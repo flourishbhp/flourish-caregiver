@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,6 +27,12 @@ SECRET_KEY = '3cmwp=o3%wpjk@@0czb&8+b$lei83&b8^q*qd4vxqdn1!dofg&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+ETC_DIR = '/etc/'
+
+APP_NAME = 'flourish_maternal'
+SITE_ID = 40
+REVIEWER_SITE_ID = 1
+
 ALLOWED_HOSTS = []
 
 
@@ -37,12 +45,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'flourish_maternal.apps.AppConfig',
+    'django_crypto_fields.apps.AppConfig',
+    'django.contrib.sites',
+    'edc_base.apps.AppConfig',
+    'edc_protocol.apps.AppConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
