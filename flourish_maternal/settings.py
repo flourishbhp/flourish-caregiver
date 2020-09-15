@@ -45,11 +45,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'flourish_maternal.apps.AppConfig',
     'django_crypto_fields.apps.AppConfig',
     'django.contrib.sites',
+    'edc_action_item.apps.AppConfig',
+    'edc_dashboard.apps.AppConfig',
     'edc_base.apps.AppConfig',
     'edc_protocol.apps.AppConfig',
+    'flourish_maternal.apps.AppConfig',
 ]
 
 MIDDLEWARE = [
@@ -61,6 +63,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'edc_dashboard.middleware.DashboardMiddleware',
+    'edc_subject_dashboard.middleware.DashboardMiddleware',
 ]
 
 ROOT_URLCONF = 'flourish_maternal.urls'
@@ -132,3 +136,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+DASHBOARD_URL_NAMES = {}

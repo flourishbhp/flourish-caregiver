@@ -32,6 +32,8 @@ class SubjectScreening(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
     screening_identifier = models.CharField(
         verbose_name="Eligibility Identifier",
         max_length=36,
+        blank=True,
+        null=True,
         unique=True)
 
     report_datetime = models.DateTimeField(

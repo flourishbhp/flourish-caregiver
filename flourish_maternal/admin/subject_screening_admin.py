@@ -1,55 +1,25 @@
 from django.contrib import admin
-from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
-
-from edc_base.sites.admin import ModelAdminSiteMixin
-from edc_model_admin import (
-    ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
-    ModelAdminFormAutoNumberMixin, ModelAdminAuditFieldsMixin,
-    ModelAdminReadOnlyMixin, ModelAdminInstitutionMixin,
-    ModelAdminRedirectOnDeleteMixin)
-from edc_model_admin.model_admin_audit_fields_mixin import (
-    audit_fields, audit_fieldset_tuple)
-from edc_metadata import NextFormGetter
 
 from ..admin_site import flourish_maternal_admin
 from ..forms import SubjectScreeningForm
 from ..models import SubjectScreening
-
-
-class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
-                      ModelAdminFormInstructionsMixin,
-                      ModelAdminFormAutoNumberMixin, ModelAdminRevisionMixin,
-                      ModelAdminAuditFieldsMixin, ModelAdminReadOnlyMixin,
-                      ModelAdminInstitutionMixin,
-                      ModelAdminRedirectOnDeleteMixin,
-                      ModelAdminSiteMixin):
-
-    list_per_page = 10
-    date_hierarchy = 'modified'
-    empty_value_display = '-'
-    next_form_getter_cls = NextFormGetter
+from .modeladmin_mixins import ModelAdminMixin
 
 
 @admin.register(SubjectScreening, site=flourish_maternal_admin)
 class SubjectScreeningAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = SubjectScreeningForm
+    search_fields = ['subject_identifier']
 
-    fieldsets = (
-        (None, {
-            'fields': (
-                'report_datetime',
-                'screening_identifier',
-                'age_in_years',
-                'has_omang')}),
-        audit_fieldset_tuple)
+    fields = ('screening_identifier',
+              'report_datetime',
+              'age_in_years',
+              'has_omang')
 
-    search_fields = ('subject_identifier',)
+    radio_fields = {'has_omang': admin.VERTICAL}
 
-    radio_fields = {
-        "has_omang": admin.VERTICAL,
-    }
+    list_display = (
+        'report_datetime', 'age_in_years', 'is_eligible', 'is_consented')
 
-    def get_readonly_fields(self, request, obj=None):
-        return (super().get_readonly_fields(request, obj=obj)
-                + audit_fields)
+    list_filter = ('report_datetime', 'is_eligible', 'is_consented')
