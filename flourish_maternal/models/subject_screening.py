@@ -32,8 +32,7 @@ class SubjectScreening(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
     screening_identifier = models.CharField(
         verbose_name="Eligibility Identifier",
         max_length=36,
-        unique=True,
-        editable=False)
+        unique=True)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date and Time",
@@ -73,7 +72,7 @@ class SubjectScreening(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
     history = HistoricalRecords()
 
     class Meta:
-        app_label = 'floursh_maternal'
+        app_label = 'flourish_maternal'
         verbose_name = "Maternal Eligibility"
         verbose_name_plural = "Maternal Eligibility"
 
