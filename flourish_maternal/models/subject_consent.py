@@ -39,7 +39,7 @@ class SubjectConsent(
 
     """ A model completed by the user on the mother's consent. """
 
-    subject_screening_model = 'td_maternal.subjectscreening'
+    subject_screening_model = 'flourish_maternal.subjectscreening'
 
     screening_identifier = models.CharField(
         verbose_name='Screening identifier',

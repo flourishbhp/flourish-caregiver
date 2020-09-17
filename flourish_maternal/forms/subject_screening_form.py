@@ -7,8 +7,8 @@ from ..models import SubjectScreening
 
 class SubjectScreeningForm(SiteModelFormMixin, FormValidatorMixin,
                            forms.ModelForm):
-
     screening_identifier = forms.CharField(
+        required=False,
         label='Screening Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
