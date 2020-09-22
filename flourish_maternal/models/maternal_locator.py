@@ -13,6 +13,8 @@ from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_action_item.model_mixins import ActionModelMixin
 from edc_locator.model_mixins import LocatorModelMixin
 
+from ..identifiers import ScreeningIdentifier
+
 
 class MaternalLocator(LocatorModelMixin, ActionModelMixin,
                       RequiresConsentFieldsModelMixin, SiteModelMixin,
@@ -23,6 +25,15 @@ class MaternalLocator(LocatorModelMixin, ActionModelMixin,
     tracking_identifier_prefix = 'SL'
 
     on_site = CurrentSiteManager()
+
+    identifier_cls = ScreeningIdentifier
+
+    screening_identifier = models.CharField(
+        verbose_name="Eligibility Identifier",
+        max_length=36,
+        blank=True,
+        null=True,
+        unique=True)
 
     locator_date = models.DateField(
         verbose_name='Date Locator Form signed',
@@ -91,6 +102,11 @@ class MaternalLocator(LocatorModelMixin, ActionModelMixin,
         validators=[TelephoneNumber, ],
         blank=True,
         null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.screening_identifier:
+            self.screening_identifier = self.identifier_cls().identifier
+        super(MaternalLocator, self).save(*args, **kwargs)
 
     history = HistoricalRecords()
 
