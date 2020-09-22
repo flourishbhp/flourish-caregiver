@@ -34,6 +34,12 @@ class MaternalLocator(LocatorModelMixin, ActionModelMixin,
         blank=True,
         null=True,
         unique=True)
+    
+    subject_identifier = models.CharField(
+        verbose_name="Subject Identifier",
+        max_length=50,
+        blank=True,
+        null=True,)
 
     locator_date = models.DateField(
         verbose_name='Date Locator Form signed',
