@@ -21,15 +21,15 @@ class MaternalOffStudyAction(Action):
 class MaternalLocatorAction(SubjectLocatorAction):
     name = MATERNAL_LOCATOR_ACTION
     display_name = 'Submit Maternal Locator'
-    reference_model = 'td_maternal.maternallocator'
-    admin_site_name = 'td_maternal_admin'
+    reference_model = 'flourish_maternal.maternallocator'
+    admin_site_name = 'flourish_maternal_admin'
 
 
 class MaternalUltrasoundAction(Action):
     name = ULTRASOUND_ACTION
     display_name = 'Submit Maternal Ultrasound'
-    reference_model = 'td_maternal.maternalultrasoundinitial'
-    admin_site_name = 'td_maternal_admin'
+    reference_model = 'flourish_maternal.maternalultrasoundinitial'
+    admin_site_name = 'flourish_maternal_admin'
     create_by_user = False
 
     def get_next_actions(self):
@@ -48,8 +48,8 @@ class MaternalUltrasoundAction(Action):
 class MaternalLabourDeliveryAction(Action):
     name = MATERNAL_DELIVERY_ACTION
     display_name = 'Submit Maternal Delivery'
-    reference_model = 'td_maternal.maternallabourdel'
-    admin_site_name = 'td_maternal_admin'
+    reference_model = 'flourish_maternal.maternallabourdel'
+    admin_site_name = 'flourish_maternal_admin'
     priority = HIGH_PRIORITY
 
     def get_next_actions(self):
@@ -62,8 +62,8 @@ class MaternalLabourDeliveryAction(Action):
 class MaternalCovidScreeningAction(Action):
     name = MATERNAL_COVID_SCREENING_ACTION
     display_name = 'Update Maternal Covid Screening Test Results'
-    reference_model = 'td_maternal.maternalcovidscreening'
-    admin_site_name = 'td_maternal_admin'
+    reference_model = 'flourish_maternal.maternalcovidscreening'
+    admin_site_name = 'flourish_maternal_admin'
     priority = HIGH_PRIORITY
 
     def close_action_item_on_save(self):

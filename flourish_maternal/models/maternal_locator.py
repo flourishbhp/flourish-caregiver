@@ -1,4 +1,4 @@
-from ..action_items import MATERNAL_LOCATOR_ACTION
+# from ..action_items import MATERNAL_LOCATOR_ACTION
 from django.db import models
 from django.utils.safestring import mark_safe
 from django_crypto_fields.fields import EncryptedCharField
@@ -10,23 +10,39 @@ from edc_base.sites import SiteModelMixin, CurrentSiteManager
 from edc_consent.model_mixins import RequiresConsentFieldsModelMixin
 from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
-from edc_action_item.model_mixins import ActionModelMixin
-from edc_locator.model_mixins import LocatorModelMixin
-
+# from edc_action_item.model_mixins import ActionModelMixin
+from edc_locator.model_mixins.subject_contact_fields_mixin import SubjectContactFieldsMixin
+from edc_locator.model_mixins.subject_indirect_contact_fields_mixin import SubjectIndirectContactFieldsMixin
+from edc_locator.model_mixins.subject_work_fields_mixin import SubjectWorkFieldsMixin
+from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsModelMixin
+from edc_base.utils import get_utcnow
 from ..identifiers import ScreeningIdentifier
 
 
-class MaternalLocator(LocatorModelMixin, ActionModelMixin,
-                      RequiresConsentFieldsModelMixin, SiteModelMixin,
-                      NonUniqueSubjectIdentifierModelMixin, BaseUuidModel):
+class LocatorManager(models.Manager):
 
-    action_name = MATERNAL_LOCATOR_ACTION
+    def get_by_natural_key(self, subject_identifier):
+        return self.get(subject_identifier=subject_identifier)
 
-    tracking_identifier_prefix = 'SL'
+class MaternalLocator( 
+#                       ActionModelMixin,
+                    SiteModelMixin,
+#                       NonUniqueSubjectIdentifierModelMixin, 
+                    SubjectContactFieldsMixin,
+                        SubjectIndirectContactFieldsMixin,
+                        SubjectWorkFieldsMixin,
+                        LocatorMethodsModelMixin,
+                      BaseUuidModel):
 
-    on_site = CurrentSiteManager()
+#     action_name = MATERNAL_LOCATOR_ACTION
+
+#     tracking_identifier_prefix = 'SL'
+
+#     on_site = CurrentSiteManager()
 
     identifier_cls = ScreeningIdentifier
+    
+    report_datetime = models.DateTimeField(default=get_utcnow)
 
     screening_identifier = models.CharField(
         verbose_name="Eligibility Identifier",
@@ -115,6 +131,9 @@ class MaternalLocator(LocatorModelMixin, ActionModelMixin,
         super(MaternalLocator, self).save(*args, **kwargs)
 
     history = HistoricalRecords()
+    
+    objects = LocatorManager()
 
     class Meta:
+        app_label = 'flourish_maternal'
         verbose_name = 'Maternal Locator'
