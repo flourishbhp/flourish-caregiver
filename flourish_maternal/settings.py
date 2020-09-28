@@ -47,10 +47,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_crypto_fields.apps.AppConfig',
     'django.contrib.sites',
+    'edc_appointment.apps.AppConfig',
     'edc_action_item.apps.AppConfig',
     'edc_dashboard.apps.AppConfig',
     'edc_base.apps.AppConfig',
     'edc_protocol.apps.AppConfig',
+    'edc_timepoint.apps.AppConfig',
     'flourish_maternal.apps.AppConfig',
 ]
 
