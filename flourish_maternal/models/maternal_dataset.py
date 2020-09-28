@@ -11,71 +11,135 @@ class MaternalDataset(
 
     infant_identifier = models.CharField(max_length=150, unique=True)
 
-    delivery_date = models.DateField()
+    delivdt = models.DateField(
+        verbose_name='Delivery date')
 
     site_name = models.CharField(max_length=150)
 
-    enrollment_date = models.DateField()
+    mom_enrolldate = models.DateField(
+        verbose_name='Maternal enrollment date')
 
-    delivery_method = models.CharField(max_length=150)
+    delivmeth = models.CharField(
+        verbose_name='Method of delivery',
+        max_length=150)
 
-    delivery_location = models.CharField(max_length=150)
+    delivery_location = models.CharField(
+        verbose_name='Delivery location',
+        max_length=150, blank=True, null=True)
 
-    enrollment_age = models.IntegerField()
+    ega_delivery = models.IntegerField(
+        verbose_name='EGA at delivery',
+        blank=True, null=True)
+    
+    mom_age_enrollment = models.IntegerField(
+        verbose_name='Mother\'s age at enrollment',
+        blank=True, null=True)
 
-    hiv_status = models.CharField(max_length=150)
+    mom_hivstatus = models.CharField(
+        verbose_name='Maternal HIV infection status',
+        max_length=150)
 
-    parity = models.IntegerField()
+    parity = models.IntegerField(blank=True, null=True)
 
-    gravida = models.IntegerField()
+    gravida = models.IntegerField(blank=True, null=True)
 
-    educational_level = models.CharField(max_length=150)
+    mom_education = models.CharField(
+        verbose_name='Maternal education level',
+        max_length=150)
 
-    marital_status = models.CharField(max_length=150)
+    mom_maritalstatus = models.CharField(
+        verbose_name='Maternal marital status',
+        max_length=150)
 
-    personal_earnings = models.DecimalField(decimal_places=2, max_digits=10)
+    mom_personal_earnings = models.DecimalField(
+        verbose_name='Mother\'s personal earnings',
+        decimal_places=2, max_digits=10,
+        blank=True, null=True)
 
-    source_of_income = models.CharField(max_length=150)
+    mom_moneysource = models.CharField(
+        verbose_name='Maternal source of income',
+        max_length=150)
 
-    occupation = models.CharField(max_length=150)
+    mom_occupation = models.CharField(
+        verbose_name='Mother\'s occupation',
+        max_length=150)
 
-    pregarv_strat = models.CharField(max_length=150)
+    mom_pregarv_strat = models.CharField(
+        verbose_name='Maternal ARVs during pregnancy',
+        max_length=150, blank=True, null=True)
 
-    arvstart_date = models.DateField()
+    mom_arvstart_date = models.DateField(
+        verbose_name='Date mother started HAART',
+        blank=True, null=True)
 
-    baseline_cd4 = models.IntegerField()
+    mom_baseline_cd4 = models.IntegerField(
+        verbose_name='Maternal baseline CD4 count',
+        blank=True, null=True)
 
-    baseline_cd4date = models.DateField()
+    mom_baseline_cd4date = models.DateField(
+        verbose_name='Draw data of mother\'s baseline CD4',
+        blank=True, null=True)
 
-    baseline_vl = models.IntegerField()
+    mom_baseline_vl = models.IntegerField(
+        verbose_name='Maternal baseline viral load',
+        blank=True, null=True)
 
-    baseline_vldate = models.DateField()
+    mom_baseline_vldate = models.DateField(
+        verbose_name='Draw date of mother\'s baseline VL',
+        blank=True, null=True)
 
-    baseline_hgb = models.DecimalField(decimal_places=1, max_digits=10)
+    mom_baseline_hgb = models.DecimalField(
+        verbose_name='Maternal baseline HGB',
+        decimal_places=1, max_digits=10,
+        blank=True, null=True)
 
-    baseline_hgbdt = models.DateField()
+    mom_baseline_hgbdt = models.DateField(
+        verbose_name='Date of maternal baseline HGB',
+        blank=True, null=True)
 
-    death_date = models.DateField()
+    mom_deathdate = models.DateField(
+        verbose_name='Date mother died',
+        blank=True, null=True)
 
-    cooking_method = models.CharField(max_length=200)
+    cooking_method = models.CharField(
+        verbose_name='Primary cooking method',
+        max_length=200, blank=True, null=True)
 
-    home_eletrified = models.CharField(max_length=150)
+    home_eletrified = models.CharField(
+        verbose_name='Electricity in home',
+        max_length=150, blank=True, null=True)
 
-    house_type = models.CharField(max_length=150)
+    house_type = models.CharField(
+        verbose_name='Type of dwelling',
+        max_length=150, blank=True, null=True)
 
-    toilet = models.IntegerField()
+    toilet = models.IntegerField(
+        verbose_name='Toilet facilities',
+        blank=True, null=True)
 
-    toilet_indoors = models.CharField(max_length=150)
+    toilet_indoors = models.CharField(
+        verbose_name='House has indoor toilet',
+        max_length=150, blank=True, null=True)
 
-    toilet_private = models.CharField(max_length=150)
+    toilet_private = models.CharField(
+        verbose_name='Private toilet for compound',
+        max_length=150, blank=True, null=True)
 
-    piped_water = models.CharField(max_length=150)
+    piped_water = models.CharField(
+        verbose_name='Water piped into home',
+        max_length=150, blank=True, null=True)
 
-    home_reridgeration = models.CharField(max_length=150)
+    home_reridgeration = models.CharField(
+        verbose_name='Refrigeration in home',
+        max_length=150, blank=True, null=True)
 
-    drinking_water = models.CharField(max_length=150)
+    drinking_water = models.CharField(
+        verbose_name='Source of drinking water',
+        max_length=150, blank=True, null=True)
 
-    live_inhouse_number = models.IntegerField()
+    live_inhouse_number = models.IntegerField(
+        verbose_name='Number of people living in household',
+        blank=True, null=True)
 
     class Meta:
         app_label = 'flourish_maternal'
