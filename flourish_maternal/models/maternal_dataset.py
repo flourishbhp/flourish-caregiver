@@ -6,10 +6,15 @@ from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 
 class MaternalDataset(
         UniqueSubjectIdentifierFieldMixin, SiteModelMixin, BaseUuidModel):
+    
+    bid = models.CharField(max_length=150, unique=True)
+
+    m_bid = models.CharField(
+        verbose_name="Mother's BID [Derived for infants]",
+        max_length=50,
+        unique=True)
 
     protocol = models.CharField(max_length=150)
-
-    infant_identifier = models.CharField(max_length=150, unique=True)
 
     delivdt = models.DateField(
         verbose_name='Delivery date')

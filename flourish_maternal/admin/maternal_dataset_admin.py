@@ -14,8 +14,8 @@ class MaternalDatasetAdmin(ModelAdminSiteMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
-                'subject_identifier',
-                'infant_identifier',
+                'bid',
+                'm_bid',
                 'protocol',
                 'delivdt',
                 'site_name',
