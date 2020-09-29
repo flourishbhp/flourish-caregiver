@@ -85,19 +85,6 @@ class SubjectConsent(
     def natural_key(self):
         return (self.subject_identifier, self.version)
 
-    def save(self, *args, **kwargs):
-        consent_version_cls = django_apps.get_model(
-            'td_maternal.tdconsentversion')
-        try:
-            consent_version_obj = consent_version_cls.objects.get(
-                screening_identifier=self.screening_identifier)
-        except consent_version_cls.DoesNotExist:
-            raise ValidationError(
-                'Missing Consent Version form. Please complete '
-                'it before proceeding.')
-        self.version = consent_version_obj.version
-        super().save(*args, **kwargs)
-
     def make_new_identifier(self):
         """Returns a new and unique identifier.
 

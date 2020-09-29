@@ -7,9 +7,9 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
 from edc_base.model_validators.date import date_not_future
 from edc_base.sites import SiteModelMixin, CurrentSiteManager
-from edc_consent.model_mixins import RequiresConsentFieldsModelMixin
+# from edc_consent.model_mixins import RequiresConsentFieldsModelMixin
 from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK
-from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
+# from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 # from edc_action_item.model_mixins import ActionModelMixin
 from edc_locator.model_mixins.subject_contact_fields_mixin import SubjectContactFieldsMixin
 from edc_locator.model_mixins.subject_indirect_contact_fields_mixin import SubjectIndirectContactFieldsMixin
@@ -128,7 +128,7 @@ class MaternalLocator(
     def save(self, *args, **kwargs):
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
-        super(MaternalLocator, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     history = HistoricalRecords()
     

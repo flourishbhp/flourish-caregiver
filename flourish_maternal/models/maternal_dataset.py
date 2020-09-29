@@ -2,10 +2,20 @@ from django.db import models
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
+from ..identifiers import ScreeningIdentifier
 
 
 class MaternalDataset(
         UniqueSubjectIdentifierFieldMixin, SiteModelMixin, BaseUuidModel):
+    
+    identifier_cls = ScreeningIdentifier
+    
+    screening_identifier = models.CharField(
+        verbose_name="Eligibility Identifier",
+        max_length=36,
+        blank=True,
+        null=True,
+        unique=True)
     
     bid = models.CharField(max_length=150, unique=True)
 
@@ -145,6 +155,11 @@ class MaternalDataset(
     live_inhouse_number = models.IntegerField(
         verbose_name='Number of people living in household',
         blank=True, null=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.screening_identifier:
+            self.screening_identifier = self.identifier_cls().identifier
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'flourish_maternal'

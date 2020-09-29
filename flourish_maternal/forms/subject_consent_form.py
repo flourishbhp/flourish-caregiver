@@ -14,7 +14,8 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
 
     subject_identifier = forms.CharField(
         label='Subject Identifier',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
 
     class Meta:
         model = SubjectConsent
