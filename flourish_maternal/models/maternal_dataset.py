@@ -1,12 +1,12 @@
 from django.db import models
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
-from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from ..identifiers import ScreeningIdentifier
 
 
 class MaternalDataset(
-        UniqueSubjectIdentifierFieldMixin, SiteModelMixin, BaseUuidModel):
+        NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin, BaseUuidModel):
     
     identifier_cls = ScreeningIdentifier
     
@@ -17,10 +17,12 @@ class MaternalDataset(
         null=True,
         unique=True)
     
-    bid = models.CharField(max_length=150, unique=True)
+    study_child_identifier = models.CharField(
+        max_length=150, unique=True,
+        verbose_name='Study Child Subject Identifier')
 
-    m_bid = models.CharField(
-        verbose_name="Mother's BID [Derived for infants]",
+    study_maternal_identifier = models.CharField(
+        verbose_name="Study maternal Subject Identifier",
         max_length=50,
         unique=True)
 
@@ -46,8 +48,9 @@ class MaternalDataset(
         verbose_name='EGA at delivery',
         blank=True, null=True)
     
-    mom_age_enrollment = models.IntegerField(
+    mom_age_enrollment = models.CharField(
         verbose_name='Mother\'s age at enrollment',
+        max_length=150,
         blank=True, null=True)
 
     mom_hivstatus = models.CharField(
@@ -66,9 +69,9 @@ class MaternalDataset(
         verbose_name='Maternal marital status',
         max_length=150)
 
-    mom_personal_earnings = models.DecimalField(
+    mom_personal_earnings = models.CharField(
         verbose_name='Mother\'s personal earnings',
-        decimal_places=2, max_digits=10,
+        max_length=150,
         blank=True, null=True)
 
     mom_moneysource = models.CharField(

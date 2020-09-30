@@ -14,12 +14,14 @@ class MaternalDatasetAdmin(ModelAdminSiteMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
-                'bid',
-                'm_bid',
+                'subject_identifier',
+                'screening_identifier',
+                'study_child_identifier',
+                'study_maternal_identifier',
+                'mom_enrolldate',
                 'protocol',
                 'delivdt',
                 'site_name',
-                'mom_enrolldate',
                 'delivmeth',
                 'delivery_location',
                 'ega_delivery',
