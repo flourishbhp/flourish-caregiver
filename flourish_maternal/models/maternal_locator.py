@@ -1,4 +1,3 @@
-# from ..action_items import MATERNAL_LOCATOR_ACTION
 from django.db import models
 from django.utils.safestring import mark_safe
 from django_crypto_fields.fields import EncryptedCharField
@@ -7,38 +6,29 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
 from edc_base.model_validators.date import date_not_future
 from edc_base.sites import SiteModelMixin, CurrentSiteManager
-# from edc_consent.model_mixins import RequiresConsentFieldsModelMixin
+from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK
-# from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
-# from edc_action_item.model_mixins import ActionModelMixin
 from edc_locator.model_mixins.subject_contact_fields_mixin import SubjectContactFieldsMixin
 from edc_locator.model_mixins.subject_indirect_contact_fields_mixin import SubjectIndirectContactFieldsMixin
 from edc_locator.model_mixins.subject_work_fields_mixin import SubjectWorkFieldsMixin
 from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsModelMixin
-from edc_base.utils import get_utcnow
+from edc_search.model_mixins import SearchSlugManager
+
 from ..identifiers import ScreeningIdentifier
+from .model_mixins.search_slug_model_mixin import SearchSlugModelMixin
 
 
-class LocatorManager(models.Manager):
+class LocatorManager(SearchSlugManager, models.Manager):
 
     def get_by_natural_key(self, subject_identifier):
         return self.get(subject_identifier=subject_identifier)
 
-class MaternalLocator( 
-#                       ActionModelMixin,
-                    SiteModelMixin,
-#                       NonUniqueSubjectIdentifierModelMixin, 
-                    SubjectContactFieldsMixin,
-                        SubjectIndirectContactFieldsMixin,
-                        SubjectWorkFieldsMixin,
-                        LocatorMethodsModelMixin,
-                      BaseUuidModel):
+class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
+                      SubjectIndirectContactFieldsMixin,
+                      SubjectWorkFieldsMixin,LocatorMethodsModelMixin,
+                      SearchSlugModelMixin, BaseUuidModel):
 
-#     action_name = MATERNAL_LOCATOR_ACTION
 
-#     tracking_identifier_prefix = 'SL'
-
-#     on_site = CurrentSiteManager()
 
     identifier_cls = ScreeningIdentifier
     

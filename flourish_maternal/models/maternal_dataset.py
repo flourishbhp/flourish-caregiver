@@ -3,10 +3,12 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from ..identifiers import ScreeningIdentifier
+from .model_mixins.search_slug_model_mixin import SearchSlugModelMixin
 
 
-class MaternalDataset(
-        NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin, BaseUuidModel):
+class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
+                      SiteModelMixin, SearchSlugModelMixin,
+                      BaseUuidModel):
     
     identifier_cls = ScreeningIdentifier
     
@@ -163,6 +165,11 @@ class MaternalDataset(
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
         super().save(*args, **kwargs)
+        
+    def get_search_slug_fields(self):
+        fields = super().get_search_slug_fields()
+        fields.append('screening_identifier')
+        return fields
 
     class Meta:
         app_label = 'flourish_maternal'
