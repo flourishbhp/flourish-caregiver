@@ -168,7 +168,9 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
         
     def get_search_slug_fields(self):
         fields = super().get_search_slug_fields()
-        fields.append('screening_identifier')
+        fields.append('screening_identifier',
+                      'study_child_identifier',
+                      'study_maternal_identifier')
         return fields
 
     class Meta:
