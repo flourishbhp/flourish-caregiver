@@ -1,1 +1,2 @@
+from .crf_model_mixin import CrfModelMixin
 from .search_slug_model_mixin import SearchSlugModelMixin

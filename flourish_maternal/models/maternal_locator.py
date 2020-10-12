@@ -5,7 +5,7 @@ from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
 from edc_base.model_validators.date import date_not_future
-from edc_base.sites import SiteModelMixin, CurrentSiteManager
+from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK
 from edc_locator.model_mixins.subject_contact_fields_mixin import SubjectContactFieldsMixin

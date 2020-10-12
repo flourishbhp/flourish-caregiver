@@ -4,14 +4,14 @@ from edc_model_admin import audit_fieldset_tuple
 from .modeladmin_mixins import ModelAdminMixin
 
 from ..admin_site import flourish_maternal_admin
-from ..forms import MaternalCyhuuPreEnrollmentForm
-from ..models import MaternalCyhuuPreEnrollment
+from ..forms import CyhuuPreEnrollmentForm
+from ..models import CyhuuPreEnrollment
 
 
-@admin.register(MaternalCyhuuPreEnrollment, site=flourish_maternal_admin)
-class MaternalCyhuuPreEnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
+@admin.register(CyhuuPreEnrollment, site=flourish_maternal_admin)
+class CyhuuPreEnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
-    form = MaternalCyhuuPreEnrollmentForm
+    form = CyhuuPreEnrollmentForm
 
     fieldsets = (
         (None, {
