@@ -1,5 +1,6 @@
 from .subject_consent_admin import SubjectConsentAdmin
 from .subject_screening_admin import SubjectScreeningAdmin
+from .maternal_cyhuu_pre_enrollment_admin import MaternalCyhuuPreEnrollmentAdmin
 from .maternal_dataset_admin import MaternalDatasetAdmin
 from .maternal_locator_admin import MaternalLocatorAdmin
 from .maternal_visit_admin import MaternalVisitAdmin
