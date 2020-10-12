@@ -9,16 +9,16 @@ from .model_mixins.search_slug_model_mixin import SearchSlugModelMixin
 class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
                       SiteModelMixin, SearchSlugModelMixin,
                       BaseUuidModel):
-    
+
     identifier_cls = ScreeningIdentifier
-    
+
     screening_identifier = models.CharField(
         verbose_name="Eligibility Identifier",
         max_length=36,
         blank=True,
         null=True,
         unique=True)
-    
+
     study_child_identifier = models.CharField(
         max_length=150, unique=True,
         verbose_name='Study Child Subject Identifier')
@@ -49,7 +49,7 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
     ega_delivery = models.IntegerField(
         verbose_name='EGA at delivery',
         blank=True, null=True)
-    
+
     mom_age_enrollment = models.CharField(
         verbose_name='Mother\'s age at enrollment',
         max_length=150,

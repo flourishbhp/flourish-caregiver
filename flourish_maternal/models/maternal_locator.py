@@ -23,15 +23,14 @@ class LocatorManager(SearchSlugManager, models.Manager):
     def get_by_natural_key(self, subject_identifier):
         return self.get(subject_identifier=subject_identifier)
 
+
 class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
                       SubjectIndirectContactFieldsMixin,
-                      SubjectWorkFieldsMixin,LocatorMethodsModelMixin,
+                      SubjectWorkFieldsMixin, LocatorMethodsModelMixin,
                       SearchSlugModelMixin, BaseUuidModel):
 
-
-
     identifier_cls = ScreeningIdentifier
-    
+
     report_datetime = models.DateTimeField(default=get_utcnow)
 
     screening_identifier = models.CharField(
@@ -40,7 +39,7 @@ class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
         blank=True,
         null=True,
         unique=True)
-    
+
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",
         max_length=50,
@@ -121,7 +120,7 @@ class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
         super().save(*args, **kwargs)
 
     history = HistoricalRecords()
-    
+
     objects = LocatorManager()
 
     class Meta:
