@@ -8,7 +8,7 @@ from edc_constants.choices import YES_NO
 from ..maternal_choices import POS_NEG_IND
 
 
-class MaternalCyhuuPreEnrollment(SiteModelMixin, BaseUuidModel):
+class CyhuuPreEnrollment(SiteModelMixin, BaseUuidModel):
 
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
@@ -41,5 +41,5 @@ class MaternalCyhuuPreEnrollment(SiteModelMixin, BaseUuidModel):
 
     class Meta:
         app_label = 'flourish_maternal'
-        verbose_name = 'Maternal CYHUU Pre-Enrollment'
-        verbose_name_plural = 'Maternal CYHUU Pre-Enrollment'
+        verbose_name = 'CYHUU Pre-Enrollment'
+        verbose_name_plural = 'CYHUU Pre-Enrollment'
