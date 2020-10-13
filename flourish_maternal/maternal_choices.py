@@ -56,7 +56,7 @@ DELIVERY_HEALTH_FACILITY = (
     (OTHER, 'Other health facilities not associated with study site'),
 )
 
-PRIOR_PREG_HAART_STATUS = (
+PRIOR_PREG_ART_STATUS = (
     (CONTINUOUS,
      'Received continuous HAART from the time she started'),
     (RESTARTED,

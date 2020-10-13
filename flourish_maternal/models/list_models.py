@@ -9,5 +9,10 @@ class CaregiverMedications(ListModelMixin, BaseUuidModel):
     pass
 
 
+class PriorArv (ListModelMixin, BaseUuidModel):
+
+    pass
+
+
 class WcsDxAdult(ListModelMixin, BaseUuidModel):
     pass

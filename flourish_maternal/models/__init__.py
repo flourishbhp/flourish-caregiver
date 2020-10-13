@@ -1,4 +1,5 @@
 from .arvs_during_pregnancy import ArvsDuringPregnancy
+from .arvs_pre_pregnancy import ArvsPrePregnancy
 from .cyhuu_pre_enrollment import CyhuuPreEnrollment
 from .hiv_viralload_cd4 import HivViralLoadAndCd4
 from .socio_demographic_data import SocioDemographicData
