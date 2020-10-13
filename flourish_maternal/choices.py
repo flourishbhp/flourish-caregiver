@@ -1041,3 +1041,15 @@ YES_NO_TRIED = (
     ('tried', 'Tried, but could not get tested'),
     (UNKNOWN, 'Unknown'),
 )
+
+RELATION_TO_CHILD = (
+    ('father', 'Father'),
+    ('grandmother', 'Grandmother'),
+    ('grandfather', 'Grandfather'),
+    ('aunt', 'Aunt'),
+    ('uncle', 'Uncle'),
+    ('sister', 'Sister'),
+    ('brother', 'Brother'),
+    ('guardian', 'Guardian'),
+    (OTHER, 'Other'),
+)
