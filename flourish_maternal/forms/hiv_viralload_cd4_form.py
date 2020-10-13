@@ -1,12 +1,10 @@
 from django import forms
-from edc_base.sites import SiteModelFormMixin
-from edc_form_validators import FormValidatorMixin
 
+from .form_mixins import SubjectModelFormMixin
 from ..models import HivViralLoadAndCd4
 
 
-class HivViralLoadCd4Form(
-        SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
+class HivViralLoadCd4Form(SubjectModelFormMixin, forms.ModelForm):
 
     class Meta:
         model = HivViralLoadAndCd4

@@ -1,20 +1,22 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
-from .modeladmin_mixins import ModelAdminMixin
+from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_maternal_admin
 from ..forms import HivViralLoadCd4Form
 from ..models import HivViralLoadAndCd4
 
 
 @admin.register(HivViralLoadAndCd4, site=flourish_maternal_admin)
-class HivViralLoadCd4Admin(ModelAdminMixin, admin.ModelAdmin):
+class HivViralLoadCd4Admin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivViralLoadCd4Form
 
     fieldsets = (
         (None, {
             'fields': [
+                'maternal_visit',
+                'report_datetime',
                 'last_cd4_count_known',
                 'cd4_count',
                 'cd4_count_date',

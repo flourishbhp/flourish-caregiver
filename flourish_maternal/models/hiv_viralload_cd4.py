@@ -1,13 +1,12 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from edc_base.model_mixins import BaseUuidModel
-from edc_base.sites import SiteModelMixin
 from edc_constants.choices import YES_NO
 
+from .model_mixins import CrfModelMixin
 from ..maternal_choices import SIZE_CHECK
 
 
-class HivViralLoadAndCd4(SiteModelMixin, BaseUuidModel):
+class HivViralLoadAndCd4(CrfModelMixin):
 
     last_cd4_count_known = models.CharField(
         verbose_name='Is the caregiver’s last CD4 count known?',
@@ -29,21 +28,24 @@ class HivViralLoadAndCd4(SiteModelMixin, BaseUuidModel):
     vl_detectable = models.CharField(
         verbose_name='Was the viral load detectable?',
         choices=YES_NO,
-        max_length=3, )
+        max_length=3,
+        null=True, blank=True, )
 
     recent_vl_results = models.IntegerField(
         verbose_name='Quantitative results of most recent Viral Load test',
         validators=[MinValueValidator(10), MaxValueValidator(150000)],
-        help_text='copies/ml', )
+        help_text='copies/ml',
+        null=True, blank=True, )
 
     hiv_results_quantifier = models.CharField(
         choices=SIZE_CHECK,
         max_length=12, )
 
     last_vl_date = models.DateField(
-        verbose_name='Date of last viral load test', )
+        verbose_name='Date of last viral load test',
+        null=True, blank=True, )
 
-    class Meta:
+    class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_maternal'
         verbose_name = 'HIV Viral Load and CD4'
         verbose_name_plural = 'HIV Viral Load and CD4'

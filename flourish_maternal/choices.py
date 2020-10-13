@@ -1053,3 +1053,99 @@ RELATION_TO_CHILD = (
     ('guardian', 'Guardian'),
     (OTHER, 'Other'),
 )
+
+DEPRESSION_SCALE = (
+    ('0', 'Not at all'),
+    ('1', 'Several days'),
+    ('2', 'More than half the days'),
+    ('3', 'Nearly every day'),
+)
+
+DEPRESSION_MOOD = (
+    ('0', 'Absent'),
+    ('1', 'Sadness, etc'),
+    ('2', 'Occassional Weeping'),
+    ('3', 'Frequent Weeping'),
+    ('4', 'Extreme symptoms')
+)
+
+GUILT_FEELINGS = (
+    ('0', 'Absent'),
+    ('1', 'Self-reproach, feels he/she has let people down'),
+    ('2', 'Ideas of guilt'),
+    ('3', 'Present illness is a punishment; delusions of guilt'),
+    ('4', 'Hallucinations of guilt')
+)
+
+SUICIDAL = (
+    ('0', 'Absent'),
+    ('1', 'Feels life is not worth living'),
+    ('2', 'Wishes he/she were dead'),
+    ('3', 'Suicidal ideas or gestures'),
+    ('4', 'Attempts at suicide')
+)
+
+INSOMNIA = (
+    ('0', 'Absent'),
+    ('1', 'Occasional'),
+    ('2', 'Frequent')
+)
+
+WORK_INTERESTS = (
+    ('0', 'No difficulty'),
+    ('1', 'Feelings of incapacity, listlessness, indecision and vacillation'),
+    ('2', 'Loss of interest in hobbies, decreased social activities'),
+    ('3', 'Productivity decreased'),
+    ('4', ('Unable to work. Stopped working because of present illness only. '
+           '(Absence from work after treatment or recovery may rate a lower score).'))
+)
+
+RETARDATION = (
+    ('0', 'Absent'),
+    ('1', 'Slight retardation at interview'),
+    ('2', 'Obvious retardation at interview'),
+    ('3', 'Interview difficult'),
+    ('4', 'Complete stupor')
+)
+
+AXIETY_PYSCHIC = (
+    ('0', 'No difficulty'),
+    ('1', 'Tension and irritability'),
+    ('2', 'Worrying about minor matters'),
+    ('3', 'Apprehensive attitude'),
+    ('4', 'Fears')
+)
+
+ANXIETY = (
+    ('0', 'Absent'),
+    ('1', 'Mild'),
+    ('2', 'Moderate'),
+    ('3', 'Severe'),
+    ('4', 'Incapacitating')
+)
+
+SOMATIC_SYMPTOMS = (
+    ('0', 'Absent'),
+    ('1', 'Mild'),
+    ('2', 'Severe')
+)
+
+HYPOCHONDRIASIS = (
+    ('0', 'Not present'),
+    ('1', 'Self-absorption (bodily)'),
+    ('2', 'Preoccupation with health'),
+    ('3', 'Querulous attitude'),
+    ('4', 'Hypochondriacal delusions')
+)
+
+WEIGHT_LOSS = (
+    ('0', 'No weight loss'),
+    ('1', 'Slight'),
+    ('2', 'Obvious or severe')
+)
+
+INSIGHT = (
+    ('0', 'No loss'),
+    ('1', 'Partial or doubtfull loss'),
+    ('2', 'Loss of insight')
+)
