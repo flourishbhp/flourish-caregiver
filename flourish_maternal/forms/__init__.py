@@ -1,5 +1,6 @@
 from .cyhuu_pre_enrollment_form import CyhuuPreEnrollmentForm
 from .hiv_viralload_cd4_form import HivViralLoadCd4Form
+from .socio_demographic_data_form import SocioDemographicDataForm
 from .subject_consent_form import SubjectConsentForm
 from .subject_screening_form import SubjectScreeningForm
 from .maternal_enrollment_form import MaternalEnrollmentForm
