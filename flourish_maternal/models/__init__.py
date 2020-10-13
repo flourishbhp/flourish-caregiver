@@ -5,6 +5,7 @@ from .caregiver_gad_anxiety_screening import CaregiverGadAnxietyScreening
 from .caregiver_hamd_depr_screening import CaregiverHamdDeprScreening
 from .caregiver_psq_depr_screening import CaregiverPsqDeprScreening
 from .cyhuu_pre_enrollment import CyhuuPreEnrollment
+from .food_frequency_questionnaire import FoodFrequencyQuestionnaire
 from .hiv_viralload_cd4 import HivViralLoadAndCd4
 from .socio_demographic_data import SocioDemographicData
 from .subject_consent import SubjectConsent
