@@ -1149,3 +1149,32 @@ INSIGHT = (
     ('1', 'Partial or doubtfull loss'),
     ('2', 'Loss of insight')
 )
+
+FOOD_FREQUENCY = (
+    ('Often True', 'Often True'),
+    ('Sometimes True', 'Sometimes True'),
+    ('Never True', 'Never True'),
+    ("I don’t know or Refused to answer", "I don’t know or Refused to answer"),
+)
+
+MEALS = (
+    ('Yes', 'Yes'),
+    ('No', 'No'),
+    ("I don’t know", "I don’t know"),
+)
+
+HOW_OFTEN = (
+    ('Almost every month', 'Almost every month'),
+    ('Some months but not every month', 'Some months but not every month'),
+    ("Only 1 or 2 months", " Only 1 or 2 months"),
+    ("I don’t know", "I don’t know"),
+)
+
+REFERRED_TO = (
+    ('Community Social Worker', 'Community Social Worker'),
+    ('Hospitalbased Social Worker', 'Hospitalbased Social Worker'),
+    ('A&E', 'A&E'),
+    ('Psychologist', 'Psychologist'),
+    ('Psychiatrist', 'Psychiatrist'),
+    (OTHER, 'Other'),
+)
