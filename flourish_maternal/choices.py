@@ -876,42 +876,38 @@ UNHAPPY = BLAME
 SAD = BLAME
 
 ANXIOUS = (
-    ('No, not at all', 'No, not at all'),
-    ('Hardly ever', 'Hardly ever'),
-    ('Yes, sometimes', 'Yes, sometimes'),
-    ('Yes, very often', 'Yes, very often')
+    ('0', 'No, not at all'),
+    ('1', 'Hardly ever'),
+    ('2', 'Yes, sometimes'),
+    ('3', 'Yes, very often')
 )
 
 PANICK = (
-    ('Yes, quite a lot', 'Yes, quite a lot'),
-    ('Yes, sometimes', 'Yes, sometimes'),
-    ('No, not much', 'No, not much'),
-    ('No, not at all', 'No, not at all')
+    ('3', 'Yes, quite a lot'),
+    ('2, sometimes', 'Yes, sometimes'),
+    ('1', 'No, not much'),
+    ('0', 'No, not at all')
 )
 
 TOP = (
-    ('Yes, most of the time I haven\'t been able to cope at all',
-     'Yes, most of the time I haven\'t been able to cope at all'),
-    ('Yes, sometimes I haven\'t been coping as well as usual',
-     'Yes, sometimes I haven\'t been coping as well as usual'),
-    ('No, most of the time I have coped quite well',
-     'No, most of the time I have coped quite well'),
-    ('No, I have been coping as well as ever',
-     'No, I have been coping as well as ever')
+    ('3', 'Yes, most of the time I haven\'t been able to cope at all'),
+    ('2', 'Yes, sometimes I haven\'t been coping as well as usual'),
+    ('1', 'No, most of the time I have coped quite well'),
+    ('0', 'No, I have been coping as well as ever')
 )
 
 CRYING = (
-    ('Yes, most of the time', 'Yes, most of the time'),
-    ('Yes, quite often', 'Yes, quite often'),
-    ('Only occasionally', 'Only occasionally'),
-    ('No, never', 'No, never')
+    ('3', 'Yes, most of the time'),
+    ('2, quite often', 'Yes, quite often'),
+    ('1', 'Only occasionally'),
+    ('0', 'No, never')
 )
 
 HARM = (
-    ('Yes, quite often', 'Yes, quite often'),
-    ('Sometimes', 'Sometimes'),
-    ('Hardly ever', 'Hardly ever'),
-    ('Never', 'Never')
+    ('3', 'Yes, quite often'),
+    ('2', 'Sometimes'),
+    ('1', 'Hardly ever'),
+    ('0', 'Never')
 )
 
 AMNIOTIC_FLUID = (
@@ -1151,23 +1147,23 @@ INSIGHT = (
 )
 
 FOOD_FREQUENCY = (
-    ('Often True', 'Often True'),
-    ('Sometimes True', 'Sometimes True'),
-    ('Never True', 'Never True'),
-    ("I don’t know or Refused to answer", "I don’t know or Refused to answer"),
+    ('0', 'Often True'),
+    ('1', 'Sometimes True'),
+    ('2', 'Never True'),
+    ("3", "I don’t know or Refused to answer"),
 )
 
 MEALS = (
-    ('Yes', 'Yes'),
-    ('No', 'No'),
-    ("I don’t know", "I don’t know"),
+    ('0', 'Yes'),
+    ('1', 'No'),
+    ("2", "I don’t know"),
 )
 
 HOW_OFTEN = (
-    ('Almost every month', 'Almost every month'),
-    ('Some months but not every month', 'Some months but not every month'),
-    ("Only 1 or 2 months", " Only 1 or 2 months"),
-    ("I don’t know", "I don’t know"),
+    ('0', 'Almost every month'),
+    ('1', 'Some months but not every month'),
+    ("2", " Only 1 or 2 months"),
+    ("3", "I don’t know"),
 )
 
 REFERRED_TO = (
@@ -1177,4 +1173,39 @@ REFERRED_TO = (
     ('Psychologist', 'Psychologist'),
     ('Psychiatrist', 'Psychiatrist'),
     (OTHER, 'Other'),
+)
+
+ABLE_TO_LAUGH = (
+    ('0', 'As much as I always could'),
+    ('1', 'Not quite so much now'),
+    ('2', 'Definitely not so much now'),
+    ('3', 'Not at all'),
+)
+
+ENJOYMENT_TO_THINGS = (
+    ('0', 'As much as I ever did'),
+    ('1', 'Rather less than I used to'),
+    ('2', 'Definitely less than I used to'),
+    ('3', 'Hardly at all'),
+)
+
+SELF_BLAME = (
+    ('0', 'No, never'),
+    ('1', 'Not very often'),
+    ('2', 'Yes, some of the time'),
+    ('3', 'Yes, most of the time'),
+)
+
+SLEEPING_DIFFICULTY = (
+    ('0', 'No, not at all'),
+    ('1', 'Not very often'),
+    ('2', 'Yes, sometimes'),
+    ('3', 'Yes, most of the time'),
+)
+
+MISERABLE_FEELING = (
+    ('0', 'No, not at all'),
+    ('1', 'Not very often'),
+    ('2', 'Yes, quite often'),
+    ('3', 'Yes, most of the time'),
 )
