@@ -1169,3 +1169,12 @@ HOW_OFTEN = (
     ("Only 1 or 2 months", " Only 1 or 2 months"),
     ("I don’t know", "I don’t know"),
 )
+
+REFERRED_TO = (
+    ('Community Social Worker', 'Community Social Worker'),
+    ('Hospitalbased Social Worker', 'Hospitalbased Social Worker'),
+    ('A&E', 'A&E'),
+    ('Psychologist', 'Psychologist'),
+    ('Psychiatrist', 'Psychiatrist'),
+    (OTHER, 'Other'),
+)

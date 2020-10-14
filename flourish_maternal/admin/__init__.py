@@ -16,3 +16,4 @@ from .huu_pre_enrollment_admin import HuuPreEnrollmentAdmin
 from .maternal_locator_admin import MaternalLocatorAdmin
 from .medical_history_admin import MedicalHistoryAdmin
 from .maternal_visit_admin import MaternalVisitAdmin
+from .referred_to_admin import ReferredToAdmin
