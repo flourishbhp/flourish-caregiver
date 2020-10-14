@@ -122,6 +122,8 @@ class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
     def save(self, *args, **kwargs):
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
+        if not self.subject_identifier:
+            self.subject_identifier = self.study_maternal_identifier
         super().save(*args, **kwargs)
 
     history = HistoricalRecords()
