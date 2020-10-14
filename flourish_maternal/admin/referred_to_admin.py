@@ -16,6 +16,7 @@ class ReferredToAdmin(ModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
+                'maternal_visit',
                 'report_datetime',
                 'referred_to',
                 'referred_to_other',

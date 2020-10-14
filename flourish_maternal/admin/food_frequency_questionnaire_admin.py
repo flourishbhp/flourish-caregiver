@@ -16,6 +16,8 @@ class FoodFrequencyQuestionnaireAdmin(ModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
+                'maternal_visit',
+                'report_datetime',
                 'did_food_last',
                 'afford_balanced_meals',
                 'cut_meals',
