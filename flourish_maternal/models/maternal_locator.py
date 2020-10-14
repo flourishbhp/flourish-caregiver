@@ -46,6 +46,11 @@ class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
         blank=True,
         null=True,)
 
+    study_maternal_identifier = models.CharField(
+        verbose_name="Study maternal Subject Identifier",
+        max_length=50,
+        unique=True)
+
     locator_date = models.DateField(
         verbose_name='Date Locator Form signed',
         validators=[date_not_future])
