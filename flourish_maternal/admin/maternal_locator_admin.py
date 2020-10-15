@@ -16,6 +16,7 @@ class MaternalLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
             'fields': [
                 'subject_identifier',
                 'screening_identifier',
+                'study_maternal_identifier',
                 'report_datetime',
                 'locator_date',
                 'mail_address',

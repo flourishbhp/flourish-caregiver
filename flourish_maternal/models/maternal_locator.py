@@ -46,6 +46,11 @@ class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
         blank=True,
         null=True,)
 
+    study_maternal_identifier = models.CharField(
+        verbose_name="Study maternal Subject Identifier",
+        max_length=50,
+        unique=True)
+
     locator_date = models.DateField(
         verbose_name='Date Locator Form signed',
         validators=[date_not_future])
@@ -117,6 +122,8 @@ class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
     def save(self, *args, **kwargs):
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
+        if not self.subject_identifier:
+            self.subject_identifier = self.study_maternal_identifier
         super().save(*args, **kwargs)
 
     history = HistoricalRecords()
