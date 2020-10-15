@@ -1,3 +1,4 @@
+from .antenatal_enrollment import AntenatalEnrollment
 from .arvs_during_pregnancy import ArvsDuringPregnancy
 from .arvs_pre_pregnancy import ArvsPrePregnancy
 from .caregiver_clinical_measurements import CaregiverClinicalMeasurements
