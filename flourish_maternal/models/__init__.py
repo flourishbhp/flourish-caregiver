@@ -12,7 +12,7 @@ from .socio_demographic_data import SocioDemographicData
 from .subject_consent import SubjectConsent
 from .subject_screening import SubjectScreening
 from .maternal_arv_preg import MaternalArvPreg
-from .maternal_enrollment import MaternalEnrollment
+from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .maternal_dataset import MaternalDataset
 from .huu_pre_enrollment import HuuPreEnrollment
 from .maternal_locator import MaternalLocator

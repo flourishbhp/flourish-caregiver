@@ -2,12 +2,12 @@ from django import forms
 from edc_base.sites import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
 
-from ..models import MaternalEnrollment
+from ..models import CaregiverPreviouslyEnrolled
 
 
-class MaternalEnrollmentForm(
+class CaregiverPreviouslyEnrolledForm(
         SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
 
     class Meta:
-        model = MaternalEnrollment
+        model = CaregiverPreviouslyEnrolled
         fields = '__all__'

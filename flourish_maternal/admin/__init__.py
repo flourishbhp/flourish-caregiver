@@ -11,7 +11,7 @@ from .socio_demographic_data_admin import SocioDemographicDataAdmin
 from .subject_consent_admin import SubjectConsentAdmin
 from .subject_screening_admin import SubjectScreeningAdmin
 from .maternal_arv_preg_admin import MaternalArvInlineAdmin
-from .maternal_enrollment_admin import MaternalEnrollmentAdmin
+from .caregiver_previously_enrolled_admin import CaregiverPreviouslyEnrolledAdmin
 from .maternal_dataset_admin import MaternalDatasetAdmin
 from .huu_pre_enrollment_admin import HuuPreEnrollmentAdmin
 from .maternal_locator_admin import MaternalLocatorAdmin
