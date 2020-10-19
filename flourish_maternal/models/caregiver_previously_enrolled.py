@@ -6,10 +6,11 @@ from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
 
+from ..choices import RELATION_TO_CHILD
 from ..maternal_choices import POS_NEG_IND
 
 
-class MaternalEnrollment(SiteModelMixin, BaseUuidModel):
+class CaregiverPreviouslyEnrolled(SiteModelMixin, BaseUuidModel):
 
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
@@ -58,8 +59,8 @@ class MaternalEnrollment(SiteModelMixin, BaseUuidModel):
 
     relation_to_child = models.CharField(
         verbose_name='Relationship to child',
-        choices=YES_NO,
-        max_length=3, )
+        choices=RELATION_TO_CHILD,
+        max_length=20, )
 
     relation_to_child_other = OtherCharField()
 

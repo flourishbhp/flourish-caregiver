@@ -4,14 +4,14 @@ from edc_model_admin import audit_fieldset_tuple
 from .modeladmin_mixins import ModelAdminMixin
 
 from ..admin_site import flourish_maternal_admin
-from ..forms import MaternalEnrollmentForm
-from ..models import MaternalEnrollment
+from ..forms import CaregiverPreviouslyEnrolledForm
+from ..models import CaregiverPreviouslyEnrolled
 
 
-@admin.register(MaternalEnrollment, site=flourish_maternal_admin)
-class MaternalEnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
+@admin.register(CaregiverPreviouslyEnrolled, site=flourish_maternal_admin)
+class CaregiverPreviouslyEnrolledAdmin(ModelAdminMixin, admin.ModelAdmin):
 
-    form = MaternalEnrollmentForm
+    form = CaregiverPreviouslyEnrolledForm
 
     fieldsets = (
         (None, {
