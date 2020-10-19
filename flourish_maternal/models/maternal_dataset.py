@@ -40,7 +40,7 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
 
     delivmeth = models.CharField(
         verbose_name='Method of delivery',
-        max_length=150)
+        max_length=150, blank=True, null=True)
 
     delivery_location = models.CharField(
         verbose_name='Delivery location',
@@ -160,6 +160,8 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
     live_inhouse_number = models.IntegerField(
         verbose_name='Number of people living in household',
         blank=True, null=True)
+
+    on_worklist = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
         if not self.screening_identifier:
