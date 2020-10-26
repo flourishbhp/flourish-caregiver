@@ -15,7 +15,7 @@ list_data = {
         (OTHER, 'Other, Specify'),
         (NOT_APPLICABLE, 'Not Applicable')
     ],
-    'flourish_maternal.maternalmedications': [
+    'flourish_maternal.caregivermedications': [
         (NOT_APPLICABLE, 'Not Applicable'),
         ('Cholesterol medications', 'Cholesterol medications'),
         ('Vitamin D supplement', 'Vitamin D supplement'),

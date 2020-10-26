@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 from django_crypto_fields.fields import EncryptedCharField
+from edc_action_item.model_mixins import ActionModelMixin
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
@@ -14,6 +15,7 @@ from edc_locator.model_mixins.subject_work_fields_mixin import SubjectWorkFields
 from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsModelMixin
 from edc_search.model_mixins import SearchSlugManager
 
+from ..action_items import MATERNAL_LOCATOR_ACTION
 from ..identifiers import ScreeningIdentifier
 from .model_mixins.search_slug_model_mixin import SearchSlugModelMixin
 
@@ -27,7 +29,9 @@ class LocatorManager(SearchSlugManager, models.Manager):
 class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
                       SubjectIndirectContactFieldsMixin,
                       SubjectWorkFieldsMixin, LocatorMethodsModelMixin,
-                      SearchSlugModelMixin, BaseUuidModel):
+                      ActionModelMixin, SearchSlugModelMixin, BaseUuidModel):
+
+    action_name = MATERNAL_LOCATOR_ACTION
 
     identifier_cls = ScreeningIdentifier
 

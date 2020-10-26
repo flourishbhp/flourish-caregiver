@@ -1,5 +1,5 @@
 from django.db import models
-from edc_base.model_fields import  OtherCharField
+from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
 from ..choices import REFERRED_TO

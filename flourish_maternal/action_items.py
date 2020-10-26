@@ -73,7 +73,4 @@ class MaternalCovidScreeningAction(Action):
         return self.reference_model_obj.covid_results != 'pending'
 
 
-site_action_items.register(MaternalCovidScreeningAction)
-site_action_items.register(MaternalLabourDeliveryAction)
 site_action_items.register(MaternalLocatorAction)
-site_action_items.register(MaternalUltrasoundAction)
