@@ -33,7 +33,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
     ga_lmp_enrollment_wks = models.IntegerField(
         verbose_name="GA by LMP at enrollment.",
         help_text=" (weeks of gestation at enrollment, LMP). Eligible if"
-        " >16 and <36 weeks GA",
+        " >22 and <28 weeks GA",
         null=True,
         blank=True,)
 
@@ -83,7 +83,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         if (self.ga_lmp_enrollment_wks and
                 (self.ga_lmp_enrollment_wks < 21 or
                  self.ga_lmp_enrollment_wks > 29)):
-            unenrolled_error_message.append('gestation not 16 to 36wks')
+            unenrolled_error_message.append('gestation not 22 to 28wks')
 
         if self.ultrasound and not self.ultrasound.pass_antenatal_enrollment:
             unenrolled_error_message.append('Pregnancy is not a singleton.')
