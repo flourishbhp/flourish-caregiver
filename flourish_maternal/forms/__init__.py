@@ -17,5 +17,6 @@ from .caregiver_previously_enrolled_form import CaregiverPreviouslyEnrolledForm
 from .maternal_dataset_form import MaternalDatasetForm
 from .maternal_locator_form import MaternalLocatorForm
 from .medical_history_form import MedicalHistoryForm
+from .maternal_ultrasound_initial_form import MaternalUltraSoundInitialForm
 from .maternal_visit_form import MaternalVisitForm
 from .referred_to_form import ReferredToForm

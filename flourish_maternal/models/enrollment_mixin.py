@@ -167,7 +167,7 @@ class EnrollmentMixin(models.Model):
             basic_criteria = False
         else:
             lmp_to_use = self.ga_lmp_enrollment_wks
-            basic_criteria = (lmp_to_use >= 16 and lmp_to_use <= 36 and
+            basic_criteria = (lmp_to_use >= 21 and lmp_to_use <= 29 and
                               enrollment_helper.no_chronic_conditions() and
                               self.will_breastfeed == YES and
                               self.will_remain_onstudy == YES)

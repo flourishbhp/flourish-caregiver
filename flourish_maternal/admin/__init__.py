@@ -16,5 +16,6 @@ from .caregiver_previously_enrolled_admin import CaregiverPreviouslyEnrolledAdmi
 from .maternal_dataset_admin import MaternalDatasetAdmin
 from .maternal_locator_admin import MaternalLocatorAdmin
 from .medical_history_admin import MedicalHistoryAdmin
+from .maternal_ultrasound_initial_admin import MaternalUltraSoundInitialAdmin
 from .maternal_visit_admin import MaternalVisitAdmin
 from .referred_to_admin import ReferredToAdmin

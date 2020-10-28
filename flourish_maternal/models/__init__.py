@@ -17,5 +17,6 @@ from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .maternal_dataset import MaternalDataset
 from .maternal_locator import MaternalLocator
 from .medical_history import MedicalHistory
+from .maternal_ultrasound_initial import MaternalUltraSoundInitial
 from .maternal_visit import MaternalVisit
 from .referred_to import ReferredTo
