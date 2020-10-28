@@ -190,5 +190,17 @@ class EnrollmentMixin(models.Model):
         else:
             return subject_consent.consent_datetime.date()
 
+    @property
+    def ultrasound(self):
+        MaternalUltraSoundInitial = django_apps.get_model(
+            'flourish_maternal.maternalultrasoundinitial')
+        try:
+            maternal_ultra_sount_initial = MaternalUltraSoundInitial.objects.get(
+                maternal_visit__subject_identifier=self.subject_identifier)
+        except MaternalUltraSoundInitial.DoesNotExist:
+            return None
+        else:
+            return maternal_ultra_sount_initial
+
     class Meta:
         abstract = True
