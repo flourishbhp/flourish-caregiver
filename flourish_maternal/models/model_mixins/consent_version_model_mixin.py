@@ -9,9 +9,9 @@ class ConsentVersionModelModelMixin:
 
     def get_consent_version(self):
         subject_screening_cls = django_apps.get_model(
-            'td_maternal.subjectscreening')
+            'flourish_maternal.subjectscreening')
         consent_version_cls = django_apps.get_model(
-            'td_maternal.tdconsentversion')
+            'flourish_maternal.tdconsentversion')
         try:
             subject_screening_obj = subject_screening_cls.objects.get(
                 subject_identifier=self.subject_identifier)
