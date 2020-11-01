@@ -1,12 +1,12 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalLocatorForm
 from ..models import MaternalLocator
 from .modeladmin_mixins import ModelAdminMixin
 
 
-@admin.register(MaternalLocator, site=flourish_maternal_admin)
+@admin.register(MaternalLocator, site=flourish_caregiver_admin)
 class MaternalLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = MaternalLocatorForm

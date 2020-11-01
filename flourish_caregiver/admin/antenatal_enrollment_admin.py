@@ -9,7 +9,7 @@ from edc_model_admin import (
 
 from .exportaction_mixin import ExportActionMixin
 
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import AntenatalEnrollmentForm
 from ..models import AntenatalEnrollment
 
@@ -38,7 +38,7 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
         return redirect_url
 
 
-@admin.register(AntenatalEnrollment, site=flourish_maternal_admin)
+@admin.register(AntenatalEnrollment, site=flourish_caregiver_admin)
 class AntenatalEnrollmentAdmin(ModelAdminMixin, ExportActionMixin,
                                admin.ModelAdmin):
 

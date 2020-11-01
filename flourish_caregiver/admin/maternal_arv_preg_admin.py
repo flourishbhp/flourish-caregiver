@@ -2,7 +2,7 @@ from django.contrib import admin
 from edc_model_admin import TabularInlineMixin
 from edc_model_admin import audit_fieldset_tuple
 
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalArvPregForm, ArvsDuringPregnancyForm
 from ..models import MaternalArvPreg, ArvsDuringPregnancy
 from .modeladmin_mixins import CrfModelAdminMixin
@@ -27,7 +27,7 @@ class MaternalArvInlineAdmin(TabularInlineMixin, admin.TabularInline):
          ), audit_fieldset_tuple)
 
 
-@admin.register(MaternalArvPreg, site=flourish_maternal_admin)
+@admin.register(MaternalArvPreg, site=flourish_caregiver_admin)
 class MaternalArvPregAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = MaternalArvPregForm
     inlines = [MaternalArvInlineAdmin, ]

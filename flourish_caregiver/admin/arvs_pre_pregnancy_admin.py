@@ -1,13 +1,13 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import ArvsPrePregnancyForm
 from ..models import ArvsPrePregnancy
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
-@admin.register(ArvsPrePregnancy, site=flourish_maternal_admin)
+@admin.register(ArvsPrePregnancy, site=flourish_caregiver_admin)
 class ArvsPrePregnancyAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = ArvsPrePregnancyForm
 

@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import SubjectScreeningForm
 from ..models import SubjectScreening
 from .modeladmin_mixins import ModelAdminMixin
 
 
-@admin.register(SubjectScreening, site=flourish_maternal_admin)
+@admin.register(SubjectScreening, site=flourish_caregiver_admin)
 class SubjectScreeningAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = SubjectScreeningForm

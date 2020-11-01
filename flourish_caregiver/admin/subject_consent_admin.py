@@ -12,7 +12,7 @@ from edc_model_admin import (
 from edc_model_admin import ModelAdminBasicMixin, ModelAdminReadOnlyMixin
 from simple_history.admin import SimpleHistoryAdmin
 
-from flourish_caregiver import flourish_maternal_admin
+from flourish_caregiver import flourish_caregiver_admin
 from flourish_caregiver import SubjectConsentForm
 from flourish_caregiver import SubjectConsent
 from flourish_caregiver import ExportActionMixin
@@ -43,7 +43,7 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
         return redirect_url
 
 
-@admin.register(SubjectConsent, site=flourish_maternal_admin)
+@admin.register(SubjectConsent, site=flourish_caregiver_admin)
 class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                           SimpleHistoryAdmin, admin.ModelAdmin):
 
