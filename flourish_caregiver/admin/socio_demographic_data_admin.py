@@ -1,13 +1,13 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import SocioDemographicDataForm
 from ..models import SocioDemographicData
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
-@admin.register(SocioDemographicData, site=flourish_maternal_admin)
+@admin.register(SocioDemographicData, site=flourish_caregiver_admin)
 class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = SocioDemographicDataForm

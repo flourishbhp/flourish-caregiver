@@ -3,12 +3,12 @@ from edc_model_admin import audit_fieldset_tuple
 
 from .modeladmin_mixins import ModelAdminMixin
 
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import FoodFrequencyQuestionnaireForm
 from ..models import FoodFrequencyQuestionnaire
 
 
-@admin.register(FoodFrequencyQuestionnaire, site=flourish_maternal_admin)
+@admin.register(FoodFrequencyQuestionnaire, site=flourish_caregiver_admin)
 class FoodFrequencyQuestionnaireAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = FoodFrequencyQuestionnaireForm

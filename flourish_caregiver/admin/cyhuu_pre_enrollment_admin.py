@@ -3,12 +3,12 @@ from edc_model_admin import audit_fieldset_tuple
 
 from .modeladmin_mixins import ModelAdminMixin
 
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import CyhuuPreEnrollmentForm
 from ..models import CyhuuPreEnrollment
 
 
-@admin.register(CyhuuPreEnrollment, site=flourish_maternal_admin)
+@admin.register(CyhuuPreEnrollment, site=flourish_caregiver_admin)
 class CyhuuPreEnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = CyhuuPreEnrollmentForm

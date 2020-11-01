@@ -3,12 +3,12 @@ from edc_model_admin import audit_fieldset_tuple
 
 from .modeladmin_mixins import ModelAdminMixin
 
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import ReferredToForm
 from ..models import ReferredTo
 
 
-@admin.register(ReferredTo, site=flourish_maternal_admin)
+@admin.register(ReferredTo, site=flourish_caregiver_admin)
 class ReferredToAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = ReferredToForm

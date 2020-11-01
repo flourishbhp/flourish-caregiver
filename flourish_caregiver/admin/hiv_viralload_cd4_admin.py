@@ -2,12 +2,12 @@ from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
 from .modeladmin_mixins import CrfModelAdminMixin
-from ..admin_site import flourish_maternal_admin
+from ..admin_site import flourish_caregiver_admin
 from ..forms import HivViralLoadCd4Form
 from ..models import HivViralLoadAndCd4
 
 
-@admin.register(HivViralLoadAndCd4, site=flourish_maternal_admin)
+@admin.register(HivViralLoadAndCd4, site=flourish_caregiver_admin)
 class HivViralLoadCd4Admin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = HivViralLoadCd4Form
