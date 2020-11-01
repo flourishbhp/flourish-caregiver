@@ -15,10 +15,11 @@ from edc_consent.field_mixins import ReviewFieldsMixin, PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 
-from flourish_caregiver import IDENTITY_TYPE
-from flourish_caregiver import RECRUIT_SOURCE, RECRUIT_CLINIC
-from flourish_caregiver import SubjectIdentifier
-from flourish_caregiver import SearchSlugModelMixin
+from ..choices import IDENTITY_TYPE
+from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
+from ..subject_identifier import SubjectIdentifier
+from .model_mixins import SearchSlugModelMixin
+
 
 
 class SubjectConsentManager(SearchSlugManager, models.Manager):

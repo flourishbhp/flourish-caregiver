@@ -2,9 +2,9 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO, YES_NO_NA
 
-from flourish_caregiver import KNOW_HIV_STATUS
-from flourish_caregiver import ChronicConditions, CaregiverMedications, WcsDxAdult
-from flourish_caregiver import CrfModelMixin
+from ..maternal_choices import KNOW_HIV_STATUS
+from .list_models import ChronicConditions, CaregiverMedications, WcsDxAdult
+from .model_mixins import CrfModelMixin
 
 
 class MedicalHistory(CrfModelMixin):

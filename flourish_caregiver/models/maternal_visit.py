@@ -15,8 +15,8 @@ from edc_visit_tracking.constants import MISSED_VISIT
 from edc_visit_tracking.managers import VisitModelManager
 from edc_visit_tracking.model_mixins import VisitModelMixin, CaretakerFieldsMixin
 
-from flourish_caregiver import MATERNAL_VISIT_STUDY_STATUS, VISIT_REASON
-from flourish_caregiver import VISIT_INFO_SOURCE, ALIVE_DEAD_UNKNOWN
+from ..choices import MATERNAL_VISIT_STUDY_STATUS, VISIT_REASON
+from ..choices import VISIT_INFO_SOURCE, ALIVE_DEAD_UNKNOWN
 
 
 class CurrentSiteManager(VisitModelManager, BaseCurrentSiteManager):

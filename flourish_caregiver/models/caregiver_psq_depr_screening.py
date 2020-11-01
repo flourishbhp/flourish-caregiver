@@ -1,7 +1,7 @@
 from django.db import models
 
-from flourish_caregiver import CrfModelMixin
-from flourish_caregiver import DEPRESSION_SCALE
+from .model_mixins import CrfModelMixin
+from ..choices import DEPRESSION_SCALE
 
 
 class CaregiverPsqDeprScreening(CrfModelMixin):

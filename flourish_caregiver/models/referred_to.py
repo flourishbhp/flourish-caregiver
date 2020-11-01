@@ -2,8 +2,9 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
-from flourish_caregiver import REFERRED_TO
-from flourish_caregiver import CrfModelMixin
+
+from ..choices import REFERRED_TO
+from .model_mixins import CrfModelMixin
 
 
 class ReferredTo(CrfModelMixin):

@@ -11,7 +11,7 @@ from edc_reference.model_mixins import ReferenceModelMixin
 from edc_visit_tracking.model_mixins import CrfModelMixin as BaseCrfModelMixin
 from edc_visit_tracking.model_mixins import PreviousVisitModelMixin
 
-from flourish_caregiver import MaternalVisit
+from ..maternal_visit import MaternalVisit
 
 
 class CrfModelMixin(BaseCrfModelMixin, SubjectScheduleCrfModelMixin,

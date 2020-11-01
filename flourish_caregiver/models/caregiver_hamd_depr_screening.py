@@ -1,7 +1,7 @@
 from django.db import models
 
-from flourish_caregiver import CrfModelMixin
-from flourish_caregiver import (DEPRESSION_MOOD, GUILT_FEELINGS, SUICIDAL, INSOMNIA,
+from .model_mixins import CrfModelMixin
+from ..choices import (DEPRESSION_MOOD, GUILT_FEELINGS, SUICIDAL, INSOMNIA,
                        WORK_INTERESTS, RETARDATION, ANXIETY, AXIETY_PYSCHIC, SOMATIC_SYMPTOMS,
                        HYPOCHONDRIASIS, WEIGHT_LOSS, INSIGHT)
 

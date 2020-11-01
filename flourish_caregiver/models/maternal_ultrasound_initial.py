@@ -2,10 +2,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from edc_action_item.model_mixins import ActionModelMixin
 
-from flourish_caregiver import ULTRASOUND_ACTION
-from flourish_caregiver import GESTATIONS_NUMBER, ZERO_ONE
-from flourish_caregiver import validate_ga_by_ultrasound, validate_fetal_weight
-from flourish_caregiver import UltraSoundModelMixin, CrfModelMixin
+from ..action_items import ULTRASOUND_ACTION
+from ..choices import GESTATIONS_NUMBER, ZERO_ONE
+from ..validators import validate_ga_by_ultrasound, validate_fetal_weight
+from .model_mixins import UltraSoundModelMixin, CrfModelMixin
 
 
 class MaternalUltraSoundInitial(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):

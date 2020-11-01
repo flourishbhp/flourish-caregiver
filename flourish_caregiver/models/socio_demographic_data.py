@@ -3,11 +3,11 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
-from flourish_caregiver import (
+from ..maternal_choices import (
     WATER_SOURCE, COOKING_METHOD, TOILET_FACILITY, HOUSE_TYPE)
-from flourish_caregiver import CURRENT_OCCUPATION, MONEY_PROVIDER, MONEY_EARNED
-from flourish_caregiver import MARITAL_STATUS, ETHNICITY, HIGHEST_EDUCATION
-from flourish_caregiver import CrfModelMixin
+from ..maternal_choices import CURRENT_OCCUPATION, MONEY_PROVIDER, MONEY_EARNED
+from ..maternal_choices import MARITAL_STATUS, ETHNICITY, HIGHEST_EDUCATION
+from .model_mixins import CrfModelMixin
 
 
 class SocioDemographicData(CrfModelMixin):

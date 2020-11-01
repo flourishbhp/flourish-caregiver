@@ -1,8 +1,8 @@
 from django.db import models
 
-from flourish_caregiver import CrfModelMixin
+from .model_mixins import CrfModelMixin
 
-from flourish_caregiver import (ABLE_TO_LAUGH, ANXIOUS, CRYING, ENJOYMENT_TO_THINGS,
+from ..choices import (ABLE_TO_LAUGH, ANXIOUS, CRYING, ENJOYMENT_TO_THINGS,
                        HARM, MISERABLE_FEELING, PANICK, SELF_BLAME,
                        SLEEPING_DIFFICULTY, TOP)
 

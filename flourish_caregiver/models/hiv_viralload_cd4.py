@@ -2,8 +2,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_constants.choices import YES_NO
 
-from flourish_caregiver import CrfModelMixin
-from flourish_caregiver import SIZE_CHECK
+from .maternal_arv_preg import CrfModelMixin
+from ..maternal_choices import SIZE_CHECK
 
 
 class HivViralLoadAndCd4(CrfModelMixin):

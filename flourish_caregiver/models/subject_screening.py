@@ -9,9 +9,9 @@ from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugManager
 
-from flourish_caregiver import ScreeningIdentifier
-from flourish_caregiver import Eligibility
-from flourish_caregiver import SearchSlugModelMixin
+from ..identifiers import ScreeningIdentifier
+from .eligibility import Eligibility
+from .model_mixins import SearchSlugModelMixin
 
 
 class SubjectScreeningManager(SearchSlugManager, models.Manager):

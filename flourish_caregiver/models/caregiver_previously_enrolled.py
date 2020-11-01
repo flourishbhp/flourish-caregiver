@@ -6,8 +6,8 @@ from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
 
-from flourish_caregiver import RELATION_TO_CHILD
-from flourish_caregiver import POS_NEG_IND
+from ..choices import RELATION_TO_CHILD
+from ..maternal_choices import POS_NEG_IND
 
 
 class CaregiverPreviouslyEnrolled(SiteModelMixin, BaseUuidModel):

@@ -3,8 +3,8 @@ from django.db.models.deletion import PROTECT
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_not_future
 
-from flourish_caregiver import ARV_DRUG_LIST, REASON_ARV_STOP
-from flourish_caregiver import MaternalArvPreg
+from ..choices import ARV_DRUG_LIST, REASON_ARV_STOP
+from .maternal_arv_preg import MaternalArvPreg
 
 
 class ArvsDuringPregnancy(BaseUuidModel):

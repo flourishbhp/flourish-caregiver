@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from flourish_caregiver import CrfModelMixin
+from .model_mixins import CrfModelMixin
 
 
 class CaregiverClinicalMeasurements(CrfModelMixin):

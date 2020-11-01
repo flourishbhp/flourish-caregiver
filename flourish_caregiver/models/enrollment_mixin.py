@@ -9,7 +9,7 @@ from edc_constants.constants import NO, YES, POS, NEG
 from edc_protocol.validators import date_not_before_study_start
 from edc_protocol.validators import datetime_not_before_study_start
 
-from flourish_caregiver import EnrollmentHelper
+from ..helper_classes import EnrollmentHelper
 
 
 class EnrollmentMixin(models.Model):

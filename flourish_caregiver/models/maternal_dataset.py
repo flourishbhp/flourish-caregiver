@@ -2,8 +2,9 @@ from django.db import models
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
-from flourish_caregiver import ScreeningIdentifier
-from flourish_caregiver import SearchSlugModelMixin
+
+from ..identifiers import ScreeningIdentifier
+from .model_mixins import SearchSlugModelMixin
 
 
 class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,

@@ -1,8 +1,9 @@
 from django.db import models
 from edc_constants.choices import YES_NO
 from edc_constants.constants import NOT_APPLICABLE
-from flourish_caregiver import ARV_INTERRUPTION_REASON
-from flourish_caregiver import CrfModelMixin
+
+from ..choices import ARV_INTERRUPTION_REASON
+from .model_mixins import CrfModelMixin
 
 
 class MaternalArvPreg(CrfModelMixin):

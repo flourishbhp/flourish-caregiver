@@ -15,9 +15,9 @@ from edc_locator.model_mixins.subject_work_fields_mixin import SubjectWorkFields
 from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsModelMixin
 from edc_search.model_mixins import SearchSlugManager
 
-from flourish_caregiver import MATERNAL_LOCATOR_ACTION
-from flourish_caregiver import ScreeningIdentifier
-from flourish_caregiver import SearchSlugModelMixin
+from ..action_items import MATERNAL_LOCATOR_ACTION
+from ..identifiers import ScreeningIdentifier
+from .model_mixins import SearchSlugModelMixin
 
 
 class LocatorManager(SearchSlugManager, models.Manager):
