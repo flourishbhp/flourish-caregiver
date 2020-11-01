@@ -19,5 +19,4 @@ from .maternal_locator import MaternalLocator
 from .medical_history import MedicalHistory
 from .maternal_ultrasound_initial import MaternalUltraSoundInitial
 from .maternal_visit import MaternalVisit
-from .onschedule import OnScheduleAntenatalEnrollment
 from .referred_to import ReferredTo

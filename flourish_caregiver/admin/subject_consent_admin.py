@@ -12,10 +12,10 @@ from edc_model_admin import (
 from edc_model_admin import ModelAdminBasicMixin, ModelAdminReadOnlyMixin
 from simple_history.admin import SimpleHistoryAdmin
 
-from flourish_caregiver import flourish_caregiver_admin
-from flourish_caregiver import SubjectConsentForm
-from flourish_caregiver import SubjectConsent
-from flourish_caregiver import ExportActionMixin
+from ..admin_site import flourish_caregiver_admin
+from ..forms import SubjectConsentForm
+from ..models import SubjectConsent
+from .exportaction_mixin import ExportActionMixin
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,

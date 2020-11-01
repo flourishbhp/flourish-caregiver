@@ -1,7 +1,7 @@
 from django.urls.conf import path
 from django.views.generic.base import RedirectView
 
-from flourish_caregiver import flourish_caregiver_admin
+from .admin_site import flourish_caregiver_admin
 
 app_name = 'flourish_caregiver'
 
