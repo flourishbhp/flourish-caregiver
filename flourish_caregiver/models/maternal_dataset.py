@@ -162,7 +162,8 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
         verbose_name='Number of people living in household',
         blank=True, null=True)
 
-    on_worklist = models.BooleanField(default=False)
+    on_worklist = models.BooleanField(
+        default=False, blank=True, null=True)
     
     def save(self, *args, **kwargs):
         if not self.screening_identifier:

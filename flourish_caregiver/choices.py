@@ -19,6 +19,11 @@ STUDY_SITES = (
     ('10', 'Molepolole'),
 )
 
+LOCATOR_LOG_STATUS = (
+    ('exist', 'Exists'),
+    ('not_found', 'Not found')
+    )
+
 IDENTITY_TYPE = (
     ('country_id', 'Country ID number'),
     ('country_id_rcpt', 'Country ID receipt'),
