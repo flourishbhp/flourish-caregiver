@@ -9,6 +9,7 @@ from .caregiver_psq_depr_screening import CaregiverPsqDeprScreening
 from .cyhuu_pre_enrollment import CyhuuPreEnrollment
 from .food_frequency_questionnaire import FoodFrequencyQuestionnaire
 from .hiv_viralload_cd4 import HivViralLoadAndCd4
+from .locator_logs import LocatorLog, LocatorLogEntry
 from .socio_demographic_data import SocioDemographicData
 from .subject_consent import SubjectConsent
 from .subject_screening import SubjectScreening

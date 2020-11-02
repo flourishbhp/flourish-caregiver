@@ -8,6 +8,7 @@ from .caregiver_psq_depr_screening_admin import CaregiverPsqDeprScreeningAdmin
 from .cyhuu_pre_enrollment_admin import CyhuuPreEnrollmentAdmin
 from .food_frequency_questionnaire_admin import FoodFrequencyQuestionnaireAdmin
 from .hiv_viralload_cd4_admin import HivViralLoadCd4Admin
+from .locator_logs_admin import LocatorLogAdmin, LocatorLogEntryAdmin
 from .socio_demographic_data_admin import SocioDemographicDataAdmin
 from .subject_consent_admin import SubjectConsentAdmin
 from .subject_screening_admin import SubjectScreeningAdmin

@@ -12,7 +12,6 @@ from edc_base.utils import get_utcnow
 from ..choices import LOCATOR_LOG_STATUS
 
 
-
 class LocatorLog(BaseUuidModel):
     """A system model to track an RA\'s attempts to confirm a Plot
     (related).
@@ -33,9 +32,6 @@ class LocatorLog(BaseUuidModel):
         return self.study_maternal_identifier
 
 
-
-
-
 class LocatorLogEntry(BaseUuidModel):
     """A model completed by the user to track an RA\'s attempts to
     confirm a Plot.
@@ -49,7 +45,6 @@ class LocatorLogEntry(BaseUuidModel):
         default=get_utcnow)
 
     report_date = models.DateField(
-        editable=False,
         help_text='date value of report_datetime for unique constraint')
 
     log_status = models.CharField(
