@@ -8,6 +8,14 @@ from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 from .constants import BREASTFEED_ONLY, NEVER_STARTED, MODIFIED, TUBERCULOSIS
 from .constants import NO_MODIFICATIONS, START
 
+AGITATION = (
+    ('0', 'None'),
+    ('1', 'Fidgetiness'),
+    ('2', 'Playing with hands, hair, etc.'),
+    ('3', 'Moving about, can’t sit still.'),
+    ('4', 'Hand wringing, nail biting, hair-pulling, biting of lips.')
+)
+
 ANSWERS = (
     ('Accepted', 'Yes and the client accepted the signed copy of the consent'),
     ('Refused', 'Yes and the client refused the signed copy of the consent'),
@@ -1064,10 +1072,12 @@ DEPRESSION_SCALE = (
 
 DEPRESSION_MOOD = (
     ('0', 'Absent'),
-    ('1', 'Sadness, etc'),
-    ('2', 'Occassional Weeping'),
-    ('3', 'Frequent Weeping'),
-    ('4', 'Extreme symptoms')
+    ('1', 'These feeling states indicated only on questioning'),
+    ('2', 'These feeling states spontaneously reported verbally'),
+    ('3', ('Communicates feeling states non-verbally, i.e. through facial '
+           'expression, posture, voice and tendency to weep')),
+    ('4', ('Patient reports virtually only these feeling states in his/her '
+           'spontaneous verbal and non-verbal communication.'))
 )
 
 GUILT_FEELINGS = (
@@ -1075,46 +1085,59 @@ GUILT_FEELINGS = (
     ('1', 'Self-reproach, feels he/she has let people down'),
     ('2', 'Ideas of guilt or rumination over past errors or sinful deeds.'),
     ('3', 'Present illness is a punishment; delusions of guilt'),
-    ('4', 'Hallucinations of guilt')
+    ('4', 'Hears accusatory or denunciatory voices and/or experiences threatening visual hallucinations.')
 )
 
 SUICIDAL = (
     ('0', 'Absent'),
     ('1', 'Feels life is not worth living'),
-    ('2', 'Wishes he/she were dead'),
+    ('2', 'Wishes he/she were dead or any thoughts of possible death to self.'),
     ('3', 'Suicidal ideas or gestures'),
     ('4', 'Attempts at suicide')
 )
 
-INSOMNIA = (
-    ('0', 'Absent'),
-    ('1', 'Occasional'),
-    ('2', 'Frequent')
+INSOMNIA_INITIAL = (
+    ('0', 'No difficulty falling asleep.'),
+    ('1', 'Complains of occasional difficulty falling asleep, i.e. more than 1⁄2 hour.'),
+    ('2', 'Complains of nightly difficulty falling asleep')
+)
+
+INSOMIA_MIDNIGHT = (
+    ('0', 'No difficulty.'),
+    ('1', 'Patient complains of being restless and disturbed during the night.'),
+    ('2', 'Waking during the night – any getting out of bed rates 2 (except for purposes of voiding).')
+)
+
+INSOMNIA_EARLY = (
+    ('0', 'No difficulty.'),
+    ('1', 'Waking in early hours of the morning but goes back to sleep.'),
+    ('2', 'Unable to fall asleep again if he/she gets out of bed.'),
 )
 
 WORK_INTERESTS = (
     ('0', 'No difficulty'),
-    ('1', 'Feelings of incapacity, listlessness, indecision and vacillation'),
-    ('2', 'Loss of interest in hobbies, decreased social activities'),
-    ('3', 'Productivity decreased'),
-    ('4', ('Unable to work. Stopped working because of present illness only. '
-           '(Absence from work after treatment or recovery may rate a lower score).'))
+    ('1', ('Thoughts and feelings of incapacity, fatigue or weakness related to'
+           ' activities, work or hobbies.')),
+    ('2', ('Loss of interest in activity, hobbies or work – either directly '
+           'reported by the patient or indirect in listlessness, indecision and vacillations')),
+    ('3', 'Decrease in actual time spent in activities or decrease in productivity'),
+    ('4', ('Stopped working because of present illness.'))
 )
 
 RETARDATION = (
-    ('0', 'Absent'),
-    ('1', 'Slight retardation at interview'),
-    ('2', 'Obvious retardation at interview'),
+    ('0', 'Normal speech and thought.'),
+    ('1', 'Slight retardation during the interview.'),
+    ('2', 'Obvious retardation during the interview.'),
     ('3', 'Interview difficult'),
     ('4', 'Complete stupor')
 )
 
-AXIETY_PYSCHIC = (
+ANXIETY_PYSCHIC = (
     ('0', 'No difficulty'),
-    ('1', 'Tension and irritability'),
+    ('1', 'Subjective tension and irritability'),
     ('2', 'Worrying about minor matters'),
-    ('3', 'Apprehensive attitude'),
-    ('4', 'Fears')
+    ('3', 'Apprehensive attitude apparent in face or speech'),
+    ('4', 'Fears expressed without questioning')
 )
 
 ANXIETY = (
@@ -1126,6 +1149,20 @@ ANXIETY = (
 )
 
 SOMATIC_SYMPTOMS = (
+    ('0', 'None'),
+    ('1', 'Loss of appetite but eating without staff encouragement. Heavy feelings in abdomen.'),
+    ('2', ('Difficulty eating without staff urging. Requests or requires '
+           'laxatives or medication for bowels or medication for gastro-intestinal symptoms.')),
+)
+
+GENERAL_SOMATIC = (
+    ('0', 'None'),
+    ('1', ('Heaviness in limbs, back or head. Backaches, headaches, '
+           'muscle aches. Loss of energy and fatigability.')),
+    ('2', ('Any clear-cut symptom rates 2.')),
+)
+
+GENITAL_SYMPTOMS = (
     ('0', 'Absent'),
     ('1', 'Mild'),
     ('2', 'Severe')
@@ -1135,20 +1172,22 @@ HYPOCHONDRIASIS = (
     ('0', 'Not present'),
     ('1', 'Self-absorption (bodily)'),
     ('2', 'Preoccupation with health'),
-    ('3', 'Querulous attitude'),
+    ('3', 'Frequent complaints, requests for help, etc.'),
     ('4', 'Hypochondriacal delusions')
 )
 
 WEIGHT_LOSS = (
     ('0', 'No weight loss'),
-    ('1', 'Slight'),
-    ('2', 'Obvious or severe')
+    ('1', 'Probable weight loss associated with present illness.'),
+    ('2', 'Definite (according to patient) weight loss.'),
+    ('3', 'Not assessed.')
 )
 
 INSIGHT = (
-    ('0', 'No loss'),
-    ('1', 'Partial or doubtfull loss'),
-    ('2', 'Loss of insight')
+    ('0', 'Acknowledges being depressed and ill'),
+    ('1', ('Acknowledges illness but attributes cause to bad food, climate, '
+           'overwork, virus, need for rest, etc')),
+    ('2', 'Denies being ill at all')
 )
 
 FOOD_FREQUENCY = (
