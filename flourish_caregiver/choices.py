@@ -940,7 +940,8 @@ REASON_NOT_DRAWN = (
     ('absent', 'Patient did not attend visit'),
     ('refused', 'Patient refused'),
     ('no_supplies', 'No supplies'),
-    (OTHER, 'Other'),)
+    (OTHER, 'Other'),
+    (NOT_APPLICABLE, 'Not applicable'),)
 
 CAUSE_OF_DEATH = (
     ('cryptococcal_meningitis', 'Cryptococcal meningitis'),
@@ -1033,15 +1034,6 @@ POS_NEG_PENDING = (
     (POS, 'Positive'),
     (NEG, 'Negative'),
     ('pending', 'Pending')
-)
-
-REASON_NOT_DRAWN = (
-    (NOT_APPLICABLE, 'Not applicable'),
-    ('collection_failed', 'Tried, but unable to obtain sample from patient'),
-    ('absent', 'Patient did not attend visit'),
-    ('refused', 'Patient refused'),
-    ('no_supplies', 'No supplies'),
-    ('other', 'Other'),
 )
 
 YES_NO_TRIED = (
