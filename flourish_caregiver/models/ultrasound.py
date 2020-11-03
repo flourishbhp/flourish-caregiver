@@ -8,7 +8,7 @@ from ..validators import validate_ga_by_ultrasound, validate_fetal_weight
 from .model_mixins import UltraSoundModelMixin, CrfModelMixin
 
 
-class MaternalUltraSoundInitial(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
+class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
 
     """ The initial ultra sound model that influences mother's
     enrollment in to study.
@@ -122,4 +122,5 @@ class MaternalUltraSoundInitial(UltraSoundModelMixin, ActionModelMixin, CrfModel
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = "Maternal Ultra Sound Initial"
+        verbose_name = 'UltraSound Form'
+        verbose_name_plural = 'UltraSound Form'
