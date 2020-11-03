@@ -4,7 +4,7 @@ from .model_mixins import CrfModelMixin
 from ..choices import DEPRESSION_SCALE
 
 
-class CaregiverPsqDeprScreening(CrfModelMixin):
+class CaregiverPhqDeprScreening(CrfModelMixin):
 
     activity_interest = models.CharField(
         verbose_name='Little interest or pleasure in doing things',
@@ -77,5 +77,5 @@ class CaregiverPsqDeprScreening(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Depression Screening - PSQ-9'
-        verbose_name_plural = 'Depression Screening - PSQ-9'
+        verbose_name = 'Depression Screening - PHQ-9'
+        verbose_name_plural = 'Depression Screening - PHQ-9'

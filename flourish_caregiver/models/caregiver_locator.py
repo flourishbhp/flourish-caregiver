@@ -26,10 +26,10 @@ class LocatorManager(SearchSlugManager, models.Manager):
         return self.get(subject_identifier=subject_identifier)
 
 
-class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
-                      SubjectIndirectContactFieldsMixin,
-                      SubjectWorkFieldsMixin, LocatorMethodsModelMixin,
-                      ActionModelMixin, SearchSlugModelMixin, BaseUuidModel):
+class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
+                       SubjectIndirectContactFieldsMixin,
+                       SubjectWorkFieldsMixin, LocatorMethodsModelMixin,
+                       ActionModelMixin, SearchSlugModelMixin, BaseUuidModel):
 
     action_name = MATERNAL_LOCATOR_ACTION
 
@@ -51,7 +51,7 @@ class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
         null=True,)
 
     study_maternal_identifier = models.CharField(
-        verbose_name="Study maternal Subject Identifier",
+        verbose_name="Study caregiver Subject Identifier",
         max_length=50,
         unique=True)
 
@@ -136,4 +136,4 @@ class MaternalLocator(SiteModelMixin, SubjectContactFieldsMixin,
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = 'Maternal Locator'
+        verbose_name = 'Caregiver Locator'

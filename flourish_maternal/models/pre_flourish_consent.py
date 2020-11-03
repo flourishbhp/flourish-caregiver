@@ -2,42 +2,38 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
-from edc_base.sites.site_model_mixin import SiteModelMixin
-from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
-from edc_registration.model_mixins import (
-    UpdatesOrCreatesRegistrationModelMixin)
-from edc_search.model_mixins import SearchSlugManager
-
+from edc_base.sites import SiteModelMixin
 from edc_consent.field_mixins import (
     CitizenFieldsMixin, VulnerabilityFieldsMixin)
 from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_consent.field_mixins import ReviewFieldsMixin, PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
+from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
+from edc_search.model_mixins import SearchSlugManager
 
 from ..choices import IDENTITY_TYPE
-from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
 from ..subject_identifier import SubjectIdentifier
+from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
 from .model_mixins import SearchSlugModelMixin
 
 
-class SubjectConsentManager(SearchSlugManager, models.Manager):
+class PreFlourishConsentManager(SearchSlugManager, models.Manager):
 
     def get_by_natural_key(self, subject_identifier, version):
         return self.get(
             subject_identifier=subject_identifier, version=version)
 
 
-class SubjectConsent(
+class PreFlourishConsent(
         ConsentModelMixin, SiteModelMixin,
         UpdatesOrCreatesRegistrationModelMixin,
         NonUniqueSubjectIdentifierModelMixin, IdentityFieldsMixin,
         ReviewFieldsMixin, PersonalFieldsMixin, CitizenFieldsMixin,
         VulnerabilityFieldsMixin, SearchSlugModelMixin, BaseUuidModel):
 
-    """ A model completed by the user on the mother's consent. """
-
-    subject_screening_model = 'flourish_caregiver.subjectscreening'
+    subject_screening_model = 'flourish_maternal.subjectscreening'
 
     screening_identifier = models.CharField(
         verbose_name='Screening identifier',
@@ -51,8 +47,8 @@ class SubjectConsent(
     recruit_source = models.CharField(
         max_length=75,
         choices=RECRUIT_SOURCE,
-        verbose_name="The caregiver first learned about the flourish "
-        "study from ")
+        verbose_name="The mother first learned about the tshilo "
+        "dikotla study from ")
 
     recruit_source_other = OtherCharField(
         max_length=35,
@@ -62,7 +58,7 @@ class SubjectConsent(
 
     recruitment_clinic = models.CharField(
         max_length=100,
-        verbose_name="The caregiver was recruited from",
+        verbose_name="The mother was recruited from",
         choices=RECRUIT_CLINIC)
 
     recruitment_clinic_other = models.CharField(
@@ -71,7 +67,7 @@ class SubjectConsent(
         blank=True,
         null=True,)
 
-    objects = SubjectConsentManager()
+    objects = PreFlourishConsentManager()
 
     consent = ConsentManager()
 
@@ -99,8 +95,8 @@ class SubjectConsent(
         return self.version
 
     class Meta(ConsentModelMixin.Meta):
-        app_label = 'flourish_caregiver'
-        verbose_name = 'Caregiver Consent'
+        app_label = 'flourish_maternal'
+        verbose_name = 'Pre Flourish Consent'
         unique_together = (('subject_identifier', 'version'),
                            ('subject_identifier', 'screening_identifier', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))

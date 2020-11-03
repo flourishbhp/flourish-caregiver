@@ -9,6 +9,7 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
 
+from .maternal_dataset import MaternalDataset
 from ..choices import LOCATOR_LOG_STATUS
 
 
@@ -17,10 +18,7 @@ class LocatorLog(BaseUuidModel):
     (related).
     """
 
-    study_maternal_identifier = models.CharField(
-        verbose_name="Study maternal Subject Identifier",
-        max_length=50,
-        unique=True)
+    maternal_dataset =models.OneToOneField(MaternalDataset, on_delete=PROTECT)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
@@ -29,7 +27,7 @@ class LocatorLog(BaseUuidModel):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.study_maternal_identifier
+        return self.maternal_dataset.study_maternal_identifier
 
 
 class LocatorLogEntry(BaseUuidModel):
@@ -66,7 +64,7 @@ class LocatorLogEntry(BaseUuidModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.locator_log.study_maternal_identifier} ({self.report_datetime})'
+        return f'{self.locator_log.maternal_dataset.study_maternal_identifier} ({self.report_datetime})'
 
     class Meta:
         unique_together = ('locator_log', 'report_datetime')

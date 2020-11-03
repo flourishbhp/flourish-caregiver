@@ -3,14 +3,14 @@ from edc_model_admin import audit_fieldset_tuple
 
 from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
-from ..forms import CaregiverPsqDeprScreeningForm
-from ..models import CaregiverPsqDeprScreening
+from ..forms import CaregiverPhqDeprScreeningForm
+from ..models import CaregiverPhqDeprScreening
 
 
-@admin.register(CaregiverPsqDeprScreening, site=flourish_caregiver_admin)
-class CaregiverPsqDeprScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+@admin.register(CaregiverPhqDeprScreening, site=flourish_caregiver_admin)
+class CaregiverPhqDeprScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
-    form = CaregiverPsqDeprScreeningForm
+    form = CaregiverPhqDeprScreeningForm
 
     fieldsets = (
         (None, {
