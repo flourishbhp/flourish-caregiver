@@ -23,3 +23,6 @@ from .maternal_delivery import MaternalDelivery
 from .medical_history import MedicalHistory
 from .ultrasound import UltraSound
 from .maternal_visit import MaternalVisit
+from .signals import subject_consent_on_post_save
+from .onschedule import OnScheduleCohortA, OnScheduleCohortB
+from .onschedule import OnScheduleCohortC

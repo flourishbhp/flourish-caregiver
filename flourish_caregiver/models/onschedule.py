@@ -16,9 +16,8 @@ class OnScheduleCohortA(OnScheduleModelMixin, BaseUuidModel):
         verbose_name="Subject Identifier",
         max_length=50)
 
-    schedule_name = models.CharField(max_length=25,
-                                     blank=True,
-                                     null=True)
+    schedule_name = models.CharField(
+        max_length=25)
 
     on_site = CurrentSiteManager()
 
@@ -42,9 +41,8 @@ class OnScheduleCohortB(OnScheduleModelMixin, BaseUuidModel):
         verbose_name="Subject Identifier",
         max_length=50)
 
-    schedule_name = models.CharField(max_length=25,
-                                     blank=True,
-                                     null=True)
+    schedule_name = models.CharField(
+        max_length=25)
 
     on_site = CurrentSiteManager()
 
@@ -68,9 +66,8 @@ class OnScheduleCohortC(OnScheduleModelMixin, BaseUuidModel):
         verbose_name="Subject Identifier",
         max_length=50)
 
-    schedule_name = models.CharField(max_length=25,
-                                     blank=True,
-                                     null=True)
+    schedule_name = models.CharField(
+        max_length=25)
 
     on_site = CurrentSiteManager()
 
