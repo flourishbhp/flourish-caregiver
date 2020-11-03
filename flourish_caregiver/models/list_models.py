@@ -16,3 +16,7 @@ class PriorArv (ListModelMixin, BaseUuidModel):
 
 class WcsDxAdult(ListModelMixin, BaseUuidModel):
     pass
+
+
+class DeliveryComplications(ListModelMixin, BaseUuidModel):
+    pass
