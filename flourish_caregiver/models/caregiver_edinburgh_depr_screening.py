@@ -16,8 +16,7 @@ class CaregiverEdinburghDeprScreening(CrfModelMixin):
         max_length=2)
 
     enjoyment_to_things = models.CharField(
-        verbose_name='I have been able to laugh and see the funny '
-                     'side of things',
+        verbose_name='I looked forward with enjoyment of things',
         choices=ENJOYMENT_TO_THINGS,
         max_length=2)
 
@@ -43,7 +42,7 @@ class CaregiverEdinburghDeprScreening(CrfModelMixin):
         max_length=2)
 
     sleeping_difficulty = models.CharField(
-        verbose_name='Things have been getting on top of me',
+        verbose_name='I have been so unhappy that I have had difficulty in sleeping',
         choices=SLEEPING_DIFFICULTY,
         max_length=2)
 
