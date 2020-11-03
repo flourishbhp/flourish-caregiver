@@ -10,6 +10,7 @@ from .cyhuu_pre_enrollment_form import CyhuuPreEnrollmentForm
 from .food_frequency_questionnaire_form import FoodFrequencyQuestionnaireForm
 from .hiv_viralload_cd4_form import HivViralLoadCd4Form
 from .locator_logs_form import LocatorLogForm, LocatorLogEntryForm
+from .pre_flourish_consent_form import PreFlourishConsentForm
 from .socio_demographic_data_form import SocioDemographicDataForm
 from .subject_consent_form import SubjectConsentForm
 from .subject_screening_form import SubjectScreeningForm
