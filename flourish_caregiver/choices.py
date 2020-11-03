@@ -1073,7 +1073,7 @@ DEPRESSION_MOOD = (
 GUILT_FEELINGS = (
     ('0', 'Absent'),
     ('1', 'Self-reproach, feels he/she has let people down'),
-    ('2', 'Ideas of guilt'),
+    ('2', 'Ideas of guilt or rumination over past errors or sinful deeds.'),
     ('3', 'Present illness is a punishment; delusions of guilt'),
     ('4', 'Hallucinations of guilt')
 )

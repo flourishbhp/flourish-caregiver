@@ -43,3 +43,7 @@ class FoodFrequencyQuestionnaire(CrfModelMixin):
         verbose_name="In the last 12 months, were you every hungry but didn't "
                      "eat because there wasn't enough money for food?",
         choices=MEALS)
+
+    class Meta(CrfModelMixin.Meta):
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Food Frequency Questionnaire'

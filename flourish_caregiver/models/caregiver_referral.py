@@ -7,7 +7,7 @@ from ..choices import REFERRED_TO
 from .model_mixins import CrfModelMixin
 
 
-class ReferredTo(CrfModelMixin):
+class CaregiverReferral(CrfModelMixin):
 
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
@@ -23,5 +23,5 @@ class ReferredTo(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Referred To'
-        verbose_name_plural = 'Referred To'
+        verbose_name = 'Caregiver Referral'
+        verbose_name_plural = 'Caregiver Referral'
