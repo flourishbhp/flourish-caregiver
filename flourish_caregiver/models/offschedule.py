@@ -8,7 +8,7 @@ from edc_visit_schedule.model_mixins import OffScheduleModelMixin
 from .model_mixins import ConsentVersionModelModelMixin
 
 
-class MaternalOffSchedule(ConsentVersionModelModelMixin, OffScheduleModelMixin, BaseUuidModel):
+class CaregiverOffSchedule(ConsentVersionModelModelMixin, OffScheduleModelMixin, BaseUuidModel):
 
     schedule_name = models.CharField(
         max_length=25,
