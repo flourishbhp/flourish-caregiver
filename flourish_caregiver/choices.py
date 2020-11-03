@@ -1204,10 +1204,10 @@ MEALS = (
 )
 
 HOW_OFTEN = (
-    ('0', 'Almost every month'),
-    ('1', 'Some months but not every month'),
-    ("2", " Only 1 or 2 months"),
-    ("3", "I don’t know"),
+    ('0', 'Acknowledges being depressed and ill'),
+    ('1', 'Acknowledges illness but attributes cause to bad food, climate, '
+          'overwork, virus, need for rest, etc'),
+    ('2', 'Denies being ill at all'),
 )
 
 REFERRED_TO = (

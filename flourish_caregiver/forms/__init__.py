@@ -20,5 +20,5 @@ from .maternal_arv_preg_form import MaternalArvPregForm
 from .caregiver_previously_enrolled_form import CaregiverPreviouslyEnrolledForm
 from .maternal_dataset_form import MaternalDatasetForm
 from .medical_history_form import MedicalHistoryForm
-from .maternal_ultrasound_initial_form import MaternalUltraSoundInitialForm
+from .ultrasound_form import UltraSoundForm
 from .maternal_visit_form import MaternalVisitForm
