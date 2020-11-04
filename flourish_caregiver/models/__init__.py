@@ -9,6 +9,7 @@ from .caregiver_phq_depr_screening import CaregiverPhqDeprScreening
 from .caregiver_locator import CaregiverLocator
 from .caregiver_referral import CaregiverReferral
 from .cyhuu_pre_enrollment import CyhuuPreEnrollment
+from .enrollment import Enrollment
 from .food_frequency_questionnaire import FoodFrequencyQuestionnaire
 from .hiv_viralload_cd4 import HivViralLoadAndCd4
 from .locator_logs import LocatorLog, LocatorLogEntry
