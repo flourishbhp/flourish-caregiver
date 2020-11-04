@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 
 import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,12 +48,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_crypto_fields.apps.AppConfig',
     'django.contrib.sites',
-    'edc_appointment.apps.AppConfig',
     'edc_action_item.apps.AppConfig',
     'edc_dashboard.apps.AppConfig',
+    'edc_device.apps.AppConfig',
+    'edc_identifier.apps.AppConfig',
+    'edc_registration.apps.AppConfig',
     'edc_base.apps.AppConfig',
-    'edc_protocol.apps.AppConfig',
+    'edc_consent.apps.AppConfig',
     'edc_timepoint.apps.AppConfig',
+    'edc_visit_schedule.apps.AppConfig',
+    'flourish_caregiver.apps.EdcAppointmentAppConfig',
+    'flourish_caregiver.apps.EdcFacilityAppConfig',
+    'flourish_caregiver.apps.EdcProtocolAppConfig',
+    'flourish_caregiver.apps.EdcVisitTrackingAppConfig',
+    'flourish_visit_schedule.apps.AppConfig',
     'flourish_caregiver.apps.AppConfig',
 ]
 
@@ -133,10 +142,25 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+COUNTRY = 'botswana'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
 
 DASHBOARD_URL_NAMES = {}
+
+
+if 'test' in sys.argv:
+
+    class DisableMigrations:
+
+        def __contains__(self, item):
+            return True
+
+        def __getitem__(self, item):
+            return None
+
+    MIGRATION_MODULES = DisableMigrations()
+    PASSWORD_HASHERS = ('django.contrib.auth.hashers.MD5PasswordHasher',)
+    DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'
