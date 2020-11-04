@@ -45,6 +45,12 @@ ALIVE_DEAD_UNKNOWN = (
     (UNKNOWN, 'Unknown'),
 )
 
+CHILD_AGE = (
+    ('lt_3', '3 years or younger'),
+    ('gt_3_lt_10', 'Older than 3 years but younger than 10 years old'),
+    ('gt_10', '10 years or older')
+)
+
 OFTEN_SOMETIMES_NEVER_TRUE = (
     ('often_true', 'Often true'),
     ('sometimes_true', 'Sometimes true'),

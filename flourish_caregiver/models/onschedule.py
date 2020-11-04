@@ -16,9 +16,6 @@ class OnScheduleCohortA(OnScheduleModelMixin, BaseUuidModel):
         verbose_name="Subject Identifier",
         max_length=50)
 
-    schedule_name = models.CharField(
-        max_length=25)
-
     on_site = CurrentSiteManager()
 
     objects = SubjectIdentifierManager()
@@ -27,6 +24,10 @@ class OnScheduleCohortA(OnScheduleModelMixin, BaseUuidModel):
 
     def put_on_schedule(self):
         pass
+    
+    def save(self, *args, **kwargs):
+        self.consent_version = '1'
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = ('subject_identifier', 'schedule_name')
@@ -41,9 +42,6 @@ class OnScheduleCohortB(OnScheduleModelMixin, BaseUuidModel):
         verbose_name="Subject Identifier",
         max_length=50)
 
-    schedule_name = models.CharField(
-        max_length=25)
-
     on_site = CurrentSiteManager()
 
     objects = SubjectIdentifierManager()
@@ -52,6 +50,10 @@ class OnScheduleCohortB(OnScheduleModelMixin, BaseUuidModel):
 
     def put_on_schedule(self):
         pass
+    
+    def save(self, *args, **kwargs):
+        self.consent_version = '1'
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = ('subject_identifier', 'schedule_name')
@@ -66,9 +68,6 @@ class OnScheduleCohortC(OnScheduleModelMixin, BaseUuidModel):
         verbose_name="Subject Identifier",
         max_length=50)
 
-    schedule_name = models.CharField(
-        max_length=25)
-
     on_site = CurrentSiteManager()
 
     objects = SubjectIdentifierManager()
@@ -77,6 +76,10 @@ class OnScheduleCohortC(OnScheduleModelMixin, BaseUuidModel):
 
     def put_on_schedule(self):
         pass
+    
+    def save(self, *args, **kwargs):
+        self.consent_version = '1'
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = ('subject_identifier', 'schedule_name')

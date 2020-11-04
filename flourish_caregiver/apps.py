@@ -6,11 +6,11 @@ from dateutil.tz import gettz
 
 class AppConfig(DjangoAppConfig):
     name = 'flourish_caregiver'
-    verbose_name = 'Flourish Maternal'
+    verbose_name = 'Flourish Caregiver'
     admin_site_name = 'flourish_caregiver_admin'
     
     def ready(self):
-        from .models import subject_consent_on_post_save
+        from .models import enrollment_on_post_save
         
 if settings.APP_NAME == 'flourish_caregiver':
     from dateutil.relativedelta import MO, TU, WE, TH, FR, SA, SU

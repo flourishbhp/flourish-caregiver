@@ -14,4 +14,11 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     fields = ('enrollment_identifier',
               'report_datetime',
-              'age_in_years')
+              'have_child',
+              'child_age')
+    
+    radio_fields = {'have_child': admin.VERTICAL,
+                    'child_age': admin.VERTICAL,}
+                    
+    
+    list_display = ('subject_identifier', 'have_child', 'child_age')

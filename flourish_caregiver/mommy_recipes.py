@@ -3,7 +3,7 @@ from edc_base.utils import get_utcnow
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
-from .models import SubjectConsent
+from .models import Enrollment, SubjectConsent
 
 
 fake = Faker()
@@ -22,4 +22,8 @@ subjectconsent = Recipe(
     identity_type='OMANG',
     is_dob_estimated='-',
     version='1'
+)
+
+enrollment = Recipe(
+    Enrollment,
 )

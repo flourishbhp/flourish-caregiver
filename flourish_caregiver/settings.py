@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'edc_consent.apps.AppConfig',
     'edc_timepoint.apps.AppConfig',
     'edc_visit_schedule.apps.AppConfig',
+    'flourish_prn.apps.AppConfig',
     'flourish_caregiver.apps.EdcAppointmentAppConfig',
     'flourish_caregiver.apps.EdcFacilityAppConfig',
     'flourish_caregiver.apps.EdcProtocolAppConfig',
@@ -143,6 +144,7 @@ USE_L10N = True
 USE_TZ = True
 
 COUNTRY = 'botswana'
+HOLIDAY_FILE = os.path.join(BASE_DIR, 'holidays.csv')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
