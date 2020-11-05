@@ -8,7 +8,6 @@ from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
-from ..choices import CHILD_AGE
 from .model_mixins import SearchSlugModelMixin
 
 
