@@ -1,5 +1,3 @@
-import arrow
-
 from django.db.models.deletion import PROTECT
 from django.db import models
 
@@ -42,9 +40,6 @@ class LocatorLogEntry(BaseUuidModel):
         validators=[datetime_not_future],
         default=get_utcnow)
 
-    report_date = models.DateField(
-        help_text='date value of report_datetime for unique constraint')
-
     log_status = models.CharField(
         verbose_name='What is the status of the locator?',
         max_length=25,
@@ -57,11 +52,6 @@ class LocatorLogEntry(BaseUuidModel):
         blank=True,)
 
     history = HistoricalRecords()
-
-    def save(self, *args, **kwargs):
-        self.report_date = arrow.Arrow.fromdatetime(
-            self.report_datetime, self.report_datetime.tzinfo).to('utc').date()
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.locator_log.maternal_dataset.study_maternal_identifier} ({self.report_datetime})'

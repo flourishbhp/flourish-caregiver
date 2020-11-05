@@ -14,10 +14,6 @@ class LocatorLogForm(SiteModelFormMixin, forms.ModelForm):
 
 class LocatorLogEntryForm(forms.ModelForm):
 
-    report_date = forms.CharField(
-        label='Report Date',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-
     class Meta:
         model = LocatorLogEntry
         fields = '__all__'

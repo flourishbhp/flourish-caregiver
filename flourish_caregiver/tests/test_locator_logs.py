@@ -39,6 +39,6 @@ class TestLocatorLogs(TestCase):
         """Test if a maternal dataset creates a locator log instance.
         """
         maternal_dataset = MaternalDataset.objects.create(**self.options)
-        print(maternal_dataset.locatorlog, '***********8')
+        print(getattr(maternal_dataset, 'locatorlog'), '***********8')
         self.assertEqual(LocatorLog.objects.filter(
             maternal_dataset=maternal_dataset).count(), 1)  
