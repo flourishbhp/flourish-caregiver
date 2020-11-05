@@ -30,7 +30,6 @@ class LocatorLogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
             'fields': [
                 'locator_log',
                 'report_datetime',
-                'report_date',
                 'log_status',
                 'comment',
             ]}
