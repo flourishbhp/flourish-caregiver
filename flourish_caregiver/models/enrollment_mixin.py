@@ -192,15 +192,15 @@ class EnrollmentMixin(models.Model):
 
     @property
     def ultrasound(self):
-        MaternalUltraSoundInitial = django_apps.get_model(
-            'flourish_caregiver.maternalultrasoundinitial')
+        ultra_sound_cls = django_apps.get_model(
+            'flourish_caregiver.ultrasound')
         try:
-            maternal_ultra_sount_initial = MaternalUltraSoundInitial.objects.get(
+            ultra_sound_obj = ultra_sound_cls.objects.get(
                 maternal_visit__subject_identifier=self.subject_identifier)
-        except MaternalUltraSoundInitial.DoesNotExist:
+        except ultra_sound_cls.DoesNotExist:
             return None
         else:
-            return maternal_ultra_sount_initial
+            return ultra_sound_obj
 
     class Meta:
         abstract = True

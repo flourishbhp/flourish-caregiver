@@ -32,20 +32,12 @@ class Enrollment(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
             datetime_not_future],
         help_text='Date and time of enrollment')
     
-    have_child = models.CharField(
+    pregnant = models.CharField(
         max_length=3,
         choices=YES_NO,
-        verbose_name="Do you have a child?",
+        verbose_name="Are you currently pregnant?",
     )
     
-    child_age = models.CharField(
-        verbose_name='If yes, how old is your child?',
-        max_length=10,
-        choices=CHILD_AGE,
-        blank=True,
-        null=True,
-        help_text='(NOT including single -dose NVP in labour)')
-
     history = HistoricalRecords()
 
     class Meta:

@@ -3,31 +3,43 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
-from .enrollment import Enrollment
-   
+from .antenatal_enrollment import AntenatalEnrollment
+from .pre_flourish_consent import PreFlourishConsent
 
-@receiver(post_save, weak=False, sender=Enrollment,
-          dispatch_uid='enrollment_on_post_save')
-def enrollment_on_post_save(sender, instance, raw, created, **kwargs):
-    """Update subject on schedule.
+
+@receiver(post_save, weak=False, sender=AntenatalEnrollment,
+          dispatch_uid='antenatal_enrollment_on_post_save')
+def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
+    """Put subject on cohort a schedule.
     """
-    if not raw and instance.child_age:
-        schedule_map = {'lt_3': 'a',
-                        'gt_3_lt_10': 'b',
-                        'gt_10': 'c'}
-        put_on_schedule(schedule_map.get(instance.child_age),
-                        instance=instance)
-
-def put_on_schedule(cohort, instance=None):
-    if instance:
+    if not raw and instance.is_eligible:
+        put_on_schedule('cohort_a', instance=instance)
+                
+@receiver(post_save, weak=False, sender=PreFlourishConsent,
+          dispatch_uid='pre_flourish_consent_on_post_save')
+def pre_flourish_consent_on_post_save(sender, instance, raw, created, **kwargs):
+    """Update subject on cohort c schedule.
+    """
+    if not raw:
+        put_on_schedule('pre_flourish', 
+                        instance=instance, 
+                        subject_identifier=instance.pre_flourish_identifier)
         
-        onschedule_model = 'flourish_caregiver.onschedulecohort'+cohort
+
+def put_on_schedule(cohort, instance=None, subject_identifier=None):
+    if instance:
+        subject_identifier = subject_identifier or instance.subject_identifier
+        
+        cohort_label_lower = ''.join(cohort.split('_'))
+        onschedule_model = 'flourish_caregiver.onschedule'+cohort_label_lower
+        
         _, schedule = site_visit_schedules.get_by_onschedule_model(
             onschedule_model)
         
         onschedule_model_cls = django_apps.get_model(onschedule_model)
         
-        schedule_name = 'cohort_' + cohort + '_schedule_1'
+        schedule_name = cohort + '_schedule_1'
+        
         try:
             onschedule_model_cls.objects.get(
                 subject_identifier=instance.subject_identifier,

@@ -51,6 +51,11 @@ class SubjectScreening(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         verbose_name="Do you have an OMANG?",
         max_length=3,
         choices=YES_NO)
+    
+    has_child = models.CharField(
+        verbose_name="Do you have a child who is 10 years or older?",
+        max_length=3,
+        choices=YES_NO)
 
     ineligibility = models.TextField(
         verbose_name="Reason not eligible",

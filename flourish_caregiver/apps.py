@@ -10,7 +10,8 @@ class AppConfig(DjangoAppConfig):
     admin_site_name = 'flourish_caregiver_admin'
     
     def ready(self):
-        from .models import enrollment_on_post_save
+        from .models import antenatal_enrollment_on_post_save
+        from .models import pre_flourish_consent_on_post_save
         
 if settings.APP_NAME == 'flourish_caregiver':
     from dateutil.relativedelta import MO, TU, WE, TH, FR, SA, SU
