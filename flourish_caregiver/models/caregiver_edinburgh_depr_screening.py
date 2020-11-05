@@ -16,8 +16,7 @@ class CaregiverEdinburghDeprScreening(CrfModelMixin):
         max_length=2)
 
     enjoyment_to_things = models.CharField(
-        verbose_name='I have been able to laugh and see the funny '
-                     'side of things',
+        verbose_name='I looked forward with enjoyment of things',
         choices=ENJOYMENT_TO_THINGS,
         max_length=2)
 
@@ -43,7 +42,7 @@ class CaregiverEdinburghDeprScreening(CrfModelMixin):
         max_length=2)
 
     sleeping_difficulty = models.CharField(
-        verbose_name='Things have been getting on top of me',
+        verbose_name='I have been so unhappy that I have had difficulty in sleeping',
         choices=SLEEPING_DIFFICULTY,
         max_length=2)
 
@@ -61,6 +60,25 @@ class CaregiverEdinburghDeprScreening(CrfModelMixin):
         verbose_name='The thought of harming myself has occurred to me',
         choices=HARM,
         max_length=2)
+
+    depression_score = models.IntegerField(
+        verbose_name='Depression score',
+        default="",
+        null=True,
+        blank=True)
+
+    def save(self, *args, **kwargs):
+        self.depression_score = self.calculate_depression_score()
+
+    def calculate_depression_score(self):
+        score = 0
+        for f in self._meta.get_fields():
+            if f.name in ['able_to_laugh', 'enjoyment_to_things', 'self_blame',
+                          'miserable_feelinganxious','panicky', 'coping',
+                          'sleeping_difficulty', 'miserable_feeling', 'unhappy'
+                          'self_harm', ]:
+                score += int(getattr(self, f.name))
+        return score
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
