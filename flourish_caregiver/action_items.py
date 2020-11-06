@@ -3,7 +3,7 @@ from edc_locator.action_items import SubjectLocatorAction
 from edc_action_item import Action, site_action_items, HIGH_PRIORITY
 
 MATERNALOFF_STUDY_ACTION = 'submit-maternaloff-study'
-MATERNAL_LOCATOR_ACTION = 'submit-maternal-locator'
+CAREGIVER_LOCATOR_ACTION = 'submit-caregiver-locator'
 ULTRASOUND_ACTION = 'submit-ultrasound'
 MATERNAL_DELIVERY_ACTION = 'submit-maternal-delivery'
 MATERNAL_COVID_SCREENING_ACTION = 'update-maternal-covid-results'
@@ -18,10 +18,10 @@ class MaternalOffStudyAction(Action):
     singleton = True
 
 
-class MaternalLocatorAction(SubjectLocatorAction):
-    name = MATERNAL_LOCATOR_ACTION
-    display_name = 'Submit Maternal Locator'
-    reference_model = 'flourish_caregiver.maternallocator'
+class CaregiverLocatorAction(SubjectLocatorAction):
+    name = CAREGIVER_LOCATOR_ACTION
+    display_name = 'Submit Caregiver Locator'
+    reference_model = 'flourish_caregiver.caregiverlocator'
     admin_site_name = 'flourish_caregiver_admin'
 
 
@@ -73,4 +73,4 @@ class MaternalCovidScreeningAction(Action):
         return self.reference_model_obj.covid_results != 'pending'
 
 
-site_action_items.register(MaternalLocatorAction)
+site_action_items.register(CaregiverLocatorAction)
