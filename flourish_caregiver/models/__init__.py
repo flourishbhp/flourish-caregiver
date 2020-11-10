@@ -18,6 +18,7 @@ from .socio_demographic_data import SocioDemographicData
 from .subject_consent import SubjectConsent
 from .subject_screening import SubjectScreening
 from .maternal_arv_preg import MaternalArvPreg
+from .maternal_hiv_interim_hx import MaternalHivInterimHx
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
