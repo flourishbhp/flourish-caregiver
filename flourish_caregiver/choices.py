@@ -286,11 +286,11 @@ REASONS_VACCINES_MISSED = (
 )
 
 REFERRED_TO = (
-    ('Community Social Worker', 'Community Social Worker'),
-    ('Hospitalbased Social Worker', 'Hospitalbased Social Worker'),
-    ('A&E', 'A&E'),
-    ('Psychologist', 'Psychologist'),
-    ('Psychiatrist', 'Psychiatrist'),
+    ('community_social_worker', 'Community Social Worker'),
+    ('hospital_based_social_worker', 'Hospital-based Social Worker'),
+    ('a&e', 'A&E'),
+    ('psychologist', 'Psychologist'),
+    ('psychiatrist', 'Psychiatrist'),
     (OTHER, 'Other'),
 )
 
