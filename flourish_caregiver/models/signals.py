@@ -6,7 +6,6 @@ from django.apps import apps as django_apps
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 from .antenatal_enrollment import AntenatalEnrollment
-from .pre_flourish_consent import PreFlourishConsent
 from .maternal_dataset import MaternalDataset
 from .locator_logs import LocatorLog
 
@@ -36,16 +35,6 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw and instance.is_eligible:
         put_on_schedule('cohort_a', instance=instance)
-                
-@receiver(post_save, weak=False, sender=PreFlourishConsent,
-          dispatch_uid='pre_flourish_consent_on_post_save')
-def pre_flourish_consent_on_post_save(sender, instance, raw, created, **kwargs):
-    """Update subject on cohort c schedule.
-    """
-    if not raw:
-        put_on_schedule('pre_flourish', 
-                        instance=instance, 
-                        subject_identifier=instance.pre_flourish_identifier)
         
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None):
