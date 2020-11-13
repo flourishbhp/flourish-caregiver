@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 from django_crypto_fields.fields import EncryptedCharField
-from edc_action_item.model_mixins import ActionModelMixin
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
@@ -15,7 +14,6 @@ from edc_locator.model_mixins.subject_work_fields_mixin import SubjectWorkFields
 from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsModelMixin
 from edc_search.model_mixins import SearchSlugManager
 
-from ..action_items import CAREGIVER_LOCATOR_ACTION
 from ..identifiers import ScreeningIdentifier
 from .model_mixins import SearchSlugModelMixin
 
@@ -29,9 +27,7 @@ class LocatorManager(SearchSlugManager, models.Manager):
 class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
                        SubjectIndirectContactFieldsMixin,
                        SubjectWorkFieldsMixin, LocatorMethodsModelMixin,
-                       ActionModelMixin, SearchSlugModelMixin, BaseUuidModel):
-
-    action_name = CAREGIVER_LOCATOR_ACTION
+                       SearchSlugModelMixin, BaseUuidModel):
 
     identifier_cls = ScreeningIdentifier
 
@@ -126,8 +122,6 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
     def save(self, *args, **kwargs):
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
-        if not self.subject_identifier:
-            self.subject_identifier = self.study_maternal_identifier
         super().save(*args, **kwargs)
 
     history = HistoricalRecords()

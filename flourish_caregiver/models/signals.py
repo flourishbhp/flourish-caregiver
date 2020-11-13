@@ -25,7 +25,6 @@ def maternal_dataset_on_post_save(sender, instance, raw, created, **kwargs):
             except LocatorLog.DoesNotExist:
                 LocatorLog.objects.create(
                     maternal_dataset=instance)
-   
 
 
 @receiver(post_save, weak=False, sender=AntenatalEnrollment,
@@ -35,22 +34,22 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw and instance.is_eligible:
         put_on_schedule('cohort_a', instance=instance)
-        
+
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None):
     if instance:
         subject_identifier = subject_identifier or instance.subject_identifier
-        
+
         cohort_label_lower = ''.join(cohort.split('_'))
         onschedule_model = 'flourish_caregiver.onschedule'+cohort_label_lower
-        
+
         _, schedule = site_visit_schedules.get_by_onschedule_model(
             onschedule_model)
-        
+
         onschedule_model_cls = django_apps.get_model(onschedule_model)
-        
+
         schedule_name = cohort + '_schedule_1'
-        
+
         try:
             onschedule_model_cls.objects.get(
                 subject_identifier=instance.subject_identifier,
