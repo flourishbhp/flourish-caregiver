@@ -51,7 +51,7 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         null=True,)
 
     study_maternal_identifier = models.CharField(
-        verbose_name="Study caregiver Subject Identifier",
+        verbose_name="Study Caregiver Subject Identifier",
         max_length=50,
         unique=True)
 
