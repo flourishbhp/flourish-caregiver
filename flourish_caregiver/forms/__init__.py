@@ -17,6 +17,7 @@ from .subject_consent_form import SubjectConsentForm
 from .substance_use_prior_preg_form import SubstanceUsePriorPregnancyForm
 from .subject_screening_form import SubjectScreeningForm
 from .maternal_arv_preg_form import MaternalArvPregForm
+from .maternal_diagnoses_form import MaternalDiagnosesForm
 from .maternal_hiv_interim_hx_form import MaternalHivInterimHxForm
 from .caregiver_previously_enrolled_form import CaregiverPreviouslyEnrolledForm
 from .maternal_delivery_form import MaternalDeliveryForm

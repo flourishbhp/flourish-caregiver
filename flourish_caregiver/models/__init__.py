@@ -17,6 +17,7 @@ from .subject_consent import SubjectConsent
 from .substance_use_prior_preg import SubstanceUsePriorPregnancy
 from .subject_screening import SubjectScreening
 from .maternal_arv_preg import MaternalArvPreg
+from .maternal_diagnoses import MaternalDiagnoses
 from .maternal_hiv_interim_hx import MaternalHivInterimHx
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .maternal_dataset import MaternalDataset

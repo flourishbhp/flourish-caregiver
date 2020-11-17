@@ -17,9 +17,10 @@ from .subject_consent_admin import SubjectConsentAdmin
 from .substance_use_prior_preg_admin import SubstanceUsePriorPregnancyAdmin
 from .subject_screening_admin import SubjectScreeningAdmin
 from .maternal_arv_preg_admin import MaternalArvInlineAdmin
+from .maternal_diagnoses_admin import MaternalDiagnosesAdmin
 from .maternal_dataset_admin import MaternalDatasetAdmin
 from .maternal_delivery_admin import MaternalDeliveryAdmin
 from .medical_history_admin import MedicalHistoryAdmin
-from.maternal_hiv_interim_hx import MaternalHivInterimHxAdmin
+from .maternal_hiv_interim_hx import MaternalHivInterimHxAdmin
 from .ultrasound_admin import UltraSoundAdmin
 from .maternal_visit_admin import MaternalVisitAdmin
