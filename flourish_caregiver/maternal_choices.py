@@ -485,3 +485,9 @@ CONTACT_TYPE = (
     ('text_message', 'Text Message'),
     ('in_person', 'In person, e.g. Home visit')
 )
+
+KHAT_USAGE_FREQUENCY = (
+    ('daily', 'Daily'),
+    ('once_every_few_weeks', 'Once every few weeks'),
+    ('weekly', 'Weekly'),
+    ('two_three_times_per_month', '2-3 times per month or less'))
