@@ -19,6 +19,7 @@ from .subject_screening_form import SubjectScreeningForm
 from .maternal_arv_preg_form import MaternalArvPregForm
 from .maternal_diagnoses_form import MaternalDiagnosesForm
 from .maternal_hiv_interim_hx_form import MaternalHivInterimHxForm
+from .maternal_interim_idcc_form import MaternalInterimIdccForm
 from .caregiver_previously_enrolled_form import CaregiverPreviouslyEnrolledForm
 from .maternal_delivery_form import MaternalDeliveryForm
 from .maternal_dataset_form import MaternalDatasetForm

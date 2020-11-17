@@ -22,5 +22,6 @@ from .maternal_dataset_admin import MaternalDatasetAdmin
 from .maternal_delivery_admin import MaternalDeliveryAdmin
 from .medical_history_admin import MedicalHistoryAdmin
 from .maternal_hiv_interim_hx import MaternalHivInterimHxAdmin
+from .maternal_interim_idcc_admin import MaternalInterimIdccAdmin
 from .ultrasound_admin import UltraSoundAdmin
 from .maternal_visit_admin import MaternalVisitAdmin
