@@ -11,7 +11,7 @@ from .caregiver_referral_admin import CaregiverReferralAdmin
 from .enrollment_admin import EnrollmentAdmin
 from .food_frequency_questionnaire_admin import FoodFrequencyQuestionnaireAdmin
 from .hiv_viralload_cd4_admin import HivViralLoadCd4Admin
-from .locator_logs_admin import LocatorLogAdmin, LocatorLogEntryAdmin
+from .locator_logs_admin import LocatorLogEntryAdmin
 from .socio_demographic_data_admin import SocioDemographicDataAdmin
 from .subject_consent_admin import SubjectConsentAdmin
 from .substance_use_prior_preg_admin import SubstanceUsePriorPregnancyAdmin

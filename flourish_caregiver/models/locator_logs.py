@@ -16,7 +16,7 @@ class LocatorLog(BaseUuidModel):
     (related).
     """
 
-    maternal_dataset =models.OneToOneField(MaternalDataset, on_delete=PROTECT)
+    maternal_dataset = models.OneToOneField(MaternalDataset, on_delete=PROTECT)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
@@ -33,7 +33,9 @@ class LocatorLogEntry(BaseUuidModel):
     confirm a Plot.
     """
 
-    locator_log = models.ForeignKey(LocatorLog, on_delete=PROTECT)
+    locator_log = models.ForeignKey(
+        LocatorLog,
+        on_delete=PROTECT,)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
