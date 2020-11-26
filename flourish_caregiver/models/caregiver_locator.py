@@ -4,7 +4,7 @@ from django_crypto_fields.fields import EncryptedCharField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
-from edc_base.model_validators.date import date_not_future
+from edc_base.model_validators.date import date_not_future, datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK
@@ -12,6 +12,7 @@ from edc_locator.model_mixins.subject_contact_fields_mixin import SubjectContact
 from edc_locator.model_mixins.subject_indirect_contact_fields_mixin import SubjectIndirectContactFieldsMixin
 from edc_locator.model_mixins.subject_work_fields_mixin import SubjectWorkFieldsMixin
 from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsModelMixin
+from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugManager
 
 from ..identifiers import ScreeningIdentifier
@@ -31,7 +32,9 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
 
     identifier_cls = ScreeningIdentifier
 
-    report_datetime = models.DateTimeField(default=get_utcnow)
+    report_datetime = models.DateTimeField(
+        default=get_utcnow,
+        validators=[datetime_not_before_study_start, datetime_not_future])
 
     screening_identifier = models.CharField(
         verbose_name="Eligibility Identifier",

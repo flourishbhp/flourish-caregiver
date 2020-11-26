@@ -1,12 +1,15 @@
 from django import forms
 from edc_base.sites import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
+from flourish_form_validations.form_validators import CaregiverLocatorFormValidator
 
 from ..models import CaregiverLocator
 
 
 class CaregiverLocatorForm(
         SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
+
+    form_validator_cls = CaregiverLocatorFormValidator
 
     screening_identifier = forms.CharField(
         label='Eligibility Identifier',
