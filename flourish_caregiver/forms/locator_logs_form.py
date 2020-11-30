@@ -18,10 +18,6 @@ class LocatorLogEntryForm(FormValidatorMixin, forms.ModelForm):
 
     form_validator_cls = LocatorLogEntryFormValidator
 
-    locator_log = forms.CharField(
-        label='Locator Log',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-
     class Meta:
         model = LocatorLogEntry
         fields = '__all__'
