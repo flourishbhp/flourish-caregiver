@@ -1,8 +1,8 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 from ..admin_site import flourish_caregiver_admin
-from ..forms import LocatorLogEntryForm
-from ..models import LocatorLogEntry
+from ..forms import LocatorLogEntryForm, LocatorLogForm
+from ..models import LocatorLogEntry, LocatorLog
 from .modeladmin_mixins import ModelAdminMixin
 
 
@@ -23,3 +23,9 @@ class LocatorLogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     radio_fields = {
         'log_status': admin.VERTICAL}
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        context['adminform'].form.fields['locator_log'].queryset = \
+            LocatorLog.objects.filter(id=request.GET.get('locator_log'))
+        return super(LocatorLogEntryAdmin, self).render_change_form(
+            request, context, *args, **kwargs)
