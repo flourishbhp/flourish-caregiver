@@ -5,7 +5,6 @@ from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
 from .models import AntenatalEnrollment, SubjectConsent
-from .models import PreFlourishConsent
 
 
 fake = Faker()
@@ -13,22 +12,6 @@ fake = Faker()
 subjectconsent = Recipe(
     SubjectConsent,
     subject_identifier=None,
-    consent_datetime=get_utcnow(),
-    dob=get_utcnow() - relativedelta(years=25),
-    first_name=fake.first_name,
-    last_name=fake.last_name,
-    initials='XX',
-    gender='F',
-    identity=seq('123425678'),
-    confirm_identity=seq('123425678'),
-    identity_type='OMANG',
-    is_dob_estimated='-',
-    version='1'
-)
-
-preflourishconsent = Recipe(
-    PreFlourishConsent,
-    pre_flourish_identifier=None,
     consent_datetime=get_utcnow(),
     dob=get_utcnow() - relativedelta(years=25),
     first_name=fake.first_name,
