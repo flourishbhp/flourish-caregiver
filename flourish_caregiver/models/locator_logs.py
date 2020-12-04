@@ -20,25 +20,6 @@ class LocatorLog(BaseUuidModel):
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
-        default=get_utcnow)
-
-    history = HistoricalRecords()
-
-    def __str__(self):
-        return self.maternal_dataset.study_maternal_identifier
-
-
-class LocatorLogEntry(BaseUuidModel):
-    """A model completed by the user to track an RA\'s attempts to
-    confirm a Plot.
-    """
-
-    locator_log = models.ForeignKey(
-        LocatorLog,
-        on_delete=PROTECT,)
-
-    report_datetime = models.DateTimeField(
-        verbose_name="Report date",
         validators=[datetime_not_future],
         default=get_utcnow)
 
@@ -51,13 +32,13 @@ class LocatorLogEntry(BaseUuidModel):
         verbose_name="Comments",
         max_length=250,
         null=True,
-        blank=True,)
+        blank=True, )
 
     history = HistoricalRecords()
 
     def __str__(self):
-        return f'{self.locator_log.maternal_dataset.study_maternal_identifier} ({self.report_datetime})'
+        return f'{self.maternal_dataset.study_maternal_identifier} ({self.report_datetime})'
 
     class Meta:
-        unique_together = ('locator_log', 'report_datetime')
         ordering = ('report_datetime', )
+
