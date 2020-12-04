@@ -30,3 +30,5 @@ git+https://github.com/botswana-harvard/edc-timepoint.git@develop#egg=edc_timepo
 git+https://github.com/botswana-harvard/edc-visit-tracking.git@develop#egg=edc_visit_tracking
 git+https://github.com/botswana-harvard/edc-visit-schedule.git@develop#egg=edc_visit_schedule
 git+https://github.com/flourishbhp/flourish-prn.git@develop#egg=flourish_prn
+git+https://github.com/flourishbhp/flourish-visit-schedule.git@develop#egg=flourish_visit_schedule
+git+https://github.com/flourishbhp/flourish-form-validations.git@develop#egg=flourish_form_validations

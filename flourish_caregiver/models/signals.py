@@ -20,11 +20,9 @@ def maternal_dataset_on_post_save(sender, instance, raw, created, **kwargs):
         if created:
 
             try:
-                LocatorLog.objects.get(
-                    maternal_dataset=instance)
+                LocatorLog.objects.get(maternal_dataset=instance)
             except LocatorLog.DoesNotExist:
-                LocatorLog.objects.create(
-                    maternal_dataset=instance)
+                LocatorLog.objects.create(maternal_dataset=instance)
 
 
 @receiver(post_save, weak=False, sender=AntenatalEnrollment,
