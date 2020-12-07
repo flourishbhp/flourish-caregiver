@@ -1,20 +1,20 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 from ..admin_site import flourish_caregiver_admin
-from ..forms import LocatorLogEntryForm, LocatorLogForm
-from ..models import LocatorLogEntry, LocatorLog
+from ..forms import LocatorLogForm
+from ..models import LocatorLog, MaternalDataset
 from .modeladmin_mixins import ModelAdminMixin
 
 
-@admin.register(LocatorLogEntry, site=flourish_caregiver_admin)
-class LocatorLogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
+@admin.register(LocatorLog, site=flourish_caregiver_admin)
+class LocatorLogAdmin(ModelAdminMixin, admin.ModelAdmin):
 
-    form = LocatorLogEntryForm
+    form = LocatorLogForm
 
     fieldsets = (
         (None, {
             'fields': [
-                'locator_log',
+                'maternal_dataset',
                 'report_datetime',
                 'log_status',
                 'comment',
@@ -25,7 +25,7 @@ class LocatorLogEntryAdmin(ModelAdminMixin, admin.ModelAdmin):
         'log_status': admin.VERTICAL}
 
     def render_change_form(self, request, context, *args, **kwargs):
-        context['adminform'].form.fields['locator_log'].queryset = \
-            LocatorLog.objects.filter(id=request.GET.get('locator_log'))
-        return super(LocatorLogEntryAdmin, self).render_change_form(
+        context['adminform'].form.fields['maternal_dataset'].queryset = \
+            MaternalDataset.objects.filter(id=request.GET.get('maternal_dataset'))
+        return super(LocatorLogAdmin, self).render_change_form(
             request, context, *args, **kwargs)
