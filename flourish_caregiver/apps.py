@@ -13,7 +13,6 @@ class AppConfig(DjangoAppConfig):
     def ready(self):
         from .models import antenatal_enrollment_on_post_save
         from .models import maternal_dataset_on_post_save
-    
 
 if settings.APP_NAME == 'flourish_caregiver':
     from dateutil.relativedelta import MO, TU, WE, TH, FR, SA, SU
@@ -26,7 +25,6 @@ if settings.APP_NAME == 'flourish_caregiver':
     from edc_timepoint.timepoint import Timepoint
     from edc_timepoint.timepoint_collection import TimepointCollection
     from edc_visit_tracking.apps import AppConfig as BaseEdcVisitTrackingAppConfig
-
 
     class EdcAppointmentAppConfig(BaseEdcAppointmentAppConfig):
         configurations = [
@@ -44,8 +42,7 @@ if settings.APP_NAME == 'flourish_caregiver':
             2020, 11, 1, 0, 0, 0, tzinfo=gettz('UTC'))
         study_close_datetime = datetime(
             2022, 12, 1, 0, 0, 0, tzinfo=gettz('UTC'))
-    
-    
+
     class EdcTimepointAppConfig(BaseEdcTimepointAppConfig):
         timepoints = TimepointCollection(
             timepoints=[
@@ -60,7 +57,6 @@ if settings.APP_NAME == 'flourish_caregiver':
                     status_field='appt_status',
                     closed_status=COMPLETE_APPT),
             ])
-
 
     class EdcVisitTrackingAppConfig(BaseEdcVisitTrackingAppConfig):
         visit_models = {
