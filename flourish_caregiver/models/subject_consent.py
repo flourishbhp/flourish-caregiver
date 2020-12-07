@@ -76,6 +76,8 @@ class SubjectConsent(
     consent = ConsentManager()
 
     history = HistoricalRecords()
+    
+    _cohort_schedule = None
 
     def __str__(self):
         return f'{self.subject_identifier} V{self.version}'
@@ -93,6 +95,15 @@ class SubjectConsent(
             requesting_model=self._meta.label_lower,
             site=self.site)
         return subject_identifier.identifier
+
+    @property
+    def cohort(self):
+        #TO-DO: add variable name, e.g 'cohort_a'
+        return self._cohort_schedule
+
+    @cohort.setter
+    def cohort(self, val):
+        self._cohort_schedule = val
 
     @property
     def consent_version(self):

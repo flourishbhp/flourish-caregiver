@@ -164,6 +164,9 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
 
     on_worklist = models.BooleanField(
         default=False, blank=True, null=True)
+
+    def __str__(self):
+        return self.study_maternal_identifier
     
     def save(self, *args, **kwargs):
         if not self.screening_identifier:
