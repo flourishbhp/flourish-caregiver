@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'edc_consent.apps.AppConfig',
     'edc_visit_schedule.apps.AppConfig',
     'flourish_prn.apps.AppConfig',
+    'flourish_child.apps.AppConfig',
     'flourish_caregiver.apps.EdcAppointmentAppConfig',
     'flourish_caregiver.apps.EdcFacilityAppConfig',
     'flourish_caregiver.apps.EdcProtocolAppConfig',
