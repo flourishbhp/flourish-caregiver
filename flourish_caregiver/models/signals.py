@@ -8,6 +8,7 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from .antenatal_enrollment import AntenatalEnrollment
 from .maternal_dataset import MaternalDataset
 from .locator_logs import LocatorLog
+from .subject_consent import SubjectConsent
 
 
 @receiver(post_save, weak=False, sender=MaternalDataset,
@@ -32,6 +33,15 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw and instance.is_eligible:
         put_on_schedule('cohort_a', instance=instance)
+        
+
+@receiver(post_save, weak=False, sender=SubjectConsent,
+          dispatch_uid='antenatal_enrollment_on_post_save')
+def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
+    """Put subject on cohort a schedule after consenting.
+    """
+    if not raw and instance.cohort:
+        put_on_schedule(instance.cohort, instance=instance)
 
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None):
