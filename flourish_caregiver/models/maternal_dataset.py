@@ -167,12 +167,12 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
 
     def __str__(self):
         return self.study_maternal_identifier
-    
+
     def save(self, *args, **kwargs):
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
         super().save(*args, **kwargs)
-        
+
     def get_search_slug_fields(self):
         fields = super().get_search_slug_fields()
         fields.append('screening_identifier')

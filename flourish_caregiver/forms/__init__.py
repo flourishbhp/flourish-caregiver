@@ -11,7 +11,7 @@ from .caregiver_referral_form import CaregiverReferralForm
 from .enrollment_form import EnrollmentForm
 from .food_frequency_questionnaire_form import FoodFrequencyQuestionnaireForm
 from .hiv_viralload_cd4_form import HivViralLoadCd4Form
-from .locator_logs_form import LocatorLogForm
+from .locator_logs_form import LocatorLogForm, LocatorLogEntryForm
 from .socio_demographic_data_form import SocioDemographicDataForm
 from .subject_consent_form import SubjectConsentForm
 from .substance_use_prior_preg_form import SubstanceUsePriorPregnancyForm
