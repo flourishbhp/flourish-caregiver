@@ -134,8 +134,9 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
         verbose_name='Type of dwelling',
         max_length=150, blank=True, null=True)
 
-    toilet = models.IntegerField(
+    toilet = models.CharField(
         verbose_name='Toilet facilities',
+        max_length=150,
         blank=True, null=True)
 
     toilet_indoors = models.CharField(
