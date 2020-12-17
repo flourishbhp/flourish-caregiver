@@ -7,7 +7,7 @@ from edc_base.model_validators import CellNumber, TelephoneNumber
 from edc_base.model_validators.date import date_not_future, datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
-from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK
+from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK, YES_NO_NA
 from edc_locator.model_mixins.subject_contact_fields_mixin import SubjectContactFieldsMixin
 from edc_locator.model_mixins.subject_indirect_contact_fields_mixin import SubjectIndirectContactFieldsMixin
 from edc_locator.model_mixins.subject_work_fields_mixin import SubjectWorkFieldsMixin
@@ -67,7 +67,7 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
 
     may_call = models.CharField(
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         verbose_name=mark_safe(
             'Has the participant given his/her permission for study '
             'staff to call her for follow-up purposes during the study?'))
