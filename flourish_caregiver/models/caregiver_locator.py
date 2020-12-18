@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 from django_crypto_fields.fields import EncryptedCharField
+from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
@@ -57,6 +58,13 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
     locator_date = models.DateField(
         verbose_name='Date Locator Form signed',
         validators=[date_not_future])
+
+    first_name = FirstnameField(
+        null=True, blank=False)
+
+    last_name = LastnameField(
+        verbose_name="Last name",
+        null=True, blank=False)
 
     health_care_infant = models.CharField(
         verbose_name=('Health clinic where your infant will'

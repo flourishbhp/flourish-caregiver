@@ -76,7 +76,7 @@ class SubjectConsent(
     consent = ConsentManager()
 
     history = HistoricalRecords()
-    
+
     _cohort_schedule = None
 
     def __str__(self):
