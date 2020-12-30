@@ -11,19 +11,19 @@ class Cohort:
 
     def __init__(
             self, child_dob=None, enrollment_date=None, infant_hiv_exposed=None,
-            mom_hivstatus=None, protocol=None):
+            mum_hivstatus=None, protocol=None):
 
         self.child_dob = child_dob
         self.enrollment_date = enrollment_date
         self.infant_hiv_exposed = infant_hiv_exposed
-        self.mom_hivstatus = mom_hivstatus
+        self.mum_hivstatus = mum_hivstatus
         self.protocol = protocol
 
     @property
     def age_at_enrollment(self):
         return self.enrollment_date.year - self.child_dob.year - (
                 (self.enrollment_date.month, self.enrollment_date.day) < (
-            self.child_dob.month, self.day))
+            self.child_dob.month, self.child_dob.day))
 
     @property
     def hiv_exposed_uninfected(self,):
