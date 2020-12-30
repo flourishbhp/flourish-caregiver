@@ -2,6 +2,7 @@ from .antenatal_enrollment import AntenatalEnrollment
 from .arvs_during_pregnancy import ArvsDuringPregnancy
 from .arvs_pre_pregnancy import ArvsPrePregnancy
 from .caregiver_clinical_measurements import CaregiverClinicalMeasurements
+from .caregiver_contact import CaregiverContact
 from .caregiver_edinburgh_depr_screening import CaregiverEdinburghDeprScreening
 from .caregiver_gad_anxiety_screening import CaregiverGadAnxietyScreening
 from .caregiver_hamd_depr_screening import CaregiverHamdDeprScreening
