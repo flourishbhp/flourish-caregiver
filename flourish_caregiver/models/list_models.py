@@ -21,5 +21,9 @@ class PriorArv (ListModelMixin, BaseUuidModel):
     pass
 
 
+class PhoneNumType(ListModelMixin, BaseUuidModel):
+    pass
+
+
 class WcsDxAdult(ListModelMixin, BaseUuidModel):
     pass

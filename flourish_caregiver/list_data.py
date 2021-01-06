@@ -40,6 +40,18 @@ list_data = {
         (NOT_APPLICABLE, 'Not Applicable'),
         ('Other, specify', 'Other, specify')
     ],
+    'flourish_caregiver.phonenumtype': [
+        ('cell_phone', 'Cell Phone'),
+        ('cell_phone_alt', 'Cell Phone (alternative)'),
+        ('telephone', 'Telephone'),
+        ('telephone_alt', 'Telephone (alternative)'),
+        ('work_contact', 'Work contact number'),
+        ('alt_person_cell', 'Alternative contact person cell phone'),
+        ('alt_person_tel', 'Alternative contact person telephone'),
+        ('resp_person_cell', 'Responsible person cell phone'),
+        ('resp_person_tel', 'Responsible person telephone'),
+        (NONE, 'None')
+    ],
     'flourish_caregiver.wcsdxadult': [
         ('Asymptomatic', 'Asymptomatic'),
         ('Persistent generalized lymphadeno',
