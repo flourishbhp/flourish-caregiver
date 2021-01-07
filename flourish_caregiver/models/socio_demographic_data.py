@@ -112,6 +112,7 @@ class SocioDemographicData(CrfModelMixin):
                       "you most often use"
                       " at this house / compound? "),
         choices=TOILET_FACILITY)
+
     toilet_facility_other = OtherCharField(
         max_length=35,
         verbose_name="if other specify...",
@@ -132,6 +133,12 @@ class SocioDemographicData(CrfModelMixin):
         choices=HOUSE_TYPE,
         help_text="Indicate the primary type of housing used over the past "
         "30 days",)
+
+    stay_with_child = models.CharField(
+        verbose_name=('Are you currently living with the child who is also '
+                      'participating in the FLOURISH study? '),
+        max_length=3,
+        choices=YES_NO)
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
