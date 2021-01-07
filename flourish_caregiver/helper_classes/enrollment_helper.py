@@ -162,7 +162,4 @@ class EnrollmentHelper(object):
             int(40 - ((self.evaluate_edd_by_lmp - instance_date).days / 7)) if
             self.instance_antenatal.last_period_date else None)
 
-    def no_chronic_conditions(self):
-        """Returns True if subject has no chronic conditions.
-        """
-        return (self.instance_antenatal.is_diabetic == NO)
+
