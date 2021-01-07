@@ -22,7 +22,6 @@ class CaregiverPreviouslyEnrolledAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'last_test_date',
                 'test_date',
                 'is_date_estimated',
-                'dob',
                 'sex',
                 'relation_to_child',
                 'relation_to_child_other',
@@ -33,6 +32,7 @@ class CaregiverPreviouslyEnrolledAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'current_hiv_status': admin.VERTICAL,
                     'last_test_date': admin.VERTICAL,
                     'is_date_estimated': admin.VERTICAL,
+                    'sex': admin.VERTICAL,
                     'relation_to_child': admin.VERTICAL}
 
     search_fields = ['screening_identifier']

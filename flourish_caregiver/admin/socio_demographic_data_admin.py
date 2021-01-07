@@ -46,7 +46,8 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'toilet_facility',
                 'toilet_facility_other',
                 'house_people_number',
-                'house_type']}
+                'house_type',
+                'stay_with_child']}
          ), audit_fieldset_tuple)
 
     radio_fields = {'marital_status': admin.VERTICAL,
@@ -61,4 +62,5 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'house_fridge': admin.VERTICAL,
                     'cooking_method': admin.VERTICAL,
                     'toilet_facility': admin.VERTICAL,
-                    'house_type': admin.VERTICAL}
+                    'house_type': admin.VERTICAL,
+                    'stay_with_child': admin.VERTICAL}
