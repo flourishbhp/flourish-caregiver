@@ -68,9 +68,6 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         enrollment failed."""
 
         unenrolled_error_message = []
-        chronic_message = self.chronic_unenrolled_error_messages()
-        unenrolled_error_message.append(
-            chronic_message) if chronic_message else None
         if self.will_breastfeed == NO:
             unenrolled_error_message.append('will not breastfeed')
         if self.will_remain_onstudy == NO:
@@ -87,12 +84,6 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
 
         if self.ultrasound and not self.ultrasound.pass_antenatal_enrollment:
             unenrolled_error_message.append('Pregnancy is not a singleton.')
-        return unenrolled_error_message
-
-    def chronic_unenrolled_error_messages(self):
-        unenrolled_error_message = None
-        if self.is_diabetic == YES:
-            unenrolled_error_message = 'Diabetic'
         return unenrolled_error_message
 
     @property
