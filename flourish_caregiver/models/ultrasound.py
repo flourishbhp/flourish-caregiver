@@ -76,7 +76,7 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         self.ga_confrimation_method = ga_c_m
         self.ga_confirmed = self.evaluate_ga_confirmed()
         self.subject_identifier = self.maternal_visit.appointment.subject_identifier
-        super(MaternalUltraSoundInitial, self).save(*args, **kwargs)
+        super(UltraSound, self).save(*args, **kwargs)
 
     @property
     def pass_antenatal_enrollment(self):

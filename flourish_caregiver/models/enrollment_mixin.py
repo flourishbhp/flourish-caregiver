@@ -166,6 +166,7 @@ class EnrollmentMixin(models.Model):
         if self.pending_ultrasound:
             basic_criteria = False
         else:
+
             lmp_to_use = self.ga_lmp_enrollment_wks
             basic_criteria = (lmp_to_use >= 21 and lmp_to_use <= 29 and
                               enrollment_helper.no_chronic_conditions() and
