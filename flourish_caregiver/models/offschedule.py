@@ -5,10 +5,10 @@ from edc_base.sites import CurrentSiteManager
 from edc_identifier.managers import SubjectIdentifierManager
 
 from edc_visit_schedule.model_mixins import OffScheduleModelMixin
-from .model_mixins import ConsentVersionModelModelMixin
+# from .model_mixins import ConsentVersionModelModelMixin
 
 
-class CaregiverOffSchedule(ConsentVersionModelModelMixin, OffScheduleModelMixin, BaseUuidModel):
+class CaregiverOffSchedule(OffScheduleModelMixin, BaseUuidModel):
 
     schedule_name = models.CharField(
         max_length=25,

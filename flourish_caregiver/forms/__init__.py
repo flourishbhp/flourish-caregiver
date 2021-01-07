@@ -25,5 +25,6 @@ from .caregiver_previously_enrolled_form import CaregiverPreviouslyEnrolledForm
 from .maternal_delivery_form import MaternalDeliveryForm
 from .maternal_dataset_form import MaternalDatasetForm
 from .medical_history_form import MedicalHistoryForm
+from .offschedule_form import CaregiverOffScheduleForm
 from .ultrasound_form import UltraSoundForm
 from .maternal_visit_form import MaternalVisitForm
