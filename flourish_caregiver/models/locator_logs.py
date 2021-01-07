@@ -1,5 +1,6 @@
-from django.db.models.deletion import PROTECT
 from django.db import models
+from django.db.models.deletion import PROTECT
+from django.utils import timezone
 
 from django_crypto_fields.fields import EncryptedTextField
 from edc_base.model_managers import HistoricalRecords
@@ -52,6 +53,8 @@ class LocatorLogEntry(BaseUuidModel):
         max_length=250,
         null=True,
         blank=True, )
+
+    date_created = models.DateField(default=timezone.now)
 
     history = HistoricalRecords()
 

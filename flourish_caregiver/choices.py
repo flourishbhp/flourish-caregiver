@@ -91,6 +91,20 @@ CONSENT_VERSION = (
     ('3', 'Consent version 3')
 )
 
+CONTACT_FAIL_REASON = (
+    ('no_response', 'Phone rang, no response but voicemail left'),
+    ('no_response_vm_not_left', 'Phone rang no response and no option to leave voicemail'),
+    ('disconnected', 'Phone did not ring/number disconnected'),
+    ('number_changed', 'No longer the phone number of BHP participant'),
+    (NOT_APPLICABLE, 'Not Applicable'),
+)
+
+CONTACT_MODE = (
+    ('phone_call', 'Phone Call'),
+    ('house_visit', 'Visit to household'),
+    (OTHER, 'Other'),
+)
+
 COWS_MILK = (
     ('boiled', '1. Boiled from cow'),
     ('unboiled', '2. Unboiled from cow'),
@@ -178,6 +192,12 @@ HARM = (
     ('2', 'Sometimes'),
     ('1', 'Hardly ever'),
     ('0', 'Never')
+)
+
+HOME_VISIT_FAIL = (
+    ('no_one_home', 'No one was home'),
+    ('relocated', 'Previous BHP participant no longer lives at household'),
+    (OTHER, 'Other')
 )
 
 HOW_OFTEN = (
