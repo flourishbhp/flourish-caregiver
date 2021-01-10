@@ -28,6 +28,6 @@ class FlourishConsentVersion(SiteModelMixin, SearchSlugModelMixin,
             datetime_not_future, ])
 
     class Meta:
-        app_label = 'flourish_maternal'
+        app_label = 'flourish_caregiver'
         verbose_name = 'Flourish Consent Version'
         verbose_name_plural = 'Flourish Consent Version'
