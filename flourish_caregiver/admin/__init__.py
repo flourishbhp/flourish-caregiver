@@ -23,6 +23,7 @@ from .maternal_diagnoses_admin import MaternalDiagnosesAdmin
 from .maternal_dataset_admin import MaternalDatasetAdmin
 from .maternal_delivery_admin import MaternalDeliveryAdmin
 from .medical_history_admin import MedicalHistoryAdmin
+from .offschedule_admin import CaregiverOffScheduleAdmin
 from .maternal_hiv_interim_hx import MaternalHivInterimHxAdmin
 from .maternal_interim_idcc_admin import MaternalInterimIdccAdmin
 from .ultrasound_admin import UltraSoundAdmin

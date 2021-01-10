@@ -31,7 +31,7 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw and instance.is_eligible:
         put_on_schedule('cohort_a', instance=instance)
-        
+
 
 @receiver(post_save, weak=False, sender=SubjectConsent,
           dispatch_uid='subject_consent_on_post_save')
