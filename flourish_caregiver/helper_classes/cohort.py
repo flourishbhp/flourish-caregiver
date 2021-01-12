@@ -11,12 +11,12 @@ class Cohort:
 
     def __init__(
             self, child_dob=None, enrollment_date=None, infant_hiv_exposed=None,
-            mum_hivstatus=None, protocol=None):
+            mum_hiv_status=None, protocol=None):
 
         self.child_dob = child_dob
         self.enrollment_date = enrollment_date
         self.infant_hiv_exposed = infant_hiv_exposed
-        self.mum_hivstatus = mum_hivstatus
+        self.mum_hiv_status = mum_hiv_status
         self.protocol = protocol
 
     @property
@@ -51,9 +51,9 @@ class Cohort:
 
     @property
     def no_hiv_during_preg(self):
-        """Return True if the infant had no expore to HIV during pregnancy.
+        """Return True if the infant had no explore to HIV during pregnancy.
         """
-        if self.mom_hivstatus == 'HIV uninfected':
+        if self.mum_hiv_status == 'HIV uninfected':
             return True
         return False
 
