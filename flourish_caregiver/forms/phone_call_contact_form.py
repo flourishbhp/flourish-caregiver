@@ -2,10 +2,10 @@ from django import forms
 from edc_base.sites import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
 
-from ..models import CaregiverContact
+from ..models import PhoneCallContact
 
 
-class CaregiverContactForm(
+class PhoneCallContactForm(
         SiteModelFormMixin, FormValidatorMixin,
         forms.ModelForm):
 
@@ -14,5 +14,5 @@ class CaregiverContactForm(
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
-        model = CaregiverContact
+        model = PhoneCallContact
         fields = '__all__'

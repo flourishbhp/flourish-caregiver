@@ -1,14 +1,12 @@
 from django.db import models
-from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import SiteModelMixin
-from edc_constants.choices import YES_NO
 
 from .list_models import PhoneNumType
-from ..choices import CONTACT_FAIL_REASON, CONTACT_MODE, HOME_VISIT_FAIL
+from ..choices import CONTACT_FAIL_REASON
 
 
-class CaregiverContact(SiteModelMixin, BaseUuidModel):
+class PhoneCallContact(SiteModelMixin, BaseUuidModel):
 
     study_maternal_identifier = models.CharField(
         verbose_name='Study maternal Subject Identifier',
@@ -21,13 +19,6 @@ class CaregiverContact(SiteModelMixin, BaseUuidModel):
 
     contact_date = models.DateField(
         verbose_name='Date of contact attempt')
-
-    contact_mode = models.CharField(
-        verbose_name='How was this person contacted?',
-        max_length=100,
-        choices=CONTACT_MODE)
-
-    contact_mode_other = OtherCharField()
 
     phone_num_type = models.ManyToManyField(
         PhoneNumType,
@@ -84,18 +75,6 @@ class CaregiverContact(SiteModelMixin, BaseUuidModel):
         max_length=100,
         choices=CONTACT_FAIL_REASON)
 
-    home_visit_success = models.CharField(
-        verbose_name='Was there a successful contact when visiting the household?',
-        max_length=3,
-        choices=YES_NO)
-
-    home_visit_fail = models.CharField(
-        verbose_name='Why was the household visit unsuccessful',
-        max_length=100,
-        choices=HOME_VISIT_FAIL)
-
-    home_visit_fail_other = OtherCharField()
-
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = 'Enrollment Contact Attempt'
+        verbose_name = 'Phone Call Contact Attempt'
