@@ -65,4 +65,5 @@ class MaternalHivInterimHx(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = "Maternal Hiv Interim Hx"
+        verbose_name = "Maternal HIV Interim Hx"
+        verbose_name_plural = "Maternal HIV Interim Hx"
