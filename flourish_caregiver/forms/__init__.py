@@ -13,7 +13,9 @@ from .caregiver_referral_form import CaregiverReferralForm
 from .enrollment_form import EnrollmentForm
 from .food_frequency_questionnaire_form import FoodFrequencyQuestionnaireForm
 from .hiv_viralload_cd4_form import HivViralLoadCd4Form
+from .in_person_contact_attempt_form import InPersonContactAttemptForm
 from .locator_logs_form import LocatorLogForm, LocatorLogEntryForm
+from .screening_prior_bhp_participants_form import ScreeningPriorBhpParticipantsForm
 from .socio_demographic_data_form import SocioDemographicDataForm
 from .subject_consent_form import SubjectConsentForm
 from .substance_use_prior_preg_form import SubstanceUsePriorPregnancyForm

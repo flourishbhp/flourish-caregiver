@@ -152,6 +152,13 @@ FEEDING_CHOICES = (
      'Medical complications: Infant did not feed'),
 )
 
+FLOURISH_PARTICIPATION = (
+    ('interested', 'Yes I am interested'),
+    ('another_caregiver_interested', 'Yes another caregiver is interested'),
+    ('no', 'No'),
+    ('undecided', 'Undecided'),
+)
+
 FOOD_FREQUENCY = (
     ('0', 'Often True'),
     ('1', 'Sometimes True'),
@@ -254,6 +261,12 @@ INSOMNIA_EARLY = (
     ('0', 'No difficulty.'),
     ('1', 'Waking in early hours of the morning but goes back to sleep.'),
     ('2', 'Unable to fall asleep again if he/she gets out of bed.'),
+)
+
+LOCATION_FOR_CONTACT = (
+    ('physical_address', 'Physical Address with detailed description'),
+    ('workplace_location', 'Name and location of workplace'),
+    ('contact_person', 'Contact person '),
 )
 
 LOCATOR_LOG_STATUS = (
@@ -390,6 +403,12 @@ TRISOME_CHROSOMESOME_ABNORMALITY = (
     ('OTHER trisomy, specify', 'Other trisomy, specify'),
     ('OTHER non-trisomic chromosome',
      'Other non-trisomic chromosome abnormality, specify'),
+)
+
+UNSUCCESSFUL_VISIT = (
+    ('no_one_was_home', 'No one was home'),
+    ('location_no_longer_used', 'Previous BHP participant no longer uses this location'),
+    (OTHER, 'Other'),
 )
 
 WATER_USED = (
