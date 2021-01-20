@@ -266,7 +266,7 @@ INSOMNIA_EARLY = (
 LOCATION_FOR_CONTACT = (
     ('physical_address', 'Physical Address with detailed description'),
     ('workplace_location', 'Name and location of workplace'),
-    ('contact_person', 'Contact person '),
+    ('contact_person', 'Full physical address '),
 )
 
 LOCATOR_LOG_STATUS = (
