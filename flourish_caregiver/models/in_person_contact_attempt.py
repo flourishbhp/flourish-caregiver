@@ -22,7 +22,6 @@ class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
     contact_location = models.CharField(
         verbose_name='Which location was used for contact?',
         max_length=100,
-        blank=True,
         null=True,
         choices=LOCATION_FOR_CONTACT)
 

@@ -33,16 +33,16 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
                      'study?',
         max_length=10,
         choices=YES_NO,
-        blank=False,
-        null=False)
+        blank=True,
+        null=True)
 
     age_assurance = models.CharField(
         verbose_name='Does the caregiver provide assurance they are 18 years '
                      'of age or older?',
         max_length=7,
         choices=YES_NO,
-        blank=False,
-        null=False)
+        blank=True,
+        null=True)
 
     flourish_participation = models.CharField(
         verbose_name='Are you or another caregiver of this child interested in'
