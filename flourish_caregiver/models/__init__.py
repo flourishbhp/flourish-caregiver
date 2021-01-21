@@ -30,6 +30,7 @@ from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .medical_history import MedicalHistory
 from .tb_history_preg import TbHistoryPreg
+from .tb_screen_preg import TbScreenPreg
 from .ultrasound import UltraSound
 from .maternal_visit import MaternalVisit
 from .signals import antenatal_enrollment_on_post_save

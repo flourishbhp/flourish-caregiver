@@ -30,5 +30,6 @@ from .offschedule_admin import CaregiverOffScheduleAdmin
 from .maternal_hiv_interim_hx import MaternalHivInterimHxAdmin
 from .maternal_interim_idcc_admin import MaternalInterimIdccAdmin
 from .tb_history_preg_admin import TbHistoryPregAdmin
+from .tb_screen_preg_admin import TbScreenPregAdmin
 from .ultrasound_admin import UltraSoundAdmin
 from .maternal_visit_admin import MaternalVisitAdmin
