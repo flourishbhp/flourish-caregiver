@@ -107,5 +107,5 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = 'Antenatal Enrollment'
-        verbose_name_plural = 'Antenatal Enrollment'
+        verbose_name = 'Maternal Antenatal Enrollment'
+        verbose_name_plural = 'Maternal Antenatal Enrollment'
