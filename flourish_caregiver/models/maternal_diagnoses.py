@@ -9,27 +9,6 @@ from .list_models import WcsDxAdult, MaternalDiagnosesList
 
 class MaternalDiagnoses(CrfModelMixin):
 
-    new_diagnoses = models.CharField(
-        max_length=25,
-        verbose_name='Have there been any new diagnoses or '
-        'medical problems in the mother\'s health since last visit?',
-        choices=YES_NO,
-    )
-
-    diagnoses = models.ManyToManyField(
-        MaternalDiagnosesList,
-        verbose_name="Have any of the following diagnoses"
-        " occured since last visit?",
-        blank=True,
-    )
-
-    diagnoses_other = OtherCharField(
-        max_length=35,
-        verbose_name="if other specify...",
-        blank=True,
-        null=True,
-    )
-
     has_who_dx = models.CharField(
         verbose_name=(
             "During this pregnancy, did the mother have any new diagnoses "
