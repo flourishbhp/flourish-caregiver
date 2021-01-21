@@ -12,6 +12,7 @@ from .caregiver_locator_admin import CaregiverLocatorAdmin
 from .caregiver_referral_admin import CaregiverReferralAdmin
 from .enrollment_admin import EnrollmentAdmin
 from .food_frequency_questionnaire_admin import FoodFrequencyQuestionnaireAdmin
+from .hiv_rapid_test_counseling_admin import HIVRapidTestCounselingAdmin
 from .hiv_viralload_cd4_admin import HivViralLoadCd4Admin
 from .in_person_contact_attempt_admin import InPersonContactAttemptAdmin
 from .locator_logs_admin import LocatorLogEntryAdmin
