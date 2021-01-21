@@ -19,6 +19,7 @@ from .locator_logs import LocatorLog, LocatorLogEntry
 from .screening_prior_bhp_participants import ScreeningPriorBhpParticipants
 from .socio_demographic_data import SocioDemographicData
 from .subject_consent import SubjectConsent
+from .substance_use_during_preg import SubstanceUseDuringPregnancy
 from .substance_use_prior_preg import SubstanceUsePriorPregnancy
 from .subject_screening import SubjectScreening
 from .maternal_arv_preg import MaternalArvPreg
