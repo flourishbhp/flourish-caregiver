@@ -12,6 +12,7 @@ from .caregiver_locator import CaregiverLocator
 from .caregiver_referral import CaregiverReferral
 from .enrollment import Enrollment
 from .food_frequency_questionnaire import FoodFrequencyQuestionnaire
+from .hiv_rapid_test_counseling import HIVRapidTestCounseling
 from .hiv_viralload_cd4 import HivViralLoadAndCd4
 from .in_person_contact_attempt import InPersonContactAttempt
 from .locator_logs import LocatorLog, LocatorLogEntry
@@ -28,6 +29,7 @@ from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .medical_history import MedicalHistory
+from .tb_history_preg import TbHistoryPreg
 from .ultrasound import UltraSound
 from .maternal_visit import MaternalVisit
 from .signals import antenatal_enrollment_on_post_save

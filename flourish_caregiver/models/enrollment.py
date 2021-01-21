@@ -30,13 +30,13 @@ class Enrollment(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
             datetime_not_before_study_start,
             datetime_not_future],
         help_text='Date and time of enrollment')
-    
+
     pregnant = models.CharField(
         max_length=3,
         choices=YES_NO,
         verbose_name="Are you currently pregnant?",
     )
-    
+
     history = HistoricalRecords()
 
     class Meta:

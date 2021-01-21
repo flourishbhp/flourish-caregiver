@@ -40,7 +40,7 @@ class SubstanceUsePriorPregnancy(CrfModelMixin):
     marijuana_prior_preg = models.CharField(
         max_length=3,
         choices=YES_NO,
-        verbose_name='Has the participant ever used marijuana prior to this'
+        verbose_name='Has the participant ever used marijuana/weed prior to this'
         ' pregnancy?',
         help_text='')
 

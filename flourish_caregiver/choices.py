@@ -1,5 +1,5 @@
 from edc_constants.constants import (
-    OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT)
+    OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA)
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN
 from edc_constants.constants import YES, NO, POS, NEG
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
@@ -376,6 +376,20 @@ SUICIDAL = (
     ('4', 'Attempts at suicide')
 )
 
+TB_DRUGS_FREQ = (
+    ('4_drugs', '4 drugs'),
+    ('more_than_4', 'More than 4 drugs'),
+    (UNKNOWN, 'Unknown'),
+    (DWTA, 'Prefer not to answer'),
+)
+
+TB_TYPE = (
+    ('pulmonary', 'Pulmonary'),
+    ('extra_pulmonary', 'Extra-pulmonary'),
+    (UNKNOWN, 'Unknown'),
+    (DWTA, 'Prefer not to answer')
+)
+
 TIMES_BREASTFED = (
     ('<1 per week', '1. Less than once per week'),
     ('<1 per day, but at least once per week',
@@ -437,6 +451,13 @@ WEIGHT_LOSS = (
     ('1', 'Probable weight loss associated with present illness.'),
     ('2', 'Definite (according to patient) weight loss.'),
     ('3', 'Not assessed.')
+)
+
+YES_NO_UNK_DWTA = (
+    (YES, YES),
+    (NO, NO),
+    (UNKNOWN, 'Unknown'),
+    (DWTA, 'Prefer not to answer'),
 )
 
 VISIT_INFO_SOURCE = [
