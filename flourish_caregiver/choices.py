@@ -1,7 +1,7 @@
 from edc_constants.constants import (
     OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA)
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN
-from edc_constants.constants import YES, NO, POS, NEG
+from edc_constants.constants import YES, NO, UNKNOWN, POS, NEG
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
@@ -336,6 +336,15 @@ RELATION_TO_CHILD = (
     ('sister', 'Sister'),
     ('brother', 'Brother'),
     ('guardian', 'Guardian'),
+    (OTHER, 'Other'),
+)
+
+RELATION_TO_INDIVIDUAL = (
+    ('partner', 'Partner'),
+    ('child', 'Child'),
+    ('mother', 'Mother'),
+    ('father', 'Father'),
+    ('sibling', 'Sibling'),
     (OTHER, 'Other'),
 )
 
