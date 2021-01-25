@@ -7,6 +7,7 @@ from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
 from .constants import BREASTFEED_ONLY, NEVER_STARTED, MODIFIED, TUBERCULOSIS
 from .constants import NO_MODIFICATIONS, START
+from flourish_caregiver.constants import NONE
 
 ABLE_TO_LAUGH = (
     ('0', 'As much as I always could'),
@@ -299,6 +300,19 @@ PANICK = (
     ('2, sometimes', 'Yes, sometimes'),
     ('1', 'No, not much'),
     ('0', 'No, not at all')
+)
+
+PHONE_NUM_TYPE = (
+        ('cell_contact', 'Cell Phone'),
+        ('alt_cell_contact', 'Cell Phone (alternative)'),
+        ('tel_contact', 'Telephone'),
+        ('alt_tel_contact', 'Telephone (alternative)'),
+        ('work_contact', 'Work contact number'),
+        ('cell_alt_contact', 'Alternative contact person cell phone'),
+        ('tel_alt_contact', 'Alternative contact person telephone'),
+        ('cell_resp_person', 'Responsible person cell phone'),
+        ('tel_resp_person', 'Responsible person telephone'),
+        (NONE, 'None')
 )
 
 REASON_ARV_STOP = (

@@ -2,7 +2,6 @@ from django.db import models
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import SiteModelMixin
 
-from .list_models import PhoneNumType
 from ..choices import CONTACT_FAIL_REASON
 
 
@@ -20,15 +19,13 @@ class PhoneCallContact(SiteModelMixin, BaseUuidModel):
     contact_date = models.DateField(
         verbose_name='Date of contact attempt')
 
-    phone_num_type = models.ManyToManyField(
-        PhoneNumType,
-        related_name='phonenumtype',
-        verbose_name='Which phone number(s) was used for contact?')
+    phone_num_type = models.CharField(
+        verbose_name='Which phone number(s) was used for contact?',
+        max_length=50)
 
-    phone_num_success = models.ManyToManyField(
-        PhoneNumType,
-        related_name='phonenumsuccess',
-        verbose_name='Which number(s) were you successful in reaching?')
+    phone_num_success = models.CharField(
+        verbose_name='Which number(s) were you successful in reaching?',
+        max_length=50)
 
     cell_contact_fail = models.CharField(
         verbose_name='Why was the contact to [Cell phone] unsuccessful?',

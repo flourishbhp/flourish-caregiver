@@ -45,28 +45,28 @@ class PhoneCallContactAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'cell_resp_person_fail': admin.VERTICAL,
                     'tel_resp_person_fail': admin.VERTICAL}
 
-    filter_horizontal = ('phone_num_type', 'phone_num_success')
-
     list_display = (
         'study_maternal_identifier', 'prev_study', 'contact_date', )
 
     def get_form(self, request, obj=None, *args, **kwargs):
         form = super().get_form(request, *args, **kwargs)
-        fields_exclude = []
+        custom_choices = []
 
         study_maternal_identifier = kwargs.get('study_maternal_identifier', 'B003611-4')
 
         fields = self.get_all_fields(form)
 
-        for field in fields:
+        for idx, field in enumerate(fields):
             custom_value = self.custom_field_label(study_maternal_identifier, field)
 
             if custom_value:
-                form.base_fields[field].label = f'Why was the contact to {custom_value} unsuccessful?'
+                custom_choices.append([field, custom_value])
+                form.base_fields[field].label = f'{idx + 1} Why was the contact to {custom_value} unsuccessful?'
+        form.custom_choices = custom_choices
 #             else:
 #                 fields_exclude.append(field)
 #         fields = [field for field in self.fieldsets[0][1].get('fields') not in fields_exclude]
-#         self.fieldsets[0][1].get('fields') = tuple(fields)
+#         self.fieldsets[0][1]('fields') = tuple(fields)
 
         return form
 
