@@ -19,3 +19,20 @@ class InPersonContactAttemptForm(
     class Meta:
         model = InPersonContactAttempt
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        choices = self.update_choices_vars(self.custom_choices)
+        self.fields['contact_location'] = forms.MultipleChoiceField(
+            label='Which location was used for contact?',
+            widget=forms.CheckboxSelectMultiple, choices=choices)
+        self.fields['successful_location'] = forms.MultipleChoiceField(
+            label='Which location was used for contact?',
+            widget=forms.CheckboxSelectMultiple, choices=choices)
+
+    def update_choices_vars(self, choice_list=[]):
+        new_choices = []
+        for choices in choice_list:
+            choices[0] = choices[0]
+            new_choices.append(tuple(choices))
+        return new_choices
