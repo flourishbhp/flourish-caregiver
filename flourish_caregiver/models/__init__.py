@@ -11,6 +11,7 @@ from .caregiver_phq_depr_screening import CaregiverPhqDeprScreening
 from .caregiver_locator import CaregiverLocator
 from .caregiver_referral import CaregiverReferral
 from .enrollment import Enrollment
+from .flourish_consent_version import FlourishConsentVersion
 from .food_frequency_questionnaire import FoodFrequencyQuestionnaire
 from .hiv_rapid_test_counseling import HIVRapidTestCounseling
 from .hiv_viralload_cd4 import HivViralLoadAndCd4
