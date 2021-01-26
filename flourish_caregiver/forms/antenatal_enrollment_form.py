@@ -1,8 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from edc_base.sites import SiteModelFormMixin
-from edc_form_validators import FormValidatorMixin
-from flourish_form_validations.form_validators import AntenatalEnrollmentFormValidator
+from edc_form_validators import FormValidatorMixinmentFormValidator
 
 
 from ..models import AntenatalEnrollment
@@ -11,8 +10,6 @@ from ..models import AntenatalEnrollment
 class AntenatalEnrollmentForm(
         SiteModelFormMixin, FormValidatorMixin,
         forms.ModelForm):
-
-    form_validator_cls = AntenatalEnrollmentFormValidator
 
     subject_identifier = forms.CharField(
         label='Subject Identifier',
