@@ -27,7 +27,7 @@ class InPersonContactAttemptForm(
             label='Which location was used for contact?',
             widget=forms.CheckboxSelectMultiple, choices=choices)
         self.fields['successful_location'] = forms.MultipleChoiceField(
-            label='Which location was used for contact?',
+            label='Which location(s) were successful?',
             widget=forms.CheckboxSelectMultiple, choices=choices)
 
     def update_choices_vars(self, choice_list=[]):
