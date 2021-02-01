@@ -55,7 +55,7 @@ class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
             if custom_value:
                 custom_choices.append([field, custom_value])
                 form.base_fields[
-                    field].label = f'{idx + 1} Why was the in-person visit to {custom_value} unsuccessful?'
+                    field].label = f'{idx + 1}. Why was the in-person visit to {custom_value} unsuccessful?'
 
         form.custom_choices = custom_choices
 

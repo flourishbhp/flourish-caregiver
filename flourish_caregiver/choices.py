@@ -100,6 +100,12 @@ CONTACT_FAIL_REASON = (
     (NOT_APPLICABLE, 'Not Applicable'),
 )
 
+CONTACT_LOCATION = (
+    ('phy_addr_unsuc', 'physical_address'),
+    ('workplace_unsuc', 'subject_work_place'),
+    ('contact_person_unsuc', 'indirect_contact_physical_address'),
+)
+
 CONTACT_MODE = (
     ('phone_call', 'Phone Call'),
     ('house_visit', 'Visit to household'),
