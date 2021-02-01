@@ -15,7 +15,8 @@ class HivViralLoadAndCd4(CrfModelMixin):
 
     cd4_count = models.IntegerField(
         verbose_name='What is the caregiver’s CD4 count?',
-        validators=[MinValueValidator(1), MaxValueValidator(9999)], )
+        validators=[MinValueValidator(1), MaxValueValidator(9999)],
+        blank=True, null=True)
 
     cd4_count_date = models.DateField(
         verbose_name='Date of CD4 count', )

@@ -4,7 +4,9 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import SiteModelMixin
 
-from ..choices import LOCATION_FOR_CONTACT, UNSUCCESSFUL_VISIT
+from ..choices import CONTACT_LOCATION, UNSUCCESSFUL_VISIT
+
+from multiselectfield import MultiSelectField
 
 
 class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
@@ -21,12 +23,14 @@ class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
     contact_date = models.DateField(
         verbose_name='Date of contact attempt')
 
-    contact_location = models.CharField(
+    contact_location = MultiSelectField(
         verbose_name='Which location was used for contact?',
+        choices=CONTACT_LOCATION,
         max_length=100)
 
-    successful_location = models.CharField(
+    successful_location = MultiSelectField(
         verbose_name='Which location(s) were successful?',
+        choices=CONTACT_LOCATION,
         max_length=100)
 
     phy_addr_unsuc = models.CharField(
