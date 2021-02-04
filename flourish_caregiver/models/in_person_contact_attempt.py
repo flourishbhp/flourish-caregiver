@@ -1,8 +1,12 @@
 from django.db import models
+
+from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import SiteModelMixin
 
-from ..choices import LOCATION_FOR_CONTACT, UNSUCCESSFUL_VISIT
+from ..choices import CONTACT_LOCATION, UNSUCCESSFUL_VISIT
+
+from multiselectfield import MultiSelectField
 
 
 class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
@@ -19,18 +23,15 @@ class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
     contact_date = models.DateField(
         verbose_name='Date of contact attempt')
 
-    contact_location = models.CharField(
+    contact_location = MultiSelectField(
         verbose_name='Which location was used for contact?',
-        max_length=100,
-        null=True,
-        choices=LOCATION_FOR_CONTACT)
+        choices=CONTACT_LOCATION,
+        max_length=100)
 
-    successful_location = models.CharField(
+    successful_location = MultiSelectField(
         verbose_name='Which location(s) were successful?',
-        max_length=100,
-        blank=True,
-        null=True,
-        choices=LOCATION_FOR_CONTACT)
+        choices=CONTACT_LOCATION,
+        max_length=100)
 
     phy_addr_unsuc = models.CharField(
         verbose_name='Why was the in-person visit to [Physical Address with '
@@ -40,7 +41,7 @@ class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
         null=True,
         choices=UNSUCCESSFUL_VISIT)
 
-    phy_addr_unsuc_other = models.CharField(
+    phy_addr_unsuc_other = OtherCharField(
         max_length=50,
         verbose_name='Visit unsuccessful other',
         blank=True,
@@ -54,7 +55,7 @@ class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
         null=True,
         choices=UNSUCCESSFUL_VISIT)
 
-    workplace_unsuc_other = models.CharField(
+    workplace_unsuc_other = OtherCharField(
         max_length=50,
         verbose_name='Unsuccessful visit reason other',
         blank=True,
@@ -68,7 +69,7 @@ class InPersonContactAttempt(SiteModelMixin, BaseUuidModel):
         null=True,
         choices=UNSUCCESSFUL_VISIT)
 
-    contact_person_unsuc_other = models.CharField(
+    contact_person_unsuc_other = OtherCharField(
         max_length=50,
         verbose_name='Visit to Contact person unsuccessful other',
         blank=True,

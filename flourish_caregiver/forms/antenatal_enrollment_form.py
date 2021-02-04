@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 from edc_base.sites import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
 
-
 from ..models import AntenatalEnrollment
 
 

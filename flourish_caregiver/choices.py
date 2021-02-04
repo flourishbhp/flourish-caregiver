@@ -1,7 +1,7 @@
 from edc_constants.constants import (
     OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA, OTHER)
-from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, UNKNOWN
-from edc_constants.constants import YES, NO, POS, NEG
+from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN
+from edc_constants.constants import YES, NO, UNKNOWN, POS, NEG
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
@@ -98,6 +98,12 @@ CONTACT_FAIL_REASON = (
     ('disconnected', 'Phone did not ring/number disconnected'),
     ('number_changed', 'No longer the phone number of BHP participant'),
     (NOT_APPLICABLE, 'Not Applicable'),
+)
+
+CONTACT_LOCATION = (
+    ('phy_addr_unsuc', 'physical_address'),
+    ('workplace_unsuc', 'subject_work_place'),
+    ('contact_person_unsuc', 'indirect_contact_physical_address'),
 )
 
 CONTACT_MODE = (
@@ -351,6 +357,15 @@ RELATION_TO_CHILD = (
     ('sister', 'Sister'),
     ('brother', 'Brother'),
     ('guardian', 'Guardian'),
+    (OTHER, 'Other'),
+)
+
+RELATION_TO_INDIVIDUAL = (
+    ('partner', 'Partner'),
+    ('child', 'Child'),
+    ('mother', 'Mother'),
+    ('father', 'Father'),
+    ('sibling', 'Sibling'),
     (OTHER, 'Other'),
 )
 

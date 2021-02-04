@@ -32,9 +32,7 @@ class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
         audit_fieldset_tuple
     )
 
-    radio_fields = {'contact_location': admin.VERTICAL,
-                    'successful_location': admin.VERTICAL,
-                    'phy_addr_unsuc': admin.VERTICAL,
+    radio_fields = {'phy_addr_unsuc': admin.VERTICAL,
                     'workplace_unsuc': admin.VERTICAL,
                     'contact_person_unsuc': admin.VERTICAL}
 
@@ -43,19 +41,23 @@ class InPersonContactAttemptAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     def get_form(self, request, obj=None, *args, **kwargs):
         form = super().get_form(request, *args, **kwargs)
+        custom_choices = []
 
         study_maternal_identifier = kwargs.get('study_maternal_identifier',
                                                '056-1980010-3')
 
         fields = self.get_all_fields(form)
 
-        for field in fields:
+        for idx, field in enumerate(fields):
             custom_value = self.custom_field_label(study_maternal_identifier,
                                                    field)
 
             if custom_value:
+                custom_choices.append([field, custom_value])
                 form.base_fields[
-                    field].label = f'Why was the in-person visit to {custom_value} unsuccessful?'
+                    field].label = f'{idx + 1}. Why was the in-person visit to {custom_value} unsuccessful?'
+
+        form.custom_choices = custom_choices
 
         return form
 

@@ -1,10 +1,9 @@
 from django.db import models
 
-from edc_base.model_fields import OtherCharField
-from edc_constants.choices import YES_NO, YES_NO_NA
+from edc_constants.choices import YES_NO_NA
 
 from .model_mixins import CrfModelMixin
-from .list_models import WcsDxAdult, MaternalDiagnosesList
+from .list_models import WcsDxAdult
 
 
 class MaternalDiagnoses(CrfModelMixin):
