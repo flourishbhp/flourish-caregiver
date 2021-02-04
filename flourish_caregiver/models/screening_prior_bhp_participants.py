@@ -3,10 +3,18 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import SiteModelMixin
 from edc_constants.choices import YES_NO_UNKNOWN, YES_NO
 
+from .eligibility import BHPPriorEligibilty
 from ..choices import FLOURISH_PARTICIPATION
 
 
 class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
+
+    screening_identifier = models.CharField(
+        verbose_name="Eligibility Identifier",
+        max_length=36,
+        blank=True,
+        null=True,
+        unique=True)
 
     study_child_identifier = models.CharField(
         verbose_name='Study Child Subject Identifier',
@@ -36,14 +44,6 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
         blank=True,
         null=True)
 
-    age_assurance = models.CharField(
-        verbose_name='Does the caregiver provide assurance they are 18 years '
-                     'of age or older?',
-        max_length=7,
-        choices=YES_NO,
-        blank=True,
-        null=True)
-
     flourish_participation = models.CharField(
         verbose_name='Are you or another caregiver of this child interested in'
                      ' participating in the FLOURISH Study ',
@@ -51,6 +51,23 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
         choices=FLOURISH_PARTICIPATION,
         blank=False,
         null=False)
+
+    ineligibility = models.TextField(
+        verbose_name="Reason not eligible",
+        max_length=150,
+        null=True,
+        editable=False)
+
+    is_eligible = models.BooleanField(
+        default=False,
+        editable=False)
+
+    def save(self, *args, **kwargs):
+        eligibility_criteria = BHPPriorEligibilty(
+            self.child_alive, self.flourish_interest, self.flourish_participation)
+        self.is_eligible = eligibility_criteria.is_eligible
+        self.ineligibility = eligibility_criteria.error_message
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'flourish_caregiver'

@@ -1,6 +1,6 @@
 from edc_constants.constants import (
-    OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA)
-from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN
+    OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA, OTHER)
+from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, UNKNOWN
 from edc_constants.constants import YES, NO, POS, NEG
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
@@ -156,8 +156,9 @@ FEEDING_CHOICES = (
 FLOURISH_PARTICIPATION = (
     ('interested', 'Yes I am interested'),
     ('another_caregiver_interested', 'Yes another caregiver is interested'),
-    ('no', 'No'),
+    (NO, 'No'),
     ('undecided', 'Undecided'),
+    (NOT_APPLICABLE, 'Not applicable'),
 )
 
 FOOD_FREQUENCY = (

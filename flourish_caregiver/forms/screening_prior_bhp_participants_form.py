@@ -12,6 +12,11 @@ class ScreeningPriorBhpParticipantsForm(
 
     form_validator_cls = ScreeningPriorBhpParticipantsFormValidator
 
+    screening_identifier = forms.CharField(
+        required=False,
+        label='Screening Identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
     study_child_identifier = forms.CharField(
         label='Study child Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))

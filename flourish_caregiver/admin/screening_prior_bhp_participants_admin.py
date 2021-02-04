@@ -17,11 +17,11 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('study_child_identifier',
+            'fields': ('screening_identifier',
+                       'study_child_identifier',
                        'child_alive',
                        'mother_alive',
                        'flourish_interest',
-                       'age_assurance',
                        'flourish_participation', )},
          ),
         audit_fieldset_tuple
@@ -30,7 +30,6 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
     radio_fields = {'child_alive': admin.VERTICAL,
                     'mother_alive': admin.VERTICAL,
                     'flourish_interest': admin.VERTICAL,
-                    'age_assurance': admin.VERTICAL,
                     'flourish_participation': admin.VERTICAL}
 
     list_display = ('study_child_identifier',)
