@@ -151,7 +151,7 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
         verbose_name='Water piped into home',
         max_length=150, blank=True, null=True)
 
-    home_reridgeration = models.CharField(
+    home_refridgeration = models.CharField(
         verbose_name='Refrigeration in home',
         max_length=150, blank=True, null=True)
 

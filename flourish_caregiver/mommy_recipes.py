@@ -1,10 +1,13 @@
 from dateutil.relativedelta import relativedelta
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES, NO, POS
+from edc_visit_tracking.constants import SCHEDULED
+from edc_constants.constants import ALIVE, YES, NO, ON_STUDY, PARTICIPANT
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
-from .models import AntenatalEnrollment, SubjectConsent
+from .models import AntenatalEnrollment, SubjectConsent, MaternalVisit
+from .models import MaternalDelivery, HIVRapidTestCounseling
 
 
 fake = Faker()
@@ -50,3 +53,18 @@ antenatalenrollment = Recipe(
     will_breastfeed=YES,
     will_get_arvs=YES,
     will_remain_onstudy=YES)
+
+maternalvisit = Recipe(
+    MaternalVisit,
+    report_datetime=get_utcnow(),
+    reason=SCHEDULED,
+    study_status=ON_STUDY,
+    survival_status=ALIVE,
+    info_source=PARTICIPANT)
+
+maternaldelivery = Recipe(
+    MaternalDelivery,
+    subject_identifier=None,)
+
+hivrapidtestcounseling = Recipe(
+    HIVRapidTestCounseling,)

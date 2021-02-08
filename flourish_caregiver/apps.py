@@ -21,11 +21,15 @@ if settings.APP_NAME == 'flourish_caregiver':
     from edc_appointment.apps import AppConfig as BaseEdcAppointmentAppConfig
     from edc_appointment.constants import COMPLETE_APPT
     from edc_facility.apps import AppConfig as BaseEdcFacilityAppConfig
+    from edc_metadata.apps import AppConfig as BaseEdcMetadataAppConfig
     from edc_protocol.apps import AppConfig as BaseEdcProtocolAppConfigs
     from edc_timepoint.apps import AppConfig as BaseEdcTimepointAppConfig
     from edc_timepoint.timepoint import Timepoint
     from edc_timepoint.timepoint_collection import TimepointCollection
     from edc_visit_tracking.apps import AppConfig as BaseEdcVisitTrackingAppConfig
+    from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
+    from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
+    from edc_constants.constants import FAILED_ELIGIBILITY
 
     class EdcAppointmentAppConfig(BaseEdcAppointmentAppConfig):
         configurations = [
@@ -33,6 +37,14 @@ if settings.APP_NAME == 'flourish_caregiver':
                 model='edc_appointment.appointment',
                 related_visit_model='flourish_caregiver.maternalvisit',
                 appt_type='clinic')]
+
+
+    class EdcMetadataAppConfig(BaseEdcMetadataAppConfig):
+
+        reason_field = {'flourish_caregiver.maternalvisit': 'reason'}
+        create_on_reasons = [SCHEDULED, UNSCHEDULED, COMPLETED_PROTOCOL_VISIT]
+        delete_on_reasons = [LOST_VISIT, MISSED_VISIT, FAILED_ELIGIBILITY]
+
 
     class EdcProtocolAppConfig(BaseEdcProtocolAppConfigs):
         protocol = 'BHP0135'
