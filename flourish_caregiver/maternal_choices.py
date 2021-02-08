@@ -35,6 +35,7 @@ RECRUIT_SOURCE = (
 )
 
 RECRUIT_CLINIC = (
+    ('Prior', 'Prior BHP Study'),
     ('PMH', 'Gaborone(PMH)'),
     ('G.West Clinic', 'G.West Clinic'),
     ('BH3 Clinic', 'BH3 Clinic'),
@@ -43,6 +44,7 @@ RECRUIT_CLINIC = (
     ('Lesirane', 'Lesirane Clinic'),
     ('Old Naledi', 'Old Naledi'),
     ('Mafitlhakgosi', 'Mafitlhakgosi'),
+    ('Schools', 'Schools'),
     (OTHER, 'Other health facilities not associated with study site'),
 )
 

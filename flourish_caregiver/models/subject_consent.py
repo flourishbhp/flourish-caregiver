@@ -14,6 +14,7 @@ from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_consent.field_mixins import ReviewFieldsMixin, PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
+from edc_constants.choices import YES_NO
 
 from ..choices import IDENTITY_TYPE
 from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
@@ -71,6 +72,30 @@ class SubjectConsent(
         blank=True,
         null=True,)
 
+    remain_in_study = models.CharField(
+        max_length=3,
+        verbose_name='Are you willing to remain in the study area for 5 years?',
+        choices=YES_NO,
+        help_text='If no, participant is not eligible.')
+
+    hiv_testing = models.CharField(
+        max_length=3,
+        verbose_name=('If HIV status not known, are you willing to undergo HIV'
+                      ' testing and counseling?'),
+        choices=YES_NO,
+        help_text='If ‘No’ ineligible for study participation')
+
+    breastfeed_intent = models.CharField(
+        max_length=3,
+        verbose_name='Do you intend on breast feeding your infant?',
+        choices=YES_NO,
+        help_text='If ‘No’ ineligible for study participation')
+
+    future_contact = models.CharField(
+        max_length=3,
+        verbose_name='Do you give us permission to be contacted for future studies?',
+        choices=YES_NO)
+
     objects = SubjectConsentManager()
 
     consent = ConsentManager()
@@ -111,7 +136,7 @@ class SubjectConsent(
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Caregiver Consent'
+        verbose_name = 'Adult Participation Consent'
         unique_together = (('subject_identifier', 'version'),
                            ('subject_identifier', 'screening_identifier', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))
