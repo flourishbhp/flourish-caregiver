@@ -3,7 +3,7 @@ from .arvs_during_pregnancy import ArvsDuringPregnancy
 from .arvs_pre_pregnancy import ArvsPrePregnancy
 from .caregiver_clinical_measurements import CaregiverClinicalMeasurements
 from .caregiver_clinical_measurements_fu import CaregiverClinicalMeasurementsFu
-from .phone_call_contact import PhoneCallContact
+from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_edinburgh_depr_screening import CaregiverEdinburghDeprScreening
 from .caregiver_gad_anxiety_screening import CaregiverGadAnxietyScreening
 from .caregiver_hamd_depr_screening import CaregiverHamdDeprScreening
@@ -15,7 +15,6 @@ from .flourish_consent_version import FlourishConsentVersion
 from .food_frequency_questionnaire import FoodFrequencyQuestionnaire
 from .hiv_rapid_test_counseling import HIVRapidTestCounseling
 from .hiv_viralload_cd4 import HivViralLoadAndCd4
-from .in_person_contact_attempt import InPersonContactAttempt
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .screening_prior_bhp_participants import ScreeningPriorBhpParticipants
 from .socio_demographic_data import SocioDemographicData

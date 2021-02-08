@@ -9,9 +9,9 @@ class PhoneCallContactForm(
         SiteModelFormMixin, FormValidatorMixin,
         forms.ModelForm):
 
-    study_maternal_identifier = forms.CharField(
-        label='Study maternal Subject Identifier',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+#     study_maternal_identifier = forms.CharField(
+#         label='Study maternal Subject Identifier',
+#         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
         model = PhoneCallContact
