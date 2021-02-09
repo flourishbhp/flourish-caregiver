@@ -69,7 +69,7 @@ class SubjectConsent(
 
     recruitment_clinic_other = models.CharField(
         max_length=100,
-        verbose_name="if other recruitment clinic, specify...",
+        verbose_name="if other recruitment, specify...",
         blank=True,
         null=True,)
 
@@ -85,6 +85,8 @@ class SubjectConsent(
         verbose_name=('If HIV status not known, are you willing to undergo HIV'
                       ' testing and counseling?'),
         choices=YES_NO,
+        blank=True,
+        null=True,
         validators=[eligible_if_yes, ],
         help_text='If ‘No’ ineligible for study participation')
 
@@ -92,6 +94,8 @@ class SubjectConsent(
         max_length=3,
         verbose_name='Do you intend on breast feeding your infant?',
         choices=YES_NO,
+        blank=True,
+        null=True,
         validators=[eligible_if_yes, ],
         help_text='If ‘No’ ineligible for study participation')
 
