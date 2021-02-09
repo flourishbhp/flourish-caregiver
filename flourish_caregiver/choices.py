@@ -466,6 +466,20 @@ WATER_USED = (
     (NOT_APPLICABLE, 'Not Applicable'),
 )
 
+WEIGHT_LOSS = (
+    ('0', 'No weight loss'),
+    ('1', 'Probable weight loss associated with present illness.'),
+    ('2', 'Definite (according to patient) weight loss.'),
+    ('3', 'Not assessed.')
+)
+
+WHERE_SCREENED = (
+    ('antenatal_visit', 'Antenatal visit'),
+    ('idcc', 'IDCC'),
+    ('postpartum_visit', 'Postpartum visit'),
+    ('hospital', 'Hospital '),
+    (OTHER, 'Other '))
+
 WORK_INTERESTS = (
     ('0', 'No difficulty'),
     ('1', ('Thoughts and feelings of incapacity, fatigue or weakness related to'
@@ -474,13 +488,6 @@ WORK_INTERESTS = (
            'reported by the patient or indirect in listlessness, indecision and vacillations')),
     ('3', 'Decrease in actual time spent in activities or decrease in productivity'),
     ('4', ('Stopped working because of present illness.'))
-)
-
-WEIGHT_LOSS = (
-    ('0', 'No weight loss'),
-    ('1', 'Probable weight loss associated with present illness.'),
-    ('2', 'Definite (according to patient) weight loss.'),
-    ('3', 'Not assessed.')
 )
 
 YES_NO_UNK_DWTA = (
