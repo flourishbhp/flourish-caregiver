@@ -14,6 +14,7 @@ from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_consent.field_mixins import ReviewFieldsMixin, PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
+from edc_consent.validators import eligible_if_yes
 from edc_constants.choices import YES_NO
 
 from ..choices import IDENTITY_TYPE
@@ -76,6 +77,7 @@ class SubjectConsent(
         max_length=3,
         verbose_name='Are you willing to remain in the study area for 5 years?',
         choices=YES_NO,
+        validators=[eligible_if_yes, ],
         help_text='If no, participant is not eligible.')
 
     hiv_testing = models.CharField(
@@ -83,12 +85,14 @@ class SubjectConsent(
         verbose_name=('If HIV status not known, are you willing to undergo HIV'
                       ' testing and counseling?'),
         choices=YES_NO,
+        validators=[eligible_if_yes, ],
         help_text='If ‘No’ ineligible for study participation')
 
     breastfeed_intent = models.CharField(
         max_length=3,
         verbose_name='Do you intend on breast feeding your infant?',
         choices=YES_NO,
+        validators=[eligible_if_yes, ],
         help_text='If ‘No’ ineligible for study participation')
 
     future_contact = models.CharField(
