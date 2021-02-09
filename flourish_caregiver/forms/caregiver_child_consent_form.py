@@ -6,9 +6,13 @@ from edc_base.sites import SiteModelFormMixin
 
 from ..models import CaregiverChildConsent
 
+from flourish_form_validations.form_validators import CaregiverChildConsentFormValidator
+
 
 class CaregiverChildConsentForm(SiteModelFormMixin, FormValidatorMixin,
                                 forms.ModelForm):
+
+    form_validator_cls = CaregiverChildConsentFormValidator
 
     screening_identifier = forms.CharField(
         label='Screening Identifier',
@@ -24,13 +28,40 @@ class CaregiverChildConsentForm(SiteModelFormMixin, FormValidatorMixin,
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
 
-    first_name = forms.CharField(
-        label='First Name',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    is_literate = forms.CharField(
+        label='Is the participant literate?',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
 
-    last_name = forms.CharField(
-        label='Last Name',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    dob = forms.CharField(
+        label='Date of birth',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
+
+    is_dob_estimated = forms.CharField(
+        label='Is date of birth estimated?',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
+
+    citizen = forms.CharField(
+        label='Is the participant a Botswana citizen?',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
+
+    identity = forms.CharField(
+        label='Identity number',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
+
+    identity_type = forms.CharField(
+        label='What type of identity number is this?',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
+
+    confirm_identity = forms.CharField(
+        label='Retype the identity number',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
 
     class Meta:
         model = CaregiverChildConsent
