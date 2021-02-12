@@ -11,7 +11,7 @@ from .caregiver_previously_enrolled_admin import CaregiverPreviouslyEnrolledAdmi
 from .caregiver_locator_admin import CaregiverLocatorAdmin
 from .caregiver_referral_admin import CaregiverReferralAdmin
 from .enrollment_admin import EnrollmentAdmin
-from .food_frequency_questionnaire_admin import FoodFrequencyQuestionnaireAdmin
+from .food_security_questionnaire_admin import FoodSecurityQuestionnaireAdmin
 from .hiv_rapid_test_counseling_admin import HIVRapidTestCounselingAdmin
 from .hiv_viralload_cd4_admin import HivViralLoadCd4Admin
 from .locator_logs_admin import LocatorLogEntryAdmin

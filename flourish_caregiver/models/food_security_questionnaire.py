@@ -4,7 +4,7 @@ from .model_mixins import CrfModelMixin
 from ..choices import MEALS, FOOD_FREQUENCY, HOW_OFTEN
 
 
-class FoodFrequencyQuestionnaire(CrfModelMixin):
+class FoodSecurityQuestionnaire(CrfModelMixin):
 
     did_food_last = models.CharField(
         max_length=60,
@@ -20,7 +20,7 @@ class FoodFrequencyQuestionnaire(CrfModelMixin):
     cut_meals = models.CharField(
         max_length=50,
         verbose_name="In the last 12 months, since last (name of current "
-                     "month), did (you/you or other adults in your household) "
+                     "month), did (you or other adults in your household) "
                      "ever cut the size of your meals or skip meals because "
                      "there wasn't enough money for food?",
         choices=MEALS)
@@ -29,7 +29,9 @@ class FoodFrequencyQuestionnaire(CrfModelMixin):
         max_length=60,
         verbose_name="How often did this happen—almost every month, some "
                      "months but not every month, or in only 1 or 2 months?",
-        choices=HOW_OFTEN)
+        choices=HOW_OFTEN,
+        blank=True,
+        null=True)
 
     ate_less = models.CharField(
         max_length=60,
@@ -46,4 +48,4 @@ class FoodFrequencyQuestionnaire(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Food Frequency Questionnaire'
+        verbose_name = 'Food Security Questionnaire'
