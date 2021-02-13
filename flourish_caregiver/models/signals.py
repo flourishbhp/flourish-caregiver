@@ -1,12 +1,34 @@
 from django.apps import apps as django_apps
+from django.contrib.auth.models import Group, User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 from .antenatal_enrollment import AntenatalEnrollment
 from .maternal_dataset import MaternalDataset
-from .locator_logs import LocatorLog
+from .locator_logs import LocatorLog, LocatorLogEntry
 from .subject_consent import SubjectConsent
+
+
+
+@receiver(post_save, weak=False, sender=LocatorLogEntry,
+          dispatch_uid='locator_log_enntry_on_post_save')
+def locator_log_enntry_on_post_save(sender, instance, raw, created, **kwargs):
+    """
+    - Create locator log entry
+    """
+    if not raw:
+        if created:
+            if not User.objects.filter(
+                username=instance.user_created, groups__name='locator users').exists():
+                try:
+                    user = User.objects.get(username=instance.user_created)
+                except User.DoesNotExist:
+                    raise ValueError(f'The user {instance.user_created}, does not exist.')
+                else:
+                    locator_group = Group.objects.get(name='my_group_name') 
+                    locator_group.user_set.add(user)
 
 
 @receiver(post_save, weak=False, sender=MaternalDataset,
