@@ -19,7 +19,7 @@ class TestCohort(TestCase):
             infant_hiv_exposed='Exposed',
             mum_hiv_status='HIV-infected',
             protocol='Tshilo Dikotla')
-        self.assertEquals(cohort.age_at_enrollment, 2)
+        self.assertEquals(cohort.age_at_enrollment, 2.0)
 
     def test_calculate_age2(self):
         cohort = Cohort(
@@ -28,17 +28,17 @@ class TestCohort(TestCase):
             infant_hiv_exposed='Exposed',
             mum_hiv_status='HIV-infected',
             protocol='Tshilo Dikotla')
-        self.assertEquals(cohort.age_at_enrollment, 2)
+        self.assertEquals(cohort.age_at_enrollment, 2.5)
 
-#     def test_calculate_age3(self):
-#         cohort = Cohort(
-#             child_dob=date.today() - relativedelta(years=2, months=7),
-#             enrollment_date=timezone.now().date(),
-#             infant_hiv_exposed='Exposed',
-#             mum_hiv_status='HIV-infected',
-#             protocol='Tshilo Dikotla'
-#             )
-#         self.assertEquals(cohort.age_at_enrollment, 3)
+    def test_find_age(self):
+        cohort = Cohort(
+            child_dob=date.today() - relativedelta(years=2, months=7),
+            enrollment_date=timezone.now().date(),
+            infant_hiv_exposed='Exposed',
+            mum_hiv_status='HIV-infected',
+            protocol='Tshilo Dikotla'
+            )
+        self.assertEquals(cohort.age_at_enrollment, 2.7)
 
     def test_hiv_exposed_uninfected(self):
         cohort = Cohort(

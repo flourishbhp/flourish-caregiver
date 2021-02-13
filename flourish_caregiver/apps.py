@@ -9,6 +9,8 @@ class AppConfig(DjangoAppConfig):
     name = 'flourish_caregiver'
     verbose_name = 'Flourish Caregiver'
     admin_site_name = 'flourish_caregiver_admin'
+    start_date_year_3 = datetime(
+            2022, 11, 1, 0, 0, 0, tzinfo=gettz('UTC')).date()
 
     def ready(self):
         from .models import antenatal_enrollment_on_post_save
