@@ -21,8 +21,7 @@ class Cohort:
         self.infant_hiv_exposed = infant_hiv_exposed
         self.mum_hiv_status = mum_hiv_status
         self.protocol = protocol
-     
-    @property
+
     def age_at_enrollment(self, child_dob=None, check_date=None):
         """Returns age months as decimals.
         """
@@ -77,7 +76,7 @@ class Cohort:
     def huu_adolescents(self):
         """Returns True if the infant is HUU and is an Adolescent.
         """
-        if self.age_at_enrollment >= 10 and self.hiv_unexposed_uninfacted:
+        if self.age_at_enrollment() >= 10 and self.hiv_unexposed_uninfacted:
             return True
         return False
 
@@ -156,7 +155,7 @@ class Cohort:
         """Return True if the infant mother pair meets criteria for cohort A.
         """
         #TODO: Cater for 200 newly enrolled pregnant woman.
-        if (self.age_at_enrollment <= 2.5 and self.protocol == 'Tshilo Dikotla' and
+        if (self.age_at_enrollment() <= 2.5 and self.protocol == 'Tshilo Dikotla' and
                 self.total_HEU(protocol='Tshilo Dikotla') < 200 and
                 self.total_HUU(protocol='Tshilo Dikotla') < 175 and self.age_at_year_3 <= 4.5):
             return True
@@ -167,7 +166,7 @@ class Cohort:
         """Return True id an infant mother pair meets criteria for cohort B.
         """
         protocols = ['Tshilo Dikotla', 'Mpepu', 'Tshipidi']
-        if (self.age_at_enrollment >= 4 and self.age_at_enrollment <= 8.5 and
+        if (self.age_at_enrollment() >= 4 and self.age_at_enrollment() <= 8.5 and
                 self.protocol in protocols and self.age_at_year_3 >= 6 and 
                 self.age_at_year_3 <= 10.5):
             if self.efv_regime and self.total_efv_regime < 100:
@@ -182,7 +181,7 @@ class Cohort:
         """Return True id an infant mother pair meets criteria for cohort C.
         """
         #TODO: cater for 125 new enrolled adolescents
-        if (self.age_at_enrollment >= 8 and self.age_at_enrollment <= 17 and
+        if (self.age_at_enrollment() >= 8 and self.age_at_enrollment() <= 17 and
             self.age_at_year_3 >= 10):
             if self.huu_adolescents and self.total_huu_adolescents(protocol='Mashi') < 75:
                 return True
