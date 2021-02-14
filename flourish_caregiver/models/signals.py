@@ -20,15 +20,14 @@ def locator_log_enntry_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw:
         if created:
-            if not User.objects.filter(
-                username=instance.user_created, groups__name='locator users').exists():
+            if not User.objects.filter(username=instance.user_created, groups__name='locator users').exists():
                 try:
                     user = User.objects.get(username=instance.user_created)
                 except User.DoesNotExist:
                     raise ValueError(f'The user {instance.user_created}, does not exist.')
                 else:
-                    locator_group = Group.objects.get(name='my_group_name') 
-                    locator_group.user_set.add(user)
+                    locator_group = Group.objects.get(name='locator users') 
+                        
 
 
 @receiver(post_save, weak=False, sender=MaternalDataset,
