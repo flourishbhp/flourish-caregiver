@@ -1,10 +1,10 @@
 from django.db import models
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import SiteModelMixin
-from edc_constants.choices import YES_NO_UNKNOWN, YES_NO
+from edc_constants.choices import YES_NO
 
 from .eligibility import BHPPriorEligibilty
-from ..choices import FLOURISH_PARTICIPATION
+from ..choices import FLOURISH_PARTICIPATION, YES_NO_UNK_NA
 
 
 class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
@@ -24,14 +24,14 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
     child_alive = models.CharField(
         verbose_name='Is the child from the previous study alive?',
         max_length=10,
-        choices=YES_NO_UNKNOWN,
+        choices=YES_NO,
         blank=False,
         null=False)
 
     mother_alive = models.CharField(
         verbose_name='Is the mother from the previous study alive?',
         max_length=10,
-        choices=YES_NO_UNKNOWN,
+        choices=YES_NO_UNK_NA,
         blank=False,
         null=False)
 

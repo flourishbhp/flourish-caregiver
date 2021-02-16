@@ -9,7 +9,7 @@ class CohortError(Exception):
 
 class Cohort:
 
-    """Class that determines the cohort that a child belong too
+    """Class that determines the cohort that a child belong to
     """
 
     def __init__(

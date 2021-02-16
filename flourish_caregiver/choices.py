@@ -497,6 +497,13 @@ YES_NO_UNK_DWTA = (
     (DWTA, 'Prefer not to answer'),
 )
 
+YES_NO_UNK_NA = (
+    (YES, YES),
+    (NO, NO),
+    (UNKNOWN, 'Unknown'),
+    (NOT_APPLICABLE, 'Not Applicable'),
+)
+
 VISIT_INFO_SOURCE = [
     (PARTICIPANT, 'Clinic visit with participant'),
     ('other_contact',
