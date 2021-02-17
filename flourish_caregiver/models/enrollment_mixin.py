@@ -52,13 +52,6 @@ class EnrollmentMixin(models.Model):
         help_text='INELIGIBLE if NO',
         max_length=3)
 
-    will_remain_onstudy = models.CharField(
-        verbose_name="Are you willing to remain in the study for the"
-        " child's first five years of life",
-        choices=YES_NO,
-        help_text='INELIGIBLE if NO',
-        max_length=3)
-
     current_hiv_status = models.CharField(
         verbose_name="What is your current HIV status?",
         choices=POS_NEG_UNTESTED_REFUSAL,
@@ -167,9 +160,8 @@ class EnrollmentMixin(models.Model):
             basic_criteria = False
         else:
             lmp_to_use = self.ga_lmp_enrollment_wks
-            basic_criteria = (lmp_to_use >= 21 and lmp_to_use <= 29 and
-                              self.will_breastfeed == YES and
-                              self.will_remain_onstudy == YES)
+            basic_criteria = (lmp_to_use >= 22 and lmp_to_use <= 28 and
+                              self.will_breastfeed == YES)
         if (basic_criteria and self.enrollment_hiv_status == POS and
                 self.will_get_arvs == YES):
             return True
