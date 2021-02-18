@@ -115,6 +115,10 @@ class SubjectConsent(
     def __str__(self):
         return f'{self.subject_identifier} V{self.version}'
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.version = '1'
+
     def natural_key(self):
         return (self.subject_identifier, self.version)
 

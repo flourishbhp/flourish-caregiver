@@ -53,7 +53,7 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
         'may_contact_indirectly': admin.VERTICAL,
         'has_caretaker': admin.VERTICAL}
 
-    search_fields = ['subject_identifier']
+    search_fields = ['subject_identifier', 'study_maternal_identifier']
 
-    list_display = ('subject_identifier', 'may_visit_home', 'may_call',
+    list_display = ('study_maternal_identifier', 'subject_identifier', 'may_visit_home', 'may_call',
                     'may_call_work')
