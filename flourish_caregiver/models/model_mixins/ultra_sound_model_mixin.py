@@ -46,7 +46,7 @@ class UltraSoundModelMixin(models.Model):
     @property
     def antenatal_enrollment(self):
         AntenatalEnrollment = django_apps.get_model(
-            'td_maternal.antenatalenrollment')
+            'flourish_caregiver.antenatalenrollment')
         return AntenatalEnrollment.objects.get(
             subject_identifier=self.maternal_visit.subject_identifier)
 
