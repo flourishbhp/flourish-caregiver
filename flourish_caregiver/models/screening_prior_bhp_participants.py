@@ -30,7 +30,8 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
     mother_alive = models.CharField(
         verbose_name='Is the mother from the previous study alive?',
         max_length=10,
-        choices=YES_NO_UNK_NA)
+        choices=YES_NO_UNK_NA,
+        default=NOT_APPLICABLE)
 
     flourish_interest = models.CharField(
         verbose_name='Is there another caregiver within the household '
@@ -44,7 +45,8 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
         verbose_name='Are you or another caregiver of this child interested in'
                      ' participating in the FLOURISH Study ',
         max_length=40,
-        choices=FLOURISH_PARTICIPATION)
+        choices=FLOURISH_PARTICIPATION,
+        default=NOT_APPLICABLE)
 
     ineligibility = models.TextField(
         verbose_name="Reason not eligible",
