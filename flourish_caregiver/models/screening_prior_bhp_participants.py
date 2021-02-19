@@ -1,7 +1,8 @@
 from django.db import models
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import SiteModelMixin
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO, YES_NO_NA
+from edc_constants.constants import NOT_APPLICABLE
 
 from .eligibility import BHPPriorEligibilty
 from ..choices import FLOURISH_PARTICIPATION, YES_NO_UNK_NA
@@ -24,33 +25,28 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
     child_alive = models.CharField(
         verbose_name='Is the child from the previous study alive?',
         max_length=10,
-        choices=YES_NO,
-        blank=False,
-        null=False)
+        choices=YES_NO)
 
     mother_alive = models.CharField(
         verbose_name='Is the mother from the previous study alive?',
         max_length=10,
         choices=YES_NO_UNK_NA,
-        blank=False,
-        null=False)
+        default=NOT_APPLICABLE)
 
     flourish_interest = models.CharField(
         verbose_name='Is there another caregiver within the household '
                      'that would be interested in learning about FLOURISH '
                      'study?',
         max_length=10,
-        choices=YES_NO,
-        blank=True,
-        null=True)
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE)
 
     flourish_participation = models.CharField(
         verbose_name='Are you or another caregiver of this child interested in'
                      ' participating in the FLOURISH Study ',
         max_length=40,
         choices=FLOURISH_PARTICIPATION,
-        blank=False,
-        null=False)
+        default=NOT_APPLICABLE)
 
     ineligibility = models.TextField(
         verbose_name="Reason not eligible",

@@ -61,8 +61,7 @@ antenatalenrollment = Recipe(
     week32_test=YES,
     week32_test_date=(get_utcnow() - relativedelta(months=2)).date(),
     will_breastfeed=YES,
-    will_get_arvs=YES,
-    will_remain_onstudy=YES)
+    will_get_arvs=YES)
 
 maternalvisit = Recipe(
     MaternalVisit,

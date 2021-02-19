@@ -70,40 +70,19 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         unenrolled_error_message = []
         if self.will_breastfeed == NO:
             unenrolled_error_message.append('will not breastfeed')
-        if self.will_remain_onstudy == NO:
-            unenrolled_error_message.append('won\'t remain in study')
         if self.will_get_arvs == NO:
             unenrolled_error_message.append(
                 'Will not get ARVs on this pregnancy.')
         if self.rapid_test_done == NO:
             unenrolled_error_message.append('rapid test not done')
         if (self.ga_lmp_enrollment_wks and
-                (self.ga_lmp_enrollment_wks < 21 or
-                 self.ga_lmp_enrollment_wks > 29)):
+                (self.ga_lmp_enrollment_wks < 22 or
+                 self.ga_lmp_enrollment_wks > 28)):
             unenrolled_error_message.append('gestation not 22 to 28wks')
 
         if self.ultrasound and not self.ultrasound.pass_antenatal_enrollment:
             unenrolled_error_message.append('Pregnancy is not a singleton.')
         return unenrolled_error_message
-
-    @property
-    def schedule_name(self):
-        """Return a visit schedule name.
-        """
-        schedule_name = None
-        subject_consent = SubjectConsent.objects.filter(
-            subject_identifier=self.subject_identifier).order_by('version').last()
-        if subject_consent.version == '1':
-            schedule_name = 'antenatal_schedule_1'
-        elif subject_consent.version == '3':
-            schedule_name = 'antenatal_schedule_3'
-        return schedule_name
-
-    @property
-    def off_study_visit_code(self):
-        """Returns the visit code for the off-study visit if eligibility
-        criteria fail."""
-        return '1000M'
 
     class Meta:
         app_label = 'flourish_caregiver'

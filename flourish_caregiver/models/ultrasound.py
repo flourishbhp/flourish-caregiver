@@ -14,7 +14,7 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
     enrollment in to study.
     """
 
-    tracking_identifier_prefix = 'MU'
+    tracking_identifier_prefix = 'CU'
 
     action_name = ULTRASOUND_ACTION
 
