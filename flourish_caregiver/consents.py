@@ -5,14 +5,25 @@ from edc_constants.constants import MALE, FEMALE
 
 edc_protocol = django_apps.get_app_config('edc_protocol')
 
-v1 = Consent(
+caregiver_v1 = Consent(
     'flourish_caregiver.subjectconsent',
     version='1',
     start=edc_protocol.study_open_datetime,
     end=edc_protocol.study_close_datetime,
-    age_min=30,
-    age_is_adult=30,
+    age_min=18,
+    age_is_adult=18,
     age_max=110,
     gender=[MALE, FEMALE])
 
-site_consents.register(v1)
+caregiver_child_v1 = Consent(
+    'flourish_caregiver.caregiverchildconsent',
+    version='1',
+    start=edc_protocol.study_open_datetime,
+    end=edc_protocol.study_close_datetime,
+    age_min=18,
+    age_is_adult=18,
+    age_max=110,
+    gender=[MALE, FEMALE])
+
+site_consents.register(caregiver_v1)
+site_consents.register(caregiver_child_v1)

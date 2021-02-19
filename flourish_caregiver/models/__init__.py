@@ -37,7 +37,7 @@ from .ultrasound import UltraSound
 from .maternal_visit import MaternalVisit
 from .signals import antenatal_enrollment_on_post_save
 from .signals import maternal_dataset_on_post_save
-from .signals import subject_consent_on_post_save
+from .signals import caregiver_child_consent_on_post_save
 from .offschedule import CaregiverOffSchedule
 from .onschedule import OnScheduleCohortA, OnScheduleCohortB
 from .onschedule import OnScheduleCohortC, OnSchedulePool

@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'flourish_reference.apps.AppConfig',
     'flourish_metadata_rules.apps.AppConfig',
     'flourish_child.apps.AppConfig',
+    'pre_flourish.apps.AppConfig',
     'flourish_caregiver.apps.EdcAppointmentAppConfig',
     'flourish_caregiver.apps.EdcFacilityAppConfig',
     'flourish_caregiver.apps.EdcMetadataAppConfig',
@@ -114,6 +115,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'pre_flourish': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'pre_flourish_db.sqlite3',
     }
 }
 

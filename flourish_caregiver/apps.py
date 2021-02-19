@@ -14,7 +14,7 @@ class AppConfig(DjangoAppConfig):
 
     def ready(self):
         from .models import antenatal_enrollment_on_post_save
-        from .models import subject_consent_on_post_save
+        from .models import caregiver_child_consent_on_post_save
         from .models import maternal_dataset_on_post_save
 
 if settings.APP_NAME == 'flourish_caregiver':
@@ -78,7 +78,9 @@ if settings.APP_NAME == 'flourish_caregiver':
             'flourish_caregiver': (
                 'maternal_visit', 'flourish_caregiver.maternalvisit'),
             'flourish_child': (
-                'child_visit', 'flourish_child.childvisit'), }
+                'child_visit', 'flourish_child.childvisit'),
+            'pre_flourish': (
+                'maternal_visit', 'pre_flourish.preflourishcaregivervisit')}
 
     class EdcFacilityAppConfig(BaseEdcFacilityAppConfig):
         country = 'botswana'

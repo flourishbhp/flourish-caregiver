@@ -15,7 +15,7 @@ from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from .model_mixins import SearchSlugModelMixin
 
-from ..choices import IDENTITY_TYPE
+from ..choices import IDENTITY_TYPE, COHORTS
 
 
 class CaregiverChildConsentManager(SearchSlugManager, models.Manager):
@@ -63,9 +63,15 @@ class CaregiverChildConsent(
         null=True,)
 
     child_knows_status = models.CharField(
-        'If your child is ≥ 16 years, have they been told about your HIV?',
+        verbose_name='If your child is ≥ 16 years, have they been told about your HIV?',
         max_length=5,
         choices=YES_NO,
+        blank=True,
+        null=True)
+
+    cohort = models.CharField(
+        max_length=12,
+        choices=COHORTS,
         blank=True,
         null=True)
 
@@ -85,6 +91,7 @@ class CaregiverChildConsent(
         fields = super().get_search_slug_fields()
         fields.extend(['identity', 'screening_identifier',
                        'first_name', 'last_name'])
+        return fields
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'flourish_caregiver'
@@ -93,4 +100,3 @@ class CaregiverChildConsent(
         unique_together = (('subject_identifier', 'version'),
                            ('subject_identifier', 'screening_identifier', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))
-

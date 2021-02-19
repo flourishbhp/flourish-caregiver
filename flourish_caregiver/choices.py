@@ -87,6 +87,12 @@ ARV_INTERRUPTION_REASON = (
     (NOT_APPLICABLE, 'Not Applicable'),
 )
 
+COHORTS = (
+    ('cohort_a', 'Cohort A'),
+    ('cohort_b', 'Cohort B'),
+    ('cohort_c', 'Cohort C'),
+    ('cohort_pool', 'Cohort Pool'),)
+
 CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('3', 'Consent version 3')

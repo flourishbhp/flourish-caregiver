@@ -7,10 +7,14 @@ from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
 from .models import AntenatalEnrollment, SubjectConsent, MaternalVisit
-from .models import MaternalDelivery, HIVRapidTestCounseling
+from .models import MaternalDelivery, HIVRapidTestCounseling, MaternalDataset
+from .models import CaregiverChildConsent
 
 
 fake = Faker()
+
+maternaldataset = Recipe(
+    MaternalDataset)
 
 subjectconsent = Recipe(
     SubjectConsent,
@@ -27,6 +31,12 @@ subjectconsent = Recipe(
     is_dob_estimated='-',
     version='1'
 )
+
+caregiverchildconsent = Recipe(
+    CaregiverChildConsent,
+    identity=seq('123425678'),
+    confirm_identity=seq('123425678'),
+    version='1')
 
 antenatalenrollment = Recipe(
     AntenatalEnrollment,
