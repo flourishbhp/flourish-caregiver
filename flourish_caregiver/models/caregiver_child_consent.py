@@ -56,7 +56,7 @@ class CaregiverChildConsent(
     child_preg_test = models.CharField(
         verbose_name='If your child is female and will be 12 years or older '
                      'prior to 30-Jun-2025, will you allow the female child '
-                     'to undergo pregnancy testing?',
+                     'to undergo pregnancy testing?',
         max_length=5,
         choices=YES_NO,
         blank=True,
