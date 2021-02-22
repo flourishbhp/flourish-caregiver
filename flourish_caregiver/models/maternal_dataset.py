@@ -163,6 +163,22 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
         verbose_name='Number of people living in household',
         blank=True, null=True)
 
+    twin_triplet = models.IntegerField(
+        verbose_name='Twins or thiplets',
+        blank=True, null=True)
+
+    preg_dtg = models.IntegerField(
+        verbose_name='Preg DTG',
+        blank=True, null=True)
+    
+    preg_pi = models.IntegerField(
+        verbose_name='Preg PI',
+        blank=True, null=True)
+
+    preg_efv = models.IntegerField(
+        verbose_name='Preg EFV',
+        blank=True, null=True)
+
     on_worklist = models.BooleanField(
         default=False, blank=True, null=True)
 
