@@ -52,6 +52,27 @@ list_data = {
         ('resp_person_tel', 'Responsible person telephone'),
         (NONE, 'None')
     ],
+    'flourish_caregiver.priorarv': [
+        ('AZT', 'AZT'),
+        ('DDI', 'DDI'),
+        ('Kaletra (or Aluvia)', 'Kaletra (or Aluvia)'),
+        ('Nevirapine', 'Nevirapine'),
+        ('3TC', '3TC'),
+        ('Atripla', 'Atripla'),
+        ('Tenofovir', 'Tenofovir'),
+        ('Truvada (Tenofovir, FTC)', 'Truvada (Tenofovir, FTC)'),
+        ('ATZ', 'ATZ'),
+        ('D4T', 'D4T'),
+        ('Raltegravir', 'Raltegravir'),
+        ('Efavirenz (or Sustiva)', 'Efavirenz (or Sustiva)'),
+        ('Combivir (AZT,3TC)', 'Combivir (AZT, 3TC)'),
+        ('Trizivir (AZT, 3TC, Abacavir)', 'Trizivir (AZT, 3TC, Abacavir)'),
+        ('Abacavir', 'Abacavir'),
+        ('Dolutegravir', 'DTG'),
+        ('ART, unknown', 'ART, unknown'),
+        (NOT_APPLICABLE, 'Not Applicable'),
+        ('Other, specify', 'Other, specify')
+    ],
     'flourish_caregiver.wcsdxadult': [
         ('Asymptomatic', 'Asymptomatic'),
         ('Persistent generalized lymphadeno',
