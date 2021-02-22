@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from edc_base.model_fields import IsDateEstimatedField, OtherCharField
+from edc_base.model_fields import IsDateEstimatedFieldNa, OtherCharField
 from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 
@@ -16,19 +16,19 @@ class ArvsPrePregnancy(CrfModelMixin):
 
     prev_preg_azt = models.CharField(
         max_length=25,
-        choices=YES_NO_NA,
+        choices=YES_NO,
         verbose_name="Did she ever receive AZT monotherapy in a "
         "previous pregnancy?  ")
 
     prev_sdnvp_labour = models.CharField(
         max_length=25,
-        choices=YES_NO_NA,
+        choices=YES_NO,
         verbose_name="Did she ever receive single-dose NVP in labour "
         "during a previous pregnancy?")
 
     prev_preg_art = models.CharField(
         max_length=25,
-        choices=YES_NO_NA,
+        choices=YES_NO,
         verbose_name=("Did she ever receive triple antiretrovirals during a "
                       "prior pregnancy?"))
 
@@ -39,12 +39,12 @@ class ArvsPrePregnancy(CrfModelMixin):
         blank=True,
         null=True)
 
-    is_date_estimated = IsDateEstimatedField(
+    is_date_estimated = IsDateEstimatedFieldNa(
         verbose_name=("Is the subject's date of triple antiretrovirals estimated?"))
 
     preg_on_art = models.CharField(
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         verbose_name=("Was she still on triple antiretrovirals at the "
                       "time she became pregnant"
                       " for this pregnancy? "))
