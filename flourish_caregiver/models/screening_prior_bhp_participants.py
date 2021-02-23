@@ -6,9 +6,12 @@ from edc_constants.constants import NOT_APPLICABLE
 
 from .eligibility import BHPPriorEligibilty
 from ..choices import FLOURISH_PARTICIPATION, YES_NO_UNK_NA
+from ..identifiers import ScreeningIdentifier
 
 
 class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
+
+    identifier_cls = ScreeningIdentifier
 
     screening_identifier = models.CharField(
         verbose_name="Eligibility Identifier",
@@ -63,6 +66,8 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
             self.child_alive, self.flourish_interest, self.flourish_participation)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
+        if not self.screening_identifier:
+            self.screening_identifier = self.identifier_cls().identifier
         super().save(*args, **kwargs)
 
     class Meta:

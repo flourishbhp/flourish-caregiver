@@ -35,3 +35,4 @@ from .tb_presence_household_members_form import TbPresenceHouseholdMembersForm
 from .tb_screen_preg_form import TbScreenPregForm
 from .ultrasound_form import UltraSoundForm
 from .maternal_visit_form import MaternalVisitForm
+from .obsterical_history_form import ObstericalHistoryForm

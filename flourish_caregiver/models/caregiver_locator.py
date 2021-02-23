@@ -16,7 +16,6 @@ from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsM
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugManager
 
-from ..identifiers import ScreeningIdentifier
 from .model_mixins import SearchSlugModelMixin
 
 
@@ -30,8 +29,6 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
                        SubjectIndirectContactFieldsMixin,
                        SubjectWorkFieldsMixin, LocatorMethodsModelMixin,
                        SearchSlugModelMixin, BaseUuidModel):
-
-    identifier_cls = ScreeningIdentifier
 
     report_datetime = models.DateTimeField(
         default=get_utcnow,
@@ -129,11 +126,6 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         validators=[TelephoneNumber, ],
         blank=True,
         null=True)
-
-    def save(self, *args, **kwargs):
-        if not self.screening_identifier:
-            self.screening_identifier = self.identifier_cls().identifier
-        super().save(*args, **kwargs)
 
     history = HistoricalRecords()
 

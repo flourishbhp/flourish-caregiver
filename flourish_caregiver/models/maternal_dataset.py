@@ -170,7 +170,7 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
     preg_dtg = models.IntegerField(
         verbose_name='Preg DTG',
         blank=True, null=True)
-    
+
     preg_pi = models.IntegerField(
         verbose_name='Preg PI',
         blank=True, null=True)
