@@ -9,7 +9,6 @@ from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import date_not_before_study_start
 
 from .enrollment_mixin import EnrollmentMixin
-from .subject_consent import SubjectConsent
 
 
 class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,

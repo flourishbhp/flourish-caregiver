@@ -64,9 +64,10 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
     """Put subject on cohort a schedule after consenting on behalf of child.
     """
     child_age = age(instance.dob, get_utcnow()).years
-    if not raw and child_age < 7:
-        cohort = cohort_assigned(instance.subject_identifier)
-        if cohort:
+    child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
+    cohort = cohort_assigned(instance.subject_identifier)
+    if not raw:
+        if child_age < 7 and cohort:
 #         if cohort == 'cohort_c':
 #             preflourish_model_cls = django_apps.get_model('pre_flourish.onschedulepreflourish')
 #             try:
@@ -78,7 +79,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             instance.cohort = cohort
             instance.save_base(raw=True)
 
-            child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
             try:
                 child_dummy_consent_cls.objects.get(subject_identifier=instance.subject_identifier+'-10',
                                                     version=instance.version,)
@@ -89,6 +89,21 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         version=instance.version,
                         dob=instance.dob,
                         cohort=cohort)
+        elif child_age >= 7 and cohort:
+            try:
+                child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
+                            subject_identifier=instance.subject_identifier+'-10',
+                            version=instance.version,
+                            dob=instance.dob)
+            except child_dummy_consent_cls.DoesNotExist:
+                pass
+            else:
+                put_on_schedule(cohort, instance=instance)
+                instance.cohort = cohort
+                instance.save_base(raw=True)
+    
+                child_dummy_consent_obj.cohort = cohort
+                child_dummy_consent_obj.save()
 
 
 def cohort_assigned(subject_identifier):
