@@ -13,13 +13,16 @@ class Cohort:
 
     def __init__(
             self, child_dob=None, enrollment_date=None, infant_hiv_exposed=None,
-            mum_hiv_status=None, protocol=None):
+            mum_hiv_status=None, protocol=None, dtg=None, pi=None, efv=None):
 
         self.child_dob = child_dob
         self.enrollment_date = enrollment_date
         self.infant_hiv_exposed = infant_hiv_exposed
         self.mum_hiv_status = mum_hiv_status
         self.protocol = protocol
+        self.dtg = dtg
+        self.pi = pi
+        self.efv = efv
 
     def age_at_enrollment(self, child_dob=None, check_date=None):
         """Returns age months as decimals.
@@ -87,20 +90,28 @@ class Cohort:
             return True
         return False
 
-    property
+    @property
     def efv_regime(self):
         """."""
+        if self.efv == 1:
+            return True
         return False
 
     @property
     def dtg_regime(self):
-        """."""
+        """Returns True if the mother used dtg during pregnancy.
+        """
+        if self.dtg == 1:
+            return True
         return False
 
     @property
     def pi_regime(self):
-        """."""
-        return True
+        """Returns True if the mother used pi during pregnancy.
+        """
+        if self.pi == 1:
+            return True
+        return False
 
     @property
     def total_efv_regime(self):
