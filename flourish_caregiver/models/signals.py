@@ -33,6 +33,7 @@ def locator_log_entry_on_post_save(sender, instance, raw, created, **kwargs):
                 else:
                     Group.objects.get(name='locator users')
 
+
 @receiver(post_save, weak=False, sender=MaternalDataset,
           dispatch_uid='maternal_dataset_on_post_save')
 def maternal_dataset_on_post_save(sender, instance, raw, created, **kwargs):
@@ -104,11 +105,13 @@ def cohort_assigned(subject_identifier):
         except infant_dataset_cls.DoesNotExist:
             return None
         else:
-            cohort = Cohort(child_dob=maternal_dataset_obj.delivdt,
-                       enrollment_date=infant_dataset_obj.infant_enrolldate,
-                       infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
-                       protocol=maternal_dataset_obj.protocol).cohort_variable
+            cohort = Cohort(
+                child_dob=maternal_dataset_obj.delivdt,
+                enrollment_date=infant_dataset_obj.infant_enrolldate,
+                infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
+                protocol=maternal_dataset_obj.protocol).cohort_variable
             return cohort
+
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None):
     if instance:

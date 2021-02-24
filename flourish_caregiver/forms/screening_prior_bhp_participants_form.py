@@ -6,9 +6,8 @@ from flourish_form_validations.form_validators import ScreeningPriorBhpParticipa
 from ..models import ScreeningPriorBhpParticipants
 
 
-class ScreeningPriorBhpParticipantsForm(
-        SiteModelFormMixin, FormValidatorMixin,
-        forms.ModelForm):
+class ScreeningPriorBhpParticipantsForm(SiteModelFormMixin, FormValidatorMixin,
+                                        forms.ModelForm):
 
     form_validator_cls = ScreeningPriorBhpParticipantsFormValidator
 
