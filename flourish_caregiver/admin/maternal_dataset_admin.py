@@ -43,7 +43,11 @@ class MaternalDatasetAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'mom_baseline_hgb',
                 'mom_baseline_hgbdt',
                 'mom_deathdate',
+                'twin_triplet',
+                'preg_dtg',
+                'preg_pi',
+                'preg_efv',
             ]}
          ), audit_fieldset_tuple)
 
-    search_fields = ['subject_identifier']
+    search_fields = ['subject_identifier', 'study_maternal_identifier', 'screening_identifier']

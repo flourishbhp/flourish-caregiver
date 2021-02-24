@@ -34,3 +34,4 @@ from .tb_presence_household_members_admin import TbPresenceHouseholdMembersAdmin
 from .tb_screen_preg_admin import TbScreenPregAdmin
 from .ultrasound_admin import UltraSoundAdmin
 from .maternal_visit_admin import MaternalVisitAdmin
+from .obsterical_history_admin import ObstericalHistoryAdmin

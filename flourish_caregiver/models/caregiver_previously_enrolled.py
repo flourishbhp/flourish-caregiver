@@ -73,5 +73,5 @@ class CaregiverPreviouslyEnrolled(SiteModelMixin, BaseUuidModel):
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = 'Previous Caregiver Enrollment'
-        verbose_name_plural = 'Previous Caregiver Enrollment'
+        verbose_name = 'Caregiver Enrollment Information'
+        verbose_name_plural = 'Caregiver Enrollment Information'

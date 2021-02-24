@@ -148,5 +148,5 @@ class MaternalDelivery(ActionModelMixin, BaseUuidModel):
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = "Delivery"
-        verbose_name_plural = "Deliveries"
+        verbose_name = "Birth Form"
+        verbose_name_plural = "Birth Form"
