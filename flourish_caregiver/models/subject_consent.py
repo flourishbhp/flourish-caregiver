@@ -17,7 +17,7 @@ from edc_consent.model_mixins import ConsentModelMixin
 from edc_consent.validators import eligible_if_yes
 from edc_constants.choices import YES_NO
 
-from ..choices import IDENTITY_TYPE
+from ..choices import IDENTITY_TYPE, COHORTS
 from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
 from ..subject_identifier import SubjectIdentifier
 from .model_mixins import SearchSlugModelMixin
@@ -103,6 +103,39 @@ class SubjectConsent(
         max_length=3,
         verbose_name='Do you give us permission to be contacted for future studies?',
         choices=YES_NO)
+
+    child_test = models.CharField(
+        verbose_name='Will you allow for HIV testing and counselling of '
+                     'your Child',
+        max_length=5,
+        choices=YES_NO)
+
+    remain_in_study = models.CharField(
+        verbose_name='Are you willing to remain in the study area for 5 years?',
+        max_length=5,
+        choices=YES_NO)
+
+    child_preg_test = models.CharField(
+        verbose_name='If your child is female and will be 12 years or older '
+                     'prior to 30-Jun-2025, will you allow the female child '
+                     'to undergo pregnancy testing?',
+        max_length=5,
+        choices=YES_NO,
+        blank=True,
+        null=True,)
+
+    child_knows_status = models.CharField(
+        verbose_name='If your child is ≥ 16 years, have they been told about your HIV?',
+        max_length=5,
+        choices=YES_NO,
+        blank=True,
+        null=True)
+
+    cohort = models.CharField(
+        max_length=12,
+        choices=COHORTS,
+        blank=True,
+        null=True)
 
     objects = SubjectConsentManager()
 
