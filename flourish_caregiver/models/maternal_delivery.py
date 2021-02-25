@@ -125,10 +125,6 @@ class MaternalDelivery(ActionModelMixin, BaseUuidModel):
 
     history = HistoricalRecords()
 
-    def save(self, *args, **kwargs):
-        self.consent_version = self.get_consent_version()
-        super(MaternalDelivery, self).save(*args, **kwargs)
-
     def __str__(self):
         return f'{self.subject_identifier}'
 
