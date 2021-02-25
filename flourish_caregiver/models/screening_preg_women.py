@@ -9,28 +9,24 @@ from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugManager
 
-from ..identifiers import ScreeningIdentifier
-from .eligibility import Eligibility
+from .eligibility import PregWomenEligibility
 from .model_mixins import SearchSlugModelMixin
+from ..identifiers import ScreeningIdentifier
 
 
-class SubjectScreeningManager(SearchSlugManager, models.Manager):
+class ScreeningPregWomenManager(SearchSlugManager, models.Manager):
 
     def get_by_natural_key(self, eligibility_identifier):
         return self.get(screening_identifier=eligibility_identifier)
 
 
-class SubjectScreening(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
-                       SearchSlugModelMixin, BaseUuidModel):
-    """ A model completed by the user to test and capture the result of
-    the pre-consent eligibility checks.
+class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
+                         SearchSlugModelMixin, BaseUuidModel):
 
-    This model has no PII.
-    """
     identifier_cls = ScreeningIdentifier
 
     screening_identifier = models.CharField(
-        verbose_name="Eligibility Identifier",
+        verbose_name='Eligibility Identifier',
         max_length=36,
         blank=True,
         null=True,
@@ -44,21 +40,19 @@ class SubjectScreening(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
             datetime_not_future],
         help_text='Date and time of assessing eligibility')
 
-    age_in_years = models.IntegerField(
-        verbose_name='What is the age of the participant?')
+    hiv_testing = models.CharField(
+        verbose_name=('If HIV status not known, are you willing to undergo HIV'
+                      ' testing and counseling?'),
+        choices=YES_NO,
+        max_length=3)
 
-    has_omang = models.CharField(
-        verbose_name="Do you have an OMANG?",
-        max_length=3,
-        choices=YES_NO)
-
-    has_child = models.CharField(
-        verbose_name="Do you have a child who is 10 years or older?",
-        max_length=3,
-        choices=YES_NO)
+    breastfeed_intent = models.CharField(
+        verbose_name='Do you intend on breastfeeding your infant? ',
+        choices=YES_NO,
+        max_length=3)
 
     ineligibility = models.TextField(
-        verbose_name="Reason not eligible",
+        verbose_name='Reason not eligible',
         max_length=150,
         null=True,
         editable=False)
@@ -66,35 +60,34 @@ class SubjectScreening(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
     is_eligible = models.BooleanField(
         default=False,
         editable=False)
+
     # is updated via signal once subject is consented
     is_consented = models.BooleanField(
-        default=False,
-        editable=False)
-    # updated by signal on saving consent, is determined by participant
-    # citizenship
-    has_passed_consent = models.BooleanField(
         default=False,
         editable=False)
 
     history = HistoricalRecords()
 
-    class Meta:
-        app_label = 'flourish_caregiver'
-        verbose_name = "Maternal Eligibility"
-        verbose_name_plural = "Maternal Eligibility"
+    objects = ScreeningPregWomenManager()
+
+    def __str__(self):
+        return f'{self.screening_identifier}, {self.study_child_identifier}'
 
     def save(self, *args, **kwargs):
-        eligibility_criteria = Eligibility(self.age_in_years, self.has_omang)
+        eligibility_criteria = PregWomenEligibility(
+            self.hiv_testing, self.breastfeed_intent)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
-        super(SubjectScreening, self).save(*args, **kwargs)
-
-    def natural_key(self):
-        return self.screening_identifier
+        super().save(*args, **kwargs)
 
     def get_search_slug_fields(self):
         fields = super().get_search_slug_fields()
         fields.append('screening_identifier')
         return fields
+
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Screening for Newly Enrolled Pregnant Women'
+        verbose_name_plural = 'Screening for Newly Enrolled Pregnant Women'

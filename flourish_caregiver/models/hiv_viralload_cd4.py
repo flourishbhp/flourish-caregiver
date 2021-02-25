@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_constants.choices import YES_NO
 
-from .maternal_arv_preg import CrfModelMixin
+from .maternal_arv_during_preg import CrfModelMixin
 from ..maternal_choices import SIZE_CHECK
 
 

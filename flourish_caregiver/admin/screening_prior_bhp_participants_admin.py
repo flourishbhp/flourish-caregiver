@@ -19,6 +19,7 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': ('screening_identifier',
                        'study_child_identifier',
+                       'report_datetime',
                        'child_alive',
                        'mother_alive',
                        'flourish_interest',
@@ -32,4 +33,9 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'flourish_interest': admin.VERTICAL,
                     'flourish_participation': admin.VERTICAL}
 
-    list_display = ('study_child_identifier',)
+    list_display = (
+        'report_datetime', 'screening_identifier', 'study_child_identifier',
+        'is_eligible', 'is_consented')
+
+    list_filter = ('report_datetime', 'screening_identifier',
+                   'is_eligible', 'is_consented')

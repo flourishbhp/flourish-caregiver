@@ -1,15 +1,30 @@
 from django.db import models
+from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
+from edc_base.model_validators import datetime_not_future
 from edc_base.sites import SiteModelMixin
+from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
+from edc_protocol.validators import datetime_not_before_study_start
+from edc_search.model_mixins import SearchSlugManager
 
 from .eligibility import BHPPriorEligibilty
+from .model_mixins import SearchSlugModelMixin
 from ..choices import FLOURISH_PARTICIPATION, YES_NO_UNK_NA
 from ..identifiers import ScreeningIdentifier
 
 
-class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
+class ScreeningPriorBhpParticipantsManager(SearchSlugManager, models.Manager):
+
+    def get_by_natural_key(self, eligibility_identifier):
+        return self.get(screening_identifier=eligibility_identifier)
+
+
+class ScreeningPriorBhpParticipants(
+        NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
+        SearchSlugModelMixin, BaseUuidModel):
 
     identifier_cls = ScreeningIdentifier
 
@@ -19,6 +34,14 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
         blank=True,
         null=True,
         unique=True)
+
+    report_datetime = models.DateTimeField(
+        verbose_name="Report Date and Time",
+        default=get_utcnow,
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future],
+        help_text='Date and time of assessing eligibility')
 
     study_child_identifier = models.CharField(
         verbose_name='Study Child Subject Identifier',
@@ -61,6 +84,18 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
         default=False,
         editable=False)
 
+    # is updated via signal once subject is consented
+    is_consented = models.BooleanField(
+        default=False,
+        editable=False)
+
+    history = HistoricalRecords()
+
+    objects = ScreeningPriorBhpParticipantsManager()
+
+    def __str__(self):
+        return f'{self.screening_identifier}, {self.study_child_identifier}'
+
     def save(self, *args, **kwargs):
         eligibility_criteria = BHPPriorEligibilty(
             self.child_alive, self.flourish_interest, self.flourish_participation)
@@ -70,9 +105,13 @@ class ScreeningPriorBhpParticipants(SiteModelMixin, BaseUuidModel):
             self.screening_identifier = self.identifier_cls().identifier
         super().save(*args, **kwargs)
 
+    def get_search_slug_fields(self):
+        fields = super().get_search_slug_fields()
+        fields.append('screening_identifier')
+        fields.append('study_child_identifier')
+        return fields
+
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'Screening Prior BHP Participants'
         verbose_name_plural = 'Screening Prior BHP Participants'
-
-

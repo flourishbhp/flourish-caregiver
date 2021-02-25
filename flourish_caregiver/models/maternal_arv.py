@@ -4,14 +4,14 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_not_future
 
 from ..choices import ARV_DRUG_LIST, REASON_ARV_STOP
-from .maternal_arv_preg import MaternalArvPreg
+from .maternal_arv_during_preg import MaternalArvDuringPreg
 
 
-class ArvsDuringPregnancy(BaseUuidModel):
+class MaternalArv(BaseUuidModel):
 
     """ Inline ARV table to indicate ARV medication taken by mother """
 
-    maternal_arv_preg = models.ForeignKey(MaternalArvPreg, on_delete=PROTECT)
+    maternal_arv_durg_preg = models.ForeignKey(MaternalArvDuringPreg, on_delete=PROTECT)
 
     arv_code = models.CharField(
         verbose_name="ARV code",
@@ -48,7 +48,7 @@ class ArvsDuringPregnancy(BaseUuidModel):
         null=True)
 
     class Meta:
-        app_label = 'flourish_caregiver'
-        verbose_name = 'ARVs During Pregnancy'
-        verbose_name_plural = 'ARVs During Pregnancy'
+        app_label = 'td_maternal'
+        verbose_name = 'Maternal ARV'
+        verbose_name_plural = 'Maternal ARV'
         unique_together = ('maternal_arv_preg', 'arv_code', 'start_date')

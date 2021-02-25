@@ -1,12 +1,12 @@
 from django.db import models
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 
 from ..choices import ARV_INTERRUPTION_REASON
 from .model_mixins import CrfModelMixin
 
 
-class MaternalArvPreg(CrfModelMixin):
+class MaternalArvDuringPreg(CrfModelMixin):
 
     """ This model is for all HIV positive mothers who are pregnant
     (whom we hope to enroll their infant) and/or for mothers who
@@ -21,7 +21,7 @@ class MaternalArvPreg(CrfModelMixin):
 
     is_interrupt = models.CharField(
         max_length=3,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         verbose_name="Was there an interruption in the ARVs received during "
         "pregnancy through delivery of >/=3days?",
     )
@@ -40,5 +40,5 @@ class MaternalArvPreg(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Maternal ARV In This Preg'
-        verbose_name_plural = 'Maternal ARV In This Preg'
+        verbose_name = 'ARVs During Pregnancy'
+        verbose_name_plural = 'ARVs During Pregnancy'

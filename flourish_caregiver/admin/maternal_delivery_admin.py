@@ -54,4 +54,5 @@ class MaternalDeliveryAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'mode_delivery': admin.VERTICAL,
                     'csection_reason': admin.VERTICAL,
                     'feeding_mode': admin.VERTICAL}
+
     filter_horizontal = ('delivery_complications',)
