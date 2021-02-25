@@ -63,6 +63,13 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         verbose_name="Last name",
         null=True, blank=False)
 
+    child_first_name = FirstnameField(
+        null=True, blank=False)
+
+    child_last_name = LastnameField(
+        verbose_name="Last name",
+        null=True, blank=False)
+
     health_care_infant = models.CharField(
         verbose_name=('Health clinic where your infant will'
                       ' receive their routine care'),
