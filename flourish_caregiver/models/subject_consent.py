@@ -110,8 +110,8 @@ class SubjectConsent(
         max_length=5,
         choices=YES_NO)
 
-    remain_in_study = models.CharField(
-        verbose_name='Are you willing to remain in the study area for 5 years?',
+    child_remain_in_study = models.CharField(
+        verbose_name='Is your child willing to remain in the study area for 5 years?',
         max_length=5,
         choices=YES_NO)
 

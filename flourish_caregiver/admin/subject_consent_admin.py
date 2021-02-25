@@ -86,10 +86,9 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         ('Caregiver Child Consent Questions', {
             'fields': (
                 'child_test',
-                'remain_in_study',
+                'child_remain_in_study',
                 'child_preg_test',
-                'child_knows_status'),
-            'description': 'The following questions are directed to the interviewer.'}),
+                'child_knows_status'),}),
         audit_fieldset_tuple)
 
     radio_fields = {
@@ -110,7 +109,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'breastfeed_intent': admin.VERTICAL,
         'future_contact': admin.VERTICAL,
         'child_test': admin.VERTICAL,
-        'remain_in_study': admin.VERTICAL,
+        'child_remain_in_study': admin.VERTICAL,
         'child_preg_test': admin.VERTICAL,
         'child_knows_status': admin.VERTICAL,}
 

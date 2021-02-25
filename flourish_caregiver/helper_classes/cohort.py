@@ -3,8 +3,6 @@ from django.apps import apps as django_apps
 
 from flourish_child.models import ChildDataset
 
-from ..models import SubjectConsent, MaternalDataset
-
 
 class CohortError(Exception):
     pass
@@ -122,6 +120,7 @@ class Cohort:
     def total_efv_regime(self):
         """Return total enrolled infant for a specified protocol with EFV regime.
         """
+        from ..models import SubjectConsent, MaternalDataset
         screening_identifiers = SubjectConsent.objects.values_list(
             'screening_identifier', flat=True).distinct()
         maternal_dataset = MaternalDataset.objects.filter(
@@ -133,6 +132,7 @@ class Cohort:
     def total_dtg_regime(self):
         """Return total enrolled infant for a specified protocol with DTG regime.
         """
+        from ..models import SubjectConsent, MaternalDataset
         screening_identifiers = SubjectConsent.objects.values_list(
             'screening_identifier', flat=True).distinct()
         maternal_dataset = MaternalDataset.objects.filter(
@@ -144,6 +144,7 @@ class Cohort:
     def total_pi_regime(self):
         """Returns total enrolled infants for a specified protocol with PI regime.
         """
+        from ..models import SubjectConsent, MaternalDataset
         screening_identifiers = SubjectConsent.objects.values_list(
             'screening_identifier', flat=True).distinct()
         maternal_dataset = MaternalDataset.objects.filter(
@@ -154,6 +155,7 @@ class Cohort:
     def total_HEU(self, protocol=None):
         """Return total enrolled Tshilo Dikotla HEU.
         """
+        from ..models import SubjectConsent, MaternalDataset
         screening_identifiers = SubjectConsent.objects.values_list(
             'screening_identifier', flat=True).distinct()
         
@@ -170,6 +172,7 @@ class Cohort:
     def total_no_hiv_during_preg(self):
         """Return total number of infants with no HIV expore.
         """
+        from ..models import SubjectConsent, MaternalDataset
         screening_identifiers = SubjectConsent.objects.values_list(
             'screening_identifier', flat=True).distinct()
         maternal_dataset = MaternalDataset.objects.filter(
@@ -181,6 +184,7 @@ class Cohort:
     def total_HUU(self, protocol=None):
         """Returns total enrolled Tshilo Dikotla HUU infants.
         """
+        from ..models import SubjectConsent, MaternalDataset
         screening_identifiers = SubjectConsent.objects.values_list(
             'screening_identifier', flat=True).distinct()
         
@@ -197,6 +201,7 @@ class Cohort:
         """Return total enrolled infant that are HUU adolescents.
         Total returned is for a protocol specified.
         """
+        from ..models import SubjectConsent, MaternalDataset
         screening_identifiers = SubjectConsent.objects.values_list(
             'screening_identifier', flat=True).filter(
                 child_age_at_enrollment__gte=9.5)
