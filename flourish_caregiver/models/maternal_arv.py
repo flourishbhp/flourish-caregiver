@@ -11,7 +11,7 @@ class MaternalArv(BaseUuidModel):
 
     """ Inline ARV table to indicate ARV medication taken by mother """
 
-    maternal_arv_preg = models.ForeignKey(MaternalArvDuringPreg, on_delete=PROTECT)
+    maternal_arv_durg_preg = models.ForeignKey(MaternalArvDuringPreg, on_delete=PROTECT)
 
     arv_code = models.CharField(
         verbose_name="ARV code",

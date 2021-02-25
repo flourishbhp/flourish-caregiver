@@ -38,8 +38,6 @@ class MaternalArvDuringPreg(CrfModelMixin):
         blank=True,
         null=True)
 
-
-
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
         verbose_name = 'ARVs During Pregnancy'
