@@ -41,7 +41,6 @@ def maternal_dataset_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw:
         if created:
-
             try:
                 LocatorLog.objects.get(maternal_dataset=instance)
             except LocatorLog.DoesNotExist:
@@ -62,11 +61,13 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
 def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """Put subject on cohort a schedule after consenting on behalf of child.
     """
-    child_age = age(instance.dob, get_utcnow()).years
-    child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
+
     cohort = cohort_assigned(instance.subject_identifier)
-    if not raw:
-        if child_age < 7 and cohort:
+
+    if not raw and cohort:
+        child_age = age(instance.dob, get_utcnow()).years
+        child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
+        if child_age < 7:
 #         if cohort == 'cohort_c':
 #             preflourish_model_cls = django_apps.get_model('pre_flourish.onschedulepreflourish')
 #             try:
@@ -88,7 +89,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         version=instance.version,
                         dob=instance.dob,
                         cohort=cohort)
-        elif child_age >= 7 and cohort:
+        else:
             try:
                 child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
                             subject_identifier=instance.subject_identifier+'-10',
@@ -100,7 +101,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 put_on_schedule(cohort, instance=instance)
                 instance.cohort = cohort
                 instance.save_base(raw=True)
-    
+
                 child_dummy_consent_obj.cohort = cohort
                 child_dummy_consent_obj.save()
 
@@ -137,7 +138,7 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
 
         onschedule_model_cls = django_apps.get_model(onschedule_model)
 
-        schedule_name = cohort + '_schedule_1'
+        schedule_name = cohort + '_schedule1'
 
         try:
             onschedule_model_cls.objects.get(
@@ -150,4 +151,5 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
                 schedule_name=schedule_name)
         else:
             schedule.refresh_schedule(
-                subject_identifier=instance.subject_identifier)
+                subject_identifier=instance.subject_identifier,
+                schedule_name=schedule_name)

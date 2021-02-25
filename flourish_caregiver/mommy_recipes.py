@@ -52,7 +52,7 @@ antenatalenrollment = Recipe(
     is_diabetic=NO,
     is_eligible=True,
     knows_lmp=YES,
-    last_period_date=(get_utcnow() - relativedelta(months=6)).date(),
+    last_period_date=(get_utcnow() - relativedelta(months=5, weeks=3)).date(),
     pending_ultrasound=False,
     rapid_test_date=None,
     rapid_test_done='N/A',
