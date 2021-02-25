@@ -1,5 +1,4 @@
 from .antenatal_enrollment import AntenatalEnrollment
-from .arvs_during_pregnancy import ArvsDuringPregnancy
 from .arvs_pre_pregnancy import ArvsPrePregnancy
 from .caregiver_clinical_measurements import CaregiverClinicalMeasurements
 from .caregiver_clinical_measurements_fu import CaregiverClinicalMeasurementsFu
@@ -22,7 +21,8 @@ from .subject_consent import SubjectConsent
 from .substance_use_during_preg import SubstanceUseDuringPregnancy
 from .substance_use_prior_preg import SubstanceUsePriorPregnancy
 from .subject_screening import SubjectScreening
-from .maternal_arv_preg import MaternalArvPreg
+from .maternal_arv import MaternalArv
+from .maternal_arv_during_preg import MaternalArvDuringPreg
 from .maternal_diagnoses import MaternalDiagnoses
 from .maternal_hiv_interim_hx import MaternalHivInterimHx
 from .maternal_interim_idcc_data import MaternalInterimIdcc

@@ -73,4 +73,4 @@ class MaternalCovidScreeningAction(Action):
         return self.reference_model_obj.covid_results != 'pending'
 
 
-# site_action_items.register(CaregiverLocatorAction)
+site_action_items.register(CaregiverLocatorAction)

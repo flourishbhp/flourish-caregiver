@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django_crypto_fields.fields import EncryptedCharField
 from django_crypto_fields.fields import FirstnameField, LastnameField
+from edc_action_item.model_mixins import ActionModelMixin
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
@@ -16,6 +17,8 @@ from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsM
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugManager
 
+from ..identifiers import ScreeningIdentifier
+from ..action_items import CAREGIVER_LOCATOR_ACTION
 from .model_mixins import SearchSlugModelMixin
 
 
@@ -29,6 +32,8 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
                        SubjectIndirectContactFieldsMixin,
                        SubjectWorkFieldsMixin, LocatorMethodsModelMixin,
                        SearchSlugModelMixin, BaseUuidModel):
+
+    identifier_cls = ScreeningIdentifier
 
     report_datetime = models.DateTimeField(
         default=get_utcnow,
