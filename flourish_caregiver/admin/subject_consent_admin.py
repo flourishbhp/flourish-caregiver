@@ -83,6 +83,12 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'future_contact',
                 'consent_datetime'),
             'description': 'The following questions are directed to the interviewer.'}),
+        ('Caregiver Child Consent Questions', {
+            'fields': (
+                'child_test',
+                'child_remain_in_study',
+                'child_preg_test',
+                'child_knows_status'),}),
         audit_fieldset_tuple)
 
     radio_fields = {
@@ -101,7 +107,11 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'remain_in_study': admin.VERTICAL,
         'hiv_testing': admin.VERTICAL,
         'breastfeed_intent': admin.VERTICAL,
-        'future_contact': admin.VERTICAL, }
+        'future_contact': admin.VERTICAL,
+        'child_test': admin.VERTICAL,
+        'child_remain_in_study': admin.VERTICAL,
+        'child_preg_test': admin.VERTICAL,
+        'child_knows_status': admin.VERTICAL,}
 
     list_display = ('subject_identifier',
                     'verified_by',

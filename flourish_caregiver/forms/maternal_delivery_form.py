@@ -9,6 +9,10 @@ class MaternalDeliveryForm(
 
 #     form_validator_cls = None
 
+    subject_identifier = forms.CharField(
+        label='Subject Identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
     class Meta:
         model = MaternalDelivery
         fields = '__all__'

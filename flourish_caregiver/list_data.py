@@ -24,6 +24,18 @@ list_data = {
         ('Hypertensive medications', 'Hypertensive medications'),
         ('Prenatal Vitamins', 'Prenatal Vitamins')
     ],
+    'flourish_caregiver.deliverycomplications': [
+        ('Uterine rupture', 'Uterine rupture'),
+        ('Hemorrhage req. transfusion', 'Hemorrhage req. transfusion'),
+        ('Pre-eclampsia/eclampsia', 'Pre-eclampsia/eclampsia'),
+        ('Placenta previa', 'Placenta previa'),
+        ('Placental abruption', 'Placental abruption'),
+        ('Chorioamnioitis or sus. chorioamnionitis',
+         'Chorioamnioitis or sus. chorioamnionitis'),
+        ('Intrapartum fever', 'Intrapartum fever'),
+        ('Other', 'Other'),
+        ('None', 'None')
+    ],
     'flourish_caregiver.maternaldiagnoseslist': [
         ('Pneumonia', 'Pneumonia'),
         ('Chlamydia', 'Chlamydia'),
