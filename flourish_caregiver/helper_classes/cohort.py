@@ -1,6 +1,8 @@
 import re
 from django.apps import apps as django_apps
 
+from flourish_child.models import ChildDataset
+
 
 class CohortError(Exception):
     pass
@@ -13,7 +15,8 @@ class Cohort:
 
     def __init__(
             self, child_dob=None, enrollment_date=None, infant_hiv_exposed=None,
-            mum_hiv_status=None, protocol=None, dtg=None, pi=None, efv=None):
+            mum_hiv_status=None, protocol=None, dtg=None, pi=None, efv=None,
+            screening_identifier=None):
 
         self.child_dob = child_dob
         self.enrollment_date = enrollment_date
@@ -117,41 +120,100 @@ class Cohort:
     def total_efv_regime(self):
         """Return total enrolled infant for a specified protocol with EFV regime.
         """
-        return 0
+        from ..models import SubjectConsent, MaternalDataset
+        screening_identifiers = SubjectConsent.objects.values_list(
+            'screening_identifier', flat=True).distinct()
+        maternal_dataset = MaternalDataset.objects.filter(
+            screening_identifier__in=screening_identifiers,
+            preg_efv=1)
+        return maternal_dataset.count()
 
     @property
     def total_dtg_regime(self):
         """Return total enrolled infant for a specified protocol with DTG regime.
         """
-        return 0
+        from ..models import SubjectConsent, MaternalDataset
+        screening_identifiers = SubjectConsent.objects.values_list(
+            'screening_identifier', flat=True).distinct()
+        maternal_dataset = MaternalDataset.objects.filter(
+            screening_identifier__in=screening_identifiers,
+            preg_dtg=1)
+        return maternal_dataset.count()
 
     @property
     def total_pi_regime(self):
         """Returns total enrolled infants for a specified protocol with PI regime.
         """
-        return 0
+        from ..models import SubjectConsent, MaternalDataset
+        screening_identifiers = SubjectConsent.objects.values_list(
+            'screening_identifier', flat=True).distinct()
+        maternal_dataset = MaternalDataset.objects.filter(
+            screening_identifier__in=screening_identifiers,
+            preg_pi=1)
+        return maternal_dataset.count()
 
     def total_HEU(self, protocol=None):
         """Return total enrolled Tshilo Dikotla HEU.
         """
-        return 0
+        from ..models import SubjectConsent, MaternalDataset
+        screening_identifiers = SubjectConsent.objects.values_list(
+            'screening_identifier', flat=True).distinct()
+        
+        study_child_identifiers = MaternalDataset.objects.values_list(
+            'study_child_identifier', flat=True).filter(
+                screening_identifier__in=screening_identifiers)
+        
+        child_dataset = ChildDataset.objects.filter(
+            study_child_identifiers__in=study_child_identifiers,
+            infant_hiv_exposed='Exposed')
+        return child_dataset.count()
 
     @property
     def total_no_hiv_during_preg(self):
         """Return total number of infants with no HIV expore.
         """
-        return 0
+        from ..models import SubjectConsent, MaternalDataset
+        screening_identifiers = SubjectConsent.objects.values_list(
+            'screening_identifier', flat=True).distinct()
+        maternal_dataset = MaternalDataset.objects.filter(
+            screening_identifier__in=screening_identifiers,
+            mum_hiv_status='HIV uninfected')
+        return maternal_dataset.count()
+        
 
     def total_HUU(self, protocol=None):
         """Returns total enrolled Tshilo Dikotla HUU infants.
         """
-        return 0
+        from ..models import SubjectConsent, MaternalDataset
+        screening_identifiers = SubjectConsent.objects.values_list(
+            'screening_identifier', flat=True).distinct()
+        
+        study_child_identifiers = MaternalDataset.objects.values_list(
+            'study_child_identifier', flat=True).filter(
+                screening_identifier__in=screening_identifiers)
+        
+        child_dataset = ChildDataset.objects.filter(
+            study_child_identifiers__in=study_child_identifiers,
+            infant_hiv_exposed='Unexposed')
+        return child_dataset.count()
 
     def total_huu_adolescents(self, protocol=None):
         """Return total enrolled infant that are HUU adolescents.
         Total returned is for a protocol specified.
         """
-        return 0
+        from ..models import SubjectConsent, MaternalDataset
+        screening_identifiers = SubjectConsent.objects.values_list(
+            'screening_identifier', flat=True).filter(
+                child_age_at_enrollment__gte=9.5)
+        
+        study_child_identifiers = MaternalDataset.objects.values_list(
+            'study_child_identifier', flat=True).filter(
+                screening_identifier__in=screening_identifiers)
+        
+        child_dataset = ChildDataset.objects.filter(
+            study_child_identifiers__in=study_child_identifiers,
+            infant_hiv_exposed='Unexposed')
+        return child_dataset.count()
 
     @property
     def age_at_year_3(self):

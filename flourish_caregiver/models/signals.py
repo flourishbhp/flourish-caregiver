@@ -10,7 +10,7 @@ from ..helper_classes import Cohort
 from .antenatal_enrollment import AntenatalEnrollment
 from .maternal_dataset import MaternalDataset
 from .locator_logs import LocatorLog, LocatorLogEntry
-from .caregiver_child_consent import CaregiverChildConsent
+from .subject_consent import SubjectConsent
 
 
 class PreFlourishError(Exception):
@@ -58,7 +58,7 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
         put_on_schedule('cohort_a', instance=instance)
 
 
-@receiver(post_save, weak=False, sender=CaregiverChildConsent,
+@receiver(post_save, weak=False, sender=SubjectConsent,
           dispatch_uid='caregiver_child_consent_on_post_save')
 def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """Put subject on cohort a schedule after consenting on behalf of child.

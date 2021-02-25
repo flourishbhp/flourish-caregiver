@@ -17,7 +17,7 @@ from edc_consent.model_mixins import ConsentModelMixin
 from edc_consent.validators import eligible_if_yes
 from edc_constants.choices import YES_NO
 
-from ..choices import IDENTITY_TYPE
+from ..choices import IDENTITY_TYPE, COHORTS
 from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
 from ..subject_identifier import SubjectIdentifier
 from .model_mixins import SearchSlugModelMixin
@@ -104,6 +104,45 @@ class SubjectConsent(
         verbose_name='Do you give us permission to be contacted for future studies?',
         choices=YES_NO)
 
+    child_test = models.CharField(
+        verbose_name='Will you allow for HIV testing and counselling of '
+                     'your Child',
+        max_length=5,
+        choices=YES_NO)
+
+    child_remain_in_study = models.CharField(
+        verbose_name='Is your child willing to remain in the study area for 5 years?',
+        max_length=5,
+        choices=YES_NO)
+
+    child_preg_test = models.CharField(
+        verbose_name='If your child is female and will be 12 years or older '
+                     'prior to 30-Jun-2025, will you allow the female child '
+                     'to undergo pregnancy testing?',
+        max_length=5,
+        choices=YES_NO,
+        blank=True,
+        null=True,)
+
+    child_knows_status = models.CharField(
+        verbose_name='If your child is ≥ 16 years, have they been told about your HIV?',
+        max_length=5,
+        choices=YES_NO,
+        blank=True,
+        null=True)
+
+    cohort = models.CharField(
+        max_length=12,
+        choices=COHORTS,
+        blank=True,
+        null=True)
+
+    child_age_at_enrollment = models.DecimalField(
+        blank=True,
+        null=True,
+        decimal_places=2,
+        max_digits=4)
+
     objects = SubjectConsentManager()
 
     consent = ConsentManager()
@@ -114,8 +153,21 @@ class SubjectConsent(
         return f'{self.subject_identifier} V{self.version}'
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        from ..helper_classes import Cohort
+        from .maternal_dataset import MaternalDataset
+        try:
+            maternal_dataset = MaternalDataset.objects.get(
+                screening_identifier=self.screening_identifier).study_child_identifier
+        except MaternalDataset.DoesNotExist:
+            pass
+        else:
+            self.child_age_at_enrollment = Cohort(
+                ).age_at_enrollment(
+                    child_dob=maternal_dataset.delivdt,
+                    check_date=self.created.date())
         self.version = '1'
+        
+        super().save(*args, **kwargs)
 
     def natural_key(self):
         return (self.subject_identifier, self.version)
