@@ -157,7 +157,7 @@ class SubjectConsent(
         from .maternal_dataset import MaternalDataset
         try:
             maternal_dataset = MaternalDataset.objects.get(
-                screening_identifier=self.screening_identifier).study_child_identifier
+                screening_identifier=self.screening_identifier)
         except MaternalDataset.DoesNotExist:
             pass
         else:
@@ -166,7 +166,7 @@ class SubjectConsent(
                     child_dob=maternal_dataset.delivdt,
                     check_date=self.created.date())
         self.version = '1'
-        
+
         super().save(*args, **kwargs)
 
     def natural_key(self):
