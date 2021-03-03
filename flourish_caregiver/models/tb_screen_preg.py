@@ -77,5 +77,5 @@ class TbScreenPreg(CrfModelMixin):
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = 'Enrollment TB Screen for Pregnant Women'
-        verbose_name_plural = 'Enrollment TB Screen for Pregnant Women'
+        verbose_name = 'TB Screen for Pregnant Women'
+        verbose_name_plural = 'TB Screen for Pregnant Women'
