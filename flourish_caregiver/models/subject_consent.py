@@ -137,6 +137,11 @@ class SubjectConsent(
         blank=True,
         null=True)
 
+    child_dob = models.DateField(
+        verbose_name="Date of birth",
+        null=True,
+        blank=False)
+
     child_age_at_enrollment = models.DecimalField(
         blank=True,
         null=True,
@@ -153,21 +158,25 @@ class SubjectConsent(
         return f'{self.subject_identifier} V{self.version}'
 
     def save(self, *args, **kwargs):
+        self.version = '1'
+        self.child_age_at_enrollment = self.get_child_age_at_enrollment()
+        super().save(*args, **kwargs)
+
+    def get_child_age_at_enrollment(self):
         from ..helper_classes import Cohort
         from .maternal_dataset import MaternalDataset
+
         try:
             maternal_dataset = MaternalDataset.objects.get(
                 screening_identifier=self.screening_identifier)
         except MaternalDataset.DoesNotExist:
             pass
         else:
-            self.child_age_at_enrollment = Cohort(
+            self.child_dob = maternal_dataset.delivdt
+            return Cohort(
                 ).age_at_enrollment(
                     child_dob=maternal_dataset.delivdt,
                     check_date=self.created.date())
-        self.version = '1'
-
-        super().save(*args, **kwargs)
 
     def natural_key(self):
         return (self.subject_identifier, self.version)

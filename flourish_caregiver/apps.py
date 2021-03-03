@@ -14,7 +14,7 @@ class AppConfig(DjangoAppConfig):
 
     def ready(self):
         from .models import antenatal_enrollment_on_post_save
-        from .models import caregiver_child_consent_on_post_save
+        from .models import subject_consent_on_post_save
         from .models import maternal_dataset_on_post_save
 
 if settings.APP_NAME == 'flourish_caregiver':

@@ -58,17 +58,18 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
 
 
 @receiver(post_save, weak=False, sender=SubjectConsent,
-          dispatch_uid='caregiver_child_consent_on_post_save')
-def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwargs):
+          dispatch_uid='subject_consent_on_post_save')
+def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """Put subject on cohort a schedule after consenting on behalf of child.
     """
 
     cohort = cohort_assigned(instance.subject_identifier)
 
     if not raw and cohort:
-        child_age = age(instance.dob, get_utcnow()).years
+        instance.registration_update_or_create()
+        child_age = age(instance.child_dob, get_utcnow()).years 
         child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
-        if child_age < 7:
+        if child_age and child_age < 7:
 #         if cohort == 'cohort_c':
 #             preflourish_model_cls = django_apps.get_model('pre_flourish.onschedulepreflourish')
 #             try:
@@ -88,14 +89,14 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         subject_identifier=instance.subject_identifier+'-10',
                         consent_datetime=instance.consent_datetime,
                         version=instance.version,
-                        dob=instance.dob,
+                        dob=instance.child_dob,
                         cohort=cohort)
         else:
             try:
                 child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
                             subject_identifier=instance.subject_identifier+'-10',
                             version=instance.version,
-                            dob=instance.dob)
+                            dob=instance.child_dob)
             except child_dummy_consent_cls.DoesNotExist:
                 pass
             else:
@@ -117,7 +118,8 @@ def cohort_assigned(subject_identifier):
     else:
         infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
         try:
-            infant_dataset_obj = infant_dataset_cls.objects.get(study_child_identifier=maternal_dataset_obj.study_child_identifier)
+            infant_dataset_obj = infant_dataset_cls.objects.get(
+                                        study_child_identifier=maternal_dataset_obj.study_child_identifier)
         except infant_dataset_cls.DoesNotExist:
             return None
         else:
@@ -125,7 +127,11 @@ def cohort_assigned(subject_identifier):
                 child_dob=maternal_dataset_obj.delivdt,
                 enrollment_date=infant_dataset_obj.infant_enrolldate,
                 infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
-                protocol=maternal_dataset_obj.protocol).cohort_variable
+                protocol=maternal_dataset_obj.protocol,
+                mum_hiv_status=maternal_dataset_obj.mom_hivstatus,
+                dtg=maternal_dataset_obj.preg_dtg,
+                efv=maternal_dataset_obj.preg_efv,
+                pi=maternal_dataset_obj.preg_pi).cohort_variable
             return cohort
 
 

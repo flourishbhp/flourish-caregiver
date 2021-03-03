@@ -8,12 +8,24 @@ from model_mommy.recipe import Recipe, seq
 
 from .models import AntenatalEnrollment, SubjectConsent, MaternalVisit
 from .models import MaternalDelivery, HIVRapidTestCounseling, MaternalDataset
+from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
 
 
 fake = Faker()
 
 maternaldataset = Recipe(
     MaternalDataset)
+
+screeningpriorbhpparticipants = Recipe(
+    ScreeningPriorBhpParticipants,
+    child_alive=YES,
+    flourish_interest=YES,
+    flourish_participation='interested')
+
+screeningpregwomen = Recipe(
+    ScreeningPregWomen,
+    hiv_testing=YES,
+    breastfeed_intent=YES)
 
 subjectconsent = Recipe(
     SubjectConsent,

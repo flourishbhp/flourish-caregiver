@@ -85,6 +85,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
             'description': 'The following questions are directed to the interviewer.'}),
         ('Caregiver Child Consent Questions', {
             'fields': (
+                'child_dob',
                 'child_test',
                 'child_remain_in_study',
                 'child_preg_test',
