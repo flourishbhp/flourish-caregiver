@@ -73,5 +73,5 @@ class TbHistoryPreg(CrfModelMixin):
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = 'Enrollment History of TB for Pregnant Women'
-        verbose_name_plural = 'Enrollment History of TB for Pregnant Women'
+        verbose_name = 'History of TB for Pregnant Women'
+        verbose_name_plural = 'History of TB for Pregnant Women'
