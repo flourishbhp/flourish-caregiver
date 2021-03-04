@@ -63,7 +63,6 @@ class TestVisitScheduleSetup(TestCase):
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
-    @tag('aa')
     def test_cohort_a_onschedule_consent_valid(self):
         self.subject_identifier = self.subject_identifier[:-1] + '1'
         self.options['subject_identifier'] = self.subject_identifier

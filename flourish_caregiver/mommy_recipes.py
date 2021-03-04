@@ -6,15 +6,18 @@ from edc_constants.constants import ALIVE, YES, NO, ON_STUDY, PARTICIPANT
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
-from .models import AntenatalEnrollment, SubjectConsent, MaternalVisit
-from .models import MaternalDelivery, HIVRapidTestCounseling, MaternalDataset
+from .models import AntenatalEnrollment, SubjectConsent
+from .models import MaternalDataset, CaregiverLocator
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
-
 
 fake = Faker()
 
 maternaldataset = Recipe(
-    MaternalDataset)
+    MaternalDataset,
+    )
+
+caregiverlocator = Recipe(
+    CaregiverLocator)
 
 screeningpriorbhpparticipants = Recipe(
     ScreeningPriorBhpParticipants,
@@ -36,8 +39,8 @@ subjectconsent = Recipe(
     last_name=fake.last_name,
     initials='XX',
     gender='F',
-    identity=seq('123425678'),
-    confirm_identity=seq('123425678'),
+    identity=seq('123425679'),
+    confirm_identity=seq('123425679'),
     identity_type='OMANG',
     is_dob_estimated='-',
     version='1'
