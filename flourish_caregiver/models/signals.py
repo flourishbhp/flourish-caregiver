@@ -63,34 +63,34 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """Put subject on cohort a schedule after consenting on behalf of child.
     """
 
-    cohort = cohort_assigned(instance.subject_identifier)
+    if not raw:
+        cohort = cohort_assigned(instance.screening_identifier)
+        if cohort:
+            instance.registration_update_or_create()
+            child_age = age(instance.child_dob, get_utcnow()).years 
+            child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
+            if child_age and child_age < 7:
+    #         if cohort == 'cohort_c':
+    #             preflourish_model_cls = django_apps.get_model('pre_flourish.onschedulepreflourish')
+    #             try:
+    #                 preflourish_model_cls.objects.using('pre_flourish').get(identity=instance.identity)
+    #             except preflourish_model_cls.DoesNotExist:
+    #                 raise  PreFlourishError('Participant is missing PreFlourish schedule.')
 
-    if not raw and cohort:
-        instance.registration_update_or_create()
-        child_age = age(instance.child_dob, get_utcnow()).years 
-        child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
-        if child_age and child_age < 7:
-#         if cohort == 'cohort_c':
-#             preflourish_model_cls = django_apps.get_model('pre_flourish.onschedulepreflourish')
-#             try:
-#                 preflourish_model_cls.objects.using('pre_flourish').get(identity=instance.identity)
-#             except preflourish_model_cls.DoesNotExist:
-#                 raise  PreFlourishError('Participant is missing PreFlourish schedule.')
+                put_on_schedule(cohort, instance=instance)
+                instance.cohort = cohort
+                instance.save_base(raw=True)
 
-            put_on_schedule(cohort, instance=instance)
-            instance.cohort = cohort
-            instance.save_base(raw=True)
-
-            try:
-                child_dummy_consent_cls.objects.get(subject_identifier=instance.subject_identifier+'-10',
-                                                    version=instance.version,)
-            except child_dummy_consent_cls.DoesNotExist:
-                child_dummy_consent_cls.objects.create(
-                        subject_identifier=instance.subject_identifier+'-10',
-                        consent_datetime=instance.consent_datetime,
-                        version=instance.version,
-                        dob=instance.child_dob,
-                        cohort=cohort)
+                try:
+                    child_dummy_consent_cls.objects.get(subject_identifier=instance.subject_identifier+'-10',
+                                                        version=instance.version,)
+                except child_dummy_consent_cls.DoesNotExist:
+                    child_dummy_consent_cls.objects.create(
+                            subject_identifier=instance.subject_identifier+'-10',
+                            consent_datetime=instance.consent_datetime,
+                            version=instance.version,
+                            dob=instance.child_dob,
+                            cohort=cohort)
         else:
             try:
                 child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
@@ -108,11 +108,11 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
                 child_dummy_consent_obj.save()
 
 
-def cohort_assigned(subject_identifier):
+def cohort_assigned(screening_identifier):
     """Calculates participant's cohort based on the maternal and child dataset
     """
     try:
-        maternal_dataset_obj = MaternalDataset.objects.get(subject_identifier=subject_identifier)
+        maternal_dataset_obj = MaternalDataset.objects.get(screening_identifier=screening_identifier)
     except MaternalDataset.DoesNotExist:
         return None
     else:
@@ -125,7 +125,7 @@ def cohort_assigned(subject_identifier):
         else:
             cohort = Cohort(
                 child_dob=maternal_dataset_obj.delivdt,
-                enrollment_date=infant_dataset_obj.infant_enrolldate,
+                enrollment_date=get_utcnow().date(),
                 infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
                 protocol=maternal_dataset_obj.protocol,
                 mum_hiv_status=maternal_dataset_obj.mom_hivstatus,

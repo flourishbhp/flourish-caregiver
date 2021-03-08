@@ -9,6 +9,7 @@ from edc_base.model_validators import CellNumber, TelephoneNumber
 from edc_base.model_validators.date import date_not_future, datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
+from edc_action_item.model_mixins import ActionModelMixin
 from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK, YES_NO_NA
 from edc_locator.model_mixins.subject_contact_fields_mixin import SubjectContactFieldsMixin
 from edc_locator.model_mixins.subject_indirect_contact_fields_mixin import SubjectIndirectContactFieldsMixin
@@ -29,11 +30,15 @@ class LocatorManager(SearchSlugManager, models.Manager):
 
 
 class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
-                       SubjectIndirectContactFieldsMixin,
+                       SubjectIndirectContactFieldsMixin, ActionModelMixin,
                        SubjectWorkFieldsMixin, LocatorMethodsModelMixin,
                        SearchSlugModelMixin, BaseUuidModel):
 
     identifier_cls = ScreeningIdentifier
+
+    action_name = CAREGIVER_LOCATOR_ACTION
+
+    tracking_identifier_prefix = 'SL'
 
     report_datetime = models.DateTimeField(
         default=get_utcnow,
@@ -142,6 +147,11 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
     history = HistoricalRecords()
 
     objects = LocatorManager()
+
+    def save(self, *args, **kwargs):
+        if not self.subject_identifier:
+            self.subject_identifier = self.study_maternal_identifier
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'flourish_caregiver'
