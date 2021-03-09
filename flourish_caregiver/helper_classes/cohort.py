@@ -270,5 +270,5 @@ class Cohort:
             return 'cohort_b'
         elif self.cohort_c():
             return 'cohort_c'
-        else:
-            return 'pool'
+#         else:
+#             return 'pool'

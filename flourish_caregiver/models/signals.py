@@ -75,6 +75,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
     #                 preflourish_model_cls.objects.using('pre_flourish').get(identity=instance.identity)
     #             except preflourish_model_cls.DoesNotExist:
     #                 raise  PreFlourishError('Participant is missing PreFlourish schedule.')
+                instance.registration_update_or_create()
                 put_on_schedule(cohort, instance=instance)
                 instance.cohort = cohort
                 instance.save_base(raw=True)
@@ -98,6 +99,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
                 except child_dummy_consent_cls.DoesNotExist:
                     pass
                 else:
+                    instance.registration_update_or_create()
                     put_on_schedule(cohort, instance=instance)
                     instance.cohort = cohort
                     instance.save_base(raw=True)
@@ -135,7 +137,6 @@ def cohort_assigned(screening_identifier):
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None):
     if instance:
-        instance.registration_update_or_create()
         subject_identifier = subject_identifier or instance.subject_identifier
 
         cohort_label_lower = ''.join(cohort.split('_'))
