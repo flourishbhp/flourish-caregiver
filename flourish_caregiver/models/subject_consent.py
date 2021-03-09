@@ -180,6 +180,9 @@ class SubjectConsent(
         self.ineligibility = eligibility_criteria.error_message
         self.version = '1'
         self.child_age_at_enrollment = self.get_child_age_at_enrollment()
+        if self.is_eligible:
+            if self.id and not self.subject_identifier:
+                self.subject_identifier = self.update_subject_identifier_on_save()
         super().save(*args, **kwargs)
 
     def get_child_age_at_enrollment(self):
