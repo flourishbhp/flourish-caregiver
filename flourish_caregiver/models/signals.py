@@ -62,13 +62,12 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
 def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """Put subject on cohort a schedule after consenting on behalf of child.
     """
-
-    if not raw:
+    if not raw and instance.is_eligible:
         cohort = cohort_assigned(instance.screening_identifier)
-        child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
+        child_dummy_consent_cls = django_apps.get_model(
+            'flourish_child.childdummysubjectconsent')
         if cohort:
-            child_age = age(instance.child_dob, get_utcnow()).years 
-
+            child_age = age(instance.child_dob, get_utcnow()).years
             if child_age and child_age < 7:
     #         if cohort == 'cohort_c':
     #             preflourish_model_cls = django_apps.get_model('pre_flourish.onschedulepreflourish')
@@ -76,7 +75,6 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
     #                 preflourish_model_cls.objects.using('pre_flourish').get(identity=instance.identity)
     #             except preflourish_model_cls.DoesNotExist:
     #                 raise  PreFlourishError('Participant is missing PreFlourish schedule.')
-
                 put_on_schedule(cohort, instance=instance)
                 instance.cohort = cohort
                 instance.save_base(raw=True)

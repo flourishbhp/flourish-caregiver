@@ -6,10 +6,3 @@ class ScreeningIdentifier(SimpleUniqueIdentifier):
     random_string_length = 5
     identifier_type = 'screening_identifier'
     template = 'S{device_id}{random_string}'
-
-
-class KaraboScreeningIdentifier(SimpleUniqueIdentifier):
-
-    random_string_length = 5
-    identifier_type = 'screening_identifier'
-    template = 'KB{device_id}{random_string}'

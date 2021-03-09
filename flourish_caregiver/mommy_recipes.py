@@ -6,9 +6,10 @@ from edc_constants.constants import ALIVE, YES, NO, ON_STUDY, PARTICIPANT
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
-from .models import AntenatalEnrollment, SubjectConsent
-from .models import MaternalDataset, CaregiverLocator
+from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery
+from .models import MaternalDataset, CaregiverLocator, MaternalVisit
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
+from .models import HIVRapidTestCounseling
 
 fake = Faker()
 

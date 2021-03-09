@@ -40,7 +40,6 @@ class TestVisitScheduleSetup(TestCase):
             'infant_enrolldate': get_utcnow(),
             'study_child_identifier': '1234'}
 
-
     def test_cohort_a_onschedule_antenatal_valid(self):
 
         mommy.make_recipe(
@@ -94,7 +93,6 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
-
 
     def test_cohort_b_onschedule_valid(self):
 

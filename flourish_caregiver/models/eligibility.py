@@ -51,3 +51,44 @@ class PregWomenEligibility:
             self.error_message.append(
                 'Participant does not intend on breastfeeding.')
         self.is_eligible = False if self.error_message else True
+
+
+class ConsentEligibility:
+
+    def __init__(self, remain_in_study=None, hiv_testing=None, breastfeed_intent=None,
+                 consent_reviewed=None, study_questions=None, assessment_score=None,
+                 consent_signature=None, consent_copy=None):
+        self.error_message = []
+        self.remain_in_study = remain_in_study
+        self.hiv_testing = hiv_testing
+        self.breastfeed_intent = breastfeed_intent
+        self.consent_reviewed = consent_reviewed
+        self.study_questions = study_questions
+        self.assessment_score = assessment_score
+        self.consent_signature = consent_signature
+        self.consent_copy = consent_copy
+        if self.remain_in_study == NO:
+            self.error_message.append(
+                'Participant is not willing to remain in study area until 2025.')
+        if self.hiv_testing == NO:
+            self.error_message.append(
+                'Participant is not willing to undergo HIV testing and counseling.')
+        if self.breastfeed_intent == NO:
+            self.error_message.append(
+                'Participant does not intend on breastfeeding.')
+        if self.consent_reviewed == NO:
+            self.error_message.append(
+                'Consent was not reviewed with the participant.')
+        if self.study_questions == NO:
+            self.error_message.append(
+                'Did not answer all questions the participant had about the study.')
+        if self.assessment_score == NO:
+            self.error_message.append(
+                'Participant did not demonstrate understanding of the study.')
+        if self.consent_signature == NO:
+            self.error_message.append(
+                'Participant did not sign the consent form.')
+        if self.consent_copy == NO:
+            self.error_message.append(
+                'Participant was not provided with a copy of their informed consent.')
+        self.is_eligible = False if self.error_message else True

@@ -4,6 +4,8 @@ from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
+from edc_registration.model_mixins.updates_or_creates_registered_subject_model_mixin import (
+    UpdatesOrCreatesRegistrationModelError)
 from edc_registration.model_mixins import (
     UpdatesOrCreatesRegistrationModelMixin)
 from edc_search.model_mixins import SearchSlugManager
@@ -11,16 +13,16 @@ from edc_search.model_mixins import SearchSlugManager
 from edc_consent.field_mixins import (
     CitizenFieldsMixin, VulnerabilityFieldsMixin)
 from edc_consent.field_mixins import IdentityFieldsMixin
-from edc_consent.field_mixins import ReviewFieldsMixin, PersonalFieldsMixin
+from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
-from edc_consent.validators import eligible_if_yes
 from edc_constants.choices import YES_NO
 
 from ..choices import IDENTITY_TYPE, COHORTS
 from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
 from ..subject_identifier import SubjectIdentifier
-from .model_mixins import SearchSlugModelMixin
+from .eligibility import ConsentEligibility
+from .model_mixins import ReviewFieldsMixin, SearchSlugModelMixin
 
 
 class SubjectConsentManager(SearchSlugManager, models.Manager):
@@ -40,6 +42,11 @@ class SubjectConsent(
     """ A model completed by the user on the mother's consent. """
 
     subject_screening_model = 'flourish_caregiver.subjectscreening'
+
+    subject_identifier = models.CharField(
+        verbose_name="Subject Identifier",
+        max_length=50,
+        null=True)
 
     screening_identifier = models.CharField(
         verbose_name='Screening identifier',
@@ -75,9 +82,8 @@ class SubjectConsent(
 
     remain_in_study = models.CharField(
         max_length=3,
-        verbose_name='Are you willing to remain in the study area for 5 years?',
+        verbose_name='Are you willing to remain in the study area until 2025?',
         choices=YES_NO,
-        validators=[eligible_if_yes, ],
         help_text='If no, participant is not eligible.')
 
     hiv_testing = models.CharField(
@@ -87,7 +93,6 @@ class SubjectConsent(
         choices=YES_NO,
         blank=True,
         null=True,
-        validators=[eligible_if_yes, ],
         help_text='If ‘No’ ineligible for study participation')
 
     breastfeed_intent = models.CharField(
@@ -96,7 +101,6 @@ class SubjectConsent(
         choices=YES_NO,
         blank=True,
         null=True,
-        validators=[eligible_if_yes, ],
         help_text='If ‘No’ ineligible for study participation')
 
     future_contact = models.CharField(
@@ -111,7 +115,7 @@ class SubjectConsent(
         choices=YES_NO)
 
     child_remain_in_study = models.CharField(
-        verbose_name='Is your child willing to remain in the study area for 5 years?',
+        verbose_name='Is your child willing to remain in the study area until 2025?',
         max_length=5,
         choices=YES_NO)
 
@@ -148,6 +152,16 @@ class SubjectConsent(
         decimal_places=2,
         max_digits=4)
 
+    ineligibility = models.TextField(
+        verbose_name="Reason not eligible",
+        max_length=150,
+        null=True,
+        editable=False)
+
+    is_eligible = models.BooleanField(
+        default=False,
+        editable=False)
+
     objects = SubjectConsentManager()
 
     consent = ConsentManager()
@@ -158,8 +172,15 @@ class SubjectConsent(
         return f'{self.subject_identifier} V{self.version}'
 
     def save(self, *args, **kwargs):
-        self.version = '1'
-        self.child_age_at_enrollment = self.get_child_age_at_enrollment()
+        eligibility_criteria = ConsentEligibility(
+            self.remain_in_study, self.hiv_testing, self.breastfeed_intent,
+            self.consent_reviewed, self.study_questions, self.assessment_score,
+            self.consent_signature, self.consent_copy)
+        self.is_eligible = eligibility_criteria.is_eligible
+        self.ineligibility = eligibility_criteria.error_message
+        if self.is_eligible:
+            self.version = '1'
+            self.child_age_at_enrollment = self.get_child_age_at_enrollment()
         super().save(*args, **kwargs)
 
     def get_child_age_at_enrollment(self):
@@ -175,7 +196,7 @@ class SubjectConsent(
             self.child_dob = maternal_dataset.delivdt
             return Cohort(
                 ).age_at_enrollment(
-                    child_dob=maternal_dataset.delivdt,
+                    child_dob=self.child_dob,
                     check_date=self.created.date())
 
     def natural_key(self):
@@ -186,6 +207,8 @@ class SubjectConsent(
 
         Override this if needed.
         """
+        if not self.is_eligible:
+            return None
         subject_identifier = SubjectIdentifier(
             identifier_type='subject',
             requesting_model=self._meta.label_lower,
@@ -195,6 +218,33 @@ class SubjectConsent(
     @property
     def consent_version(self):
         return self.version
+
+    def registration_update_or_create(self):
+        """Creates or Updates the registration model with attributes
+        from this instance.
+
+        Called from the signal
+        """
+        if self.is_eligible:
+            if not getattr(self, self.registration_unique_field):
+                raise UpdatesOrCreatesRegistrationModelError(
+                    f'Cannot update or create RegisteredSubject. '
+                    f'Field value for \'{self.registration_unique_field}\' is None.')
+
+            registration_value = getattr(self, self.registration_unique_field)
+            registration_value = self.to_string(registration_value)
+
+            try:
+                obj = self.registration_model.objects.get(
+                    **{self.registered_subject_unique_field: registration_value})
+            except self.registration_model.DoesNotExist:
+                pass
+            else:
+                self.registration_raise_on_illegal_value_change(obj)
+            registered_subject, created = self.registration_model.objects.update_or_create(
+                **{self.registered_subject_unique_field: registration_value},
+                defaults=self.registration_options)
+            return registered_subject, created
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'flourish_caregiver'
