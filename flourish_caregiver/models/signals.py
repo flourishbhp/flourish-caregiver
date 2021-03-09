@@ -148,6 +148,8 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
 
         onschedule_model_cls = django_apps.get_model(onschedule_model)
 
+        if 'pool' in cohort:
+            cohort = 'caregiver_pool'
         schedule_name = cohort + '_schedule1'
         try:
             onschedule_model_cls.objects.get(
