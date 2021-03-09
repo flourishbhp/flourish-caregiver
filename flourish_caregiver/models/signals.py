@@ -65,6 +65,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
 
     if not raw:
         cohort = cohort_assigned(instance.screening_identifier)
+
         if cohort:
             instance.registration_update_or_create()
             child_age = age(instance.child_dob, get_utcnow()).years 
@@ -91,21 +92,21 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
                             version=instance.version,
                             dob=instance.child_dob,
                             cohort=cohort)
-        else:
-            try:
-                child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
-                            subject_identifier=instance.subject_identifier+'-10',
-                            version=instance.version,
-                            dob=instance.child_dob)
-            except child_dummy_consent_cls.DoesNotExist:
-                pass
             else:
-                put_on_schedule(cohort, instance=instance)
-                instance.cohort = cohort
-                instance.save_base(raw=True)
+                try:
+                    child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
+                                subject_identifier=instance.subject_identifier+'-10',
+                                version=instance.version,
+                                dob=instance.child_dob)
+                except child_dummy_consent_cls.DoesNotExist:
+                    pass
+                else:
+                    put_on_schedule(cohort, instance=instance)
+                    instance.cohort = cohort
+                    instance.save_base(raw=True)
 
-                child_dummy_consent_obj.cohort = cohort
-                child_dummy_consent_obj.save()
+                    child_dummy_consent_obj.cohort = cohort
+                    child_dummy_consent_obj.save()
 
 
 def cohort_assigned(screening_identifier):
@@ -148,7 +149,6 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
         onschedule_model_cls = django_apps.get_model(onschedule_model)
 
         schedule_name = cohort + '_schedule1'
-
         try:
             onschedule_model_cls.objects.get(
                 subject_identifier=instance.subject_identifier,
