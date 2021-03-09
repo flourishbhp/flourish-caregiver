@@ -178,9 +178,8 @@ class SubjectConsent(
             self.consent_signature, self.consent_copy)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
-        if self.is_eligible:
-            self.version = '1'
-            self.child_age_at_enrollment = self.get_child_age_at_enrollment()
+        self.version = '1'
+        self.child_age_at_enrollment = self.get_child_age_at_enrollment()
         super().save(*args, **kwargs)
 
     def get_child_age_at_enrollment(self):
