@@ -65,11 +65,11 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
 
     if not raw:
         cohort = cohort_assigned(instance.screening_identifier)
-
+        child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
         if cohort:
             instance.registration_update_or_create()
             child_age = age(instance.child_dob, get_utcnow()).years 
-            child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
+
             if child_age and child_age < 7:
     #         if cohort == 'cohort_c':
     #             preflourish_model_cls = django_apps.get_model('pre_flourish.onschedulepreflourish')
