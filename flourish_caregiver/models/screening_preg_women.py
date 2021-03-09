@@ -71,7 +71,7 @@ class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
     objects = ScreeningPregWomenManager()
 
     def __str__(self):
-        return f'{self.screening_identifier}, {self.study_child_identifier}'
+        return f'{self.screening_identifier}'
 
     def save(self, *args, **kwargs):
         eligibility_criteria = PregWomenEligibility(

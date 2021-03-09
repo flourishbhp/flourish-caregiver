@@ -67,7 +67,6 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
         cohort = cohort_assigned(instance.screening_identifier)
         child_dummy_consent_cls = django_apps.get_model('flourish_child.childdummysubjectconsent')
         if cohort:
-            instance.registration_update_or_create()
             child_age = age(instance.child_dob, get_utcnow()).years 
 
             if child_age and child_age < 7:
@@ -138,6 +137,7 @@ def cohort_assigned(screening_identifier):
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None):
     if instance:
+        instance.registration_update_or_create()
         subject_identifier = subject_identifier or instance.subject_identifier
 
         cohort_label_lower = ''.join(cohort.split('_'))

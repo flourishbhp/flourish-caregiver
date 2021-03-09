@@ -148,7 +148,8 @@ class EnrollmentMixin(models.Model):
             self.get_registration_date())
         self.enrollment_hiv_status = enrollment_helper.enrollment_hiv_status
         self.date_at_32wks = enrollment_helper.date_at_32wks
-
+        if not self.ultrasound:
+            self.pending_ultrasound = enrollment_helper.pending
         self.is_eligible = self.antenatal_criteria(enrollment_helper)
         self.unenrolled = self.unenrolled_error_messages()
         super(EnrollmentMixin, self).save(*args, **kwargs)
