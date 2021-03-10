@@ -48,6 +48,12 @@ class ScreeningPriorBhpParticipants(
         max_length=50,
         unique=True)
 
+    study_maternal_identifier = models.CharField(
+        verbose_name="Study Caregiver Subject Identifier",
+        max_length=50,
+        blank=True,
+        null=True)
+
     child_alive = models.CharField(
         verbose_name='Is the child from the previous study alive?',
         max_length=10,
