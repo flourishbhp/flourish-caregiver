@@ -16,7 +16,7 @@ from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO, GENDER
 
 from ..choices import IDENTITY_TYPE, COHORTS
 from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
@@ -51,6 +51,11 @@ class SubjectConsent(
     screening_identifier = models.CharField(
         verbose_name='Screening identifier',
         max_length=50)
+
+    gender = models.CharField(
+        verbose_name='Gender',
+        choices=GENDER,
+        max_length=1,)
 
     identity_type = models.CharField(
         verbose_name='What type of identity number is this?',
