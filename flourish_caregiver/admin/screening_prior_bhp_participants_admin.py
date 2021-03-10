@@ -19,6 +19,7 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': ('screening_identifier',
                        'study_child_identifier',
+                       'study_maternal_identifier',
                        'report_datetime',
                        'child_alive',
                        'mother_alive',

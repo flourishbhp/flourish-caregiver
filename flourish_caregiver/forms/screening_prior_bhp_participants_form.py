@@ -20,6 +20,10 @@ class ScreeningPriorBhpParticipantsForm(SiteModelFormMixin, FormValidatorMixin,
         label='Study child Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
+    study_maternal_identifier = forms.CharField(
+        label='Study Caregiver Subject Identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
     class Meta:
         model = ScreeningPriorBhpParticipants
         fields = '__all__'
