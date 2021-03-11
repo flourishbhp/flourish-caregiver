@@ -180,7 +180,6 @@ class Cohort:
             mom_hivstatus='HIV uninfected')
         return maternal_dataset.count()
 
-
     def total_HUU(self, protocol=None):
         """Returns total enrolled Tshilo Dikotla HUU infants.
         """
@@ -232,7 +231,6 @@ class Cohort:
                 self.total_HUU(protocol='Tshilo Dikotla') < 175 and self.age_at_year_3 <= 4.5):
             return True
         return False
-
 
     def cohort_b(self):
         """Return True id an infant mother pair meets criteria for cohort B.
