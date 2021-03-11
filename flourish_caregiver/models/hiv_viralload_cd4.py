@@ -21,7 +21,7 @@ class HivViralLoadAndCd4(CrfModelMixin):
 
     cd4_count_date = models.DateField(
         verbose_name='Date of CD4 count',
-        validators=[date_not_future],
+        validators=[date_not_future, ],
         blank=True, null=True)
 
     last_vl_known = models.CharField(
@@ -43,10 +43,12 @@ class HivViralLoadAndCd4(CrfModelMixin):
 
     hiv_results_quantifier = models.CharField(
         choices=SIZE_CHECK,
-        max_length=12, )
+        max_length=12,
+        blank=True, null=True)
 
     last_vl_date = models.DateField(
         verbose_name='Date of last viral load test',
+        validators=[date_not_future, ],
         null=True, blank=True, )
 
     class Meta(CrfModelMixin.Meta):
