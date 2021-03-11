@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO
 
 from .maternal_arv_during_preg import CrfModelMixin
@@ -19,7 +20,9 @@ class HivViralLoadAndCd4(CrfModelMixin):
         blank=True, null=True)
 
     cd4_count_date = models.DateField(
-        verbose_name='Date of CD4 count', )
+        verbose_name='Date of CD4 count',
+        validators=[date_not_future],
+        blank=True, null=True)
 
     last_vl_known = models.CharField(
         verbose_name='Is the caregiver’s last viral load known?',
