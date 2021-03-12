@@ -192,19 +192,9 @@ class SubjectConsent(
 
     def get_child_age_at_enrollment(self):
         from ..helper_classes import Cohort
-        from .maternal_dataset import MaternalDataset
-
-        try:
-            maternal_dataset = MaternalDataset.objects.get(
-                screening_identifier=self.screening_identifier)
-        except MaternalDataset.DoesNotExist:
-            pass
-        else:
-            self.child_dob = maternal_dataset.delivdt
-            return Cohort(
-                ).age_at_enrollment(
-                    child_dob=self.child_dob,
-                    check_date=self.created.date())
+        return Cohort().age_at_enrollment(
+            child_dob=self.child_dob,
+            check_date=self.created.date())
 
     def natural_key(self):
         return (self.subject_identifier, self.version)
