@@ -186,7 +186,7 @@ class SubjectConsent(
         self.version = '1'
         self.child_age_at_enrollment = self.get_child_age_at_enrollment()
         if self.is_eligible:
-            if self.id and not self.subject_identifier:
+            if self.created and not self.subject_identifier:
                 self.subject_identifier = self.update_subject_identifier_on_save()
         super().save(*args, **kwargs)
 
@@ -247,5 +247,6 @@ class SubjectConsent(
         app_label = 'flourish_caregiver'
         verbose_name = 'Adult Participation Consent'
         unique_together = (('subject_identifier', 'version'),
+                           ('screening_identifier', 'version'),
                            ('subject_identifier', 'screening_identifier', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))
