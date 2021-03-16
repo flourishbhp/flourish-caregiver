@@ -9,7 +9,6 @@ from model_mommy import mommy
 from ..models import SubjectConsent
 from edc_constants.constants import NO, YES
 
-
 subject_identifier = '142\-[0-9\-]+'
 
 
@@ -71,4 +70,3 @@ class TestSubjectConsent(TestCase):
         self.assertEquals(RegisteredSubject.objects.all().count(), 0)
         mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
         self.assertEquals(RegisteredSubject.objects.all().count(), 1)
-

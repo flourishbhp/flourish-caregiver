@@ -45,7 +45,6 @@ class Cohort:
             current_month = current_month - 1
             current_date = current_date + month[birth_month - 1]
 
-
         # if birth month exceeds current month, then
         # donot count this year and add 12 to the
         # month so that we can subtract and find out

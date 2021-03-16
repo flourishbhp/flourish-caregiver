@@ -121,7 +121,7 @@ def cohort_assigned(screening_identifier):
             infant_dataset_obj = infant_dataset_cls.objects.get(
                                         study_child_identifier=maternal_dataset_obj.study_child_identifier)
         except infant_dataset_cls.DoesNotExist:
-            return None
+            raise
         else:
             cohort = Cohort(
                 child_dob=maternal_dataset_obj.delivdt,
