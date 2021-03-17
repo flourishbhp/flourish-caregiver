@@ -14,5 +14,4 @@ class ReferralFormMixin(models.Model):
     referred_to_other = OtherCharField()
 
     class Meta:
-        app_label = 'flourish_caregiver'
         abstract = True
