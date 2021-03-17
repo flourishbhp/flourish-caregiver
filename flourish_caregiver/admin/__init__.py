@@ -12,7 +12,6 @@ from .caregiver_phq_depr_screening_admin import CaregiverPhqDeprScreeningAdmin
 from .caregiver_phq_referral_admin import CaregiverPhqReferralAdmin
 from .caregiver_previously_enrolled_admin import CaregiverPreviouslyEnrolledAdmin
 from .caregiver_locator_admin import CaregiverLocatorAdmin
-from .caregiver_referral_admin import CaregiverReferralAdmin
 from .enrollment_admin import EnrollmentAdmin
 from .food_security_questionnaire_admin import FoodSecurityQuestionnaireAdmin
 from .hiv_rapid_test_counseling_admin import HIVRapidTestCounselingAdmin

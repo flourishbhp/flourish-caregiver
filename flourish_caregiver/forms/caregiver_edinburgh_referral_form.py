@@ -1,12 +1,12 @@
-from django import forms
-
-from edc_base.sites import SiteModelFormMixin
-from edc_form_validators import FormValidatorMixin
+from .form_mixins import SubjectModelFormMixin
 from ..models import CaregiverEdinburghReferral
 
+from flourish_form_validations.form_validators import CaregiverReferralFormValidator
 
-class CaregiverEdinburghReferralForm(SiteModelFormMixin, FormValidatorMixin,
-                               forms.ModelForm):
+
+class CaregiverEdinburghReferralForm(SubjectModelFormMixin):
+
+    form_validator_cls = CaregiverReferralFormValidator
 
     class Meta:
         model = CaregiverEdinburghReferral

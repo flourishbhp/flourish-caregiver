@@ -11,7 +11,6 @@ from .caregiver_hamd_referral_form import CaregiverHamdReferralForm
 from .caregiver_locator_form import CaregiverLocatorForm
 from .caregiver_phq_depr_screening_form import CaregiverPhqDeprScreeningForm
 from .caregiver_phq_referral_form import CaregiverPhqReferralForm
-from .caregiver_referral_form import CaregiverReferralForm
 from .enrollment_form import EnrollmentForm
 from .food_security_questionnaire_form import FoodSecurityQuestionnaireForm
 from .hiv_rapid_test_counseling_form import HIVRapidTestCounselingForm
