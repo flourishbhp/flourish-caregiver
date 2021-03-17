@@ -35,18 +35,55 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
         abstract = True
 
 
-class OnScheduleCohortA(OnScheduleModelMixin):
+class OnScheduleCohortA1(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortB(OnScheduleModelMixin):
+class OnScheduleCohortA2(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortC(OnScheduleModelMixin):
+class OnScheduleCohortA3(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortB1(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortB2(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortB3(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortC1(OnScheduleModelMixin):
 
     pass
 
-class OnSchedulePool(OnScheduleModelMixin):
+
+class OnScheduleCohortC2(OnScheduleModelMixin):
+
+    pass
+
+
+class OnScheduleCohortC3(OnScheduleModelMixin):
+
+    pass
+
+
+class OnSchedulePool1(OnScheduleModelMixin):
+
+    pass
+
+
+class OnSchedulePool2(OnScheduleModelMixin):
+
+    pass
+
+
+class OnSchedulePool3(OnScheduleModelMixin):
 
     pass

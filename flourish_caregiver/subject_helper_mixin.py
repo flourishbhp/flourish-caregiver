@@ -4,7 +4,7 @@ from django.apps import apps as django_apps
 from edc_base.utils import get_utcnow
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
-from .models import CaregiverLocator
+from .models import CaregiverLocator, MaternalDataset
 
 
 class SubjectHelperMixin:
@@ -64,76 +64,65 @@ class SubjectHelperMixin:
 
         return subject_consent.subject_identifier
 
-    def create_TD_efv_enrollment(self, subject_identifier, **kwargs):
+    def create_TD_efv_enrollment(self, screening_identifier, **kwargs):
         import_holidays()
 
-        prior_screening = mommy.make_recipe(
-            'flourish_caregiver.screeningpriorbhpparticipants',)
+        try:
+            maternal_dataset_obj = MaternalDataset.objects.get(
+                screening_identifier=screening_identifier)
+        except MaternalDataset.DoesNotExist:
+            pass
+        else:
+            prior_screening = mommy.make_recipe(
+                'flourish_caregiver.screeningpriorbhpparticipants',
+                screening_identifier=maternal_dataset_obj.screening_identifier)
 
-        mommy.make_recipe(
-            'flourish_child.childdataset',
-            study_child_identifier='142-4995638-1-10',
-            infant_hiv_exposed='Exposed',
-            subject_identifier=subject_identifier + '-10',)
+            consent_options = {
+                'consent_datetime': get_utcnow(),
+                'screening_identifier': prior_screening.screening_identifier,
+                'version': '1'}
 
-        mommy.make_recipe(
-            'flourish_caregiver.maternaldataset',
-            subject_identifier=subject_identifier,
-            screening_identifier=prior_screening.screening_identifier,
-            **self.maternal_dataset_options)
+            subject_consent = mommy.make_recipe(
+                'flourish_caregiver.subjectconsent',
+                child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),
+                ** consent_options)
 
-        consent_options = {
-            'consent_datetime': get_utcnow(),
-            'subject_identifier': subject_identifier,
-            'screening_identifier': prior_screening.screening_identifier,
-            'version': '1'}
+            return subject_consent.subject_identifier
+        return None
 
-        subject_consent = mommy.make_recipe(
-            'flourish_caregiver.subjectconsent',
-            child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),
-            ** consent_options)
-
-        return subject_consent.subject_identifier
-
-    def create_TD_no_hiv_enrollment(self, subject_identifier, **kwargs):
+    def create_TD_no_hiv_enrollment(self, screening_identifier, **kwargs):
         import_holidays()
 
         self.maternal_dataset_options['mom_hivstatus'] = 'HIV uninfected'
 
-        prior_screening = mommy.make_recipe(
-            'flourish_caregiver.screeningpriorbhpparticipants',)
+        try:
+            maternal_dataset_obj = MaternalDataset.objects.get(
+                screening_identifier=screening_identifier)
+        except MaternalDataset.DoesNotExist:
+            pass
+        else:
+            prior_screening = mommy.make_recipe(
+                'flourish_caregiver.screeningpriorbhpparticipants',
+                screening_identifier=maternal_dataset_obj.screening_identifier)
 
-        child_dataset_obj = mommy.make_recipe(
-            'flourish_child.childdataset',
-            study_child_identifier='142-4975738-1-10',
-            infant_hiv_exposed='Exposed',
-            subject_identifier=subject_identifier + '-10',)
+            consent_options = {
+                'consent_datetime': get_utcnow(),
+                'screening_identifier': prior_screening.screening_identifier,
+                'version': '1'}
 
-        mommy.make_recipe(
-            'flourish_caregiver.maternaldataset',
-            subject_identifier=subject_identifier,
-            study_child_identifier=child_dataset_obj.study_child_identifier,
-            study_maternal_identifier='142-4975738-1',
-            screening_identifier=prior_screening.screening_identifier,
-            **self.maternal_dataset_options)
+            subject_consent = mommy.make_recipe(
+                'flourish_caregiver.subjectconsent',
+                child_dob=(get_utcnow() - relativedelta(years=2, months=8)).date(),
+                ** consent_options)
 
-        consent_options = {
-            'consent_datetime': get_utcnow(),
-            'subject_identifier': subject_identifier,
-            'screening_identifier': prior_screening.screening_identifier,
-            'version': '1'}
-
-        subject_consent = mommy.make_recipe(
-            'flourish_caregiver.subjectconsent',
-            child_dob=(get_utcnow() - relativedelta(years=2, months=8)).date(),
-            ** consent_options)
-
-        return subject_consent.subject_identifier
+            return subject_consent.subject_identifier
+        return None
 
     def prepare_prior_participant_enrolmment(self, maternal_dataset_obj):
 
         try:
-            caregiver_locator = CaregiverLocator.objects.get(screening_identifier=maternal_dataset_obj.screening_identifier)
+            caregiver_locator = CaregiverLocator.objects.get(
+                screening_identifier=maternal_dataset_obj.screening_identifier)
         except CaregiverLocator.DoesNotExist:
             caregiver_locator = mommy.make_recipe(
                 'flourish_caregiver.caregiverlocator',
@@ -142,7 +131,8 @@ class SubjectHelperMixin:
 
         worklist_cls = django_apps.get_model('flourish_follow.worklist')
         try:
-            worklist_cls.objects.get(study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier)
+            worklist_cls.objects.get(
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier)
         except worklist_cls.DoesNotExist:
             mommy.make_recipe(
                 'flourish_follow.worklist',
