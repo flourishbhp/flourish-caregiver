@@ -1,15 +1,17 @@
+from django.apps import apps as django_apps
 from django.db import models
 from django.utils.safestring import mark_safe
+from django.core.exceptions import ObjectDoesNotExist
 from django_crypto_fields.fields import EncryptedCharField
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_action_item.model_mixins import ActionModelMixin
+from edc_action_item.action import ActionItemGetter
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
 from edc_base.model_validators.date import date_not_future, datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
-from edc_action_item.model_mixins import ActionModelMixin
 from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK, YES_NO_NA
 from edc_locator.model_mixins.subject_contact_fields_mixin import SubjectContactFieldsMixin
 from edc_locator.model_mixins.subject_indirect_contact_fields_mixin import SubjectIndirectContactFieldsMixin
@@ -21,6 +23,7 @@ from edc_search.model_mixins import SearchSlugManager
 from ..identifiers import ScreeningIdentifier
 from ..action_items import CAREGIVER_LOCATOR_ACTION
 from .model_mixins import SearchSlugModelMixin
+from .dataset_action_item import DataSetActionItem
 
 
 class LocatorManager(SearchSlugManager, models.Manager):
@@ -148,10 +151,41 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
 
     objects = LocatorManager()
 
+    @property
+    def action_item(self):
+        """Returns the ActionItem instance associated with
+        this model or None.
+        """
+        action_item_cls = django_apps.get_model('edc_action_item.actionitem')
+
+        if (not self.subject_identifier
+                or self.subject_identifier == self.study_maternal_identifier):
+            action_item_cls = DataSetActionItem
+        try:
+            action_item = action_item_cls.objects.get(
+                action_identifier=self.action_identifier)
+        except action_item_cls.DoesNotExist:
+            action_item = None
+        return action_item
+
     def save(self, *args, **kwargs):
-        if not self.subject_identifier:
-            self.subject_identifier = self.study_maternal_identifier
-        super().save(*args, **kwargs)
+        if not self.subject_identifier or self.subject_identifier == self.screening_identifier:
+            self.subject_identifier = self.screening_identifier
+            self.identifier_field = 'screening_identifier'
+            try:
+                ActionItemGetter(
+                    self.action_cls, subject_identifier=self.screening_identifier)
+            except ObjectDoesNotExist:
+                action_item_cls = ActionItemGetter.action_item_model_cls()
+                action_item_cls.subject_identifier_model = 'flourish_caregiver.maternaldataset'
+                action_item_cls.identifier_field = 'screening_identifier'
+                action_item_cls.screening_identifier = self.screening_identifier
+
+                action_item_cls.objects.create(
+                    action_type=self.action_cls.action_type(),
+                    subject_identifier=self.screening_identifier)
+        else:
+            super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'flourish_caregiver'

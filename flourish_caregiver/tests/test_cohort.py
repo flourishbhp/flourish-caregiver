@@ -121,7 +121,6 @@ class TestCohort(TestCase):
             protocol='Tshilo Dikotla')
         self.assertTrue(cohort.no_hiv_during_preg)
 
-
     def test_pi(self):
         cohort = Cohort(
             child_dob=date.today() - relativedelta(years=10, months=7),

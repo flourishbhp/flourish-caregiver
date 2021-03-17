@@ -7,7 +7,6 @@ from model_mommy import mommy
 from edc_appointment.models import Appointment
 
 from ..models import OnScheduleCohortA, OnScheduleCohortB, OnScheduleCohortC
-from ..models import OnSchedulePool
 from flourish_child.models import ChildDataset
 from pre_flourish.models import PreFlourishConsent
 
@@ -211,7 +210,6 @@ class TestVisitScheduleSetup(TestCase):
 #                                                         version='1',
 #                                                         consent_datetime=get_utcnow(),
 #                                                         created=get_utcnow())
-
 
         mommy.make_recipe(
             'flourish_child.childassent',

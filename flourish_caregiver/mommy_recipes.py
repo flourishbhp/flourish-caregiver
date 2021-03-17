@@ -1,15 +1,14 @@
 from dateutil.relativedelta import relativedelta
 from edc_base.utils import get_utcnow
-from edc_constants.constants import YES, NO, POS
+from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT
 from edc_visit_tracking.constants import SCHEDULED
-from edc_constants.constants import ALIVE, YES, NO, ON_STUDY, PARTICIPANT
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
-from .models import HIVRapidTestCounseling
+from .models import HIVRapidTestCounseling, LocatorLogEntry
 
 fake = Faker()
 
@@ -19,6 +18,11 @@ maternaldataset = Recipe(
 
 caregiverlocator = Recipe(
     CaregiverLocator)
+
+locatorlogentry = Recipe(
+    LocatorLogEntry,
+    report_datetime=get_utcnow(),
+    log_status='exist')
 
 screeningpriorbhpparticipants = Recipe(
     ScreeningPriorBhpParticipants,
