@@ -45,7 +45,6 @@ class Cohort:
             current_month = current_month - 1
             current_date = current_date + month[birth_month - 1]
 
-
         # if birth month exceeds current month, then
         # donot count this year and add 12 to the
         # month so that we can subtract and find out
@@ -256,7 +255,7 @@ class Cohort:
             if self.huu_adolescents and self.total_huu_adolescents(protocol='Mashi') < 75:
                 return True
             if (self.pi_regime and self.protocol == 'Mma Bana' and
-                    self.total_pi_regime(protocol='Mma Bana') < 100):
+                    self.total_pi_regime < 100):
                 return True
         return False
 
