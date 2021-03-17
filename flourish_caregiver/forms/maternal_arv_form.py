@@ -6,7 +6,7 @@ from ..models import MaternalArv
 from .form_mixins import SubjectModelFormMixin
 
 
-class MaternalArvForm(SubjectModelFormMixin, forms.ModelForm):
+class MaternalArvForm(SubjectModelFormMixin):
 
     # form_validator_cls = MaternalArvFormValidator
 

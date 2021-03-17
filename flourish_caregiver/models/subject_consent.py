@@ -23,7 +23,6 @@ from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
 from ..subject_identifier import SubjectIdentifier
 from .eligibility import ConsentEligibility
 from .model_mixins import ReviewFieldsMixin, SearchSlugModelMixin
-from flourish_caregiver.constants import NOT_APPLICABLE
 
 
 class SubjectConsentManager(SearchSlugManager, models.Manager):
@@ -114,43 +113,11 @@ class SubjectConsent(
         verbose_name='Do you give us permission to be contacted for future studies?',
         choices=YES_NO)
 
-    child_test = models.CharField(
-        verbose_name='Will you allow for HIV testing and counselling of '
-                     'your Child',
-        max_length=5,
-        choices=YES_NO_NA,
-        default=NOT_APPLICABLE)
-
-    child_remain_in_study = models.CharField(
-        verbose_name='Is your child willing to remain in the study area until 2025?',
-        max_length=5,
-        choices=YES_NO_NA,
-        default=NOT_APPLICABLE)
-
-    child_preg_test = models.CharField(
-        verbose_name='If your child is female and will be 12 years or older '
-                     'prior to 30-Jun-2025, will you allow the female child '
-                     'to undergo pregnancy testing?',
-        max_length=5,
-        choices=YES_NO_NA,
-        default=NOT_APPLICABLE)
-
-    child_knows_status = models.CharField(
-        verbose_name='If your child is ≥ 16 years, have they been told about your HIV?',
-        max_length=5,
-        choices=YES_NO_NA,
-        default=NOT_APPLICABLE)
-
     cohort = models.CharField(
         max_length=12,
         choices=COHORTS,
         blank=True,
         null=True)
-
-    child_dob = models.DateField(
-        verbose_name="Date of birth",
-        null=True,
-        blank=True)
 
     child_age_at_enrollment = models.DecimalField(
         blank=True,

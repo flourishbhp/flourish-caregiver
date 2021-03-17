@@ -1,5 +1,6 @@
 from .antenatal_enrollment import AntenatalEnrollment
 from .arvs_pre_pregnancy import ArvsPrePregnancy
+from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinical_measurements import CaregiverClinicalMeasurements
 from .caregiver_clinical_measurements_fu import CaregiverClinicalMeasurementsFu
 from .caregiver_edinburgh_depr_screening import CaregiverEdinburghDeprScreening
