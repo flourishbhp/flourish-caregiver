@@ -10,6 +10,7 @@ from ..helper_classes import Cohort
 from .antenatal_enrollment import AntenatalEnrollment
 from .maternal_dataset import MaternalDataset
 from .locator_logs import LocatorLog, LocatorLogEntry
+from .caregiver_child_consent import CaregiverChildConsent
 from .subject_consent import SubjectConsent
 from .screening_preg_women import ScreeningPregWomen
 
@@ -26,7 +27,8 @@ def locator_log_entry_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw:
         if created:
-            if not User.objects.filter(username=instance.user_created, groups__name='locator users').exists():
+            if not User.objects.filter(username=instance.user_created,
+                                       groups__name='locator users').exists():
                 try:
                     User.objects.get(username=instance.user_created)
                 except User.DoesNotExist:
@@ -59,19 +61,21 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
         put_on_schedule('cohort_a', instance=instance)
 
 
-@receiver(post_save, weak=False, sender=SubjectConsent,
-          dispatch_uid='subject_consent_on_post_save')
-def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
+@receiver(post_save, weak=False, sender=CaregiverChildConsent,
+          dispatch_uid='caregiver_child_consent_on_post_save')
+def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on cohort a schedule after consenting on behalf of child.
     """
     if not raw and instance.is_eligible:
         try:
-            ScreeningPregWomen.objects.get(screening_identifier=instance.screening_identifier)
+            ScreeningPregWomen.objects.get(
+                screening_identifier=instance.subject_consent.screening_identifier)
         except ScreeningPregWomen.DoesNotExist:
-            cohort = cohort_assigned(instance.screening_identifier)
+            cohort = cohort_assigned(instance.subject_consent.screening_identifier)
             child_dummy_consent_cls = django_apps.get_model(
                 'flourish_child.childdummysubjectconsent')
+
             if cohort:
                 child_age = age(instance.child_dob, get_utcnow()).years
                 if child_age and child_age < 7:
@@ -81,19 +85,25 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
                         # preflourish_model_cls.objects.using('pre_flourish').get(identity=instance.identity)
                     # except preflourish_model_cls.DoesNotExist:
                         # raise  PreFlourishError('Participant is missing PreFlourish schedule.')
-                    instance.registration_update_or_create()
-                    put_on_schedule(cohort, instance=instance)
-                    instance.cohort = cohort
-                    instance.save_base(raw=True)
+                    put_on_schedule(cohort, instance=instance.subject_consent)
+                    instance.subject_consent.cohort = cohort
+                    instance.subject_consent.save_base(raw=True)
 
                     try:
                         child_dummy_consent_cls.objects.get(
-                            subject_identifier=instance.subject_identifier+'-10',
+                            identity=instance.identity,
                             version=instance.version,)
                     except child_dummy_consent_cls.DoesNotExist:
+                        children = child_dummy_consent_cls.objects.filter()
+                        if children:
+                            child_identifier_postfix = '-'+(children.count() + 1) * 10
+                        else:
+                            child_identifier_postfix = '-10'
                         child_dummy_consent_cls.objects.create(
-                                subject_identifier=instance.subject_identifier+'-10',
+                                subject_identifier=(
+                                    instance.subject_identifier+child_identifier_postfix),
                                 consent_datetime=instance.consent_datetime,
+                                identity=instance.identity,
                                 version=instance.version,
                                 dob=instance.child_dob,
                                 cohort=cohort)
@@ -102,13 +112,14 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
                         child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
                                     subject_identifier=instance.subject_identifier+'-10',
                                     version=instance.version,
+                                    identity=instance.identity,
                                     dob=instance.child_dob)
                     except child_dummy_consent_cls.DoesNotExist:
                         pass
                     else:
                         instance.registration_update_or_create()
-                        put_on_schedule(cohort, instance=instance)
-                        instance.cohort = cohort
+                        put_on_schedule(cohort, instance=instance.subject_consent)
+                        instance.subject_consent.cohort = cohort
                         instance.save_base(raw=True)
 
                         child_dummy_consent_obj.cohort = cohort
@@ -119,7 +130,8 @@ def cohort_assigned(screening_identifier):
     """Calculates participant's cohort based on the maternal and child dataset
     """
     try:
-        maternal_dataset_obj = MaternalDataset.objects.get(screening_identifier=screening_identifier)
+        maternal_dataset_obj = MaternalDataset.objects.get(
+            screening_identifier=screening_identifier)
     except MaternalDataset.DoesNotExist:
         return None
     else:
