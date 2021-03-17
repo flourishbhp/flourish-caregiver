@@ -5,6 +5,7 @@ from .caregiver_clinical_measurements_fu import CaregiverClinicalMeasurementsFu
 from .caregiver_edinburgh_depr_screening import CaregiverEdinburghDeprScreening
 from .caregiver_gad_anxiety_screening import CaregiverGadAnxietyScreening
 from .caregiver_hamd_depr_screening import CaregiverHamdDeprScreening
+from .caregiver_hamd_referral import CaregiverHamdReferral
 from .caregiver_phq_depr_screening import CaregiverPhqDeprScreening
 from .caregiver_locator import CaregiverLocator
 from .caregiver_referral import CaregiverReferral
