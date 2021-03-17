@@ -1,5 +1,6 @@
 from .antenatal_enrollment_form import AntenatalEnrollmentForm
 from .arvs_pre_pregnancy_form import ArvsPrePregnancyForm
+from .caregiver_child_consent_form import CaregiverChildConsentForm
 from .caregiver_clinical_measurements_form import CaregiverClinicalMeasurementsForm
 from .caregiver_clinical_measurements_fu_form import CaregiverClinicalMeasurementsFuForm
 from .caregiver_edinburgh_depr_screening_form import CaregiverEdinburghDeprScreeningForm
