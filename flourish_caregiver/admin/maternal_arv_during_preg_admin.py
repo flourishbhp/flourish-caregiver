@@ -16,7 +16,6 @@ class MaternalArvInlineAdmin(TabularInlineMixin, admin.TabularInline):
     fieldsets = (
         (None, {
             'fields': [
-                'maternal_arv_preg',
                 'arv_code',
                 'start_date',
                 'stop_date',
