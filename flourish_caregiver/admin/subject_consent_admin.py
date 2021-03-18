@@ -51,6 +51,7 @@ class CaregiverChildConsentInlineAdminAdmin(StackedInlineMixin,
     form = CaregiverChildConsentForm
 
     extra = 1
+    max_num = 3
 
     fieldsets = (
         (None, {
