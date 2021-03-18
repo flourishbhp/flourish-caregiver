@@ -74,10 +74,8 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             child_dummy_consent_cls = django_apps.get_model(
                 'flourish_child.childdummysubjectconsent')
 
-            children_count = 1
-            children = child_dummy_consent_cls.objects.filter()
-            if children:
-                children_count = children_count + children.count()
+            children_count = 1 + child_dummy_consent_cls.objects.filter(
+                identity=instance.identity).count()
             cohort = cohort + str(children_count)
             child_identifier_postfix = '-' + str(children_count * 10)
 

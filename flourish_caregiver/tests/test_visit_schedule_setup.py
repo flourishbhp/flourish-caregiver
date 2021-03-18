@@ -29,11 +29,13 @@ class TestVisitScheduleSetup(TestCase):
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
+            'study_maternal_identifier': '12345',
             'protocol': 'Tshilo Dikotla'}
 
         self.child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
+            'study_maternal_identifier': '12345',
             'study_child_identifier': '1234'}
 
     def test_cohort_a_onschedule_antenatal_valid(self):

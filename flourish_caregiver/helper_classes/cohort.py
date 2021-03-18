@@ -28,6 +28,8 @@ class Cohort:
         self.dtg = dtg
         self.pi = pi
         self.efv = efv
+        self._screening_identifiers = SubjectConsent.objects.values_list(
+            'screening_identifier', flat=True).distinct()
 
     def age_at_enrollment(self, child_dob=None, check_date=None):
         """Returns age months as decimals.
@@ -66,65 +68,50 @@ class Cohort:
     def hiv_exposed_uninfected(self,):
         """Return True is an infant is HEU.
         """
-        if self.infant_hiv_exposed == 'Exposed':
-            return True
-        return False
+        return self.infant_hiv_exposed == 'Exposed'
 
     @property
     def hiv_unexposed_uninfected(self):
         """Returns True if an infant is HUU
         """
-        if self.infant_hiv_exposed == 'Unexposed':
-            return True
-        return False
+        return self.infant_hiv_exposed == 'Unexposed'
 
     @property
     def huu_adolescents(self):
         """Returns True if the infant is HUU and is an Adolescent.
         """
-        if self.age_at_enrollment() >= 10 and self.hiv_unexposed_uninfected:
-            return True
-        return False
+        return self.age_at_enrollment() >= 10 and self.hiv_unexposed_uninfected
 
     @property
     def no_hiv_during_preg(self):
         """Return True if the infant had no explore to HIV during pregnancy.
         """
-        if self.mum_hiv_status == 'HIV uninfected':
-            return True
-        return False
+        return self.mum_hiv_status == 'HIV uninfected'
 
     @property
     def efv_regime(self):
         """."""
-        if self.efv == 1:
-            return True
-        return False
+        return self.efv == 1
 
     @property
     def dtg_regime(self):
         """Returns True if the mother used dtg during pregnancy.
         """
-        if self.dtg == 1:
-            return True
-        return False
+        return self.dtg == 1
 
     @property
     def pi_regime(self):
         """Returns True if the mother used pi during pregnancy.
         """
-        if self.pi == 1:
-            return True
-        return False
+        return self.pi == 1
 
     @property
     def total_efv_regime(self):
         """Return total enrolled infant for a specified protocol with EFV regime.
         """
-        screening_identifiers = SubjectConsent.objects.values_list(
-            'screening_identifier', flat=True).distinct()
+
         maternal_dataset = MaternalDataset.objects.filter(
-            screening_identifier__in=screening_identifiers,
+            screening_identifier__in=self._screening_identifiers,
             preg_efv=1)
         return maternal_dataset.count()
 
@@ -132,10 +119,8 @@ class Cohort:
     def total_dtg_regime(self):
         """Return total enrolled infant for a specified protocol with DTG regime.
         """
-        screening_identifiers = SubjectConsent.objects.values_list(
-            'screening_identifier', flat=True).distinct()
         maternal_dataset = MaternalDataset.objects.filter(
-            screening_identifier__in=screening_identifiers,
+            screening_identifier__in=self._screening_identifiers,
             preg_dtg=1)
         return maternal_dataset.count()
 
@@ -143,22 +128,18 @@ class Cohort:
     def total_pi_regime(self):
         """Returns total enrolled infants for a specified protocol with PI regime.
         """
-        screening_identifiers = SubjectConsent.objects.values_list(
-            'screening_identifier', flat=True).distinct()
         maternal_dataset = MaternalDataset.objects.filter(
-            screening_identifier__in=screening_identifiers,
+            screening_identifier__in=self._screening_identifiers,
             preg_pi=1)
         return maternal_dataset.count()
 
     def total_HEU(self, protocol=None):
         """Return total enrolled Tshilo Dikotla HEU.
         """
-        screening_identifiers = SubjectConsent.objects.values_list(
-            'screening_identifier', flat=True).distinct()
 
         study_child_identifiers = MaternalDataset.objects.values_list(
             'study_child_identifier', flat=True).filter(
-                screening_identifier__in=screening_identifiers)
+                screening_identifier__in=self._screening_identifiers)
 
         child_dataset = ChildDataset.objects.filter(
             study_child_identifier__in=study_child_identifiers,
@@ -169,22 +150,18 @@ class Cohort:
     def total_no_hiv_during_preg(self):
         """Return total number of infants with no HIV expore.
         """
-        screening_identifiers = SubjectConsent.objects.values_list(
-            'screening_identifier', flat=True).distinct()
         maternal_dataset = MaternalDataset.objects.filter(
-            screening_identifier__in=screening_identifiers,
+            screening_identifier__in=self._screening_identifiers,
             mom_hivstatus='HIV uninfected')
         return maternal_dataset.count()
 
     def total_HUU(self, protocol=None):
         """Returns total enrolled Tshilo Dikotla HUU infants.
         """
-        screening_identifiers = SubjectConsent.objects.values_list(
-            'screening_identifier', flat=True).distinct()
 
         study_child_identifiers = MaternalDataset.objects.values_list(
             'study_child_identifier', flat=True).filter(
-                screening_identifier__in=screening_identifiers)
+                screening_identifier__in=self._screening_identifiers)
 
         child_dataset = ChildDataset.objects.filter(
             study_child_identifier__in=study_child_identifiers,
@@ -220,11 +197,9 @@ class Cohort:
         """Return True if the infant mother pair meets criteria for cohort A.
         """
         # TODO: Cater for 200 newly enrolled pregnant woman.
-        if (self.age_at_enrollment() <= 2.5 and self.protocol == 'Tshilo Dikotla' and
+        return (self.age_at_enrollment() <= 2.5 and self.protocol == 'Tshilo Dikotla' and
                 self.total_HEU(protocol='Tshilo Dikotla') < 200 and
-                self.total_HUU(protocol='Tshilo Dikotla') < 175 and self.age_at_year_3 <= 4.5):
-            return True
-        return False
+                self.total_HUU(protocol='Tshilo Dikotla') < 175 and self.age_at_year_3 <= 4.5)
 
     def cohort_b(self):
         """Return True id an infant mother pair meets criteria for cohort B.

@@ -1,12 +1,13 @@
 from dateutil.relativedelta import relativedelta
 from datetime import date
-
+from django.test import tag
 from django.test.testcases import TestCase
 from django.utils import timezone
 
 from ..helper_classes.cohort import Cohort
 
 
+@tag('ch')
 class TestCohort(TestCase):
 
     def setUp(self):
