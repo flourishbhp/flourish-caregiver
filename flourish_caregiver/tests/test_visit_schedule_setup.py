@@ -181,6 +181,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=self.subject_identifier + '-10',
             dob=get_utcnow() - relativedelta(years=7, months=2),
             identity=caregiver_child_consent_obj.identity,
+            confirm_identity=caregiver_child_consent_obj.identity,
             version=subject_consent.version)
 
         self.assertEqual(OnScheduleCohortB1.objects.filter(
@@ -246,6 +247,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=self.subject_identifier + '-10',
             dob=(get_utcnow() - relativedelta(years=10, months=2)).date(),
             identity=caregiver_child_consent_obj.identity,
+            confirm_identity=caregiver_child_consent_obj.identity,
             version=subject_consent.version)
 
         self.assertEqual(OnScheduleCohortC1.objects.filter(

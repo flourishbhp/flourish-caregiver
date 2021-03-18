@@ -75,7 +75,8 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 'flourish_child.childdummysubjectconsent')
 
             children_count = 1 + child_dummy_consent_cls.objects.filter(
-                identity=instance.identity).count()
+                subject_identifier__icontains=instance.subject_consent.subject_identifier
+                ).exclude(identity=instance.identity).count()
             cohort = cohort + str(children_count)
             child_identifier_postfix = '-' + str(children_count * 10)
             child_age = age(instance.child_dob, get_utcnow()).years
@@ -108,7 +109,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                             cohort=cohort[:-1])
             else:
                 try:
-                    child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
+                    child_dummy_consent_cls.objects.get(
                                 subject_identifier=(
                                     instance.subject_consent.subject_identifier+child_identifier_postfix),
                                 version=instance.subject_consent.version,
@@ -117,12 +118,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     pass
                 else:
                     put_on_schedule(cohort, instance=instance.subject_consent)
-                    instance.subject_identifier = (
-                        instance.subject_consent.subject_identifier+child_identifier_postfix)
-                    instance.save_base(raw=True)
-
-                    child_dummy_consent_obj.cohort = cohort[:-1]
-                    child_dummy_consent_obj.save()
 
             instance.cohort = cohort[:-1]
             instance.save_base(raw=True)
