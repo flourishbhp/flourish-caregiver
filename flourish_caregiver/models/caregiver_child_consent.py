@@ -1,5 +1,6 @@
 from django.db import models
 from edc_base.model_mixins import BaseUuidModel
+from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_constants.choices import (GENDER_UNDETERMINED, NOT_APPLICABLE,
                                    YES_NO_NA)
@@ -9,13 +10,19 @@ from .subject_consent import SubjectConsent
 from ..choices import IDENTITY_TYPE
 
 
-class CaregiverChildConsent(NonUniqueSubjectIdentifierModelMixin,
+class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin,
                             IdentityFieldsMixin, BaseUuidModel):
     """Inline table for caregiver's children"""
 
     subject_consent = models.ForeignKey(
         SubjectConsent,
         on_delete=models.PROTECT)
+
+    subject_identifier = models.CharField(
+        verbose_name="Subject Identifier",
+        max_length=50,
+        null=True,
+        blank=True)
 
     first_name = models.CharField(
         max_length=50,
@@ -79,6 +86,10 @@ class CaregiverChildConsent(NonUniqueSubjectIdentifierModelMixin,
         null=True,
         blank=False,
         default=NOT_APPLICABLE)
+
+    is_eligible = models.BooleanField(
+        default=False,
+        editable=False)
 
     class Meta:
         app_label = 'flourish_caregiver'
