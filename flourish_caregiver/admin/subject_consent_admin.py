@@ -44,7 +44,7 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
         return redirect_url
 
 
-class CaregiverChildConsentInlineAdminAdmin(StackedInlineMixin,
+class CaregiverChildConsentInlineAdmin(StackedInlineMixin,
                                             admin.StackedInline):
 
     model = CaregiverChildConsent
@@ -84,7 +84,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                           SimpleHistoryAdmin, admin.ModelAdmin):
 
     form = SubjectConsentForm
-    inlines = [CaregiverChildConsentInlineAdminAdmin, ]
+    inlines = [CaregiverChildConsentInlineAdmin, ]
 
     fieldsets = (
         (None, {
