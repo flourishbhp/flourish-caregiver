@@ -28,7 +28,6 @@ class TestVisitScheduleSetup(TestCase):
         self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
             'mom_enrolldate': get_utcnow(),
-            'study_child_identifier': '1234',
             'mom_hivstatus': 'HIV-infected',
             'protocol': 'Tshilo Dikotla'}
 
@@ -85,6 +84,11 @@ class TestVisitScheduleSetup(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),
             ** self.options)
 
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
+
         self.assertEqual(OnScheduleCohortA1.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 1)
 
@@ -120,9 +124,13 @@ class TestVisitScheduleSetup(TestCase):
 
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
-            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),
             screening_identifier=maternal_dataset_obj.screening_identifier,
             **self.options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
         self.assertEqual(OnScheduleCohortB1.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 1)
@@ -134,7 +142,6 @@ class TestVisitScheduleSetup(TestCase):
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
-    @tag('cb')
     def test_cohort_b_assent_onschedule_valid(self):
 
         self.subject_identifier = self.subject_identifier[:-1] + '3'
@@ -160,9 +167,13 @@ class TestVisitScheduleSetup(TestCase):
 
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
-            child_dob=(get_utcnow() - relativedelta(years=7, months=2)).date(),
             screening_identifier=maternal_dataset_obj.screening_identifier,
             **self.options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            child_dob=(get_utcnow() - relativedelta(years=7, months=2)).date(),)
 
         mommy.make_recipe(
             'flourish_child.childassent',
@@ -206,9 +217,13 @@ class TestVisitScheduleSetup(TestCase):
 
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
-            child_dob=(get_utcnow() - relativedelta(years=10, months=2)).date(),
             screening_identifier=maternal_dataset_obj.screening_identifier,
             ** self.options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            child_dob=(get_utcnow() - relativedelta(years=10, months=2)).date(),)
 
 #         PreFlourishConsent.objects.using('pre_flourish').create(
 #                                                         identity=subject_consent.identity,

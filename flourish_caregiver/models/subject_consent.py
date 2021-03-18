@@ -16,9 +16,9 @@ from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
-from edc_constants.choices import YES_NO, GENDER, YES_NO_NA
+from edc_constants.choices import YES_NO, GENDER
 
-from ..choices import IDENTITY_TYPE, COHORTS
+from ..choices import IDENTITY_TYPE
 from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
 from ..subject_identifier import SubjectIdentifier
 from .eligibility import ConsentEligibility
@@ -112,12 +112,6 @@ class SubjectConsent(
         max_length=3,
         verbose_name='Do you give us permission to be contacted for future studies?',
         choices=YES_NO)
-
-    cohort = models.CharField(
-        max_length=12,
-        choices=COHORTS,
-        blank=True,
-        null=True)
 
     ineligibility = models.TextField(
         verbose_name="Reason not eligible",
