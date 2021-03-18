@@ -1,13 +1,13 @@
 from django.db import models
+from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.field_mixins import IdentityFieldsMixin
-from edc_constants.choices import (GENDER, NOT_APPLICABLE,
-                                   YES_NO_NA)
+from edc_constants.choices import GENDER, NOT_APPLICABLE, YES_NO_NA
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 
 from .subject_consent import SubjectConsent
-from ..choices import IDENTITY_TYPE
+from ..choices import CHILD_IDENTITY_TYPE
 
 
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin,
@@ -24,14 +24,9 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
         null=True,
         blank=True)
 
-    first_name = models.CharField(
-        max_length=50,
-        null=True, blank=True)
+    first_name = FirstnameField(null=True, blank=True)
 
-    last_name = models.CharField(
-        verbose_name="Last name",
-        max_length=50,
-        null=True, blank=True)
+    last_name = LastnameField(verbose_name="Last name", null=True, blank=True)
 
     gender = models.CharField(
         verbose_name="Gender",
@@ -43,7 +38,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
     identity_type = models.CharField(
         verbose_name='What type of identity number is this?',
         max_length=25,
-        choices=IDENTITY_TYPE)
+        choices=CHILD_IDENTITY_TYPE)
 
     child_dob = models.DateField(
         verbose_name="Date of birth",
@@ -107,6 +102,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
         if not self.id:
             self.child_age_at_enrollment = (
                 self.get_child_age_at_enrollment() if self.child_dob else None)
+        super().save(*args, **kwargs)
 
     def get_child_age_at_enrollment(self):
         from ..helper_classes import Cohort

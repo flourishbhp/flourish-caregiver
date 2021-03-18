@@ -87,6 +87,14 @@ ARV_INTERRUPTION_REASON = (
     (NOT_APPLICABLE, 'Not Applicable'),
 )
 
+CHILD_IDENTITY_TYPE = (
+    ('country_id', 'Country ID number'),
+    ('birth_cert', 'Birth Certificate number'),
+    ('country_id_rcpt', 'Country ID receipt'),
+    ('passport', 'Passport'),
+    (OTHER, 'Other'),
+)
+
 COHORTS = (
     ('cohort_a', 'Cohort A'),
     ('cohort_b', 'Cohort B'),
