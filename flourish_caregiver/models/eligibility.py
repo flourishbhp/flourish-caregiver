@@ -92,3 +92,28 @@ class ConsentEligibility:
             self.error_message.append(
                 'Participant was not provided with a copy of their informed consent.')
         self.is_eligible = False if self.error_message else True
+
+
+class CaregiverChildConsentEligibility:
+
+    def __init__(self, child_test=None, child_remain_in_study=None,
+                 child_preg_test=None, child_knows_status=None):
+        self.error_message = []
+        self.child_test = child_test
+        self.child_remain_in_study = child_remain_in_study
+        self.child_preg_test = child_preg_test
+        self.child_knows_status = child_knows_status
+        if self.child_test == NO:
+            self.error_message.append(
+                'Participant is not willing to allow for HIV testing and '
+                'counselling of child.')
+        if self.child_remain_in_study == NO:
+            self.error_message.append(
+                'Child is not will to remain in the study area.')
+        if self.child_preg_test == NO:
+            self.error_message.append(
+                'Participant will not allow the child to undergo pregnancy testing.')
+        if self.child_knows_status == NO:
+            self.error_message.append(
+                'Child has not been told about the mother\'s HIV status.')
+        self.is_eligible = False if self.error_message else True

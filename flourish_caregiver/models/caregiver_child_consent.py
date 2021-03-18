@@ -3,14 +3,15 @@ from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.field_mixins import IdentityFieldsMixin
-from edc_constants.choices import GENDER, NOT_APPLICABLE, YES_NO_NA
-from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
+from edc_constants.choices import GENDER, NOT_APPLICABLE, YES_NO_NA, YES_NO
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 
+from .eligibility import CaregiverChildConsentEligibility
 from .subject_consent import SubjectConsent
 from ..choices import CHILD_IDENTITY_TYPE
 
 
-class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin,
+class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin,
                             IdentityFieldsMixin, BaseUuidModel):
     """Inline table for caregiver's children"""
 
@@ -49,19 +50,19 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
         verbose_name='Will you allow for HIV testing and counselling of '
                      'your Child',
         max_length=5,
-        choices=YES_NO_NA,
+        choices=YES_NO,
         null=True,
         blank=False,
-        default=NOT_APPLICABLE)
+        help_text='If no, participant is not eligible.')
 
     child_remain_in_study = models.CharField(
         verbose_name='Is your child willing to remain in the study area until '
                      '2025?',
         max_length=5,
-        choices=YES_NO_NA,
+        choices=YES_NO,
         null=True,
         blank=False,
-        default=NOT_APPLICABLE)
+        help_text='If no, participant is not eligible.')
 
     child_preg_test = models.CharField(
         verbose_name='If your child is female and will be 12 years or older '
@@ -71,7 +72,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
         choices=YES_NO_NA,
         null=True,
         blank=False,
-        default=NOT_APPLICABLE)
+        default=NOT_APPLICABLE,
+        help_text='If no, participant is not eligible.')
 
     child_knows_status = models.CharField(
         verbose_name='If your child is ≥ 16 years, have they been told about '
@@ -80,7 +82,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
         choices=YES_NO_NA,
         null=True,
         blank=False,
-        default=NOT_APPLICABLE)
+        default=NOT_APPLICABLE,
+        help_text='If no, participant is not eligible.')
 
     child_age_at_enrollment = models.DecimalField(
         blank=True,
@@ -99,6 +102,11 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
         editable=False)
 
     def save(self, *args, **kwargs):
+        eligibility_criteria = CaregiverChildConsentEligibility(
+            self.child_test, self.child_remain_in_study, self.child_preg_test,
+            self.child_knows_status)
+        self.is_eligible = eligibility_criteria.is_eligible
+        self.ineligibility = eligibility_criteria.error_message
         if not self.id:
             self.child_age_at_enrollment = (
                 self.get_child_age_at_enrollment() if self.child_dob else None)
