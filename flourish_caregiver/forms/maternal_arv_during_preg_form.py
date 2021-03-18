@@ -220,7 +220,7 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
 
     def get_previous_stopped_arv_date(self, subject_identifier, arv_code):
             previous_arv_preg = self.maternal_arv_cls.objects.filter(
-                maternal_arv_preg__maternal_visit__appointment__subject_identifier=\
+                maternal_arv_durg_preg__maternal_visit__appointment__subject_identifier=\
                 subject_identifier,
                 arv_code=arv_code,
                 stop_date__isnull=False)

@@ -51,4 +51,4 @@ class MaternalArv(BaseUuidModel):
         app_label = 'td_maternal'
         verbose_name = 'Maternal ARV'
         verbose_name_plural = 'Maternal ARV'
-        unique_together = ('maternal_arv_preg', 'arv_code', 'start_date')
+        unique_together = ('maternal_arv_durg_preg', 'arv_code', 'start_date')
