@@ -50,7 +50,7 @@ class CaregiverChildConsentInlineAdminAdmin(StackedInlineMixin,
     model = CaregiverChildConsent
     form = CaregiverChildConsentForm
 
-    extra = 1
+    extra = 0
     max_num = 3
 
     fieldsets = (
@@ -67,7 +67,8 @@ class CaregiverChildConsentInlineAdminAdmin(StackedInlineMixin,
                 'child_knows_status',
                 'identity',
                 'identity_type',
-                'confirm_identity']}
+                'confirm_identity',
+                'consent_datetime']}
          ),)
 
     radio_fields = {'gender': admin.VERTICAL,
