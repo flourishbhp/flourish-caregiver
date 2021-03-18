@@ -67,7 +67,8 @@ class CaregiverChildConsentInlineAdminAdmin(StackedInlineMixin,
                 'child_knows_status',
                 'identity',
                 'identity_type',
-                'confirm_identity']}
+                'confirm_identity',
+                'consent_datetime']}
          ),)
 
     radio_fields = {'gender': admin.VERTICAL,

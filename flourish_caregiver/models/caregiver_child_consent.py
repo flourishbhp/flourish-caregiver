@@ -1,10 +1,12 @@
 from django.db import models
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
+from edc_base.model_validators import datetime_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_constants.choices import GENDER, NOT_APPLICABLE, YES_NO_NA
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
+from edc_protocol.validators import datetime_not_before_study_start
 
 from .subject_consent import SubjectConsent
 from ..choices import CHILD_IDENTITY_TYPE
@@ -87,6 +89,12 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
         null=True,
         decimal_places=2,
         max_digits=4)
+
+    consent_datetime = models.DateTimeField(
+        verbose_name='Consent date and time',
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future])
 
     is_eligible = models.BooleanField(
         default=False,
