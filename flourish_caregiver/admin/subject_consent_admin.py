@@ -44,8 +44,7 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
         return redirect_url
 
 
-class CaregiverChildConsentInlineAdmin(StackedInlineMixin,
-                                            admin.StackedInline):
+class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
 
     model = CaregiverChildConsent
     form = CaregiverChildConsentForm
@@ -84,7 +83,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                           SimpleHistoryAdmin, admin.ModelAdmin):
 
     form = SubjectConsentForm
-    inlines = [CaregiverChildConsentInlineAdmin, ]
+    inlines = [CaregiverChildConsentInline, ]
 
     fieldsets = (
         (None, {
@@ -191,5 +190,41 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         return super_actions
 
     def get_readonly_fields(self, request, obj=None):
-        return (super().get_readonly_fields(request, obj=obj)
-                +audit_fields)
+        return (super().get_readonly_fields(request, obj=obj) + audit_fields)
+
+
+@admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
+class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
+
+    form = CaregiverChildConsentForm
+
+    fieldsets = (
+        (None, {
+            'fields': [
+                'subject_consent',
+                'subject_identifier',
+                'first_name',
+                'last_name',
+                'gender',
+                'child_dob',
+                'child_test',
+                'child_remain_in_study',
+                'child_preg_test',
+                'child_knows_status',
+                'identity',
+                'identity_type',
+                'confirm_identity',
+                'consent_datetime']}
+         ),)
+
+    radio_fields = {'gender': admin.VERTICAL,
+                    'child_test': admin.VERTICAL,
+                    'child_remain_in_study': admin.VERTICAL,
+                    'child_preg_test': admin.VERTICAL,
+                    'child_knows_status': admin.VERTICAL,
+                    'identity_type': admin.VERTICAL}
+
+    list_display = ('identity', 'subject_identifier', 'first_name', 'last_name',
+                    'consent_datetime', )
+
+    search_fields = ['subject_identifier', 'subject_consent__subject_identifier', ]

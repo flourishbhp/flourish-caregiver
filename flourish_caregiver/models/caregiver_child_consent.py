@@ -3,6 +3,7 @@ from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
+from edc_base.utils import get_utcnow
 from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_constants.choices import GENDER, NOT_APPLICABLE, YES_NO_NA, YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
@@ -98,7 +99,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         verbose_name='Consent date and time',
         validators=[
             datetime_not_before_study_start,
-            datetime_not_future])
+            datetime_not_future],
+        default=get_utcnow)
 
     cohort = models.CharField(
         max_length=12,
@@ -122,9 +124,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             self.child_knows_status)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
-        if not self.id:
-            self.child_age_at_enrollment = (
-                self.get_child_age_at_enrollment() if self.child_dob else None)
+        self.child_age_at_enrollment = (
+            self.get_child_age_at_enrollment() if self.child_dob else None)
         super().save(*args, **kwargs)
 
     def get_child_age_at_enrollment(self):

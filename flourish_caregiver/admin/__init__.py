@@ -20,7 +20,7 @@ from .locator_logs_admin import LocatorLogEntryAdmin
 from .screening_preg_women_admin import ScreeningPregWomenAdmin
 from .screening_prior_bhp_participants_admin import ScreeningPriorBhpParticipantsAdmin
 from .socio_demographic_data_admin import SocioDemographicDataAdmin
-from .subject_consent_admin import SubjectConsentAdmin
+from .subject_consent_admin import SubjectConsentAdmin, CaregiverChildConsentAdmin
 from .substance_use_during_preg_admin import SubstanceUseDuringPregnancyAdmin
 from .substance_use_prior_preg_admin import SubstanceUsePriorPregnancyAdmin
 from .maternal_arv_during_preg_admin import MaternalArvInlineAdmin
