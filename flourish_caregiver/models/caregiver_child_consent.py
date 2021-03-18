@@ -10,7 +10,7 @@ from edc_protocol.validators import datetime_not_before_study_start
 
 from .eligibility import CaregiverChildConsentEligibility
 from .subject_consent import SubjectConsent
-from ..choices import CHILD_IDENTITY_TYPE
+from ..choices import CHILD_IDENTITY_TYPE, COHORTS
 
 
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin,
@@ -98,6 +98,12 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         validators=[
             datetime_not_before_study_start,
             datetime_not_future])
+
+    cohort = models.CharField(
+        max_length=12,
+        choices=COHORTS,
+        blank=True,
+        null=True)
 
     is_eligible = models.BooleanField(
         default=False,

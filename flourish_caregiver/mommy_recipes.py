@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from edc_base.utils import get_utcnow
-from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT
+from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT, NOT_APPLICABLE
 from edc_visit_tracking.constants import SCHEDULED
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
@@ -8,7 +8,7 @@ from model_mommy.recipe import Recipe, seq
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
-from .models import HIVRapidTestCounseling, LocatorLogEntry
+from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
 
 fake = Faker()
 
@@ -57,6 +57,22 @@ subjectconsent = Recipe(
     future_contact=YES,
     version='1'
 )
+
+caregiverchildconsent = Recipe(
+    CaregiverChildConsent,
+    first_name=fake.first_name,
+    last_name=fake.last_name,
+    subject_identifier=None,
+    gender='M',
+    child_test=YES,
+    child_dob=get_utcnow() - relativedelta(years=5),
+    child_remain_in_study=YES,
+    child_preg_test=NOT_APPLICABLE,
+    child_knows_status=YES,
+    identity=seq('123417681'),
+    identity_type='birth_cert',
+    confirm_identity=seq('123417681')
+    )
 
 antenatalenrollment = Recipe(
     AntenatalEnrollment,
