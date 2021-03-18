@@ -87,9 +87,32 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
         blank=False,
         default=NOT_APPLICABLE)
 
+    child_age_at_enrollment = models.DecimalField(
+        blank=True,
+        null=True,
+        decimal_places=2,
+        max_digits=4)
+
     is_eligible = models.BooleanField(
         default=False,
         editable=False)
+
+    ineligibility = models.TextField(
+        verbose_name="Reason not eligible",
+        max_length=150,
+        null=True,
+        editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.child_age_at_enrollment = (
+                self.get_child_age_at_enrollment() if self.child_dob else None)
+
+    def get_child_age_at_enrollment(self):
+        from ..helper_classes import Cohort
+        return Cohort().age_at_enrollment(
+            child_dob=self.child_dob,
+            check_date=self.created.date())
 
     class Meta:
         app_label = 'flourish_caregiver'

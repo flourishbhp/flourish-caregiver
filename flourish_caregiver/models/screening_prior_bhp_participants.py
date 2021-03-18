@@ -43,11 +43,6 @@ class ScreeningPriorBhpParticipants(
             datetime_not_future],
         help_text='Date and time of assessing eligibility')
 
-    study_child_identifier = models.CharField(
-        verbose_name='Study Child Subject Identifier',
-        max_length=50,
-        unique=True)
-
     study_maternal_identifier = models.CharField(
         verbose_name="Study Caregiver Subject Identifier",
         max_length=50,

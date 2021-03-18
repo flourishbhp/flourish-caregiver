@@ -22,7 +22,8 @@ class CaregiverLocatorForm(
 
     study_maternal_identifier = forms.CharField(
         label='Study Caregiver Subject Identifier',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
 
     class Meta:
         model = CaregiverLocator

@@ -16,10 +16,6 @@ class ScreeningPriorBhpParticipantsForm(SiteModelFormMixin, FormValidatorMixin,
         label='Screening Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
-    study_child_identifier = forms.CharField(
-        label='Study child Subject Identifier',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-
     study_maternal_identifier = forms.CharField(
         label='Study Caregiver Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))

@@ -119,12 +119,6 @@ class SubjectConsent(
         blank=True,
         null=True)
 
-    child_age_at_enrollment = models.DecimalField(
-        blank=True,
-        null=True,
-        decimal_places=2,
-        max_digits=4)
-
     ineligibility = models.TextField(
         verbose_name="Reason not eligible",
         max_length=150,
@@ -152,18 +146,10 @@ class SubjectConsent(
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         self.version = '1'
-        self.child_age_at_enrollment = (self.get_child_age_at_enrollment()
-                                        if self.child_dob else None)
         if self.is_eligible:
             if self.created and not self.subject_identifier:
                 self.subject_identifier = self.update_subject_identifier_on_save()
         super().save(*args, **kwargs)
-
-    def get_child_age_at_enrollment(self):
-        from ..helper_classes import Cohort
-        return Cohort().age_at_enrollment(
-            child_dob=self.child_dob,
-            check_date=self.created.date())
 
     def natural_key(self):
         return (self.subject_identifier, self.version)

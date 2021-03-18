@@ -16,8 +16,9 @@ class MaternalDatasetAdmin(ModelAdminMixin, admin.ModelAdmin):
             'fields': [
                 'subject_identifier',
                 'screening_identifier',
-                'study_child_identifier',
                 'study_maternal_identifier',
+                'first_name',
+                'last_name',
                 'mom_enrolldate',
                 'protocol',
                 'delivdt',

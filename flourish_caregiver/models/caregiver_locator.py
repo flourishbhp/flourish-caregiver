@@ -63,25 +63,12 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
     study_maternal_identifier = models.CharField(
         verbose_name="Study Caregiver Subject Identifier",
         max_length=50,
-        unique=True)
+        blank=True,
+        null=True)
 
     locator_date = models.DateField(
         verbose_name='Date Locator Form signed',
         validators=[date_not_future])
-
-    first_name = FirstnameField(
-        null=True, blank=False)
-
-    last_name = LastnameField(
-        verbose_name="Last name",
-        null=True, blank=False)
-
-    child_first_name = FirstnameField(
-        null=True, blank=False)
-
-    child_last_name = LastnameField(
-        verbose_name="Last name",
-        null=True, blank=False)
 
     health_care_infant = models.CharField(
         verbose_name=('Health clinic where your infant will'
