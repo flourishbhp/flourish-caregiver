@@ -2,7 +2,7 @@ from django.db import models
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.field_mixins import IdentityFieldsMixin
-from edc_constants.choices import (GENDER_UNDETERMINED, NOT_APPLICABLE,
+from edc_constants.choices import (GENDER, NOT_APPLICABLE,
                                    YES_NO_NA)
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 
@@ -35,10 +35,10 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
 
     gender = models.CharField(
         verbose_name="Gender",
-        choices=GENDER_UNDETERMINED,
+        choices=GENDER,
         max_length=1,
-        null=True,
-        blank=True)
+        null=False,
+        blank=False)
 
     identity_type = models.CharField(
         verbose_name='What type of identity number is this?',
