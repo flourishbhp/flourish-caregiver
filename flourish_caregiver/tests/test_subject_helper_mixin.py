@@ -25,7 +25,7 @@ class TestSubjectHelperMixin(TestCase):
     def prepare_prior_participant_enrolmment(self):
 
         subject_identifier = self.subject_helper.create_TD_efv_enrollment(
-            subject_identifier='142-40200037')
+            screening_identifier='11234')
 
         maternal_dataset_obj = MaternalDataset.objects.get(
             subject_identifier=subject_identifier)

@@ -81,7 +81,6 @@ class TestVisitScheduleSetup(TestCase):
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
-            child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),
             ** self.options)
 
         mommy.make_recipe(

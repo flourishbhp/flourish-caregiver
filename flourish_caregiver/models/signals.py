@@ -6,7 +6,7 @@ from django.dispatch import receiver
 from edc_base.utils import age, get_utcnow
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
-from ..helper_classes import Cohort
+from ..helper_classes.cohort import Cohort
 from .antenatal_enrollment import AntenatalEnrollment
 from .maternal_dataset import MaternalDataset
 from .locator_logs import LocatorLog, LocatorLogEntry
@@ -91,7 +91,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         # preflourish_model_cls.objects.using('pre_flourish').get(identity=instance.identity)
                     # except preflourish_model_cls.DoesNotExist:
                         # raise  PreFlourishError('Participant is missing PreFlourish schedule.')
-                put_on_schedule(cohort, subject_consent=instance.subject_consent)
+                put_on_schedule(cohort, instance=instance.subject_consent)
 
                 try:
                     child_dummy_consent_cls.objects.get(
@@ -118,7 +118,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 except child_dummy_consent_cls.DoesNotExist:
                     pass
                 else:
-                    put_on_schedule(cohort, subject_consent=instance.subject_consent)
+                    put_on_schedule(cohort, instance=instance.subject_consent)
                     child_dummy_consent_obj.cohort = cohort[:-1]
                     child_dummy_consent_obj.save()
 
@@ -154,9 +154,9 @@ def cohort_assigned(screening_identifier):
             return cohort
 
 
-def put_on_schedule(cohort, subject_consent=None, subject_identifier=None):
-    if subject_consent:
-        subject_identifier = subject_identifier or subject_consent.subject_identifier
+def put_on_schedule(cohort, instance=None, subject_identifier=None):
+    if instance:
+        subject_identifier = subject_identifier or instance.subject_identifier
 
         cohort_label_lower = ''.join(cohort.split('_'))
         onschedule_model = 'flourish_caregiver.onschedule'+cohort_label_lower
@@ -171,14 +171,14 @@ def put_on_schedule(cohort, subject_consent=None, subject_identifier=None):
         schedule_name = cohort + '_schedule1'
         try:
             onschedule_model_cls.objects.get(
-                subject_identifier=subject_consent.subject_identifier,
+                subject_identifier=instance.subject_identifier,
                 schedule_name=schedule_name)
         except onschedule_model_cls.DoesNotExist:
             schedule.put_on_schedule(
-                subject_identifier=subject_consent.subject_identifier,
-                onschedule_datetime=subject_consent.created,
+                subject_identifier=instance.subject_identifier,
+                onschedule_datetime=instance.created,
                 schedule_name=schedule_name)
         else:
             schedule.refresh_schedule(
-                subject_identifier=subject_consent.subject_identifier,
+                subject_identifier=instance.subject_identifier,
                 schedule_name=schedule_name)

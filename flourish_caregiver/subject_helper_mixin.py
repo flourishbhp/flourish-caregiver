@@ -31,7 +31,6 @@ class SubjectHelperMixin:
         'piped_water': 'Other water source',
         'protocol': 'Tshilo Dikotla',
         'site_name': 'Gaborone',
-        'study_child_identifier': '142-4995638-1-10',
         'study_maternal_identifier': '142-4995638-1',
         'toilet': 2,
         'toilet_indoors': 'Latrine or none',

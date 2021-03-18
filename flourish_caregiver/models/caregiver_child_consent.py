@@ -10,6 +10,7 @@ from edc_protocol.validators import datetime_not_before_study_start
 
 from .subject_consent import SubjectConsent
 from ..choices import CHILD_IDENTITY_TYPE, COHORTS
+from ..helper_classes.cohort import Cohort
 
 
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin,
@@ -119,7 +120,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierModelMixin
         super().save(*args, **kwargs)
 
     def get_child_age_at_enrollment(self):
-        from ..helper_classes import Cohort
         return Cohort().age_at_enrollment(
             child_dob=self.child_dob,
             check_date=self.created.date())

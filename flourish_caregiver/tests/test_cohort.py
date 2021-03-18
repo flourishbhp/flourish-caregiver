@@ -2,9 +2,9 @@ from dateutil.relativedelta import relativedelta
 from datetime import date
 
 from django.test.testcases import TestCase
-from  django.utils import timezone
+from django.utils import timezone
 
-from ..helper_classes import Cohort
+from ..helper_classes.cohort import Cohort
 
 
 class TestCohort(TestCase):
