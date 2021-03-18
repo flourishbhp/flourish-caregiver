@@ -70,8 +70,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         cohort = cohort_assigned(instance.subject_consent.screening_identifier)
 
         if cohort:
-            instance.cohort = cohort
-            instance.save_base(raw=True)
 
             child_dummy_consent_cls = django_apps.get_model(
                 'flourish_child.childdummysubjectconsent')
@@ -120,6 +118,9 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     pass
                 else:
                     put_on_schedule(cohort, instance=instance.subject_consent)
+
+            instance.cohort = cohort[:-1]
+            instance.save_base(raw=True)
 
 
 def cohort_assigned(screening_identifier):
