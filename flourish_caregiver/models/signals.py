@@ -56,7 +56,7 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     - Put subject on cohort a schedule.
     """
     if not raw and instance.is_eligible:
-        put_on_schedule('cohort_a', instance=instance)
+        put_on_schedule('cohort_a1', instance=instance)
 
 
 @receiver(post_save, weak=False, sender=CaregiverChildConsent,
@@ -78,7 +78,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 identity=instance.identity).count()
             cohort = cohort + str(children_count)
             child_identifier_postfix = '-' + str(children_count * 10)
-
             child_age = age(instance.child_dob, get_utcnow()).years
 
             if child_age and child_age < 7:
@@ -90,11 +89,14 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     # except preflourish_model_cls.DoesNotExist:
                         # raise  PreFlourishError('Participant is missing PreFlourish schedule.')
                 put_on_schedule(cohort, instance=instance.subject_consent)
+                instance.subject_identifier = (
+                    instance.subject_consent.subject_identifier+child_identifier_postfix)
+                instance.save_base(raw=True)
 
                 try:
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
-                        version=instance.version,)
+                        version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -102,21 +104,23 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                                 instance.subject_consent.subject_identifier+child_identifier_postfix),
                             consent_datetime=instance.consent_datetime,
                             identity=instance.identity,
-                            version=instance.version,
-                            dob=instance.child_dob,
+                            version=instance.subject_consent.version,
                             cohort=cohort[:-1])
             else:
                 try:
                     child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
                                 subject_identifier=(
                                     instance.subject_consent.subject_identifier+child_identifier_postfix),
-                                version=instance.version,
-                                identity=instance.identity,
-                                dob=instance.child_dob)
+                                version=instance.subject_consent.version,
+                                identity=instance.identity)
                 except child_dummy_consent_cls.DoesNotExist:
                     pass
                 else:
                     put_on_schedule(cohort, instance=instance.subject_consent)
+                    instance.subject_identifier = (
+                        instance.subject_consent.subject_identifier+child_identifier_postfix)
+                    instance.save_base(raw=True)
+
                     child_dummy_consent_obj.cohort = cohort[:-1]
                     child_dummy_consent_obj.save()
 

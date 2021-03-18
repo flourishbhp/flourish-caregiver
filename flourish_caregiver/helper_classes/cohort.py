@@ -137,12 +137,12 @@ class Cohort:
         """Return total enrolled Tshilo Dikotla HEU.
         """
 
-        study_child_identifiers = MaternalDataset.objects.values_list(
-            'study_child_identifier', flat=True).filter(
+        study_maternal_identifiers = MaternalDataset.objects.values_list(
+            'study_maternal_identifier', flat=True).filter(
                 screening_identifier__in=self._screening_identifiers)
 
         child_dataset = ChildDataset.objects.filter(
-            study_child_identifier__in=study_child_identifiers,
+            study_maternal_identifier__in=study_maternal_identifiers,
             infant_hiv_exposed='Exposed')
         return child_dataset.count()
 
@@ -159,12 +159,12 @@ class Cohort:
         """Returns total enrolled Tshilo Dikotla HUU infants.
         """
 
-        study_child_identifiers = MaternalDataset.objects.values_list(
-            'study_child_identifier', flat=True).filter(
+        study_maternal_identifiers = MaternalDataset.objects.values_list(
+            'study_maternal_identifier', flat=True).filter(
                 screening_identifier__in=self._screening_identifiers)
 
         child_dataset = ChildDataset.objects.filter(
-            study_child_identifier__in=study_child_identifiers,
+            study_maternal_identifier__in=study_maternal_identifiers,
             infant_hiv_exposed='Unexposed')
         return child_dataset.count()
 
@@ -172,16 +172,20 @@ class Cohort:
         """Return total enrolled infant that are HUU adolescents.
         Total returned is for a protocol specified.
         """
-        screening_identifiers = SubjectConsent.objects.values_list(
-            'screening_identifier', flat=True).filter(
+
+        caregiver_child_consent_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverchildconsent')
+
+        screening_identifiers = caregiver_child_consent_cls.objects.values_list(
+            'subject_consent__screening_identifier', flat=True).filter(
                 child_age_at_enrollment__gte=9.5)
 
-        study_child_identifiers = ChildDataset.objects.values_list(
-            'study_child_identifier', flat=True).filter(
+        study_maternal_identifiers = MaternalDataset.objects.values_list(
+            'study_maternal_identifier', flat=True).filter(
                 screening_identifier__in=screening_identifiers)
 
         child_dataset = ChildDataset.objects.filter(
-            study_child_identifier__in=study_child_identifiers,
+            study_maternal_identifier__in=study_maternal_identifiers,
             infant_hiv_exposed='Unexposed')
         return child_dataset.count()
 
