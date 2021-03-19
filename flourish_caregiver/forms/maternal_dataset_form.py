@@ -19,9 +19,11 @@ class MaternalDatasetForm(SiteModelFormMixin, forms.ModelForm):
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     first_name = forms.CharField(
+        label='First name',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     last_name = forms.CharField(
+        label='Last name',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     mom_enrolldate = forms.CharField(

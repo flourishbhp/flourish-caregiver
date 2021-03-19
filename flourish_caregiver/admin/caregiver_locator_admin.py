@@ -21,8 +21,6 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'locator_date',
                 'first_name',
                 'last_name',
-                'child_first_name',
-                'child_last_name',
                 'mail_address',
                 'health_care_infant',
                 'may_visit_home',

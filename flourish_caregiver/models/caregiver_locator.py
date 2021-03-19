@@ -66,6 +66,14 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         blank=True,
         null=True)
 
+    first_name = FirstnameField(
+        verbose_name='First name',
+        null=True, blank=False)
+
+    last_name = LastnameField(
+        verbose_name='Last name',
+        null=True, blank=False)
+
     locator_date = models.DateField(
         verbose_name='Date Locator Form signed',
         validators=[date_not_future])
@@ -156,23 +164,17 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         return action_item
 
     def save(self, *args, **kwargs):
-        if not self.subject_identifier or self.subject_identifier == self.screening_identifier:
-            self.subject_identifier = self.screening_identifier
-            self.identifier_field = 'screening_identifier'
-            try:
-                ActionItemGetter(
-                    self.action_cls, subject_identifier=self.screening_identifier)
-            except ObjectDoesNotExist:
-                action_item_cls = ActionItemGetter.action_item_model_cls()
-                action_item_cls.subject_identifier_model = 'flourish_caregiver.maternaldataset'
-                action_item_cls.identifier_field = 'screening_identifier'
-                action_item_cls.screening_identifier = self.screening_identifier
+        if not self.subject_identifier and not self.action_identifier:
 
-                action_item_cls.objects.create(
-                    action_type=self.action_cls.action_type(),
-                    subject_identifier=self.screening_identifier)
-        else:
-            super().save(*args, **kwargs)
+            action_item_cls = ActionItemGetter.action_item_model_cls()
+            action_item_cls.subject_identifier_model = 'flourish_caregiver.maternaldataset'
+            action_item_cls.identifier_field = 'screening_identifier'
+            action_item_cls.screening_identifier = self.screening_identifier
+
+            action_item_obj = action_item_cls.objects.create(
+                action_type=self.action_cls.action_type())
+            self.action_identifier = action_item_obj.action_identifier
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'flourish_caregiver'
