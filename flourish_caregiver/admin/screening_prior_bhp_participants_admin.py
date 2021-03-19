@@ -13,12 +13,11 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = ScreeningPriorBhpParticipantsForm
 
-    search_fields = ['study_child_identifier']
+    search_fields = ['study_maternal_identifier', 'screening_identifier']
 
     fieldsets = (
         (None, {
             'fields': ('screening_identifier',
-                       'study_child_identifier',
                        'study_maternal_identifier',
                        'report_datetime',
                        'child_alive',
@@ -35,7 +34,7 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'flourish_participation': admin.VERTICAL}
 
     list_display = (
-        'report_datetime', 'screening_identifier', 'study_child_identifier',
+        'report_datetime', 'screening_identifier', 'study_maternal_identifier',
         'is_eligible', 'is_consented')
 
     list_filter = ('report_datetime', 'screening_identifier',

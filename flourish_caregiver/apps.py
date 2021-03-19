@@ -14,8 +14,9 @@ class AppConfig(DjangoAppConfig):
 
     def ready(self):
         from .models import antenatal_enrollment_on_post_save
-        from .models import subject_consent_on_post_save
+        from .models import caregiver_child_consent_on_post_save
         from .models import maternal_dataset_on_post_save
+
 
 if settings.APP_NAME == 'flourish_caregiver':
     from dateutil.relativedelta import MO, TU, WE, TH, FR, SA, SU
@@ -40,13 +41,11 @@ if settings.APP_NAME == 'flourish_caregiver':
                 related_visit_model='flourish_caregiver.maternalvisit',
                 appt_type='clinic')]
 
-
     class EdcMetadataAppConfig(BaseEdcMetadataAppConfig):
 
         reason_field = {'flourish_caregiver.maternalvisit': 'reason'}
         create_on_reasons = [SCHEDULED, UNSCHEDULED, COMPLETED_PROTOCOL_VISIT]
         delete_on_reasons = [LOST_VISIT, MISSED_VISIT, FAILED_ELIGIBILITY]
-
 
     class EdcProtocolAppConfig(BaseEdcProtocolAppConfigs):
         protocol = 'BHP142'

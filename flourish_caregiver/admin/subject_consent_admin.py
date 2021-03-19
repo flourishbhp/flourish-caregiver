@@ -10,11 +10,12 @@ from edc_model_admin import (
     audit_fieldset_tuple, audit_fields, ModelAdminNextUrlRedirectMixin,
     ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
 from edc_model_admin import ModelAdminBasicMixin, ModelAdminReadOnlyMixin
+from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
 
 from ..admin_site import flourish_caregiver_admin
-from ..forms import SubjectConsentForm
-from ..models import SubjectConsent
+from ..forms import CaregiverChildConsentForm, SubjectConsentForm
+from ..models import CaregiverChildConsent, SubjectConsent
 from .exportaction_mixin import ExportActionMixin
 
 
@@ -43,11 +44,46 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
         return redirect_url
 
 
+class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
+
+    model = CaregiverChildConsent
+    form = CaregiverChildConsentForm
+
+    extra = 0
+    max_num = 3
+
+    fieldsets = (
+        (None, {
+            'fields': [
+                'subject_identifier',
+                'first_name',
+                'last_name',
+                'gender',
+                'child_dob',
+                'child_test',
+                'child_remain_in_study',
+                'child_preg_test',
+                'child_knows_status',
+                'identity',
+                'identity_type',
+                'confirm_identity',
+                'consent_datetime']}
+         ),)
+
+    radio_fields = {'gender': admin.VERTICAL,
+                    'child_test': admin.VERTICAL,
+                    'child_remain_in_study': admin.VERTICAL,
+                    'child_preg_test': admin.VERTICAL,
+                    'child_knows_status': admin.VERTICAL,
+                    'identity_type': admin.VERTICAL}
+
+
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)
 class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                           SimpleHistoryAdmin, admin.ModelAdmin):
 
     form = SubjectConsentForm
+    inlines = [CaregiverChildConsentInline, ]
 
     fieldsets = (
         (None, {
@@ -84,13 +120,6 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'future_contact',
                 'consent_datetime'),
             'description': 'The following questions are directed to the interviewer.'}),
-        ('Caregiver Child Consent Questions', {
-            'fields': (
-                'child_dob',
-                'child_test',
-                'child_remain_in_study',
-                'child_preg_test',
-                'child_knows_status'),}),
         audit_fieldset_tuple)
 
     radio_fields = {
@@ -110,11 +139,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'remain_in_study': admin.VERTICAL,
         'hiv_testing': admin.VERTICAL,
         'breastfeed_intent': admin.VERTICAL,
-        'future_contact': admin.VERTICAL,
-        'child_test': admin.VERTICAL,
-        'child_remain_in_study': admin.VERTICAL,
-        'child_preg_test': admin.VERTICAL,
-        'child_knows_status': admin.VERTICAL,}
+        'future_contact': admin.VERTICAL,}
 
     list_display = ('subject_identifier',
                     'verified_by',
@@ -165,5 +190,41 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         return super_actions
 
     def get_readonly_fields(self, request, obj=None):
-        return (super().get_readonly_fields(request, obj=obj)
-                +audit_fields)
+        return (super().get_readonly_fields(request, obj=obj) + audit_fields)
+
+
+@admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
+class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
+
+    form = CaregiverChildConsentForm
+
+    fieldsets = (
+        (None, {
+            'fields': [
+                'subject_consent',
+                'subject_identifier',
+                'first_name',
+                'last_name',
+                'gender',
+                'child_dob',
+                'child_test',
+                'child_remain_in_study',
+                'child_preg_test',
+                'child_knows_status',
+                'identity',
+                'identity_type',
+                'confirm_identity',
+                'consent_datetime']}
+         ),)
+
+    radio_fields = {'gender': admin.VERTICAL,
+                    'child_test': admin.VERTICAL,
+                    'child_remain_in_study': admin.VERTICAL,
+                    'child_preg_test': admin.VERTICAL,
+                    'child_knows_status': admin.VERTICAL,
+                    'identity_type': admin.VERTICAL}
+
+    list_display = ('identity', 'subject_identifier', 'first_name', 'last_name',
+                    'consent_datetime', )
+
+    search_fields = ['subject_identifier', 'subject_consent__subject_identifier', ]

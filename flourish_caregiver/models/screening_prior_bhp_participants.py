@@ -43,11 +43,6 @@ class ScreeningPriorBhpParticipants(
             datetime_not_future],
         help_text='Date and time of assessing eligibility')
 
-    study_child_identifier = models.CharField(
-        verbose_name='Study Child Subject Identifier',
-        max_length=50,
-        unique=True)
-
     study_maternal_identifier = models.CharField(
         verbose_name="Study Caregiver Subject Identifier",
         max_length=50,
@@ -100,7 +95,7 @@ class ScreeningPriorBhpParticipants(
     objects = ScreeningPriorBhpParticipantsManager()
 
     def __str__(self):
-        return f'{self.screening_identifier}, {self.study_child_identifier}'
+        return f'{self.screening_identifier}, {self.study_maternal_identifier}'
 
     def save(self, *args, **kwargs):
         eligibility_criteria = BHPPriorEligibilty(
@@ -114,7 +109,7 @@ class ScreeningPriorBhpParticipants(
     def get_search_slug_fields(self):
         fields = super().get_search_slug_fields()
         fields.append('screening_identifier')
-        fields.append('study_child_identifier')
+        fields.append('study_maternal_identifier')
         return fields
 
     class Meta:

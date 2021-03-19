@@ -3,14 +3,14 @@ from edc_model_admin import audit_fieldset_tuple
 from .modeladmin_mixins import ModelAdminMixin
 
 from ..admin_site import flourish_caregiver_admin
-from ..forms import CaregiverPhqReferralForm
-from ..models import CaregiverPhqReferral
+from ..forms import CaregiverHamdReferralForm
+from ..models import CaregiverHamdReferral
 
 
-@admin.register(CaregiverPhqReferral, site=flourish_caregiver_admin)
-class CaregiverPhqReferralAdmin(ModelAdminMixin, admin.ModelAdmin):
+@admin.register(CaregiverHamdReferral, site=flourish_caregiver_admin)
+class CaregiverHamdReferralAdmin(ModelAdminMixin, admin.ModelAdmin):
 
-    form = CaregiverPhqReferralForm
+    form = CaregiverHamdReferralForm
 
     fieldsets = (
         (None, {

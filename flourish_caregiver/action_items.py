@@ -2,18 +2,18 @@ from edc_locator.action_items import SubjectLocatorAction
 
 from edc_action_item import Action, site_action_items, HIGH_PRIORITY
 
-MATERNALOFF_STUDY_ACTION = 'submit-maternaloff-study'
+CAREGIVEROFF_STUDY_ACTION = 'submit-caregiveroff-study'
 CAREGIVER_LOCATOR_ACTION = 'submit-caregiver-locator'
 ULTRASOUND_ACTION = 'submit-ultrasound'
 MATERNAL_DELIVERY_ACTION = 'submit-maternal-delivery'
 MATERNAL_COVID_SCREENING_ACTION = 'update-maternal-covid-results'
 
 
-class MaternalOffStudyAction(Action):
-    name = MATERNALOFF_STUDY_ACTION
-    display_name = 'Submit Maternal Offstudy'
-    reference_model = 'td_prn.maternaloffstudy'
-    admin_site_name = 'td_prn_admin'
+class CaregiverOffStudyAction(Action):
+    name = CAREGIVEROFF_STUDY_ACTION
+    display_name = 'Submit Caregiver Offstudy'
+    reference_model = 'flourish_prn.caregiveroffstudy'
+    admin_site_name = 'flourish_prn_admin'
     priority = HIGH_PRIORITY
     singleton = True
 
@@ -39,9 +39,9 @@ class MaternalUltrasoundAction(Action):
         self.reference_model_obj.maternal_visit.save()
 
         if self.reference_model_obj.number_of_gestations != '1':
-            actions = [MaternalOffStudyAction]
+            actions = [CaregiverOffStudyAction]
         else:
-            self.delete_if_new(MaternalOffStudyAction)
+            self.delete_if_new(CaregiverOffStudyAction)
         return actions
 
 
@@ -55,7 +55,7 @@ class MaternalLabourDeliveryAction(Action):
     def get_next_actions(self):
         actions = []
         if self.reference_model_obj.live_infants_to_register != 1:
-            actions = [MaternalOffStudyAction]
+            actions = [CaregiverOffStudyAction]
         return actions
 
 
