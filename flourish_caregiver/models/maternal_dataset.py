@@ -26,9 +26,13 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
         max_length=50,
         unique=True)
 
-    first_name = FirstnameField(null=True, blank=False)
+    first_name = FirstnameField(
+        verbose_name='Firstname',
+        null=True, blank=False)
 
-    last_name = LastnameField(null=True, blank=False)
+    last_name = LastnameField(
+        verbose_name='Lastname',
+        null=True, blank=False)
 
     protocol = models.CharField(max_length=150)
 
