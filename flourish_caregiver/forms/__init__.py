@@ -8,17 +8,10 @@ from .caregiver_edinburgh_referral_form import CaregiverEdinburghReferralForm
 from .caregiver_gad_anxiety_screening_form import CaregiverGadAnxietyScreeningForm
 from .caregiver_gad_referral_form import CaregiverGadReferralForm
 from .caregiver_hamd_depr_screening_form import CaregiverHamdDeprScreeningForm
-<<<<<<< HEAD
-from .caregiver_locator_form import CaregiverLocatorForm
-from .caregiver_phq_depr_screening_form import CaregiverPhqDeprScreeningForm
-from .caregiver_phq_referral_form import CaregiverPhqReferralForm
-from .caregiver_referral_form import CaregiverReferralForm
-=======
 from .caregiver_hamd_referral_form import CaregiverHamdReferralForm
 from .caregiver_locator_form import CaregiverLocatorForm
 from .caregiver_phq_depr_screening_form import CaregiverPhqDeprScreeningForm
 from .caregiver_phq_referral_form import CaregiverPhqReferralForm
->>>>>>> 10658e898b7115019c711a2fe54810d3c80a8eb5
 from .enrollment_form import EnrollmentForm
 from .food_security_questionnaire_form import FoodSecurityQuestionnaireForm
 from .hiv_rapid_test_counseling_form import HIVRapidTestCounselingForm
