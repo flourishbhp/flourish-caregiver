@@ -11,6 +11,7 @@ from .antenatal_enrollment import AntenatalEnrollment
 from .maternal_dataset import MaternalDataset
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .caregiver_child_consent import CaregiverChildConsent
+from .maternal_delivery import MaternalDelivery
 
 
 class PreFlourishError(Exception):
@@ -57,6 +58,32 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw and instance.is_eligible:
         put_on_schedule('cohort_a1', instance=instance)
+
+
+# @receiver(post_save, weak=False, sender=MaternalDelivery,
+          # dispatch_uid='maternal_delivery_on_post_save')
+# def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
+    # """
+    # - Put new born child on schedule
+    # """
+    # if not raw:
+        # if created and instance.live_infants_to_register > 1:
+        #
+            # child_dummy_consent_cls = django_apps.get_model(
+                    # 'flourish_child.childdummysubjectconsent')
+                    #
+            # children_count = 1 + child_dummy_consent_cls.objects.filter(
+                # subject_identifier__icontains=instance.subject_identifier
+                # ).count()
+            # cohort = 'cohort_a' + str(children_count)
+            # child_identifier_postfix = '-' + str(children_count * 10)
+            #
+            # child_dummy_consent_cls.objects.create(
+                # subject_identifier=(
+                    # instance.subject_consent.subject_identifier+child_identifier_postfix),
+                # consent_datetime=instance.delivery_datetime,
+                # version=instance.subject_consent.version,
+                # cohort='cohort_a')
 
 
 @receiver(post_save, weak=False, sender=CaregiverChildConsent,

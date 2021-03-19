@@ -54,14 +54,8 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,)
 
         self.assertEqual(OnScheduleCohortA1.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 1)
-
-        self.assertEqual(OnScheduleCohortA1.objects.get(
-            subject_identifier=subject_consent.subject_identifier).schedule_name,
-             'cohort_a1_schedule1')
-
-        self.assertNotEqual(Appointment.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 0)
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='cohort_a1_schedule1').count(), 1)
 
     def test_cohort_a_onschedule_consent_valid(self):
         self.subject_identifier = self.subject_identifier[:-1] + '1'
@@ -92,11 +86,8 @@ class TestVisitScheduleSetup(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
 
         self.assertEqual(OnScheduleCohortA1.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 1)
-
-        self.assertEqual(OnScheduleCohortA1.objects.get(
-            subject_identifier=subject_consent.subject_identifier).schedule_name,
-            'cohort_a1_schedule1')
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='cohort_a1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -135,11 +126,8 @@ class TestVisitScheduleSetup(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
         self.assertEqual(OnScheduleCohortB1.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 1)
-
-        self.assertEqual(OnScheduleCohortB1.objects.get(
-            subject_identifier=subject_consent.subject_identifier).schedule_name,
-            'cohort_b1_schedule1')
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='cohort_b1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -178,7 +166,8 @@ class TestVisitScheduleSetup(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
         self.assertEqual(OnScheduleCohortB1.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 0)
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='cohort_b1_schedule1').count(), 0)
 
         self.assertEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -225,11 +214,8 @@ class TestVisitScheduleSetup(TestCase):
             version=subject_consent.version)
 
         self.assertEqual(OnScheduleCohortB1.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 1)
-
-        self.assertEqual(OnScheduleCohortB1.objects.get(
-            subject_identifier=subject_consent.subject_identifier).schedule_name,
-            'cohort_b1_schedule1')
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='cohort_a1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -339,11 +325,8 @@ class TestVisitScheduleSetup(TestCase):
             version=subject_consent.version)
 
         self.assertEqual(OnScheduleCohortC1.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 1)
-
-        self.assertEqual(OnScheduleCohortC1.objects.get(
-            subject_identifier=subject_consent.subject_identifier).schedule_name,
-            'cohort_c1_schedule1')
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='cohort_a1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
