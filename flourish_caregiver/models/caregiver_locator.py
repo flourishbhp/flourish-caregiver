@@ -1,7 +1,6 @@
 from django.apps import apps as django_apps
 from django.db import models
 from django.utils.safestring import mark_safe
-from django.core.exceptions import ObjectDoesNotExist
 from django_crypto_fields.fields import EncryptedCharField
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_action_item.model_mixins import ActionModelMixin
@@ -165,12 +164,7 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
 
     def save(self, *args, **kwargs):
         if not self.subject_identifier and not self.action_identifier:
-
             action_item_cls = ActionItemGetter.action_item_model_cls()
-            action_item_cls.subject_identifier_model = 'flourish_caregiver.maternaldataset'
-            action_item_cls.identifier_field = 'screening_identifier'
-            action_item_cls.screening_identifier = self.screening_identifier
-
             action_item_obj = action_item_cls.objects.create(
                 action_type=self.action_cls.action_type())
             self.action_identifier = action_item_obj.action_identifier
