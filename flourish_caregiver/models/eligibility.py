@@ -1,20 +1,36 @@
-from edc_constants.constants import NO, UNKNOWN
+from edc_constants.constants import NO, UNKNOWN, POS
 
 
 class AntenatalEnrollmentEligibility:
 
-    def __init__(self, will_breastfeed=None):
-        self.will_breastfeed = will_breastfeed
-        self.reasons = []
-        self.eligible = None
-        if self.will_breastfeed:
-            self.eligible = True
-        if not self.will_breastfeed:
-            self.reasons.append(
-                'Participant is not willing to breastfeed')
+    def __init__(self, will_breastfeed=None, ga_lmp_enrollment_wks=None,
+                 enrollment_hiv_status=None, will_get_arvs=None,
+                 pending_ultrasound=None, rapid_test_done=None):
+
+        self.error_message = []
+        self.is_eligible = True
+
+        if pending_ultrasound:
+            self.is_eligible = False
+            self.error_message.append('Pending ultrasound.')
+        else:
+            lmp_to_use = ga_lmp_enrollment_wks
+            if lmp_to_use < 22 or lmp_to_use > 28:
+                self.error_message.append('Gestation not 22 to 28wks.')
+                self.is_eligible = False
+            if will_breastfeed == NO:
+                self.error_message.append('Will not breastfeed.')
+                self.is_eligible = False
+            if enrollment_hiv_status == POS and will_get_arvs == NO:
+                self.error_message.append('Will not get ARVs on this pregnancy.')
+                self.is_eligible = False
+            if rapid_test_done == NO:
+                self.error_message.append('Rapid test not done.')
+                self.is_eligible = False
 
 
 class BHPPriorEligibilty:
+
     def __init__(self, child_alive=None, mother_alive=None,
                  flourish_interest=None, flourish_participation=None, **kwargs):
         """checks if prior BHP participants are eligible otherwise

@@ -5,10 +5,11 @@ from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.utils import get_utcnow
 from edc_constants.choices import (
     POS_NEG_UNTESTED_REFUSAL, YES_NO_NA, POS_NEG, YES_NO)
-from edc_constants.constants import NO, YES, POS, NEG
+from edc_constants.constants import NO
 from edc_protocol.validators import date_not_before_study_start
 from edc_protocol.validators import datetime_not_before_study_start
 
+from .eligibility import AntenatalEnrollmentEligibility
 from ..helper_classes import EnrollmentHelper
 
 
@@ -133,7 +134,7 @@ class EnrollmentMixin(models.Model):
         null=True,
         blank=True)
 
-    unenrolled = models.TextField(
+    ineligibility = models.TextField(
         verbose_name="Reason not enrolled",
         max_length=350,
         null=True,
@@ -143,6 +144,7 @@ class EnrollmentMixin(models.Model):
         enrollment_helper = EnrollmentHelper(instance_antenatal=self)
 #      if not enrollment_helper.validate_rapid_test():
 #        raise ValidationError('Ensure a rapid test id done for this subject.')
+
         self.edd_by_lmp = enrollment_helper.evaluate_edd_by_lmp
         self.ga_lmp_enrollment_wks = enrollment_helper.evaluate_ga_lmp(
             self.get_registration_date())
@@ -150,26 +152,14 @@ class EnrollmentMixin(models.Model):
         self.date_at_32wks = enrollment_helper.date_at_32wks
         if not self.ultrasound:
             self.pending_ultrasound = enrollment_helper.pending
-        self.is_eligible = self.antenatal_criteria(enrollment_helper)
-        self.unenrolled = self.unenrolled_error_messages()
+        eligibility_criteria = AntenatalEnrollmentEligibility(
+            will_breastfeed=self.will_breastfeed,
+            ga_lmp_enrollment_wks=self.ga_lmp_enrollment_wks,
+            enrollment_hiv_status=self.enrollment_hiv_status,
+            will_get_arvs=self.will_get_arvs, pending_ultrasound=self.pending_ultrasound)
+        self.is_eligible = eligibility_criteria.is_eligible
+        self.ineligibility = eligibility_criteria.error_message
         super(EnrollmentMixin, self).save(*args, **kwargs)
-
-    def antenatal_criteria(self, enrollment_helper):
-        """Returns True if basic criteria is met for enrollment.
-        """
-        if self.pending_ultrasound:
-            basic_criteria = False
-        else:
-            lmp_to_use = self.ga_lmp_enrollment_wks
-            basic_criteria = (lmp_to_use >= 22 and lmp_to_use <= 28 and
-                              self.will_breastfeed == YES)
-        if (basic_criteria and self.enrollment_hiv_status == POS and
-                self.will_get_arvs == YES):
-            return True
-        elif basic_criteria and self.enrollment_hiv_status == NEG:
-            return True
-        else:
-            return False
 
     def get_registration_date(self):
         consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
