@@ -4,7 +4,6 @@ from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO
-from edc_constants.constants import NO
 from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import date_not_before_study_start
 
@@ -49,39 +48,34 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         validators=[
             date_not_before_study_start],
         null=True,
-        blank=True,
-        help_text="")
+        blank=True)
 
     history = HistoricalRecords()
 
     def __str__(self):
         return f'antenatal: {self.subject_identifier}'
 
-#     def natural_key(self):
-#         return self.registered_subject.natural_key()
-#     natural_key.dependencies = ['edc_registration.registeredsubject']
-
-    def unenrolled_error_messages(self):
-        """Returns a tuple (True, None) if mother is eligible otherwise
-        (False, unenrolled_error_message) where error message is the reason
-        enrollment failed."""
-
-        unenrolled_error_message = []
-        if self.will_breastfeed == NO:
-            unenrolled_error_message.append('will not breastfeed')
-        if self.will_get_arvs == NO:
-            unenrolled_error_message.append(
-                'Will not get ARVs on this pregnancy.')
-        if self.rapid_test_done == NO:
-            unenrolled_error_message.append('rapid test not done')
-        if (self.ga_lmp_enrollment_wks and
-                (self.ga_lmp_enrollment_wks < 22 or
-                 self.ga_lmp_enrollment_wks > 28)):
-            unenrolled_error_message.append('gestation not 22 to 28wks')
-
-        if self.ultrasound and not self.ultrasound.pass_antenatal_enrollment:
-            unenrolled_error_message.append('Pregnancy is not a singleton.')
-        return unenrolled_error_message
+    # def unenrolled_error_messages(self):
+        # """Returns a tuple (True, None) if mother is eligible otherwise
+        # (False, unenrolled_error_message) where error message is the reason
+        # enrollment failed."""
+        #
+        # unenrolled_error_message = []
+        # if self.will_breastfeed == NO:
+            # unenrolled_error_message.append('will not breastfeed')
+        # if self.will_get_arvs == NO:
+            # unenrolled_error_message.append(
+                # 'Will not get ARVs on this pregnancy.')
+        # if self.rapid_test_done == NO:
+            # unenrolled_error_message.append('rapid test not done')
+        # if (self.ga_lmp_enrollment_wks and
+                # (self.ga_lmp_enrollment_wks < 22 or
+                 # self.ga_lmp_enrollment_wks > 28)):
+            # unenrolled_error_message.append('gestation not 22 to 28wks')
+            #
+        # if self.ultrasound and not self.ultrasound.pass_antenatal_enrollment:
+            # unenrolled_error_message.append('Pregnancy is not a singleton.')
+        # return unenrolled_error_message
 
     class Meta:
         app_label = 'flourish_caregiver'
