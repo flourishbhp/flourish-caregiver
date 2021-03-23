@@ -31,18 +31,19 @@ class AntenatalEnrollmentEligibility:
 
 class BHPPriorEligibilty:
 
-    def __init__(self, child_alive=None, flourish_interest=None,
-                 flourish_participation=None, **kwargs):
+    def __init__(self, child_alive=None, mother_alive=None,
+                 flourish_interest=None, flourish_participation=None, **kwargs):
         """checks if prior BHP participants are eligible otherwise
             error message is the reason for eligibility test failed."""
         self.error_message = []
         self.child_alive = child_alive
+        self.mother_alive = mother_alive
         self.flourish_interest = flourish_interest
         self.flourish_participation = flourish_participation
         if self.child_alive in [NO, UNKNOWN]:
             self.error_message.append(
                 'The child from the previous study is not alive.')
-        if self.flourish_interest == NO:
+        if self.mother_alive in [NO, UNKNOWN] and self.flourish_interest == NO:
             self.error_message.append(
                 'Child caregiver not interested in learning about flourish.')
         if self.flourish_participation == NO:
@@ -73,7 +74,7 @@ class ConsentEligibility:
 
     def __init__(self, remain_in_study=None, hiv_testing=None, breastfeed_intent=None,
                  consent_reviewed=None, study_questions=None, assessment_score=None,
-                 consent_signature=None, consent_copy=None):
+                 consent_signature=None, consent_copy=None, child_consent=None):
         self.error_message = []
         self.remain_in_study = remain_in_study
         self.hiv_testing = hiv_testing
@@ -83,6 +84,7 @@ class ConsentEligibility:
         self.assessment_score = assessment_score
         self.consent_signature = consent_signature
         self.consent_copy = consent_copy
+        self.child_consent = child_consent
         if self.remain_in_study == NO:
             self.error_message.append(
                 'Participant is not willing to remain in study area until 2025.')
@@ -107,6 +109,9 @@ class ConsentEligibility:
         if self.consent_copy == NO:
             self.error_message.append(
                 'Participant was not provided with a copy of their informed consent.')
+        if self.child_consent == NO:
+            self.error_message.append(
+                'Participant is not willing to consent for their child\'s participation.')
         self.is_eligible = False if self.error_message else True
 
 

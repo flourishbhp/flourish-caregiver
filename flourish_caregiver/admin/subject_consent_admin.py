@@ -109,7 +109,8 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'confirm_identity',
                 'remain_in_study',
                 'hiv_testing',
-                'breastfeed_intent')}),
+                'breastfeed_intent',
+                'child_consent')}),
         ('Review Questions', {
             'fields': (
                 'consent_reviewed',
@@ -139,7 +140,8 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'remain_in_study': admin.VERTICAL,
         'hiv_testing': admin.VERTICAL,
         'breastfeed_intent': admin.VERTICAL,
-        'future_contact': admin.VERTICAL,}
+        'future_contact': admin.VERTICAL,
+        'child_consent': admin.VERTICAL}
 
     list_display = ('subject_identifier',
                     'verified_by',

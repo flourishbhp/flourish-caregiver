@@ -161,5 +161,3 @@ class EnrollmentHelper(object):
         return (
             int(40 - ((self.evaluate_edd_by_lmp - instance_date).days / 7)) if
             self.instance_antenatal.last_period_date else None)
-
-

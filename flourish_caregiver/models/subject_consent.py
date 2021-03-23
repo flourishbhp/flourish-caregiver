@@ -113,6 +113,12 @@ class SubjectConsent(
         verbose_name='Do you give us permission to be contacted for future studies?',
         choices=YES_NO)
 
+    child_consent = models.CharField(
+        max_length=3,
+        verbose_name='Are you willing to consent for your child’s participation in FLOURISH?',
+        choices=YES_NO,
+        help_text='If ‘No’ ineligible for study participation')
+
     ineligibility = models.TextField(
         verbose_name="Reason not eligible",
         max_length=150,
@@ -136,7 +142,7 @@ class SubjectConsent(
         eligibility_criteria = ConsentEligibility(
             self.remain_in_study, self.hiv_testing, self.breastfeed_intent,
             self.consent_reviewed, self.study_questions, self.assessment_score,
-            self.consent_signature, self.consent_copy)
+            self.consent_signature, self.consent_copy, self.child_consent)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         self.version = '1'
