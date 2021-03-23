@@ -1,5 +1,6 @@
 from django.db import models
-from ..choices import TB_DRUGS_FREQ, TB_TYPE, YES_NO_UNK_DWTA
+from ..choices import (EXTRA_PULMONARY_LOC, TB_DRUGS_FREQ, TB_TYPE,
+                       YES_NO_UNK_DWTA)
 
 from .model_mixins import CrfModelMixin
 
@@ -41,6 +42,13 @@ class TbHistoryPreg(CrfModelMixin):
         verbose_name='What type of TB were you diagnosed with?',
         choices=TB_TYPE,
         max_length=30,
+        blank=True,
+        null=True)
+
+    extra_pulmonary_loc = models.CharField(
+        verbose_name='Where was the location of your extra-pulmonary TB?',
+        choices=EXTRA_PULMONARY_LOC,
+        max_length=40,
         blank=True,
         null=True)
 

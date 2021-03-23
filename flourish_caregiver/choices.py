@@ -164,6 +164,14 @@ ENJOYMENT_TO_THINGS = (
     ('3', 'Hardly at all'),
 )
 
+EXTRA_PULMONARY_LOC = (
+    ('lymph_nodes', 'Lymph nodes'),
+    ('abdomen', 'Abdomen '),
+    ('bones', 'Bones '),
+    ('brain', 'Brrain'),
+    (UNKNOWN, 'Unknown'),
+)
+
 FEEDING_CHOICES = (
     (BREASTFEED_ONLY, 'Breastfeed only'),
     ('Formula feeding only', 'Formula feeding only'),
