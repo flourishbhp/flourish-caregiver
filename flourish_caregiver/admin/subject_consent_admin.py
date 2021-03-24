@@ -249,3 +249,9 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'consent_datetime',)
 
     search_fields = ['subject_identifier', 'subject_consent__subject_identifier', ]
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        context['adminform'].form.fields['subject_consent'].queryset = \
+            SubjectConsent.objects.filter(id=request.GET.get('subject_consent'))
+        return super(CaregiverChildConsentAdmin, self).render_change_form(
+            request, context, *args, **kwargs)
