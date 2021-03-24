@@ -78,28 +78,23 @@ class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
                     'child_knows_status': admin.VERTICAL,
                     'identity_type': admin.VERTICAL}
 
-    def get_min_num(self, request, obj=None, **kwargs):
-        screening_preg = django_apps.get_model('flourish_caregiver.screeningpregwomen')
+    def get_max_num(self, request, obj=None, **kwargs):
         maternal_delivery = django_apps.get_model('flourish_caregiver.maternaldelivery')
-        self.min_num = 1
-        try:
-            screening_preg.objects.get(screening_identifier=obj.screening_identifier)
-        except screening_preg.DoesNotExist:
-            pass
-        else:
-            try:
-                maternal_delivery.objects.get(subject_identifier=obj.subject_identifier)
-            except maternal_delivery.DoesNotExist:
+        dummy_consent = django_apps.get_model('flourish_child.childdummysubjectconsent')
+
+        if request.GET.get('antenatal') != 'None':
+            if obj:
+                self.max_num = dummy_consent.objects.filter(
+                    subject_identifier__icontains=obj.subject_identifier).count()
                 try:
-                    obj.__class__.objects.get(identity=obj.identity)
-                except obj.__class__.DoesNotExist:
-                    self.min_num = 0
+                    maternal_delivery.objects.get(subject_identifier=obj.subject_identifier)
+                except maternal_delivery.DoesNotExist:
+                    pass
+                else:
+                    self.max_num += 1
             else:
-                try:
-                    obj.__class__.objects.get(identity=obj.identity)
-                except obj.__class__.DoesNotExist:
-                    self.max_num = 1
-        return self.min_num
+                self.max_num = 0
+        return super().get_max_num(request, obj=None, **kwargs)
 
 
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)
