@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from django.apps import apps as django_apps
 from django.contrib import admin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
@@ -76,6 +76,29 @@ class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
                     'child_preg_test': admin.VERTICAL,
                     'child_knows_status': admin.VERTICAL,
                     'identity_type': admin.VERTICAL}
+
+    def get_min_num(self, request, obj=None, **kwargs):
+        screening_preg = django_apps.get_model('flourish_caregiver.screeningpregwomen')
+        maternal_delivery = django_apps.get_model('flourish_caregiver.maternaldelivery')
+        self.min_num = 1
+        try:
+            screening_preg.objects.get(screening_identifier=obj.screening_identifier)
+        except screening_preg.DoesNotExist:
+            pass
+        else:
+            try:
+                maternal_delivery.objects.get(subject_identifier=obj.subject_identifier)
+            except maternal_delivery.DoesNotExist:
+                try:
+                    obj.__class__.objects.get(identity=obj.identity)
+                except obj.__class__.DoesNotExist:
+                    self.min_num = 0
+            else:
+                try:
+                    obj.__class__.objects.get(identity=obj.identity)
+                except obj.__class__.DoesNotExist:
+                    self.max_num = 1
+        return self.min_num
 
 
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)
@@ -193,7 +216,6 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
 
     def get_readonly_fields(self, request, obj=None):
         return (super().get_readonly_fields(request, obj=obj) + audit_fields)
-
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
 class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
