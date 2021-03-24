@@ -17,6 +17,7 @@ from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..models import CaregiverChildConsent, SubjectConsent
 from .exportaction_mixin import ExportActionMixin
+from _collections import OrderedDict
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
@@ -250,6 +251,6 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'identity_type': admin.VERTICAL}
 
     list_display = ('identity', 'subject_identifier', 'first_name', 'last_name',
-                    'consent_datetime', )
+                    'consent_datetime',)
 
     search_fields = ['subject_identifier', 'subject_consent__subject_identifier', ]

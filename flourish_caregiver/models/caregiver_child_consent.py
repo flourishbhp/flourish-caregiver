@@ -1,3 +1,5 @@
+from django.apps import apps as django_apps
+from django.core.exceptions import ValidationError
 from django.db import models
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
@@ -126,7 +128,21 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         self.ineligibility = eligibility_criteria.error_message
         self.child_age_at_enrollment = (
             self.get_child_age_at_enrollment() if self.child_dob else None)
+        if self.is_eligible and not self.subject_identifier:
+                self.subject_identifier = self.update_subject_identifier
         super().save(*args, **kwargs)
+
+    @property
+    def update_subject_identifier(self):
+
+        child_dummy_consent_cls = django_apps.get_model(
+            'flourish_child.childdummysubjectconsent')
+
+        children_count = 1 + child_dummy_consent_cls.objects.filter(
+            subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
+                identity=self.identity).count()
+        child_identifier_postfix = '-' + str(children_count * 10)
+        return self.subject_consent.subject_identifier + child_identifier_postfix
 
     def get_child_age_at_enrollment(self):
         return Cohort().age_at_enrollment(

@@ -55,6 +55,7 @@ subjectconsent = Recipe(
     consent_signature=YES,
     consent_copy=YES,
     future_contact=YES,
+    child_consent=YES,
     version='1'
 )
 
@@ -109,7 +110,16 @@ maternalvisit = Recipe(
 
 maternaldelivery = Recipe(
     MaternalDelivery,
-    subject_identifier=None,)
+    subject_identifier=None,
+    report_datetime=get_utcnow(),
+    delivery_datetime=get_utcnow(),
+    delivery_time_estimated=NO,
+    labour_hrs='3',
+    delivery_hospital='Lesirane',
+    mode_delivery='spontaneous vaginal',
+    csection_reason=NOT_APPLICABLE,
+    live_infants_to_register=1,
+    valid_regiment_duration=YES)
 
 hivrapidtestcounseling = Recipe(
     HIVRapidTestCounseling,)

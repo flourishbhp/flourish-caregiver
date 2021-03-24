@@ -1,6 +1,5 @@
 from django.apps import apps as django_apps
 from django.db import models
-from edc_action_item.model_mixins.action_model_mixin import ActionModelMixin
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
@@ -8,23 +7,20 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import YES, POS
+from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
-from ..action_items import MATERNAL_DELIVERY_ACTION
 from ..maternal_choices import (
     DELIVERY_HEALTH_FACILITY, DELIVERY_MODE, CSECTION_REASON)
 from ..choices import FEEDING_CHOICES
 from .list_models import DeliveryComplications
 
 
-class MaternalDelivery(ActionModelMixin, BaseUuidModel):
+class MaternalDelivery(UniqueSubjectIdentifierFieldMixin, BaseUuidModel):
 
     """ A model completed by the user on Maternal Delivery which
     triggers registration of infants.
     """
-    tracking_identifier_prefix = 'MD'
-
-    action_name = MATERNAL_DELIVERY_ACTION
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",

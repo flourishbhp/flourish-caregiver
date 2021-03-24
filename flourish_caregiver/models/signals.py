@@ -60,30 +60,29 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
         put_on_schedule('cohort_a1', instance=instance)
 
 
-# @receiver(post_save, weak=False, sender=MaternalDelivery,
-          # dispatch_uid='maternal_delivery_on_post_save')
-# def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
-    # """
-    # - Put new born child on schedule
-    # """
-    # if not raw:
-        # if created and instance.live_infants_to_register > 1:
-        #
-            # child_dummy_consent_cls = django_apps.get_model(
-                    # 'flourish_child.childdummysubjectconsent')
-                    #
-            # children_count = 1 + child_dummy_consent_cls.objects.filter(
-                # subject_identifier__icontains=instance.subject_identifier
-                # ).count()
-            # cohort = 'cohort_a' + str(children_count)
-            # child_identifier_postfix = '-' + str(children_count * 10)
-            #
-            # child_dummy_consent_cls.objects.create(
-                # subject_identifier=(
-                    # instance.subject_consent.subject_identifier+child_identifier_postfix),
-                # consent_datetime=instance.delivery_datetime,
-                # version=instance.subject_consent.version,
-                # cohort='cohort_a')
+@receiver(post_save, weak=False, sender=MaternalDelivery,
+          dispatch_uid='maternal_delivery_on_post_save')
+def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
+    """
+    - Put new born child on schedule
+    """
+    if not raw:
+        if created and instance.live_infants_to_register > 1:
+
+            child_dummy_consent_cls = django_apps.get_model(
+                    'flourish_child.childdummysubjectconsent')
+
+            children_count = 1 + child_dummy_consent_cls.objects.filter(
+                subject_identifier__icontains=instance.subject_identifier
+                ).count()
+            child_identifier_postfix = '-' + str(children_count * 10)
+
+            child_dummy_consent_cls.objects.create(
+                subject_identifier=(
+                    instance.subject_consent.subject_identifier + child_identifier_postfix),
+                consent_datetime=instance.delivery_datetime,
+                version=instance.subject_consent.version,
+                cohort='cohort_a')
 
 
 @receiver(post_save, weak=False, sender=CaregiverChildConsent,
@@ -118,7 +117,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         # raise  PreFlourishError('Participant is missing PreFlourish schedule.')
                 put_on_schedule(cohort, instance=instance.subject_consent)
                 instance.subject_identifier = (
-                    instance.subject_consent.subject_identifier+child_identifier_postfix)
+                    instance.subject_consent.subject_identifier + child_identifier_postfix)
                 instance.save_base(raw=True)
 
                 try:
@@ -129,7 +128,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
                     child_dummy_consent_cls.objects.create(
                             subject_identifier=(
-                                instance.subject_consent.subject_identifier+child_identifier_postfix),
+                                instance.subject_consent.subject_identifier + child_identifier_postfix),
                             consent_datetime=instance.consent_datetime,
                             identity=instance.identity,
                             version=instance.subject_consent.version,
@@ -138,7 +137,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 try:
                     child_dummy_consent_cls.objects.get(
                                 subject_identifier=(
-                                    instance.subject_consent.subject_identifier+child_identifier_postfix),
+                                    instance.subject_consent.subject_identifier + child_identifier_postfix),
                                 version=instance.subject_consent.version,
                                 identity=instance.identity)
                 except child_dummy_consent_cls.DoesNotExist:
@@ -183,7 +182,7 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
         subject_identifier = subject_identifier or instance.subject_identifier
 
         cohort_label_lower = ''.join(cohort.split('_'))
-        onschedule_model = 'flourish_caregiver.onschedule'+cohort_label_lower
+        onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
 
         _, schedule = site_visit_schedules.get_by_onschedule_model(
             onschedule_model)

@@ -178,25 +178,7 @@ class SubjectConsent(
         Called from the signal
         """
         if self.is_eligible:
-            if not getattr(self, self.registration_unique_field):
-                raise UpdatesOrCreatesRegistrationModelError(
-                    f'Cannot update or create RegisteredSubject. '
-                    f'Field value for \'{self.registration_unique_field}\' is None.')
-
-            registration_value = getattr(self, self.registration_unique_field)
-            registration_value = self.to_string(registration_value)
-
-            try:
-                obj = self.registration_model.objects.get(
-                    **{self.registered_subject_unique_field: registration_value})
-            except self.registration_model.DoesNotExist:
-                pass
-            else:
-                self.registration_raise_on_illegal_value_change(obj)
-            registered_subject, created = self.registration_model.objects.update_or_create(
-                **{self.registered_subject_unique_field: registration_value},
-                defaults=self.registration_options)
-            return registered_subject, created
+            return super().registration_update_or_create()
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'flourish_caregiver'
