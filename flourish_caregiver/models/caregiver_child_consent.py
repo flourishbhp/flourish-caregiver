@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
-from edc_base.model_validators import datetime_not_future
+from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_consent.field_mixins import IdentityFieldsMixin
@@ -49,6 +49,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     child_dob = models.DateField(
         verbose_name="Date of birth",
+        validators=[date_not_future, ],
         null=False,
         blank=False)
 
