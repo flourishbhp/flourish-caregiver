@@ -82,7 +82,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
         maternal_delivery = django_apps.get_model('flourish_caregiver.maternaldelivery')
         dummy_consent = django_apps.get_model('flourish_child.childdummysubjectconsent')
 
-        if request.GET.get('antenatal') != 'None':
+        if request.GET.get('antenatal') == 'True':
             if obj:
                 self.max_num = dummy_consent.objects.filter(
                     subject_identifier__icontains=obj.subject_identifier).count()
