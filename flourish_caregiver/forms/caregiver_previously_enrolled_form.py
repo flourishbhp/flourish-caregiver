@@ -11,6 +11,10 @@ class CaregiverPreviouslyEnrolledForm(
 
     form_validator_cls = CaregiverPrevEnrolledFormValidator
 
+    subject_identifier = forms.CharField(
+        label='Subject Identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
     class Meta:
         model = CaregiverPreviouslyEnrolled
         fields = '__all__'

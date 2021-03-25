@@ -5,23 +5,19 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, GENDER
+from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 
 from ..choices import RELATION_TO_CHILD
 from ..maternal_choices import POS_NEG_IND
 
 
-class CaregiverPreviouslyEnrolled(SiteModelMixin, BaseUuidModel):
+class CaregiverPreviouslyEnrolled(UniqueSubjectIdentifierFieldMixin,
+                                  SiteModelMixin, BaseUuidModel):
 
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
         default=get_utcnow,
         validators=[datetime_not_future, ], )
-
-    screening_identifier = models.CharField(
-        verbose_name='Eligibility Identifier',
-        max_length=36,
-        unique=True,
-        editable=False)
 
     maternal_prev_enroll = models.CharField(
         verbose_name='Is this caregiver the person '
@@ -70,6 +66,9 @@ class CaregiverPreviouslyEnrolled(SiteModelMixin, BaseUuidModel):
         blank=True,)
 
     relation_to_child_other = OtherCharField()
+
+    def __str__(self):
+        return f'{self.subject_identifier}'
 
     class Meta:
         app_label = 'flourish_caregiver'

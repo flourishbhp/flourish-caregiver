@@ -105,6 +105,12 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             datetime_not_future],
         default=get_utcnow)
 
+    version = models.CharField(
+        verbose_name='Consent version',
+        max_length=10,
+        help_text='See \'Consent Type\' for consent versions by period.',
+        editable=False)
+
     cohort = models.CharField(
         max_length=12,
         choices=COHORTS,
@@ -125,6 +131,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         eligibility_criteria = CaregiverChildConsentEligibility(
             self.child_test, self.child_remain_in_study, self.child_preg_test,
             self.child_knows_status)
+        self.version = self.subject_consent.consent_version
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         self.child_age_at_enrollment = (

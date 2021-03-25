@@ -17,6 +17,7 @@ class CaregiverPreviouslyEnrolledAdmin(ModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': [
                 'report_datetime',
+                'subject_identifier',
                 'maternal_prev_enroll',
                 'current_hiv_status',
                 'last_test_date',
@@ -35,4 +36,4 @@ class CaregiverPreviouslyEnrolledAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'sex': admin.VERTICAL,
                     'relation_to_child': admin.VERTICAL}
 
-    search_fields = ['screening_identifier']
+    search_fields = ['subject_identifier']
