@@ -32,7 +32,7 @@ class AntenatalEnrollmentEligibility:
 class BHPPriorEligibilty:
 
     def __init__(self, child_alive=None, mother_alive=None,
-                 flourish_interest=None, flourish_participation=None, **kwargs):
+                 flourish_interest=None, flourish_participation=None):
         """checks if prior BHP participants are eligible otherwise
             error message is the reason for eligibility test failed."""
         self.error_message = []
@@ -46,7 +46,7 @@ class BHPPriorEligibilty:
         if self.mother_alive in [NO, UNKNOWN] and self.flourish_interest == NO:
             self.error_message.append(
                 'Child caregiver not interested in learning about flourish.')
-        if self.flourish_participation == NO:
+        if self.flourish_participation in [NO, 'undecided']:
             self.error_message.append(
                 'Not interested in participating in the Flourish study.')
         self.is_eligible = False if self.error_message else True
@@ -54,7 +54,7 @@ class BHPPriorEligibilty:
 
 class PregWomenEligibility:
 
-    def __init__(self, hiv_testing=None, breastfeed_intent=None, **kwargs):
+    def __init__(self, hiv_testing=None, breastfeed_intent=None):
         """checks if pregnant women enrolling is eligible otherwise'
         ' error message is the reason for'
         ' eligibility test failed."""
