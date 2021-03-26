@@ -73,8 +73,9 @@ class PregWomenEligibility:
 class ConsentEligibility:
 
     def __init__(self, remain_in_study=None, hiv_testing=None, breastfeed_intent=None,
-                 consent_reviewed=None, study_questions=None, assessment_score=None,
-                 consent_signature=None, consent_copy=None, child_consent=None):
+                 consent_reviewed=None, citizen=None, study_questions=None,
+                 assessment_score=None, consent_signature=None, consent_copy=None,
+                 child_consent=None):
         self.error_message = []
         self.remain_in_study = remain_in_study
         self.hiv_testing = hiv_testing
@@ -112,6 +113,9 @@ class ConsentEligibility:
         if self.child_consent == NO:
             self.error_message.append(
                 'Participant is not willing to consent for their child\'s participation.')
+        if citizen == NO:
+            self.error_message.append(
+                'Participant is not a Botswana citizen.')
         self.is_eligible = False if self.error_message else True
 
 
