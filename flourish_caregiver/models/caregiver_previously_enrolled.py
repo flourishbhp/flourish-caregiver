@@ -6,6 +6,7 @@ from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, GENDER
 from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
+from edc_protocol.validators import datetime_not_before_study_start
 
 from ..choices import RELATION_TO_CHILD
 from ..maternal_choices import POS_NEG_IND
@@ -17,7 +18,7 @@ class CaregiverPreviouslyEnrolled(UniqueSubjectIdentifierFieldMixin,
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
         default=get_utcnow,
-        validators=[datetime_not_future, ], )
+        validators=[datetime_not_future, datetime_not_before_study_start], )
 
     maternal_prev_enroll = models.CharField(
         verbose_name='Is this caregiver the person '
@@ -41,6 +42,7 @@ class CaregiverPreviouslyEnrolled(UniqueSubjectIdentifierFieldMixin,
 
     test_date = models.DateField(
         verbose_name='Test Date',
+        validators=[datetime_not_future, ],
         null=True,
         blank=True,)
 
