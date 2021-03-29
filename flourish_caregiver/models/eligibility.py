@@ -32,7 +32,7 @@ class AntenatalEnrollmentEligibility:
 class BHPPriorEligibilty:
 
     def __init__(self, child_alive=None, mother_alive=None,
-                 flourish_interest=None, flourish_participation=None, **kwargs):
+                 flourish_interest=None, flourish_participation=None):
         """checks if prior BHP participants are eligible otherwise
             error message is the reason for eligibility test failed."""
         self.error_message = []
@@ -46,7 +46,7 @@ class BHPPriorEligibilty:
         if self.mother_alive in [NO, UNKNOWN] and self.flourish_interest == NO:
             self.error_message.append(
                 'Child caregiver not interested in learning about flourish.')
-        if self.flourish_participation == NO:
+        if self.flourish_participation in [NO, 'undecided']:
             self.error_message.append(
                 'Not interested in participating in the Flourish study.')
         self.is_eligible = False if self.error_message else True
@@ -54,7 +54,7 @@ class BHPPriorEligibilty:
 
 class PregWomenEligibility:
 
-    def __init__(self, hiv_testing=None, breastfeed_intent=None, **kwargs):
+    def __init__(self, hiv_testing=None, breastfeed_intent=None):
         """checks if pregnant women enrolling is eligible otherwise'
         ' error message is the reason for'
         ' eligibility test failed."""
@@ -73,8 +73,9 @@ class PregWomenEligibility:
 class ConsentEligibility:
 
     def __init__(self, remain_in_study=None, hiv_testing=None, breastfeed_intent=None,
-                 consent_reviewed=None, study_questions=None, assessment_score=None,
-                 consent_signature=None, consent_copy=None, child_consent=None):
+                 consent_reviewed=None, citizen=None, study_questions=None,
+                 assessment_score=None, consent_signature=None, consent_copy=None,
+                 child_consent=None):
         self.error_message = []
         self.remain_in_study = remain_in_study
         self.hiv_testing = hiv_testing
@@ -112,6 +113,9 @@ class ConsentEligibility:
         if self.child_consent == NO:
             self.error_message.append(
                 'Participant is not willing to consent for their child\'s participation.')
+        if citizen == NO:
+            self.error_message.append(
+                'Participant is not a Botswana citizen.')
         self.is_eligible = False if self.error_message else True
 
 

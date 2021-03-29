@@ -1,11 +1,11 @@
 from django import forms
 
 from edc_base.sites import SiteModelFormMixin
-from edc_form_validators import FormValidatorMixin
-
-from flourish_form_validations.form_validators import SubjectConsentFormValidator
-from ..models import SubjectConsent
 from edc_constants.constants import NO, YES
+from edc_form_validators import FormValidatorMixin
+from flourish_form_validations.form_validators import SubjectConsentFormValidator
+
+from ..models import SubjectConsent
 
 
 class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
@@ -33,7 +33,7 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
             raise forms.ValidationError(msg)
         elif child_consent == YES and int(caregiver_child_consent) < 1:
             msg = {'child_consent':
-                   'Participant is willing to consent on behalf of child.'
+                   'Participant is willing to consent on behalf of child. '
                    'Caregiver child consent should be completed. '}
             raise forms.ValidationError(msg)
 
