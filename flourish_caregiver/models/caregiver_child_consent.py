@@ -27,20 +27,16 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",
-        max_length=50,
-        null=False,
-        blank=False)
+        max_length=50)
 
-    first_name = FirstnameField(null=False, blank=False)
+    first_name = FirstnameField()
 
-    last_name = LastnameField(null=False, blank=False)
+    last_name = LastnameField()
 
     gender = models.CharField(
         verbose_name="Gender",
         choices=GENDER,
-        max_length=1,
-        null=False,
-        blank=False)
+        max_length=1)
 
     identity_type = models.CharField(
         verbose_name='What type of identity number is this?',
@@ -49,17 +45,13 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     child_dob = models.DateField(
         verbose_name="Date of birth",
-        validators=[date_not_future, ],
-        null=False,
-        blank=False)
+        validators=[date_not_future, ])
 
     child_test = models.CharField(
         verbose_name='Will you allow for HIV testing and counselling of '
                      'your Child',
         max_length=5,
         choices=YES_NO,
-        null=False,
-        blank=False,
         help_text='If no, participant is not eligible.')
 
     child_remain_in_study = models.CharField(
@@ -67,8 +59,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                      '2025?',
         max_length=5,
         choices=YES_NO,
-        null=False,
-        blank=False,
         help_text='If no, participant is not eligible.')
 
     child_preg_test = models.CharField(
@@ -77,8 +67,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                      'to undergo pregnancy testing?',
         max_length=5,
         choices=YES_NO_NA,
-        null=False,
-        blank=False,
         default=NOT_APPLICABLE,
         help_text='If no, participant is not eligible.')
 
@@ -87,14 +75,10 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                      'your HIV?',
         max_length=5,
         choices=YES_NO_NA,
-        null=False,
-        blank=False,
         default=NOT_APPLICABLE,
         help_text='If no, participant is not eligible.')
 
     child_age_at_enrollment = models.DecimalField(
-        blank=False,
-        null=False,
         decimal_places=2,
         max_digits=4)
 
@@ -113,9 +97,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     cohort = models.CharField(
         max_length=12,
-        choices=COHORTS,
-        blank=False,
-        null=False)
+        choices=COHORTS,)
 
     is_eligible = models.BooleanField(
         default=False,
