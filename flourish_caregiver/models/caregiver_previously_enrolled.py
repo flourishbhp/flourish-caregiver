@@ -1,7 +1,7 @@
 from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
-from edc_base.model_validators import datetime_not_future
+from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, GENDER
@@ -18,13 +18,13 @@ class CaregiverPreviouslyEnrolled(UniqueSubjectIdentifierFieldMixin,
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
         default=get_utcnow,
-        validators=[datetime_not_future, datetime_not_before_study_start], )
+        validators=[datetime_not_future, datetime_not_before_study_start],)
 
     maternal_prev_enroll = models.CharField(
         verbose_name='Is this caregiver the person '
                      'previously enrolled in a BHP study',
         choices=YES_NO,
-        max_length=3, )
+        max_length=3,)
 
     current_hiv_status = models.CharField(
         verbose_name='What is your current HIV status?',
@@ -42,7 +42,7 @@ class CaregiverPreviouslyEnrolled(UniqueSubjectIdentifierFieldMixin,
 
     test_date = models.DateField(
         verbose_name='Test Date',
-        validators=[datetime_not_future, ],
+        validators=[date_not_future, ],
         null=True,
         blank=True,)
 
