@@ -13,7 +13,7 @@ from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
-from edc_constants.choices import YES_NO, GENDER, YES_NO_NA
+from edc_constants.choices import YES_NO, GENDER, YES_NO_NA, NOT_APPLICABLE
 
 from ..choices import IDENTITY_TYPE
 from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
@@ -92,17 +92,13 @@ class SubjectConsent(
         max_length=3,
         verbose_name=('If HIV status not known, are you willing to undergo HIV'
                       ' testing and counseling?'),
-        choices=YES_NO,
-        blank=True,
-        null=True,
+        choices=YES_NO_NA,
         help_text='If ‘No’ ineligible for study participation')
 
     breastfeed_intent = models.CharField(
         max_length=3,
         verbose_name='Do you intend on breast feeding your infant?',
-        choices=YES_NO,
-        blank=True,
-        null=True,
+        choices=YES_NO_NA,
         help_text='If ‘No’ ineligible for study participation')
 
     future_contact = models.CharField(
