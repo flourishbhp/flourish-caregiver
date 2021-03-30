@@ -134,8 +134,9 @@ class SubjectConsent(
     def save(self, *args, **kwargs):
         eligibility_criteria = ConsentEligibility(
             self.remain_in_study, self.hiv_testing, self.breastfeed_intent,
-            self.consent_reviewed, self.study_questions, self.assessment_score,
-            self.citizen, self.consent_signature, self.consent_copy, self.child_consent)
+            self.consent_reviewed, self.citizen, self.study_questions,
+            self.assessment_score, self.consent_signature, self.consent_copy,
+            self.child_consent)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         self.version = '1'
