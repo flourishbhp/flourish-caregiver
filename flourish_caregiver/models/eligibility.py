@@ -4,7 +4,7 @@ from edc_constants.constants import NO, UNKNOWN, POS
 class AntenatalEnrollmentEligibility:
 
     def __init__(self, will_breastfeed=None, ga_lmp_enrollment_wks=None,
-                 enrollment_hiv_status=None, will_get_arvs=None,
+                 enrollment_hiv_status=None, will_get_arvs=None, ultrasound=None,
                  pending_ultrasound=None, rapid_test_done=None):
 
         self.error_message = []
@@ -13,6 +13,9 @@ class AntenatalEnrollmentEligibility:
         if pending_ultrasound:
             self.is_eligible = False
             self.error_message.append('Pending ultrasound.')
+        elif ultrasound and not ultrasound.pass_antenatal_enrollment:
+            self.error_message.append('Pregnancy is not a singleton.')
+            self.is_eligible = False
         else:
             lmp_to_use = ga_lmp_enrollment_wks
             if lmp_to_use < 22 or lmp_to_use > 28:
