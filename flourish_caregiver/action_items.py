@@ -5,7 +5,6 @@ from edc_action_item import Action, site_action_items, HIGH_PRIORITY
 CAREGIVEROFF_STUDY_ACTION = 'submit-caregiveroff-study'
 CAREGIVER_LOCATOR_ACTION = 'submit-caregiver-locator'
 ULTRASOUND_ACTION = 'submit-ultrasound'
-MATERNAL_DELIVERY_ACTION = 'submit-maternal-delivery'
 MATERNAL_COVID_SCREENING_ACTION = 'update-maternal-covid-results'
 
 
@@ -42,20 +41,6 @@ class MaternalUltrasoundAction(Action):
             actions = [CaregiverOffStudyAction]
         else:
             self.delete_if_new(CaregiverOffStudyAction)
-        return actions
-
-
-class MaternalLabourDeliveryAction(Action):
-    name = MATERNAL_DELIVERY_ACTION
-    display_name = 'Submit Maternal Delivery'
-    reference_model = 'flourish_caregiver.maternallabourdel'
-    admin_site_name = 'flourish_caregiver_admin'
-    priority = HIGH_PRIORITY
-
-    def get_next_actions(self):
-        actions = []
-        if self.reference_model_obj.live_infants_to_register != 1:
-            actions = [CaregiverOffStudyAction]
         return actions
 
 
