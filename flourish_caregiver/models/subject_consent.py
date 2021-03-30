@@ -4,10 +4,7 @@ from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
-from edc_registration.model_mixins.updates_or_creates_registered_subject_model_mixin import (
-    UpdatesOrCreatesRegistrationModelError)
-from edc_registration.model_mixins import (
-    UpdatesOrCreatesRegistrationModelMixin)
+from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 from edc_search.model_mixins import SearchSlugManager
 
 from edc_consent.field_mixins import (
@@ -142,7 +139,7 @@ class SubjectConsent(
         eligibility_criteria = ConsentEligibility(
             self.remain_in_study, self.hiv_testing, self.breastfeed_intent,
             self.consent_reviewed, self.study_questions, self.assessment_score,
-            self.consent_signature, self.consent_copy, self.child_consent)
+            self.citizen, self.consent_signature, self.consent_copy, self.child_consent)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         self.version = '1'
