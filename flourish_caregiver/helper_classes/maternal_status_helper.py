@@ -15,20 +15,19 @@ class MaternalStatusHelper(object):
         """
         rapid_test_result_cls = django_apps.get_model(
             'flourish_caregiver.hivrapidtestcounseling')
-        if not self.maternal_visit:
-            return ''
-        for visit in self.previous_visits:
-            rapid_test_result = None
-            try:
-                rapid_test_result = rapid_test_result_cls.objects.get(
-                    maternal_visit=visit)
-            except rapid_test_result_cls.DoesNotExist:
-                pass
-            else:
-                status = self._evaluate_status_from_rapid_tests(
-                    (rapid_test_result, 'result', 'result_date'))
-                if status in [POS, NEG, UNK, IND]:
-                    return status
+        if self.maternal_visit:
+            for visit in self.previous_visits:
+                rapid_test_result = None
+                try:
+                    rapid_test_result = rapid_test_result_cls.objects.get(
+                        maternal_visit=visit)
+                except rapid_test_result_cls.DoesNotExist:
+                    pass
+                else:
+                    status = self._evaluate_status_from_rapid_tests(
+                        (rapid_test_result, 'result', 'result_date'))
+                    if status in [POS, NEG, UNK, IND]:
+                        return status
 
         # If we have exhausted all visits without a concrete status then use
         # enrollment.
@@ -38,7 +37,7 @@ class MaternalStatusHelper(object):
             antenatal_enrollment = antenatal_enrollment_cls.objects.get(
                     subject_identifier=self.maternal_visit.subject_identifier)
         except antenatal_enrollment_cls.DoesNotExist:
-            status = ''
+            status = self.enrollment_hiv_status
         else:
             status = self._evaluate_status_from_rapid_tests(
                 (antenatal_enrollment, 'enrollment_hiv_status', 'rapid_test_date'))
@@ -52,17 +51,28 @@ class MaternalStatusHelper(object):
 
     @property
     def enrollment_hiv_status(self):
-        """Return enrollment hiv status.
+        """Returns caregiver's current hiv status.
         """
+        subject_identifier = self.kwargs.get('subject_identifier')
+
+        previous_enrollment_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverpreviouslyenrolled')
+
         antenatal_enrollment_cls = django_apps.get_model(
             'flourish_caregiver.antenatalenrollment')
         try:
             antenatal_enrollment = antenatal_enrollment_cls.objects.get(
-                subject_identifier=self.maternal_visit.subject_identifier)
+                subject_identifier=subject_identifier)
         except antenatal_enrollment_cls.DoesNotExist:
-            return ''
+            try:
+                previous_enrollment = previous_enrollment_cls.objects.get(
+                    subject_identifier=subject_identifier)
+            except previous_enrollment_cls.DoesNotExist:
+                return None
+            else:
+                return previous_enrollment.current_hiv_status
         else:
-            return antenatal_enrollment.enrollment_hiv_status
+            return antenatal_enrollment.current_hiv_status
 
     @property
     def eligible_for_cd4(self):
