@@ -22,7 +22,8 @@ list_data = {
         (NONE, 'None'),
         ('Traditional medications', 'Traditional medications'),
         ('Hypertensive medications', 'Hypertensive medications'),
-        ('Prenatal Vitamins', 'Prenatal Vitamins')
+        ('Prenatal Vitamins', 'Prenatal Vitamins'),
+        (OTHER, 'Other, Specify'),
     ],
     'flourish_caregiver.deliverycomplications': [
         ('Uterine rupture', 'Uterine rupture'),
