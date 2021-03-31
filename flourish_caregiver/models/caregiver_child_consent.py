@@ -29,9 +29,13 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         verbose_name="Subject Identifier",
         max_length=50)
 
-    first_name = FirstnameField()
+    first_name = FirstnameField(
+        blank=False
+    )
 
-    last_name = LastnameField()
+    last_name = LastnameField(
+        blank=False
+    )
 
     gender = models.CharField(
         verbose_name="Gender",
@@ -67,7 +71,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                      'to undergo pregnancy testing?',
         max_length=5,
         choices=YES_NO_NA,
-        default=NOT_APPLICABLE,
         help_text='If no, participant is not eligible.')
 
     child_knows_status = models.CharField(
@@ -75,7 +78,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                      'your HIV?',
         max_length=5,
         choices=YES_NO_NA,
-        default=NOT_APPLICABLE,
         help_text='If no, participant is not eligible.')
 
     child_age_at_enrollment = models.DecimalField(
@@ -86,8 +88,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         verbose_name='Consent date and time',
         validators=[
             datetime_not_before_study_start,
-            datetime_not_future],
-        default=get_utcnow)
+            datetime_not_future])
 
     version = models.CharField(
         verbose_name='Consent version',
