@@ -6,8 +6,9 @@ from edc_constants.constants import POS, NEG, UNK, IND
 
 class MaternalStatusHelper(object):
 
-    def __init__(self, maternal_visit=None):
+    def __init__(self, maternal_visit=None, subject_identifier=None):
         self.maternal_visit = maternal_visit
+        self.subject_identifier = subject_identifier
 
     @property
     def hiv_status(self):
@@ -16,6 +17,7 @@ class MaternalStatusHelper(object):
         rapid_test_result_cls = django_apps.get_model(
             'flourish_caregiver.hivrapidtestcounseling')
         if self.maternal_visit:
+            self.subject_identifier = self.maternal_visit.subject_identifier
             for visit in self.previous_visits:
                 rapid_test_result = None
                 try:
@@ -31,30 +33,29 @@ class MaternalStatusHelper(object):
 
         # If we have exhausted all visits without a concrete status then use
         # enrollment.
-        antenatal_enrollment_cls = django_apps.get_model(
-            'flourish_caregiver.antenatalenrollment')
-        try:
-            antenatal_enrollment = antenatal_enrollment_cls.objects.get(
-                    subject_identifier=self.maternal_visit.subject_identifier)
-        except antenatal_enrollment_cls.DoesNotExist:
-            status = self.enrollment_hiv_status
-        else:
-            status = self._evaluate_status_from_rapid_tests(
-                (antenatal_enrollment, 'enrollment_hiv_status', 'rapid_test_date'))
-            if status == UNK:
-                # Check that the week32_test_date is still within 3 months
+        if self.subject_identifier:
+            antenatal_enrollment_cls = django_apps.get_model(
+                'flourish_caregiver.antenatalenrollment')
+            try:
+                antenatal_enrollment = antenatal_enrollment_cls.objects.get(
+                        subject_identifier=self.subject_identifier)
+            except antenatal_enrollment_cls.DoesNotExist:
+                status = self.enrollment_hiv_status
+            else:
                 status = self._evaluate_status_from_rapid_tests(
-                    (antenatal_enrollment, 'enrollment_hiv_status', 'week32_test_date'))
-            if status in [POS, NEG, UNK]:
-                return status
-        return status
+                    (antenatal_enrollment, 'enrollment_hiv_status', 'rapid_test_date'))
+                if status == UNK:
+                    # Check that the week32_test_date is still within 3 months
+                    status = self._evaluate_status_from_rapid_tests(
+                        (antenatal_enrollment, 'enrollment_hiv_status', 'week32_test_date'))
+                if status in [POS, NEG, UNK]:
+                    return status
+            return status
 
     @property
     def enrollment_hiv_status(self):
         """Returns caregiver's current hiv status.
         """
-        subject_identifier = self.kwargs.get('subject_identifier')
-
         previous_enrollment_cls = django_apps.get_model(
             'flourish_caregiver.caregiverpreviouslyenrolled')
 
@@ -62,11 +63,11 @@ class MaternalStatusHelper(object):
             'flourish_caregiver.antenatalenrollment')
         try:
             antenatal_enrollment = antenatal_enrollment_cls.objects.get(
-                subject_identifier=subject_identifier)
+                subject_identifier=self.subject_identifier)
         except antenatal_enrollment_cls.DoesNotExist:
             try:
                 previous_enrollment = previous_enrollment_cls.objects.get(
-                    subject_identifier=subject_identifier)
+                    subject_identifier=self.subject_identifier)
             except previous_enrollment_cls.DoesNotExist:
                 return None
             else:
