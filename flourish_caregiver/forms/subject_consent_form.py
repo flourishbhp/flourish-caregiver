@@ -26,16 +26,16 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
         cleaned_data = super().clean()
         child_consent = cleaned_data.get('child_consent')
         caregiver_child_consent = self.data.get('caregiverchildconsent_set-TOTAL_FORMS')
-        if child_consent == NO and int(caregiver_child_consent) > 0:
+
+        if child_consent == NO and int(caregiver_child_consent) != 0:
             msg = {'child_consent':
                    'Participant is not willing to consent on behalf of child.'
                    'Caregiver child consent should not be completed. '}
             raise forms.ValidationError(msg)
-        elif child_consent == YES and int(caregiver_child_consent) < 1:
-            msg = {'child_consent':
-                   'Participant is willing to consent on behalf of child. '
-                   'Caregiver child consent should be completed. '}
-            raise forms.ValidationError(msg)
+        elif (child_consent == YES and int(caregiver_child_consent) == 0)\
+                or not self.data.get('caregiverchildconsent_set-0-first_name'):
+            raise forms.ValidationError('Please complete the Caregiver '
+                                        'consent for child participation')
 
     class Meta:
         model = SubjectConsent
