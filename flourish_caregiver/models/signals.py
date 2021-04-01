@@ -91,6 +91,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
     """
     - Put subject on cohort a schedule after consenting on behalf of child.
     """
+
     if not raw and instance.is_eligible:
 
         cohort = cohort_assigned(instance.subject_consent.screening_identifier,
@@ -122,7 +123,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 instance.save_base(raw=True)
 
                 try:
-                    child_dummy_consent_cls.objects.get(
+                    child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
@@ -134,6 +135,11 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                             identity=instance.identity,
                             version=instance.subject_consent.version,
                             cohort=cohort[:-1])
+                else:
+                    if not child_dummy_consent_obj.cohort:
+                        child_dummy_consent_obj.cohort = cohort[:-1]
+                    child_dummy_consent_obj.save()
+
             else:
                 try:
                     child_dummy_consent_cls.objects.get(
