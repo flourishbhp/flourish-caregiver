@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
@@ -141,8 +142,11 @@ class SubjectConsent(
         self.ineligibility = eligibility_criteria.error_message
         self.version = '1'
         if self.is_eligible:
+
             if self.created and not self.subject_identifier:
                 self.subject_identifier = self.update_subject_identifier_on_save()
+
+            self.update_dataset_identifier()
         super().save(*args, **kwargs)
 
     def natural_key(self):
@@ -160,6 +164,18 @@ class SubjectConsent(
             requesting_model=self._meta.label_lower,
             site=self.site)
         return subject_identifier.identifier
+
+    def update_dataset_identifier(self):
+        dataset_cls = django_apps.get_model('flourish_caregiver.maternaldataset')
+
+        try:
+            dataset_obj = dataset_cls.objects.get(
+                screening_identifier=self.screening_identifier)
+        except dataset_cls.DoesNotExist:
+            pass
+        else:
+            dataset_obj.subject_identifier = self.subject_identifier
+            dataset_obj.save()
 
     @property
     def consent_version(self):

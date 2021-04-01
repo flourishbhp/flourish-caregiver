@@ -24,7 +24,7 @@ class MaternalStatusHelper(object):
                     rapid_test_result = rapid_test_result_cls.objects.get(
                         maternal_visit=visit)
                 except rapid_test_result_cls.DoesNotExist:
-                    pass
+                    return self.enrollment_hiv_status
                 else:
                     status = self._evaluate_status_from_rapid_tests(
                         (rapid_test_result, 'result', 'result_date'))
