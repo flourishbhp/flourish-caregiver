@@ -93,7 +93,8 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
     """
     if not raw and instance.is_eligible:
 
-        cohort = cohort_assigned(instance.subject_consent.screening_identifier)
+        cohort = cohort_assigned(instance.subject_consent.screening_identifier,
+                                 instance.child_dob)
 
         if cohort:
 
@@ -149,7 +150,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             instance.save_base(raw=True)
 
 
-def cohort_assigned(screening_identifier):
+def cohort_assigned(screening_identifier, child_dob):
     """Calculates participant's cohort based on the maternal and child dataset
     """
     try:
@@ -166,7 +167,7 @@ def cohort_assigned(screening_identifier):
             raise
         else:
             cohort = Cohort(
-                child_dob=maternal_dataset_obj.delivdt,
+                child_dob=child_dob,
                 enrollment_date=get_utcnow().date(),
                 infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
                 protocol=maternal_dataset_obj.protocol,

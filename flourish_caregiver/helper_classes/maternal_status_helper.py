@@ -56,24 +56,36 @@ class MaternalStatusHelper(object):
     def enrollment_hiv_status(self):
         """Returns caregiver's current hiv status.
         """
+
+        maternal_dataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
+
         previous_enrollment_cls = django_apps.get_model(
             'flourish_caregiver.caregiverpreviouslyenrolled')
 
         antenatal_enrollment_cls = django_apps.get_model(
             'flourish_caregiver.antenatalenrollment')
         try:
-            antenatal_enrollment = antenatal_enrollment_cls.objects.get(
+            maternal_dataset_obj = maternal_dataset_cls.objects.get(
                 subject_identifier=self.subject_identifier)
-        except antenatal_enrollment_cls.DoesNotExist:
+        except maternal_dataset_cls.DoesNotExist:
             try:
-                previous_enrollment = previous_enrollment_cls.objects.get(
+                antenatal_enrollment = antenatal_enrollment_cls.objects.get(
                     subject_identifier=self.subject_identifier)
-            except previous_enrollment_cls.DoesNotExist:
-                return None
+            except antenatal_enrollment_cls.DoesNotExist:
+                try:
+                    previous_enrollment = previous_enrollment_cls.objects.get(
+                        subject_identifier=self.subject_identifier)
+                except previous_enrollment_cls.DoesNotExist:
+                    return None
+                else:
+                    return previous_enrollment.current_hiv_status
             else:
-                return previous_enrollment.current_hiv_status
+                return antenatal_enrollment.current_hiv_status
         else:
-            return antenatal_enrollment.current_hiv_status
+            status_dict = {'HIV-infected': POS,
+                           'HIV-uninfected': NEG}
+            return status_dict.get(maternal_dataset_obj.mom_hivstatus)
 
     @property
     def eligible_for_cd4(self):
