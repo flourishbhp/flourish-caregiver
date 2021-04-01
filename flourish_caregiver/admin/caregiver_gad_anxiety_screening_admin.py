@@ -24,6 +24,7 @@ class CaregiverGadAnxietyScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'restlessness',
                 'easily_annoyed',
                 'fearful',
+                'anxiety_score'
             ]}
          ), audit_fieldset_tuple)
 
@@ -34,3 +35,7 @@ class CaregiverGadAnxietyScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'restlessness': admin.VERTICAL,
                     'easily_annoyed': admin.VERTICAL,
                     'fearful': admin.VERTICAL, }
+
+    def get_readonly_fields(self, request, obj=None):
+        fields = super().get_readonly_fields(request, obj)
+        return ('anxiety_score', ) + fields
