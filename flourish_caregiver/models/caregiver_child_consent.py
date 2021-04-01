@@ -1,13 +1,11 @@
 from django.apps import apps as django_apps
-from django.core.exceptions import ValidationError
 from django.db import models
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
-from edc_base.utils import get_utcnow
 from edc_consent.field_mixins import IdentityFieldsMixin
-from edc_constants.choices import GENDER, NOT_APPLICABLE, YES_NO_NA, YES_NO
+from edc_constants.choices import GENDER, YES_NO_NA, YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 

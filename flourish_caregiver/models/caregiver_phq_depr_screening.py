@@ -58,7 +58,6 @@ class CaregiverPhqDeprScreening(CrfModelMixin):
 
     depression_score = models.IntegerField(
         verbose_name='Depression score',
-        default="",
         null=True,
         blank=True)
 
@@ -70,8 +69,8 @@ class CaregiverPhqDeprScreening(CrfModelMixin):
         score = 0
         for f in self._meta.get_fields():
             if f.name in ['activity_interest', 'depressed', 'sleep_disorders',
-                          'fatigued', 'eating_disorders', 'self_doubt', 'easily_distracted',
-                          'restlessness', 'self_harm', ]:
+                          'fatigued', 'eating_disorders', 'self_doubt',
+                          'easily_distracted', 'restlessness', 'self_harm', ]:
                 score += int(getattr(self, f.name))
         return score
 
