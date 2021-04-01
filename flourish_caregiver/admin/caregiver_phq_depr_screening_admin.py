@@ -25,7 +25,8 @@ class CaregiverPhqDeprScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'self_doubt',
                 'easily_distracted',
                 'restlessness',
-                'self_harm'
+                'self_harm',
+                'depression_score'
             ]}
          ), audit_fieldset_tuple)
 
@@ -38,3 +39,7 @@ class CaregiverPhqDeprScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'easily_distracted': admin.VERTICAL,
                     'restlessness': admin.VERTICAL,
                     'self_harm': admin.VERTICAL, }
+
+    def get_readonly_fields(self, request, obj=None):
+        fields = super().get_readonly_fields(request, obj)
+        return ('depression_score', ) + fields
