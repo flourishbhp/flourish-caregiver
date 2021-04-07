@@ -9,6 +9,8 @@ from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
+from .models import CaregiverGadAnxietyScreening
+
 
 fake = Faker()
 
@@ -48,6 +50,7 @@ subjectconsent = Recipe(
     confirm_identity=seq('123427681'),
     identity_type='country_id',
     is_dob_estimated='-',
+    hiv_testing=YES,
     remain_in_study=YES,
     consent_reviewed=YES,
     study_questions=YES,
@@ -56,6 +59,7 @@ subjectconsent = Recipe(
     consent_copy=YES,
     future_contact=YES,
     child_consent=YES,
+    citizen=YES,
     version='1'
 )
 
@@ -123,3 +127,13 @@ maternaldelivery = Recipe(
 
 hivrapidtestcounseling = Recipe(
     HIVRapidTestCounseling,)
+
+gadanxietyscreening = Recipe(
+    CaregiverGadAnxietyScreening,
+    feeling_anxious='1',
+    control_worrying='3',
+    worrying='1',
+    trouble_relaxing='0',
+    restlessness='1',
+    easily_annoyed='2',
+    fearful='3',)
