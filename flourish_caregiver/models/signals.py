@@ -138,7 +138,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 else:
                     if not child_dummy_consent_obj.cohort:
                         child_dummy_consent_obj.cohort = cohort[:-1]
-                    child_dummy_consent_obj.save()
+                        child_dummy_consent_obj.save()
 
             else:
                 try:
