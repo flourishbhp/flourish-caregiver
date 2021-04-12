@@ -63,6 +63,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
                 'child_dob',
                 'child_test',
                 'child_remain_in_study',
+                'biological_caregiver',
                 'child_preg_test',
                 'child_knows_status',
                 'identity',

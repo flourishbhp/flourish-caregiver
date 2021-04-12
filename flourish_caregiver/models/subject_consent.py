@@ -89,6 +89,11 @@ class SubjectConsent(
         choices=YES_NO,
         help_text='If no, participant is not eligible.')
 
+    biological_caregiver = models.CharField(
+        max_length=3,
+        verbose_name='Are you the biological mother to the child or children?',
+        choices=YES_NO)
+
     hiv_testing = models.CharField(
         max_length=3,
         verbose_name=('If HIV status not known, are you willing to undergo HIV'
