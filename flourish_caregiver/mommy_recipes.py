@@ -9,7 +9,8 @@ from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
-from .models import CaregiverGadAnxietyScreening
+from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
+                     CaregiverEdinburghDeprScreening)
 
 
 fake = Faker()
@@ -137,3 +138,28 @@ gadanxietyscreening = Recipe(
     restlessness='1',
     easily_annoyed='2',
     fearful='3',)
+
+caregiverphqdeprscreening = Recipe(
+    CaregiverPhqDeprScreening,
+    activity_interest='1',
+    depressed='2',
+    sleep_disorders='1',
+    fatigued='0',
+    eating_disorders='0',
+    self_doubt='0',
+    easily_distracted='1',
+    restlessness='1',
+    self_harm='0',)
+
+caregiveredinburghdeprscreening = Recipe(
+    CaregiverEdinburghDeprScreening,
+    able_to_laugh='0',
+    enjoyment_to_things='0',
+    self_blame='2',
+    anxious='3',
+    panicky='1',
+    coping='1',
+    sleeping_difficulty='2',
+    miserable_feeling='1',
+    unhappy='1',
+    self_harm='1',)

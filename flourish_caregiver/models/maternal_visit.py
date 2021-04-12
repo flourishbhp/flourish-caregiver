@@ -38,23 +38,19 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
         choices=VISIT_REASON)
 
     reason_missed = models.CharField(
-        verbose_name=(
-            'If \'missed\' above, reason scheduled '
-            'scheduled visit was missed'),
+        verbose_name='If \'missed\' above, reason scheduled visit was missed',
         blank=True,
         null=True,
         max_length=250)
 
     reason_unscheduled = models.CharField(
-        verbose_name=(
-            'If \'Unscheduled\' above, provide reason for '
-            'the unscheduled visit'),
+        verbose_name='If \'Unscheduled\' above, provide reason for the unscheduled visit',
         blank=True,
         null=True,
         max_length=25,)
 
     study_status = models.CharField(
-        verbose_name="What is the participant's current study status",
+        verbose_name='What is the participant\'s current study status',
         max_length=50,
         choices=MATERNAL_VISIT_STUDY_STATUS)
 

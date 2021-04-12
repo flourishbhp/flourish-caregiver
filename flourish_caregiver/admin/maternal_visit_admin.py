@@ -37,7 +37,6 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
                        for k in attrs if request.GET.dict().get(k)}
             if (obj.require_crfs == NO):
                 del options['appointment']
-                del options['reason']
             try:
                 redirect_url = reverse(url_name, kwargs=options)
             except NoReverseMatch as e:

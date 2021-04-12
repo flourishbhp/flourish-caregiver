@@ -31,6 +31,7 @@ from .maternal_interim_idcc_form import MaternalInterimIdccForm
 from .caregiver_previously_enrolled_form import CaregiverPreviouslyEnrolledForm
 from .maternal_delivery_form import MaternalDeliveryForm
 from .maternal_dataset_form import MaternalDatasetForm
+from .maternal_visit_form import MaternalVisitFormValidator
 from .medical_history_form import MedicalHistoryForm
 from .offschedule_form import CaregiverOffScheduleForm
 from .tb_history_preg_form import TbHistoryPregForm
