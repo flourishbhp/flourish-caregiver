@@ -157,6 +157,16 @@ class SubjectConsent(
     def natural_key(self):
         return (self.subject_identifier, self.version)
 
+    @property
+    def caregiver_type(self):
+        """Return the letter that represents the caregiver type.
+        """
+        if self.biological_caregiver == 'Yes':
+            return 'B'
+        elif self.biological_caregiver == 'No':
+            return 'C'
+        return None
+
     def make_new_identifier(self):
         """Returns a new and unique identifier.
 
@@ -165,6 +175,7 @@ class SubjectConsent(
         if not self.is_eligible:
             return None
         subject_identifier = SubjectIdentifier(
+            caregiver_type=self.caregiver_type,
             identifier_type='subject',
             requesting_model=self._meta.label_lower,
             site=self.site)
