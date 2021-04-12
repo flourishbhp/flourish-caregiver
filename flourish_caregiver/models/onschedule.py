@@ -35,55 +35,45 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
         abstract = True
 
 
-class OnScheduleCohortA1(OnScheduleModelMixin):
+class OnScheduleCohortAEnrollment(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortA2(OnScheduleModelMixin):
+class OnScheduleCohortABirth(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortA3(OnScheduleModelMixin):
+class OnScheduleCohortAQuarterly(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortB1(OnScheduleModelMixin):
+class OnScheduleCohortBEnrollment(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortB2(OnScheduleModelMixin):
+class OnScheduleCohortBQuarterly(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortB3(OnScheduleModelMixin):
+class OnScheduleCohortCEnrollment(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortC1(OnScheduleModelMixin):
-
+class OnScheduleCohortCQuarterly(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortC2(OnScheduleModelMixin):
-
+class OnScheduleCohortCPool(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortC3(OnScheduleModelMixin):
-
+class OnScheduleDYADA(OnScheduleModelMixin):
     pass
 
 
-class OnSchedulePool1(OnScheduleModelMixin):
-
+class OnScheduleDYADB(OnScheduleModelMixin):
     pass
 
 
-class OnSchedulePool2(OnScheduleModelMixin):
-
-    pass
-
-
-class OnSchedulePool3(OnScheduleModelMixin):
-
+class OnScheduleDYADC(OnScheduleModelMixin):
     pass
