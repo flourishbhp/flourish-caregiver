@@ -39,6 +39,10 @@ if settings.APP_NAME == 'flourish_caregiver':
             AppointmentConfig(
                 model='edc_appointment.appointment',
                 related_visit_model='flourish_caregiver.maternalvisit',
+                appt_type='clinic'),
+            AppointmentConfig(
+                model='flourish_child.appointment',
+                related_visit_model='flourish_child.childvisit',
                 appt_type='clinic')]
 
     class EdcMetadataAppConfig(BaseEdcMetadataAppConfig):
@@ -67,6 +71,16 @@ if settings.APP_NAME == 'flourish_caregiver':
                     closed_status=COMPLETE_APPT),
                 Timepoint(
                     model='edc_appointment.historicalappointment',
+                    datetime_field='appt_datetime',
+                    status_field='appt_status',
+                    closed_status=COMPLETE_APPT),
+                Timepoint(
+                    model='flourish_child.appointment',
+                    datetime_field='appt_datetime',
+                    status_field='appt_status',
+                    closed_status=COMPLETE_APPT),
+                Timepoint(
+                    model='flourish_child.historicalappointment',
                     datetime_field='appt_datetime',
                     status_field='appt_status',
                     closed_status=COMPLETE_APPT),

@@ -19,47 +19,40 @@ class ObstericalHistory(CrfModelMixin):
     pregs_24wks_or_more = models.IntegerField(
         verbose_name='Number of pregnancies at least 24 weeks?',
         validators=[MinValueValidator(0), MaxValueValidator(20), ],
-        help_text='If participant is pregnant, don\'t include current pregnancy.',
     )
 
     lost_before_24wks = models.IntegerField(
         verbose_name='Number of pregnancies lost before 24 weeks gestation',
         validators=[MinValueValidator(0), MaxValueValidator(20), ],
-        help_text='If participant is pregnant, don\'t include current pregnancy.',
     )
 
     lost_after_24wks = models.IntegerField(
         verbose_name='Number of pregnancies lost at or after 24 weeks'
         ' gestation ',
         validators=[MinValueValidator(0), MaxValueValidator(20), ],
-        help_text='If participant is pregnant, don\'t include current pregnancy.',
     )
 
     live_children = models.IntegerField(
         verbose_name='How many living children does the participant have?',
         validators=[MinValueValidator(0), MaxValueValidator(20), ],
-        help_text='If participant is pregnant, don\'t include current pregnancy.',
     )
 
     children_died_b4_5yrs = models.IntegerField(
         verbose_name='How many of the participant\'s children died after '
         'birth before 5 years of age? ',
         validators=[MinValueValidator(0), MaxValueValidator(20), ],
-        help_text='If participant is pregnant, don\'t include current pregnancy.',
     )
 
     children_deliv_before_37wks = models.IntegerField(
         verbose_name='Number of previous pregnancies delivered at < 37'
         ' weeks GA?',
         validators=[MinValueValidator(0), MaxValueValidator(20), ],
-        help_text='If participant is pregnant, don\'t include current pregnancy.',
     )
 
     children_deliv_aftr_37wks = models.IntegerField(
         verbose_name='Number of previous pregnancies delivered at >= 37'
         ' weeks GA?',
         validators=[MinValueValidator(0), MaxValueValidator(20), ],
-        help_text='If participant is pregnant, don\'t include current pregnancy.',
     )
 
     class Meta(CrfModelMixin.Meta):

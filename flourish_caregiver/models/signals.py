@@ -12,6 +12,7 @@ from .maternal_dataset import MaternalDataset
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .caregiver_child_consent import CaregiverChildConsent
 from .maternal_delivery import MaternalDelivery
+from flourish_caregiver.models.subject_consent import SubjectConsent
 
 
 class PreFlourishError(Exception):
@@ -57,7 +58,8 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     - Put subject on cohort a schedule.
     """
     if not raw and instance.is_eligible:
-        put_on_schedule('cohort_a1', instance=instance)
+        put_on_schedule('cohort_a_enrollment', instance=instance)
+        put_on_schedule('cohort_a_quarterly', instance=instance)
 
 
 @receiver(post_save, weak=False, sender=MaternalDelivery,
@@ -67,22 +69,29 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     - Put new born child on schedule
     """
     if not raw:
-        if created and instance.live_infants_to_register > 1:
+        if created and instance.live_infants_to_register == 1:
 
-            child_dummy_consent_cls = django_apps.get_model(
+            try:
+                consent_obj = SubjectConsent.objects.get(subject_identifier=instance.subject_identifier)
+            except SubjectConsent.DoesNotExist:
+                raise
+            else:
+                put_on_schedule('cohort_a_birth', instance=instance)
+
+                child_dummy_consent_cls = django_apps.get_model(
                     'flourish_child.childdummysubjectconsent')
 
-            children_count = 1 + child_dummy_consent_cls.objects.filter(
-                subject_identifier__icontains=instance.subject_identifier
-                ).count()
-            child_identifier_postfix = '-' + str(children_count * 10)
+                children_count = 1 + child_dummy_consent_cls.objects.filter(
+                    subject_identifier__icontains=instance.subject_identifier
+                    ).count()
+                child_identifier_postfix = '-' + str(children_count * 10)
 
-            child_dummy_consent_cls.objects.create(
-                subject_identifier=(
-                    instance.subject_consent.subject_identifier + child_identifier_postfix),
-                consent_datetime=instance.delivery_datetime,
-                version=instance.subject_consent.version,
-                cohort='cohort_a')
+                child_dummy_consent_cls.objects.create(
+                    subject_identifier=(
+                        instance.subject_identifier + child_identifier_postfix),
+                    consent_datetime=instance.delivery_datetime,
+                    version=consent_obj.version,
+                    cohort='cohort_a')
 
 
 @receiver(post_save, weak=False, sender=CaregiverChildConsent,
@@ -105,7 +114,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__icontains=instance.subject_consent.subject_identifier
                 ).exclude(identity=instance.identity).count()
-            cohort = cohort + str(children_count)
             child_identifier_postfix = '-' + str(children_count * 10)
             child_age = age(instance.child_dob, get_utcnow()).years
 
@@ -117,7 +125,8 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         # preflourish_model_cls.objects.using('pre_flourish').get(identity=instance.identity)
                     # except preflourish_model_cls.DoesNotExist:
                         # raise  PreFlourishError('Participant is missing PreFlourish schedule.')
-                put_on_schedule(cohort, instance=instance.subject_consent)
+                put_on_schedule((cohort + '_enrollment'), instance=instance.subject_consent)
+                put_on_schedule((cohort + '_quarterly'), instance=instance.subject_consent)
                 instance.subject_identifier = (
                     instance.subject_consent.subject_identifier + child_identifier_postfix)
                 instance.save_base(raw=True)
@@ -134,10 +143,10 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                             consent_datetime=instance.consent_datetime,
                             identity=instance.identity,
                             version=instance.subject_consent.version,
-                            cohort=cohort[:-1])
+                            cohort=cohort)
                 else:
                     if not child_dummy_consent_obj.cohort:
-                        child_dummy_consent_obj.cohort = cohort[:-1]
+                        child_dummy_consent_obj.cohort = cohort
                         child_dummy_consent_obj.save()
 
             else:
@@ -150,9 +159,10 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 except child_dummy_consent_cls.DoesNotExist:
                     pass
                 else:
-                    put_on_schedule(cohort, instance=instance.subject_consent)
+                    put_on_schedule((cohort + '_enrollment'), instance=instance.subject_consent)
+                    put_on_schedule((cohort + '_quarterly'), instance=instance.subject_consent)
 
-            instance.cohort = cohort[:-1]
+            instance.cohort = cohort
             instance.save_base(raw=True)
 
 
