@@ -121,7 +121,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__icontains=instance.subject_consent.subject_identifier
                 ).exclude(identity=instance.identity).count()
-            child_identifier_postfix = '-' + str(children_count * 10)
             child_age = age(instance.child_dob, get_utcnow()).years
 
             if child_age and child_age < 7:
@@ -130,9 +129,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                                 instance=instance.subject_consent)
                 put_on_schedule((cohort + '_quarterly' + str(children_count)),
                                 instance=instance.subject_consent)
-                instance.subject_identifier = (
-                    instance.subject_consent.subject_identifier + child_identifier_postfix)
-                instance.save_base(raw=True)
 
                 try:
                     child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
@@ -141,8 +137,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
-                            subject_identifier=(
-                                instance.subject_consent.subject_identifier + child_identifier_postfix),
+                            subject_identifier=instance.subject_identifier,
                             consent_datetime=instance.consent_datetime,
                             identity=instance.identity,
                             version=instance.subject_consent.version,
@@ -155,8 +150,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             else:
                 try:
                     child_dummy_consent_cls.objects.get(
-                                subject_identifier=(
-                                    instance.subject_consent.subject_identifier + child_identifier_postfix),
+                                subject_identifier=instance.subject_identifier,
                                 version=instance.subject_consent.version,
                                 identity=instance.identity)
                 except child_dummy_consent_cls.DoesNotExist:
