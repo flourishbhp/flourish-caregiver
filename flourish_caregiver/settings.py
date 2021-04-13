@@ -18,7 +18,6 @@ import sys
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -35,7 +34,6 @@ SITE_ID = 40
 REVIEWER_SITE_ID = 1
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -64,6 +62,7 @@ INSTALLED_APPS = [
     'flourish_metadata_rules.apps.AppConfig',
     'flourish_child.apps.AppConfig',
     'pre_flourish.apps.AppConfig',
+    'flourish_follow.apps.AppConfig',
     'flourish_caregiver.apps.EdcAppointmentAppConfig',
     'flourish_caregiver.apps.EdcFacilityAppConfig',
     'flourish_caregiver.apps.EdcMetadataAppConfig',
@@ -107,7 +106,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'flourish_caregiver.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -121,7 +119,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'pre_flourish_db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -140,7 +137,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -163,7 +159,6 @@ HOLIDAY_FILE = os.path.join(BASE_DIR, 'holidays.csv')
 STATIC_URL = '/static/'
 
 DASHBOARD_URL_NAMES = {}
-
 
 if 'test' in sys.argv:
 

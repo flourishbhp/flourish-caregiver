@@ -76,12 +76,6 @@ class TestSubjectHelperMixin(TestCase):
             'flourish_child.childdataset',
             **self.child_dataset_options)
 
-        subject_identifier = self.subject_helper.create_TD_no_hiv_enrollment(
-            screening_identifier=maternal_dataset_obj.screening_identifier)
-
-        maternal_dataset_obj = MaternalDataset.objects.get(
-            subject_identifier=subject_identifier)
-
         self.subject_helper.prepare_prior_participant_enrollment(maternal_dataset_obj)
 
         logentry_cls = django_apps.get_model('flourish_follow.logentry')
@@ -121,6 +115,7 @@ class TestSubjectHelperMixin(TestCase):
         self.subject_helper.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier)
 
+    @tag('sh2')
     def test_enroll_prior_participant_assent_cohort_c(self):
 
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10, months=5)

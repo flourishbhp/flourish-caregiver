@@ -126,7 +126,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         child_dummy_consent_cls = django_apps.get_model(
             'flourish_child.childdummysubjectconsent')
-
         children_count = 1 + child_dummy_consent_cls.objects.filter(
             subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
                 identity=self.identity).count()

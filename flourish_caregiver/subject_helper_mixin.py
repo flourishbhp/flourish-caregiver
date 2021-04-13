@@ -1,8 +1,7 @@
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from edc_base.utils import get_utcnow
-from edc_constants.constants import NO, YES
+from edc_constants.constants import NO, NOT_APPLICABLE, YES
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 from .models import CaregiverLocator, MaternalDataset
@@ -187,6 +186,7 @@ class SubjectHelperMixin:
             subject_consent = mommy.make_recipe(
                 'flourish_caregiver.subjectconsent',
                 screening_identifier=maternal_dataset_obj.screening_identifier,
+                breastfeed_intent=NOT_APPLICABLE,
                 **self.options)
 
             mommy.make_recipe(
@@ -216,7 +216,7 @@ class SubjectHelperMixin:
             subject_consent = mommy.make_recipe(
                 'flourish_caregiver.subjectconsent',
                 screening_identifier=maternal_dataset_obj.screening_identifier,
-                subject_identifier=self.subject_identifier,
+                breastfeed_intent=NOT_APPLICABLE,
                 **self.options)
 
             caregiver_child_consent_obj = mommy.make_recipe(
@@ -226,7 +226,7 @@ class SubjectHelperMixin:
 
             mommy.make_recipe(
                 'flourish_child.childassent',
-                subject_identifier=self.subject_identifier + '-10',
+                subject_identifier=subject_consent.subject_identifier + '-10',
                 dob=maternal_dataset_obj.delivdt,
                 identity=caregiver_child_consent_obj.identity,
                 confirm_identity=caregiver_child_consent_obj.identity,
