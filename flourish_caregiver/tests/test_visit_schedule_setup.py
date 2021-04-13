@@ -1,7 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES, NO, NOT_APPLICABLE
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 
@@ -43,7 +43,6 @@ class TestVisitScheduleSetup(TestCase):
             'study_maternal_identifier': self.study_maternal_identifier,
             'study_child_identifier': '1234'}
 
-    @tag('vs1')
     def test_cohort_a_onschedule_antenatal_valid(self):
 
         screening_preg = mommy.make_recipe(
@@ -132,6 +131,7 @@ class TestVisitScheduleSetup(TestCase):
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
+    @tag('vs3')
     def test_cohort_b_onschedule_valid(self):
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
@@ -157,6 +157,7 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
             subject_identifier=self.subject_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
         mommy.make_recipe(
@@ -200,6 +201,7 @@ class TestVisitScheduleSetup(TestCase):
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
         mommy.make_recipe(
@@ -244,6 +246,7 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
             subject_identifier=self.subject_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
         caregiver_child_consent_obj = mommy.make_recipe(
@@ -296,6 +299,7 @@ class TestVisitScheduleSetup(TestCase):
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
         caregiver_child_consent_obj = mommy.make_recipe(
@@ -350,6 +354,7 @@ class TestVisitScheduleSetup(TestCase):
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             ** self.options)
 
         caregiver_child_consent_obj = mommy.make_recipe(
