@@ -1,7 +1,7 @@
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from edc_base.utils import get_utcnow
+from edc_constants.constants import NO, NOT_APPLICABLE, YES
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 from .models import CaregiverLocator, MaternalDataset
@@ -37,16 +37,16 @@ class SubjectHelperMixin:
         'toilet_private': 'Indoor toilet or private latrine',
         'preg_efv': '1'}
 
-    def create_antenatal_enrollment(self, subject_identifier, **kwargs):
+    def create_antenatal_enrollment(self, **kwargs):
         import_holidays()
 
-        mommy.make_recipe(
+        preg_screening = mommy.make_recipe(
             'flourish_caregiver.screeningpregwomen',)
 
         self.options = {
             'consent_datetime': get_utcnow(),
-            'subject_identifier': subject_identifier,
-            'screening_identifier': 'A1234',
+            'screening_identifier': preg_screening.screening_identifier,
+            'breastfeed_intent': YES,
             'version': '1'}
 
         subject_consent = mommy.make_recipe(
@@ -79,12 +79,20 @@ class SubjectHelperMixin:
             consent_options = {
                 'consent_datetime': get_utcnow(),
                 'screening_identifier': prior_screening.screening_identifier,
+                'breastfeed_intent': YES,
                 'version': '1'}
 
             subject_consent = mommy.make_recipe(
                 'flourish_caregiver.subjectconsent',
-                child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),
                 ** consent_options)
+
+            mommy.make_recipe(
+                'flourish_caregiver.caregiverchildconsent',
+                subject_consent=subject_consent,
+                child_dob=maternal_dataset_obj.delivdt,)
+
+            mommy.make_recipe(
+                'flourish_caregiver.caregiverpreviouslyenrolled')
 
             return subject_consent.subject_identifier
         return None
@@ -107,17 +115,25 @@ class SubjectHelperMixin:
             consent_options = {
                 'consent_datetime': get_utcnow(),
                 'screening_identifier': prior_screening.screening_identifier,
+                'breastfeed_intent': YES,
                 'version': '1'}
 
             subject_consent = mommy.make_recipe(
                 'flourish_caregiver.subjectconsent',
-                child_dob=(get_utcnow() - relativedelta(years=2, months=8)).date(),
                 ** consent_options)
+
+            mommy.make_recipe(
+                'flourish_caregiver.caregiverchildconsent',
+                subject_consent=subject_consent,
+                child_dob=maternal_dataset_obj.delivdt,)
+
+            mommy.make_recipe(
+                'flourish_caregiver.caregiverpreviouslyenrolled')
 
             return subject_consent.subject_identifier
         return None
 
-    def prepare_prior_participant_enrolmment(self, maternal_dataset_obj):
+    def prepare_prior_participant_enrollment(self, maternal_dataset_obj):
 
         try:
             caregiver_locator = CaregiverLocator.objects.get(
@@ -150,3 +166,72 @@ class SubjectHelperMixin:
             'flourish_follow.logentry',
             log=log,
             study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
+
+    def enroll_prior_participant(self, screening_identifier):
+
+        try:
+            maternal_dataset_obj = MaternalDataset.objects.get(
+                screening_identifier=screening_identifier)
+        except MaternalDataset.DoesNotExist:
+            pass
+        else:
+            self.options = {
+                'consent_datetime': get_utcnow(),
+                'version': '1'}
+
+            mommy.make_recipe(
+                'flourish_caregiver.screeningpriorbhpparticipants',
+                screening_identifier=maternal_dataset_obj.screening_identifier,)
+
+            subject_consent = mommy.make_recipe(
+                'flourish_caregiver.subjectconsent',
+                screening_identifier=maternal_dataset_obj.screening_identifier,
+                breastfeed_intent=NOT_APPLICABLE,
+                **self.options)
+
+            mommy.make_recipe(
+                'flourish_caregiver.caregiverchildconsent',
+                subject_consent=subject_consent,
+                child_dob=maternal_dataset_obj.delivdt,)
+
+            mommy.make_recipe(
+                    'flourish_caregiver.caregiverpreviouslyenrolled')
+
+    def enroll_prior_participant_assent(self, screening_identifier):
+
+        try:
+            maternal_dataset_obj = MaternalDataset.objects.get(
+                screening_identifier=screening_identifier)
+        except MaternalDataset.DoesNotExist:
+            pass
+        else:
+            self.options = {
+                'consent_datetime': get_utcnow(),
+                'version': '1'}
+
+            mommy.make_recipe(
+                'flourish_caregiver.screeningpriorbhpparticipants',
+                screening_identifier=maternal_dataset_obj.screening_identifier,)
+
+            subject_consent = mommy.make_recipe(
+                'flourish_caregiver.subjectconsent',
+                screening_identifier=maternal_dataset_obj.screening_identifier,
+                breastfeed_intent=NOT_APPLICABLE,
+                **self.options)
+
+            caregiver_child_consent_obj = mommy.make_recipe(
+                'flourish_caregiver.caregiverchildconsent',
+                subject_consent=subject_consent,
+                child_dob=maternal_dataset_obj.delivdt,)
+
+            mommy.make_recipe(
+                'flourish_child.childassent',
+                subject_identifier=subject_consent.subject_identifier + '-10',
+                dob=maternal_dataset_obj.delivdt,
+                identity=caregiver_child_consent_obj.identity,
+                confirm_identity=caregiver_child_consent_obj.identity,
+                remain_in_study=NO,
+                version=subject_consent.version)
+
+            mommy.make_recipe(
+                    'flourish_caregiver.caregiverpreviouslyenrolled')

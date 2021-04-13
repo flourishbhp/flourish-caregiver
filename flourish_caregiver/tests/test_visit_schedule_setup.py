@@ -1,7 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES, NO, NOT_APPLICABLE
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 
@@ -61,13 +61,12 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_a_enrollment_schedule1').count(), 1)
+            schedule_name='a_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_a_quarterly_schedule1').count(), 1)
+            schedule_name='a_quarterly1_schedule1').count(), 1)
 
-    @tag('vs1')
     def test_cohort_a_onschedule_birth_valid(self):
 
         screening_preg = mommy.make_recipe(
@@ -90,7 +89,7 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(OnScheduleCohortABirth.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_a_birth_schedule1').count(), 1)
+            schedule_name='a_birth1_schedule1').count(), 1)
 
     def test_cohort_a_onschedule_consent_valid(self):
         self.subject_identifier = self.subject_identifier[:-1] + '1'
@@ -123,16 +122,16 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_a_enrollment_schedule1').count(), 1)
+            schedule_name='a_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_a_quarterly_schedule1').count(), 1)
+            schedule_name='a_quarterly1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
-    @tag('vs2')
+    @tag('vs3')
     def test_cohort_b_onschedule_valid(self):
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
@@ -158,6 +157,7 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
             subject_identifier=self.subject_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
         mommy.make_recipe(
@@ -167,11 +167,11 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_b_enrollment_schedule1').count(), 1)
+            schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_b_quarterly_schedule1').count(), 1)
+            schedule_name='b_quarterly1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -201,6 +201,7 @@ class TestVisitScheduleSetup(TestCase):
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
         mommy.make_recipe(
@@ -211,11 +212,11 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_b_enrollment_schedule1').count(), 0)
+            schedule_name='b_enrol1_schedule1').count(), 0)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_b_quarterly_schedule1').count(), 0)
+            schedule_name='b_quarterly1_schedule1').count(), 0)
 
         self.assertEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -245,6 +246,7 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
             subject_identifier=self.subject_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
         caregiver_child_consent_obj = mommy.make_recipe(
@@ -262,11 +264,11 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_b_enrollment_schedule1').count(), 1)
+            schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_b_quarterly_schedule1').count(), 1)
+            schedule_name='b_quarterly1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -297,6 +299,7 @@ class TestVisitScheduleSetup(TestCase):
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
         caregiver_child_consent_obj = mommy.make_recipe(
@@ -315,11 +318,11 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_b_enrollment_schedule1').count(), 0)
+            schedule_name='b_enrol1_schedule1').count(), 0)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_b_quarterly_schedule1').count(), 0)
+            schedule_name='b_quarterly1_schedule1').count(), 0)
 
         self.assertEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -351,26 +354,13 @@ class TestVisitScheduleSetup(TestCase):
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
             ** self.options)
 
         caregiver_child_consent_obj = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             child_dob=(get_utcnow() - relativedelta(years=10, months=2)).date(),)
-
-#         PreFlourishConsent.objects.using('pre_flourish').create(
-#                                                         identity=subject_consent.identity,
-#                                                         confirm_identity=subject_consent.identity,
-#                                                         dob=get_utcnow() - relativedelta(years=25),
-#                                                         first_name=subject_consent.first_name,
-#                                                         last_name=subject_consent.last_name,
-#                                                         initials=subject_consent.initials,
-#                                                         gender='F',
-#                                                         identity_type='OMANG',
-#                                                         is_dob_estimated='-',
-#                                                         version='1',
-#                                                         consent_datetime=get_utcnow(),
-#                                                         created=get_utcnow())
 
         mommy.make_recipe(
             'flourish_child.childassent',
@@ -382,42 +372,11 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_c_enrollment_schedule1').count(), 1)
+            schedule_name='c_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortCQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='cohort_c_quarterly_schedule1').count(), 1)
+            schedule_name='c_quarterly1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
-
-#     def test_pool_onschedule_valid(self):
-#         self.subject_identifier = self.subject_identifier[:-1] + '5'
-#         self.maternal_dataset_options['protocol'] = 'Mashi'
-#         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=9, months=2)
-#         self.child_dataset_options['infant_hiv_exposed'] = 'Unexposed'
-#         self.options['subject_identifier'] = self.subject_identifier
-#
-#         mommy.make_recipe(
-#             'flourish_child.childdataset',
-#             subject_identifier=self.subject_identifier + '10',
-#             **self.child_dataset_options)
-#
-#         mommy.make_recipe(
-#             'flourish_caregiver.maternaldataset',
-#             subject_identifier=self.subject_identifier,
-#             **self.maternal_dataset_options)
-#
-#         mommy.make_recipe(
-#             'flourish_caregiver.subjectconsent',
-#             ** self.options)
-#
-#         self.assertEqual(OnSchedulePool.objects.filter(
-#             subject_identifier=caregiver_child_consent.subject_identifier).count(), 1)
-#
-#         self.assertEqual(OnSchedulePool.objects.get(
-#             subject_identifier=caregiver_child_consent.subject_identifier).schedule_name,
-#             'pool_schedule1')
-#
-#         self.assertNotEqual(Appointment.objects.filter(
-#             subject_identifier=caregiver_child_consent.subject_identifier).count(), 0)

@@ -68,14 +68,14 @@ class CaregiverEdinburghDeprScreening(CrfModelMixin):
 
     def save(self, *args, **kwargs):
         self.depression_score = self.calculate_depression_score()
+        super().save(*args, **kwargs)
 
     def calculate_depression_score(self):
         score = 0
         for f in self._meta.get_fields():
             if f.name in ['able_to_laugh', 'enjoyment_to_things', 'self_blame',
-                          'miserable_feelinganxious', 'panicky', 'coping',
-                          'sleeping_difficulty', 'miserable_feeling', 'unhappy'
-                          'self_harm', ]:
+                          'anxious', 'panicky', 'coping', 'sleeping_difficulty',
+                          'miserable_feeling', 'unhappy', 'self_harm', ]:
                 score += int(getattr(self, f.name))
         return score
 
