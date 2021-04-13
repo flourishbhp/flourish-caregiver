@@ -89,6 +89,11 @@ class SubjectConsent(
         choices=YES_NO,
         help_text='If no, participant is not eligible.')
 
+    biological_caregiver = models.CharField(
+        max_length=3,
+        verbose_name='Are you the biological mother to the child or children?',
+        choices=YES_NO)
+
     hiv_testing = models.CharField(
         max_length=3,
         verbose_name=('If HIV status not known, are you willing to undergo HIV'
@@ -152,6 +157,16 @@ class SubjectConsent(
     def natural_key(self):
         return (self.subject_identifier, self.version)
 
+    @property
+    def caregiver_type(self):
+        """Return the letter that represents the caregiver type.
+        """
+        if self.biological_caregiver == 'Yes':
+            return 'B'
+        elif self.biological_caregiver == 'No':
+            return 'C'
+        return None
+
     def make_new_identifier(self):
         """Returns a new and unique identifier.
 
@@ -160,6 +175,7 @@ class SubjectConsent(
         if not self.is_eligible:
             return None
         subject_identifier = SubjectIdentifier(
+            caregiver_type=self.caregiver_type,
             identifier_type='subject',
             requesting_model=self._meta.label_lower,
             site=self.site)

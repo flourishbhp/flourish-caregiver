@@ -1,4 +1,4 @@
-from django.test import TestCase, tag
+from django.test import TestCase
 from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES
@@ -11,7 +11,6 @@ from model_mommy import mommy
 from ..models import MaternalVisit
 
 
-@tag('mtd')
 class TestRuleGroups(TestCase):
 
     def setUp(self):
@@ -110,10 +109,8 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M').entry_status, REQUIRED)
 
-    @tag('arr')
     def test_edingte_10_referral_required(self):
-        visit = MaternalVisit.objects.get(
-            visit_code='1000M', visit_code_sequence='0')
+        visit = MaternalVisit.objects.get(visit_code='1000M')
         mommy.make_recipe('flourish_caregiver.caregiveredinburghdeprscreening',
                           maternal_visit=visit)
         self.assertEqual(
