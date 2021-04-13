@@ -107,7 +107,7 @@ class SubjectHelperMixin:
     def prepare_prior_participant_enrollment(self, maternal_dataset_obj):
 
         try:
-            CaregiverLocator.objects.get(
+            caregiver_locator = CaregiverLocator.objects.get(
                 study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
         except CaregiverLocator.DoesNotExist:
             caregiver_locator = mommy.make_recipe(
