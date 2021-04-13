@@ -83,7 +83,6 @@ class TestSubjectHelperMixin(TestCase):
 
         self.assertEqual(logentry_cls.objects.all().count(), 1)
 
-    @tag('sh1')
     def test_enroll_prior_participant_cohort_b(self):
 
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4, months=5)
@@ -109,11 +108,11 @@ class TestSubjectHelperMixin(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
-    @tag('sh2')
+    @tag('sh1')
     def test_enroll_prior_participant_assent_cohort_b(self):
 
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7, months=5)
-        self.maternal_dataset_options['protocol'] = 'Mma Bana'
+        self.maternal_dataset_options['protocol'] = 'Mpepu'
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -136,15 +135,15 @@ class TestSubjectHelperMixin(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
-    @tag('sh3')
     def test_enroll_prior_participant_assent_cohort_c(self):
 
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10, months=5)
-        self.maternal_dataset_options['protocol'] = 'Mmabana'
+        self.maternal_dataset_options['protocol'] = 'Mma Bana'
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             screening_identifier='123452',
+            preg_pi=1,
             **self.maternal_dataset_options)
 
         mommy.make_recipe(
@@ -153,8 +152,6 @@ class TestSubjectHelperMixin(TestCase):
 
         subject_identifier = self.subject_helper.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier)
-
-        import pdb; pdb.set_trace()
 
         self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
             subject_identifier=subject_identifier,

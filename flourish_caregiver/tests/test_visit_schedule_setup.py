@@ -333,6 +333,8 @@ class TestVisitScheduleSetup(TestCase):
         self.maternal_dataset_options['protocol'] = 'Mashi'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10,
                                                                                 months=2)
+        self.maternal_dataset_options['preg_pi'] = 1
+
         self.child_dataset_options['infant_hiv_exposed'] = 'Unexposed'
         self.options['subject_identifier'] = self.subject_identifier
 
