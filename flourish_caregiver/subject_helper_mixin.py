@@ -181,7 +181,8 @@ class SubjectHelperMixin:
 
             mommy.make_recipe(
                 'flourish_caregiver.screeningpriorbhpparticipants',
-                screening_identifier=maternal_dataset_obj.screening_identifier,)
+                screening_identifier=maternal_dataset_obj.screening_identifier,
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier)
 
             subject_consent = mommy.make_recipe(
                 'flourish_caregiver.subjectconsent',
@@ -211,7 +212,8 @@ class SubjectHelperMixin:
 
             mommy.make_recipe(
                 'flourish_caregiver.screeningpriorbhpparticipants',
-                screening_identifier=maternal_dataset_obj.screening_identifier,)
+                screening_identifier=maternal_dataset_obj.screening_identifier,
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier)
 
             subject_consent = mommy.make_recipe(
                 'flourish_caregiver.subjectconsent',
@@ -226,11 +228,13 @@ class SubjectHelperMixin:
 
             mommy.make_recipe(
                 'flourish_child.childassent',
-                subject_identifier=subject_consent.subject_identifier + '-10',
-                dob=maternal_dataset_obj.delivdt,
+                subject_identifier=caregiver_child_consent_obj.subject_identifier,
+                first_name=caregiver_child_consent_obj.first_name,
+                last_name=caregiver_child_consent_obj.last_name,
+                dob=caregiver_child_consent_obj.child_dob,
                 identity=caregiver_child_consent_obj.identity,
                 confirm_identity=caregiver_child_consent_obj.identity,
-                remain_in_study=NO,
+                remain_in_study=YES,
                 version=subject_consent.version)
 
             mommy.make_recipe(

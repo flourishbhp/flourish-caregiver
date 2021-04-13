@@ -68,7 +68,7 @@ subjectconsent = Recipe(
 caregiverpreviouslyenrolled = Recipe(
     CaregiverPreviouslyEnrolled,
     maternal_prev_enroll=YES,
-    last_test_date=get_utcnow(),
+    last_test_date=get_utcnow().date(),
     sex=FEMALE)
 
 caregiverchildconsent = Recipe(

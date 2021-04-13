@@ -63,7 +63,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
                 'child_dob',
                 'child_test',
                 'child_remain_in_study',
-                'biological_caregiver',
+
                 'child_preg_test',
                 'child_knows_status',
                 'identity',
@@ -130,6 +130,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'remain_in_study',
                 'hiv_testing',
                 'breastfeed_intent',
+                'biological_caregiver',
                 'child_consent')}),
         ('Review Questions', {
             'fields': (
@@ -161,6 +162,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'hiv_testing': admin.VERTICAL,
         'breastfeed_intent': admin.VERTICAL,
         'future_contact': admin.VERTICAL,
+        'biological_caregiver': admin.VERTICAL,
         'child_consent': admin.VERTICAL}
 
     list_display = ('subject_identifier',
