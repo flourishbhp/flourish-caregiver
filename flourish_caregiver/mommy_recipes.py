@@ -21,7 +21,9 @@ maternaldataset = Recipe(
     )
 
 caregiverlocator = Recipe(
-    CaregiverLocator)
+    CaregiverLocator,
+    first_name=fake.first_name,
+    last_name=fake.last_name,)
 
 locatorlogentry = Recipe(
     LocatorLogEntry,
@@ -48,8 +50,8 @@ subjectconsent = Recipe(
     last_name=fake.last_name,
     initials='XX',
     gender='F',
-    identity=seq('123427681'),
-    confirm_identity=seq('123427681'),
+    identity=seq('123427673'),
+    confirm_identity=seq('123427673'),
     identity_type='country_id',
     is_dob_estimated='-',
     hiv_testing=YES,
@@ -68,7 +70,6 @@ subjectconsent = Recipe(
 caregiverpreviouslyenrolled = Recipe(
     CaregiverPreviouslyEnrolled,
     maternal_prev_enroll=YES,
-    last_test_date=get_utcnow().date(),
     sex=FEMALE)
 
 caregiverchildconsent = Recipe(
@@ -82,9 +83,9 @@ caregiverchildconsent = Recipe(
     child_remain_in_study=YES,
     child_preg_test=NOT_APPLICABLE,
     child_knows_status=YES,
-    identity=seq('123417681'),
+    identity=seq('234516187'),
     identity_type='birth_cert',
-    confirm_identity=seq('123417681')
+    confirm_identity=seq('234516187')
     )
 
 antenatalenrollment = Recipe(

@@ -5,6 +5,8 @@ from django.test import TestCase, tag
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 from ..subject_helper_mixin import SubjectHelperMixin
+from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
+from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
 from ..models import MaternalDataset, ScreeningPriorBhpParticipants, SubjectConsent
 from ..models import ScreeningPregWomen, AntenatalEnrollment, CaregiverChildConsent
 
@@ -61,7 +63,6 @@ class TestSubjectHelperMixin(TestCase):
 
         self.assertEqual(SubjectConsent.objects.all().count(), 1)
 
-    @tag('sh1')
     def test_prepare_prior_participant_enrollmment(self):
 
         self.maternal_dataset_options['mom_hivstatus'] = 'HIV uninfected'
@@ -82,6 +83,7 @@ class TestSubjectHelperMixin(TestCase):
 
         self.assertEqual(logentry_cls.objects.all().count(), 1)
 
+    @tag('sh1')
     def test_enroll_prior_participant_cohort_b(self):
 
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4, months=5)
@@ -96,11 +98,22 @@ class TestSubjectHelperMixin(TestCase):
             'flourish_child.childdataset',
             **self.child_dataset_options)
 
-        self.subject_helper.enroll_prior_participant(maternal_dataset_obj.screening_identifier)
+        subject_identifier = self.subject_helper.enroll_prior_participant(
+            maternal_dataset_obj.screening_identifier)
 
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_enrol1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_quarterly1_schedule1').count(), 1)
+
+    @tag('sh2')
     def test_enroll_prior_participant_assent_cohort_b(self):
 
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7, months=5)
+        self.maternal_dataset_options['protocol'] = 'Mma Bana'
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -112,10 +125,18 @@ class TestSubjectHelperMixin(TestCase):
             'flourish_child.childdataset',
             **self.child_dataset_options)
 
-        self.subject_helper.enroll_prior_participant(
+        subject_identifier = self.subject_helper.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier)
 
-    @tag('sh2')
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_enrol1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_quarterly1_schedule1').count(), 1)
+
+    @tag('sh3')
     def test_enroll_prior_participant_assent_cohort_c(self):
 
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10, months=5)
@@ -123,7 +144,6 @@ class TestSubjectHelperMixin(TestCase):
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
-            preg_efv=1,
             screening_identifier='123452',
             **self.maternal_dataset_options)
 
@@ -131,5 +151,15 @@ class TestSubjectHelperMixin(TestCase):
             'flourish_child.childdataset',
             **self.child_dataset_options)
 
-        self.subject_helper.enroll_prior_participant_assent(
+        subject_identifier = self.subject_helper.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier)
+
+        import pdb; pdb.set_trace()
+
+        self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='c_enrol1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortCQuarterly.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='c_quarterly1_schedule1').count(), 1)

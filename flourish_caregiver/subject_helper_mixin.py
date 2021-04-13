@@ -1,41 +1,12 @@
-from datetime import datetime
 from django.apps import apps as django_apps
 from edc_base.utils import get_utcnow
-from edc_constants.constants import NO, NOT_APPLICABLE, YES
+from edc_constants.constants import NOT_APPLICABLE, YES
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 from .models import CaregiverLocator, MaternalDataset
 
 
 class SubjectHelperMixin:
-
-    maternal_dataset_options = {
-        'cooking_method': '',
-        'delivdt': datetime(2015, 3, 31).date(),
-        'delivery_location': 'Molepolole',
-        'delivmeth': '',
-        'house_type': 'Formal: tin-roofed & concrete walls',
-        'live_inhouse_number': 5,
-        'mom_age_enrollment': '18-24 years',
-        'mom_arvstart_date': datetime(2014, 6, 17).date(),
-        'mom_baseline_cd4': 516,
-        'mom_education': 'Secondary',
-        'mom_enrolldate': datetime(2015, 4, 1).date(),
-        'mom_hivstatus': 'HIV-infected',
-        'mom_maritalstatus': 'Single',
-        'mom_moneysource': 'Relative',
-        'mom_occupation': 'Housewife or unemployed',
-        'mom_personal_earnings': 'None',
-        'mom_pregarv_strat': '3-drug ART',
-        'parity': 1,
-        'piped_water': 'Other water source',
-        'protocol': 'Tshilo Dikotla',
-        'site_name': 'Gaborone',
-        'study_maternal_identifier': '142-4995638-1',
-        'toilet': 2,
-        'toilet_indoors': 'Latrine or none',
-        'toilet_private': 'Indoor toilet or private latrine',
-        'preg_efv': '1'}
 
     def create_antenatal_enrollment(self, **kwargs):
         import_holidays()
@@ -136,8 +107,8 @@ class SubjectHelperMixin:
     def prepare_prior_participant_enrollment(self, maternal_dataset_obj):
 
         try:
-            caregiver_locator = CaregiverLocator.objects.get(
-                screening_identifier=maternal_dataset_obj.screening_identifier)
+            CaregiverLocator.objects.get(
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
         except CaregiverLocator.DoesNotExist:
             caregiver_locator = mommy.make_recipe(
                 'flourish_caregiver.caregiverlocator',
@@ -152,7 +123,7 @@ class SubjectHelperMixin:
             mommy.make_recipe(
                 'flourish_follow.worklist',
                 subject_identifier=None,
-                study_maternal_identifier=caregiver_locator.study_maternal_identifier,)
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
 
         call = mommy.make_recipe(
             'flourish_follow.call',
@@ -166,6 +137,7 @@ class SubjectHelperMixin:
             'flourish_follow.logentry',
             log=log,
             study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
+        return caregiver_locator
 
     def enroll_prior_participant(self, screening_identifier):
 
@@ -197,6 +169,7 @@ class SubjectHelperMixin:
 
             mommy.make_recipe(
                     'flourish_caregiver.caregiverpreviouslyenrolled')
+            return subject_consent.subject_identifier
 
     def enroll_prior_participant_assent(self, screening_identifier):
 
@@ -239,3 +212,5 @@ class SubjectHelperMixin:
 
             mommy.make_recipe(
                     'flourish_caregiver.caregiverpreviouslyenrolled')
+
+            return subject_consent.subject_identifier
