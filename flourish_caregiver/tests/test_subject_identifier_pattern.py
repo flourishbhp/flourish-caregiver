@@ -11,7 +11,7 @@ from edc_constants.constants import NO, YES
 subject_identifier = '[B|C]142\-[0-9\-]+'
 
 
-class TestSubjectConsent(TestCase):
+class TestSubjectIdentifier(TestCase):
 
     def setUp(self):
         import_holidays()
