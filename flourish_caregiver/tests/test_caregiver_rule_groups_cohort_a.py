@@ -116,7 +116,6 @@ class TestRuleGroups(TestCase):
             visit_code='1000M', visit_code_sequence='0')
         mommy.make_recipe('flourish_caregiver.caregiveredinburghdeprscreening',
                           maternal_visit=visit)
-        import pdb; pdb.set_trace()
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.caregiveredinburghreferral',

@@ -1,17 +1,18 @@
 from dateutil.relativedelta import relativedelta
 from edc_base.utils import get_utcnow
-from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT, NOT_APPLICABLE
+from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT, NOT_APPLICABLE, \
+    FEMALE
 from edc_visit_tracking.constants import SCHEDULED
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery
+from .models import CaregiverPreviouslyEnrolled
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
 from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
                      CaregiverEdinburghDeprScreening)
-
 
 fake = Faker()
 
@@ -63,6 +64,12 @@ subjectconsent = Recipe(
     citizen=YES,
     version='1'
 )
+
+caregiverpreviouslyenrolled = Recipe(
+    CaregiverPreviouslyEnrolled,
+    maternal_prev_enroll=YES,
+    last_test_date=get_utcnow(),
+    sex=FEMALE)
 
 caregiverchildconsent = Recipe(
     CaregiverChildConsent,
