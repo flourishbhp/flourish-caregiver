@@ -14,6 +14,10 @@ from .subject_consent import SubjectConsent
 from ..choices import CHILD_IDENTITY_TYPE, COHORTS
 from ..helper_classes.cohort import Cohort
 
+from ..subject_identifier import InfantIdentifier
+
+INFANT = 'infant'
+
 
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin,
                             IdentityFieldsMixin, BaseUuidModel):
@@ -117,20 +121,27 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         self.ineligibility = eligibility_criteria.error_message
         self.child_age_at_enrollment = (
             self.get_child_age_at_enrollment() if self.child_dob else None)
-        if self.is_eligible and not self.subject_identifier:
-                self.subject_identifier = self.update_subject_identifier
+        if self.is_eligible and not self.id:
+                self.subject_identifier = InfantIdentifier(
+                    maternal_identifier=self.subject_consent.subject_identifier,
+                    birth_order=self.birth_order,
+                    live_infants= self.live_infants,
+                    registration_status=self.registration_status,
+                    registration_datetime=self.consent_datetime,
+                    subject_type=INFANT).identifier
         super().save(*args, **kwargs)
 
     @property
-    def update_subject_identifier(self):
+    def live_infants(self):
+        return 1
 
-        child_dummy_consent_cls = django_apps.get_model(
-            'flourish_child.childdummysubjectconsent')
-        children_count = 1 + child_dummy_consent_cls.objects.filter(
-            subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
-                identity=self.identity).count()
-        child_identifier_postfix = '-' + str(children_count * 10)
-        return self.subject_consent.subject_identifier + child_identifier_postfix
+    @property
+    def registration_status(self):
+        return 'REGISTERED'
+
+    @property
+    def birth_order(self):
+        return 1
 
     def get_child_age_at_enrollment(self):
         return Cohort().age_at_enrollment(
