@@ -1,6 +1,7 @@
 from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO, YES_NO_NA
+from edc_constants.constants import NOT_APPLICABLE
 
 from ..maternal_choices import KNOW_HIV_STATUS
 from .list_models import ChronicConditions, CaregiverMedications, WcsDxAdult
@@ -13,7 +14,7 @@ class MedicalHistory(CrfModelMixin):
 
     chronic_since = models.CharField(
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         verbose_name='Does the caregiver have any chronic conditions?', )
 
     caregiver_chronic = models.ManyToManyField(
@@ -67,6 +68,13 @@ class MedicalHistory(CrfModelMixin):
         verbose_name='Comments',
         blank=True,
         null=True)
+
+    """Quartely phone calls stem question"""
+    med_history_changed = models.CharField(
+        verbose_name='Has any of your following medical history changed?',
+        max_length=20,
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE)
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'

@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
 from django.urls.base import reverse
@@ -16,6 +17,7 @@ from edc_visit_tracking.modeladmin_mixins import (
     CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin)
 
 from .exportaction_mixin import ExportActionMixin
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
@@ -61,3 +63,30 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
         except NoReverseMatch:
             url = super().view_on_site(obj)
         return url
+
+    def get_appointment(self, request):
+        """Returns the appointment instance for this request or None.
+        """
+        appointment_model_cls = django_apps.get_model(self.appointment_model)
+        return appointment_model_cls.objects.get(
+            pk=request.GET.get('appointment'))
+        return None
+
+    def get_instance(self, request):
+        try:
+            appointment = self.get_appointment(request)
+        except ObjectDoesNotExist:
+            return None
+        else:
+            return appointment
+
+    def get_key(self, request, obj=None):
+        schedule_name = None
+        if self.get_previous_instance(request):
+            try:
+                model_obj = self.get_instance(request)
+            except ObjectDoesNotExist:
+                schedule_name = None
+            else:
+                schedule_name = model_obj.schedule_name
+        return schedule_name
