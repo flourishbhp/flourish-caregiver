@@ -1,4 +1,6 @@
 from django.contrib import admin
+from edc_fieldsets.fieldlist import Insert
+from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 from edc_model_admin import audit_fieldset_tuple
 
 from .modeladmin_mixins import CrfModelAdminMixin
@@ -33,7 +35,25 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     radio_fields = {'chronic_since': admin.VERTICAL,
                     'who_diagnosis': admin.VERTICAL,
-                    'know_hiv_status': admin.VERTICAL}
+                    'know_hiv_status': admin.VERTICAL,
+                    'med_history_changed': admin.VERTICAL}
 
     filter_horizontal = (
         'who', 'caregiver_chronic', 'caregiver_medications')
+
+    custom_form_labels = [
+        FormLabel(
+            field='med_history_changed',
+            label=('Since the last scheduled visit in {previous}, has any of '
+                   'your medical history changed?'),
+            previous_appointment=True)
+        ]
+
+    quartely_schedules = ['b_quarterly1_schedule1', 'b_quarterly2_schedule1',
+                          'b_quarterly3_schedule1', 'c_quarterly2_schedule1',
+                          'c_quarterly1_schedule1', 'c_quarterly3_schedule1']
+
+    conditional_fieldlists = {}
+    for schedule in quartely_schedules:
+        conditional_fieldlists.update(
+            {schedule: Insert('med_history_changed', after='report_datetime')})
