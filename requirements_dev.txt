@@ -3,6 +3,7 @@ git+https://github.com/botswana-harvard/django-revision.git@develop#egg=django_r
 git+https://github.com/botswana-harvard/edc-action-item.git@develop#egg=edc_action_item
 git+https://github.com/botswana-harvard/edc-appointment.git@develop#egg=edc_appointment
 git+https://github.com/botswana-harvard/edc-base.git@develop#egg=edc_base
+git+https://github.com/botswana-harvard/edc-call-manager.git@develop#egg=edc-call-manager
 git+https://github.com/botswana-harvard/edc-calender.git@develop#egg=edc-calender
 git+https://github.com/botswana-harvard/edc-consent.git@develop#egg=edc_consent
 git+https://github.com/botswana-harvard/edc-constants.git@develop#egg=edc_constants
@@ -32,6 +33,11 @@ git+https://github.com/botswana-harvard/edc-visit-tracking.git@develop#egg=edc_v
 git+https://github.com/botswana-harvard/edc-visit-schedule.git@develop#egg=edc_visit_schedule
 django_q
 xlwt
+django-crispy-forms
+django-multiselectfield
+notebook
+pandas
+django-multiselectfield
 -e /Users/ckgathi/source/flourish-caregiver
 -e /Users/ckgathi/source/flourish-dashboard
 -e /Users/ckgathi/source/flourish-child

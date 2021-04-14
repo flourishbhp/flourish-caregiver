@@ -160,6 +160,7 @@ class SubjectHelperMixin:
                 'flourish_caregiver.subjectconsent',
                 screening_identifier=maternal_dataset_obj.screening_identifier,
                 breastfeed_intent=NOT_APPLICABLE,
+                biological_caregiver=YES,
                 **self.options)
 
             mommy.make_recipe(

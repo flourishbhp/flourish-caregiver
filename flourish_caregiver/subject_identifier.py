@@ -1,7 +1,8 @@
-from edc_identifier.subject_identifier import SubjectIdentifier
+from edc_identifier.infant_identifier import InfantIdentifier as BaseInfantIdentifier
+from edc_identifier.subject_identifier import SubjectIdentifier as BaseSubjectIdentifier
 
 
-class SubjectIdentifier(SubjectIdentifier):
+class SubjectIdentifier(BaseSubjectIdentifier):
 
     template = '{protocol_number}-0{site_id}{device_id}{sequence}'
     
@@ -33,6 +34,11 @@ class SubjectIdentifier(SubjectIdentifier):
             self.post_identifier()
         return self._identifier
 
-class PreFlourishIdentifier(SubjectIdentifier):
+
+class InfantIdentifier(BaseInfantIdentifier):
+    pass
+
+
+class PreFlourishIdentifier(BaseSubjectIdentifier):
 
     template = 'PF{protocol_number}-0{site_id}{device_id}{sequence}'
