@@ -128,7 +128,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                     live_infants= self.live_infants,
                     registration_status=self.registration_status,
                     registration_datetime=self.consent_datetime,
-                    subject_type=INFANT)
+                    subject_type=INFANT).identifier
         super().save(*args, **kwargs)
 
     @property
