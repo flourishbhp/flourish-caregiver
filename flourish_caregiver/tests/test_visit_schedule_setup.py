@@ -1,4 +1,5 @@
 from dateutil.relativedelta import relativedelta
+from django.apps import apps as django_apps
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES, NO, NOT_APPLICABLE
@@ -14,6 +15,7 @@ from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
 from ..models import OnScheduleCohortCPool, OnScheduleDYADB, OnScheduleDYADC
 from flourish_child.models import ChildDataset
 from pre_flourish.models import PreFlourishConsent
+from ..subject_helper_mixin import SubjectHelperMixin
 
 
 @tag('vs')
@@ -131,7 +133,6 @@ class TestVisitScheduleSetup(TestCase):
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
-    @tag('vs3')
     def test_cohort_b_onschedule_valid(self):
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
@@ -149,32 +150,21 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_child.childdataset',
             **self.child_dataset_options)
 
-        mommy.make_recipe(
-            'flourish_caregiver.screeningpriorbhpparticipants',
-            screening_identifier=maternal_dataset_obj.screening_identifier,)
+        sh = SubjectHelperMixin()
 
-        subject_consent = mommy.make_recipe(
-            'flourish_caregiver.subjectconsent',
-            screening_identifier=maternal_dataset_obj.screening_identifier,
-            subject_identifier=self.subject_identifier,
-            breastfeed_intent=NOT_APPLICABLE,
-            **self.options)
-
-        mommy.make_recipe(
-            'flourish_caregiver.caregiverchildconsent',
-            subject_consent=subject_consent,
-            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
+        subject_identifier = sh.enroll_prior_participant(
+            maternal_dataset_obj.screening_identifier)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
-            subject_identifier=subject_consent.subject_identifier,
+            subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
-            subject_identifier=subject_consent.subject_identifier,
+            subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 0)
+            subject_identifier=subject_identifier).count(), 0)
 
     def test_cohort_b_onschedule_invalid(self):
 
@@ -238,40 +228,21 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=self.subject_identifier,
             **self.maternal_dataset_options)
 
-        mommy.make_recipe(
-            'flourish_caregiver.screeningpriorbhpparticipants',
-            screening_identifier=maternal_dataset_obj.screening_identifier,)
+        sh = SubjectHelperMixin()
 
-        subject_consent = mommy.make_recipe(
-            'flourish_caregiver.subjectconsent',
-            screening_identifier=maternal_dataset_obj.screening_identifier,
-            subject_identifier=self.subject_identifier,
-            breastfeed_intent=NOT_APPLICABLE,
-            **self.options)
-
-        caregiver_child_consent_obj = mommy.make_recipe(
-            'flourish_caregiver.caregiverchildconsent',
-            subject_consent=subject_consent,
-            child_dob=(get_utcnow() - relativedelta(years=7, months=2)).date(),)
-
-        mommy.make_recipe(
-            'flourish_child.childassent',
-            subject_identifier=caregiver_child_consent_obj.subject_identifier,
-            dob=get_utcnow() - relativedelta(years=7, months=2),
-            identity=caregiver_child_consent_obj.identity,
-            confirm_identity=caregiver_child_consent_obj.identity,
-            version=subject_consent.version)
+        subject_identifier = sh.enroll_prior_participant_assent(
+            maternal_dataset_obj.screening_identifier)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
-            subject_identifier=subject_consent.subject_identifier,
+            subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
-            subject_identifier=subject_consent.subject_identifier,
+            subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 0)
+            subject_identifier=subject_identifier).count(), 0)
 
     def test_cohort_b_assent_onschedule_invalid(self):
 
@@ -333,6 +304,8 @@ class TestVisitScheduleSetup(TestCase):
         self.maternal_dataset_options['protocol'] = 'Mashi'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10,
                                                                                 months=2)
+        self.maternal_dataset_options['preg_pi'] = 1
+
         self.child_dataset_options['infant_hiv_exposed'] = 'Unexposed'
         self.options['subject_identifier'] = self.subject_identifier
 
@@ -346,37 +319,216 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=self.subject_identifier,
             **self.maternal_dataset_options)
 
+        sh = SubjectHelperMixin()
+
+        subject_identifier = sh.enroll_prior_participant_assent(
+            maternal_dataset_obj.screening_identifier)
+
+        self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='c_enrol1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortCQuarterly.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='c_quarterly1_schedule1').count(), 1)
+
+        self.assertNotEqual(Appointment.objects.filter(
+            subject_identifier=subject_identifier).count(), 0)
+
+    def test_cohort_b_twins_onschedule_valid(self):
+        self.subject_identifier = self.subject_identifier[:-1] + '2'
+        self.study_maternal_identifier = '981232'
+        self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
+                                                                                months=2)
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            subject_identifier=self.subject_identifier,
+            preg_efv=1,
+            **self.maternal_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            **self.child_dataset_options)
+
         mommy.make_recipe(
             'flourish_caregiver.screeningpriorbhpparticipants',
-            screening_identifier=maternal_dataset_obj.screening_identifier,
-            )
+            screening_identifier=maternal_dataset_obj.screening_identifier,)
 
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
             breastfeed_intent=NOT_APPLICABLE,
-            ** self.options)
-
-        caregiver_child_consent_obj = mommy.make_recipe(
-            'flourish_caregiver.caregiverchildconsent',
-            subject_consent=subject_consent,
-            child_dob=(get_utcnow() - relativedelta(years=10, months=2)).date(),)
+            **self.options)
 
         mommy.make_recipe(
-            'flourish_child.childassent',
-            subject_identifier=self.subject_identifier + '-10',
-            dob=(get_utcnow() - relativedelta(years=10, months=2)).date(),
-            identity=caregiver_child_consent_obj.identity,
-            confirm_identity=caregiver_child_consent_obj.identity,
-            version=subject_consent.version)
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            subject_identifier=subject_consent.subject_identifier + '-25',
+            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
-        self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
-            subject_identifier=subject_consent.subject_identifier,
-            schedule_name='c_enrol1_schedule1').count(), 1)
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            subject_identifier=subject_consent.subject_identifier + '-35',
+            identity='234513181',
+            confirm_identity='234513181',
+            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
-        self.assertEqual(OnScheduleCohortCQuarterly.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='c_quarterly1_schedule1').count(), 1)
+            schedule_name='b_enrol1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_enrol2_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_enrol3_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly2_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly2_schedule1').count(), 0)
+
+        self.assertNotEqual(Appointment.objects.filter(
+            subject_identifier=subject_consent.subject_identifier).count(), 0)
+
+    def test_cohort_b_triplets_onschedule_valid(self):
+        self.subject_identifier = self.subject_identifier[:-1] + '3'
+        self.study_maternal_identifier = '981232'
+        self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
+                                                                                months=2)
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            subject_identifier=self.subject_identifier,
+            preg_efv=1,
+            **self.maternal_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            **self.child_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.screeningpriorbhpparticipants',
+            screening_identifier=maternal_dataset_obj.screening_identifier,)
+
+        subject_consent = mommy.make_recipe(
+            'flourish_caregiver.subjectconsent',
+            screening_identifier=maternal_dataset_obj.screening_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
+            **self.options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            subject_identifier=subject_consent.subject_identifier + '-36',
+            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            subject_identifier=subject_consent.subject_identifier + '-46',
+            identity='234513181',
+            confirm_identity='234513181',
+            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            subject_identifier=subject_consent.subject_identifier + '-56',
+            identity='234513182',
+            confirm_identity='234513182',
+            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
+
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_enrol1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_enrol2_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_enrol3_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly2_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly3_schedule1').count(), 0)
+
+    def test_cohort_b_multiple_onschedule_valid(self):
+        self.subject_identifier = self.subject_identifier[:-1] + '4'
+        self.study_maternal_identifier = '981232'
+        self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4,
+                                                                                months=9)
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            subject_identifier=self.subject_identifier,
+            preg_efv=1,
+            **self.maternal_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            **self.child_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.screeningpriorbhpparticipants',
+            screening_identifier=maternal_dataset_obj.screening_identifier,)
+
+        subject_consent = mommy.make_recipe(
+            'flourish_caregiver.subjectconsent',
+            screening_identifier=maternal_dataset_obj.screening_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
+            **self.options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            subject_identifier=subject_consent.subject_identifier + '-10',
+            child_dob=(get_utcnow() - relativedelta(years=4, months=9)).date(),)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            subject_identifier=subject_consent.subject_identifier + '-60',
+            identity='234513181',
+            confirm_identity='234513181',
+            child_dob=(get_utcnow() - relativedelta(years=5, months=9)).date(),)
+
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_enrol1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_enrol2_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly2_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)

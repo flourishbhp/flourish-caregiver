@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from edc_base.utils import get_utcnow
 from edc_constants.constants import NOT_APPLICABLE, YES
@@ -7,6 +8,30 @@ from .models import CaregiverLocator, MaternalDataset
 
 
 class SubjectHelperMixin:
+
+    def create_cohort_c_dataset(self):
+
+        self.maternal_dataset_options = {
+            'delivdt': get_utcnow() - relativedelta(years=10, months=2),
+            'mom_enrolldate': get_utcnow(),
+            'mom_hivstatus': 'HIV-infected',
+            'study_maternal_identifier': '8907-21',
+            'preg_pi': 1,
+            'protocol': 'Mashi'}
+
+        self.child_dataset_options = {
+            'infant_hiv_exposed': 'Unexposed',
+            'infant_enrolldate': get_utcnow(),
+            'study_maternal_identifier': '8907-21',
+            'study_child_identifier': '1234'}
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            **self.child_dataset_options)
+
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            **self.maternal_dataset_options)
 
     def create_antenatal_enrollment(self, **kwargs):
         import_holidays()
@@ -107,7 +132,7 @@ class SubjectHelperMixin:
     def prepare_prior_participant_enrollment(self, maternal_dataset_obj):
 
         try:
-            CaregiverLocator.objects.get(
+            caregiver_locator = CaregiverLocator.objects.get(
                 study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
         except CaregiverLocator.DoesNotExist:
             caregiver_locator = mommy.make_recipe(
