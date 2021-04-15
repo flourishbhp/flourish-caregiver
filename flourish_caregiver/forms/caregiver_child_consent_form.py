@@ -13,6 +13,11 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
 
+    study_child_identifier = forms.CharField(
+        label='Previous study identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
+
     form_validator_cls = CaregiverChildConsentFormValidator
 
     class Meta:
