@@ -7,7 +7,7 @@ from edc_base.utils import get_utcnow
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 
-from edc_constants.constants import NO, YES
+from edc_constants.constants import YES, NO, NOT_APPLICABLE
 
 from ..subject_helper_mixin import SubjectHelperMixin
 
@@ -24,6 +24,9 @@ class TestInfantSubjectIdentifier(TestCase):
         self.options = {
             'consent_datetime': get_utcnow(),
             'version': '1'}
+        
+        self.child_dummy_consent_cls = django_apps.get_model(
+            'flourish_child.childdummysubjectconsent')
 
         self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
@@ -57,14 +60,49 @@ class TestInfantSubjectIdentifier(TestCase):
 
         self.subject_helper.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier)
-        
-        child_dummy_consent_cls = django_apps.get_model(
-            'flourish_child.childdummysubjectconsent')
 
         self.assertTrue(
             re.match(
                 subject_identifier,
-                child_dummy_consent_cls.objects.all()[0].subject_identifier))
+                self.child_dummy_consent_cls.objects.all()[0].subject_identifier))
+    
+    def test_infant_subject_identifier_2_children(self):
+        self.study_maternal_identifier = '981232'
+        self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4,
+                                                                                months=9)
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            preg_efv=1,
+            **self.maternal_dataset_options)
 
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            **self.child_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.screeningpriorbhpparticipants',
+            screening_identifier=maternal_dataset_obj.screening_identifier,)
+
+        subject_consent = mommy.make_recipe(
+            'flourish_caregiver.subjectconsent',
+            screening_identifier=maternal_dataset_obj.screening_identifier,
+            breastfeed_intent=NOT_APPLICABLE,
+            **self.options)
+
+        first_child = mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            child_dob=(get_utcnow() - relativedelta(years=4, months=9)).date(),)
+
+        second_child = mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            identity='234513181',
+            confirm_identity='234513181',
+            child_dob=(get_utcnow() - relativedelta(years=5, months=9)).date(),)
+    
+        self.assertTrue(first_child.subject_identifier.endswith('10'))
+        self.assertTrue(second_child.subject_identifier.endswith('20'))
 
 

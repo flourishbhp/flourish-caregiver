@@ -1,4 +1,5 @@
-from edc_identifier.infant_identifier import InfantIdentifier as BaseInfantIdentifier
+from edc_identifier.infant_identifier import (
+    InfantIdentifier as BaseInfantIdentifier, InfantIdentifierError)
 from edc_identifier.subject_identifier import SubjectIdentifier as BaseSubjectIdentifier
 
 
@@ -36,7 +37,16 @@ class SubjectIdentifier(BaseSubjectIdentifier):
 
 
 class InfantIdentifier(BaseInfantIdentifier):
-    pass
+
+    def __init__(self, supplied_infant_suffix=None, **kwargs):
+        self.supplied_infant_suffix = supplied_infant_suffix
+        super().__init__(**kwargs)
+    
+    @property
+    def infant_suffix(self):
+        return self.supplied_infant_suffix
+    
+
 
 
 class PreFlourishIdentifier(BaseSubjectIdentifier):

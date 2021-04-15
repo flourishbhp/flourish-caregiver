@@ -1,13 +1,11 @@
 from django.apps import apps as django_apps
+from django.core.exceptions import ValidationError
 from django.db import models
+
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
-from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
-from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
-from edc_search.model_mixins import SearchSlugManager
-
 from edc_consent.field_mixins import (
     CitizenFieldsMixin, VulnerabilityFieldsMixin)
 from edc_consent.field_mixins import IdentityFieldsMixin
@@ -15,6 +13,9 @@ from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO, GENDER, YES_NO_NA
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
+from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
+from edc_search.model_mixins import SearchSlugManager
 
 from ..choices import IDENTITY_TYPE
 from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
@@ -128,6 +129,10 @@ class SubjectConsent(
         default=False,
         editable=False)
 
+    multiple_birth = models.BooleanField(
+        default=False,
+        editable=False)
+
     objects = SubjectConsentManager()
 
     consent = ConsentManager()
@@ -146,6 +151,8 @@ class SubjectConsent(
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         self.version = '1'
+        if self.multiple_births in ['twins', 'triplets']:
+            self.multiple_birth = True
         if self.is_eligible:
 
             if self.created and not self.subject_identifier:
@@ -156,6 +163,29 @@ class SubjectConsent(
 
     def natural_key(self):
         return (self.subject_identifier, self.version)
+
+    def multiple_births(self):
+        """Returns value of births if the mother has twins/triplets.
+        """
+        dataset_cls = django_apps.get_model('flourish_caregiver.maternaldataset')
+
+        try:
+            dataset_obj = dataset_cls.objects.get(
+                screening_identifier=self.screening_identifier)
+        except dataset_cls.DoesNotExist:
+            pass
+        else:
+            child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+            children = child_dataset_cls.objects.filter(
+                study_maternal_identifier=dataset_obj.study_maternal_identifier)
+            if children.count() == 2:
+                return 'twins'
+            elif children.count() == 3:
+                return 'tripplets'
+            elif children.count() > 3:
+                raise ValidationError(
+                    'We do not expect more than trippets to exist.')
+        return None
 
     @property
     def caregiver_type(self):
