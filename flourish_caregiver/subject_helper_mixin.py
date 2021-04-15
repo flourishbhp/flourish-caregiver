@@ -9,7 +9,7 @@ from .models import CaregiverLocator, MaternalDataset
 
 class SubjectHelperMixin:
 
-    def create_cohort_c_dataset(self):
+    def create_cohort_c_dataset(self,):
 
         self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=10, months=2),
@@ -32,6 +32,8 @@ class SubjectHelperMixin:
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             **self.maternal_dataset_options)
+
+        return maternal_dataset_obj
 
     def create_antenatal_enrollment(self, **kwargs):
         import_holidays()
@@ -185,6 +187,7 @@ class SubjectHelperMixin:
                 'flourish_caregiver.subjectconsent',
                 screening_identifier=maternal_dataset_obj.screening_identifier,
                 breastfeed_intent=NOT_APPLICABLE,
+                biological_caregiver=YES,
                 **self.options)
 
             mommy.make_recipe(
