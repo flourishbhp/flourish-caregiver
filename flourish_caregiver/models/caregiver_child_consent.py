@@ -1,4 +1,5 @@
 from django.apps import apps as django_apps
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
@@ -108,6 +109,11 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         max_length=12,
         choices=COHORTS,)
 
+    caregiver_visit_count = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(3)],
+        blank=True,
+        null=True)
+
     is_eligible = models.BooleanField(
         default=False,
         editable=False)
@@ -131,7 +137,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                 self.subject_identifier = InfantIdentifier(
                     maternal_identifier=self.subject_consent.subject_identifier,
                     birth_order=self.birth_order,
-                    live_infants= self.live_infants,
+                    live_infants=self.live_infants,
                     registration_status=self.registration_status,
                     registration_datetime=self.consent_datetime,
                     subject_type=INFANT,
