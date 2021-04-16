@@ -1,7 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from edc_base.utils import get_utcnow
-from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT, NOT_APPLICABLE, \
-    FEMALE
+from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT, \
+    NOT_APPLICABLE, FEMALE
 from edc_visit_tracking.constants import SCHEDULED
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
@@ -50,8 +50,8 @@ subjectconsent = Recipe(
     last_name=fake.last_name,
     initials='XX',
     gender='F',
-    identity=seq('123427673'),
-    confirm_identity=seq('123427673'),
+    identity=seq('123427675'),
+    confirm_identity=seq('123427675'),
     identity_type='country_id',
     is_dob_estimated='-',
     hiv_testing=YES,
@@ -83,9 +83,9 @@ caregiverchildconsent = Recipe(
     child_remain_in_study=YES,
     child_preg_test=NOT_APPLICABLE,
     child_knows_status=YES,
-    identity=seq('234516187'),
+    identity=seq('234513187'),
     identity_type='birth_cert',
-    confirm_identity=seq('234516187')
+    confirm_identity=seq('234513187')
     )
 
 antenatalenrollment = Recipe(

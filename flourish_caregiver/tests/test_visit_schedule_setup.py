@@ -1,20 +1,17 @@
 from dateutil.relativedelta import relativedelta
-from django.apps import apps as django_apps
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES, NO, NOT_APPLICABLE
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
-
+from edc_visit_schedule.models import SubjectScheduleHistory
 from edc_appointment.models import Appointment
 
 from ..models import OnScheduleCohortAEnrollment, OnScheduleCohortABirth
 from ..models import OnScheduleCohortAQuarterly
 from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
 from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
-from ..models import OnScheduleCohortCPool, OnScheduleDYADB, OnScheduleDYADC
-from flourish_child.models import ChildDataset
-from pre_flourish.models import PreFlourishConsent
+from ..models import OnScheduleCohortCPool, OnScheduleSecB, OnScheduleSecC
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
@@ -336,8 +333,8 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_identifier).count(), 0)
 
     def test_cohort_b_twins_onschedule_valid(self):
-        self.subject_identifier = self.subject_identifier[:-1] + '2'
-        self.study_maternal_identifier = '981232'
+        self.subject_identifier = self.subject_identifier[:-1] + '9'
+        self.study_maternal_identifier = '981231'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
                                                                                 months=2)
@@ -361,13 +358,13 @@ class TestVisitScheduleSetup(TestCase):
             breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
-        mommy.make_recipe(
+        ccc = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             subject_identifier=subject_consent.subject_identifier + '-25',
             child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
-        mommy.make_recipe(
+        ccc2 = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             subject_identifier=subject_consent.subject_identifier + '-35',
@@ -403,8 +400,8 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
     def test_cohort_b_triplets_onschedule_valid(self):
-        self.subject_identifier = self.subject_identifier[:-1] + '3'
-        self.study_maternal_identifier = '981232'
+        self.subject_identifier = self.subject_identifier[:-1] + '7'
+        self.study_maternal_identifier = '981237'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
                                                                                 months=2)
@@ -474,6 +471,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly3_schedule1').count(), 0)
 
+    @tag('vs1')
     def test_cohort_b_multiple_onschedule_valid(self):
         self.subject_identifier = self.subject_identifier[:-1] + '4'
         self.study_maternal_identifier = '981232'
@@ -497,10 +495,11 @@ class TestVisitScheduleSetup(TestCase):
         subject_consent = mommy.make_recipe(
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
+            subject_identifier=self.subject_identifier,
             breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
-        mommy.make_recipe(
+        child_consent = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             subject_identifier=subject_consent.subject_identifier + '-10',
@@ -514,6 +513,10 @@ class TestVisitScheduleSetup(TestCase):
             confirm_identity='234513181',
             child_dob=(get_utcnow() - relativedelta(years=5, months=9)).date(),)
 
+        self.assertEqual(SubjectScheduleHistory.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            onschedule_datetime=child_consent.created).count(), 1)
+
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
@@ -521,6 +524,10 @@ class TestVisitScheduleSetup(TestCase):
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
+
+        self.assertNotEqual(Appointment.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly1_schedule1').count(), 0)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
@@ -531,4 +538,5 @@ class TestVisitScheduleSetup(TestCase):
             schedule_name='b_quarterly2_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
-            subject_identifier=subject_consent.subject_identifier).count(), 0)
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_quarterly2_schedule1').count(), 0)

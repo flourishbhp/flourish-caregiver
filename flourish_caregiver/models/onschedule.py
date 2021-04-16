@@ -15,6 +15,10 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
         verbose_name="Subject Identifier",
         max_length=50)
 
+    child_subject_identifier = models.CharField(
+        verbose_name="Associated Child Identifier",
+        max_length=50)
+
     schedule_name = models.CharField(max_length=25, blank=True, null=True)
 
     on_site = CurrentSiteManager()
@@ -67,13 +71,13 @@ class OnScheduleCohortCPool(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleDYADA(OnScheduleModelMixin):
+class OnScheduleSecA(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleDYADB(OnScheduleModelMixin):
+class OnScheduleSecB(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleDYADC(OnScheduleModelMixin):
+class OnScheduleSecC(OnScheduleModelMixin):
     pass
