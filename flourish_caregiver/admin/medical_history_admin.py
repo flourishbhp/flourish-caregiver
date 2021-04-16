@@ -49,6 +49,7 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             previous_appointment=True)
         ]
 
+
     quartely_schedules = ['b_quarterly1_schedule1', 'b_quarterly2_schedule1',
                           'b_quarterly3_schedule1', 'c_quarterly2_schedule1',
                           'c_quarterly1_schedule1', 'c_quarterly3_schedule1']

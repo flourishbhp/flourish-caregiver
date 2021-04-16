@@ -1,6 +1,6 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
-from .modeladmin_mixins import ModelAdminMixin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverHamdReferralForm
@@ -8,7 +8,7 @@ from ..models import CaregiverHamdReferral
 
 
 @admin.register(CaregiverHamdReferral, site=flourish_caregiver_admin)
-class CaregiverHamdReferralAdmin(ModelAdminMixin, admin.ModelAdmin):
+class CaregiverHamdReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = CaregiverHamdReferralForm
 
