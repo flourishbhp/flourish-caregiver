@@ -184,7 +184,7 @@ class SubjectConsent(
                 return 'tripplets'
             elif children.count() > 3:
                 raise ValidationError(
-                    'We do not expect more than trippets to exist.')
+                    'We do not expect more than triplets to exist.')
         return None
 
     @property

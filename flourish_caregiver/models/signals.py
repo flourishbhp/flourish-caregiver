@@ -93,18 +93,16 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         cohort = cohort_assigned(instance.subject_consent.screening_identifier,
                                  instance.child_dob)
         if cohort:
-
             child_dummy_consent_cls = django_apps.get_model(
                 'flourish_child.childdummysubjectconsent')
 
-            if instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
-                children_count = 1 + child_dummy_consent_cls.objects.filter(
-                    subject_identifier__icontains=instance.subject_consent.subject_identifier
-                    ).exclude(identity=instance.identity,).count()
+            children_count = 1 + child_dummy_consent_cls.objects.filter(
+                subject_identifier__icontains=instance.subject_consent.subject_identifier
+                ).exclude(identity=instance.identity,).count()
             child_age = age(instance.child_dob, get_utcnow()).years
 
             if child_age and child_age < 7:
-                if children_count:
+                if instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
                     put_on_schedule((cohort + '_enrol' + str(children_count)),
                                     instance=instance)
                     put_on_schedule((cohort + '_quarterly' + str(children_count)),
@@ -127,7 +125,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         child_dummy_consent_obj.cohort = cohort
                         child_dummy_consent_obj.save()
 
-            elif children_count:
+            elif instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
                 try:
                     child_dummy_consent_cls.objects.get(
                                 subject_identifier=instance.subject_identifier,
