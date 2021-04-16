@@ -358,13 +358,13 @@ class TestVisitScheduleSetup(TestCase):
             breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
-        ccc = mommy.make_recipe(
+        mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             subject_identifier=subject_consent.subject_identifier + '-25',
             child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
-        ccc2 = mommy.make_recipe(
+        mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             subject_identifier=subject_consent.subject_identifier + '-35',

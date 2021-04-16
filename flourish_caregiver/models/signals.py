@@ -63,8 +63,12 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
                 subject_identifier__icontains=instance.subject_identifier).count()
 
     if not raw and instance.is_eligible:
-        put_on_schedule(('cohort_a_enrol' + str(children_count)), instance=instance)
-        put_on_schedule(('cohort_a_quarterly' + str(children_count)), instance=instance)
+        put_on_schedule(('cohort_a_enrol' + str(children_count)),
+                        instance=instance,
+                        subject_identifier=instance.subject_identifier)
+        put_on_schedule(('cohort_a_quarterly' + str(children_count)),
+                        instance=instance,
+                        subject_identifier=instance.subject_identifier)
 
 # @receiver(post_save, weak=False, sender=MaternalDelivery,
           # dispatch_uid='maternal_delivery_on_post_save')
@@ -183,7 +187,9 @@ def get_assent_onschedule_datetime(subject_identifier):
 
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None):
-    if instance and instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
+
+    subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
+    if instance:
 
         cohort_label_lower = ''.join(cohort[:-1].split('_'))
 
@@ -202,20 +208,19 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
 
         onschedule_model_cls = django_apps.get_model(onschedule_model)
 
-        assent_onschedule_datetime = get_assent_onschedule_datetime(
-            instance.subject_consent.subject_identifier)
+        assent_onschedule_datetime = get_assent_onschedule_datetime(subject_identifier)
 
         try:
             onschedule_model_cls.objects.get(
-                subject_identifier=instance.subject_consent.subject_identifier,
+                subject_identifier=subject_identifier,
                 onschedule_datetime=assent_onschedule_datetime or instance.created,
                 schedule_name=schedule_name)
         except onschedule_model_cls.DoesNotExist:
             schedule.put_on_schedule(
-                subject_identifier=instance.subject_consent.subject_identifier,
+                subject_identifier=subject_identifier,
                 onschedule_datetime=assent_onschedule_datetime or instance.created,
                 schedule_name=schedule_name)
         else:
             schedule.refresh_schedule(
-                subject_identifier=instance.subject_consent.subject_identifier,
+                subject_identifier=subject_identifier,
                 schedule_name=schedule_name)
