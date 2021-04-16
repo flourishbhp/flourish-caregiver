@@ -228,7 +228,7 @@ class Cohort:
                 and self.age_at_year_3 >= 10):
             if self.huu_adolescents and self.total_huu_adolescents(protocol='Mashi') < 75:
                 return True
-            if (self.pi_regime and self.protocol == 'Mma Bana' and
+            if (self.pi_regime and self.protocol in ['Mma Bana', 'Mpepu', 'Tshipidi'] and
                     self.total_pi_regime < 100):
                 return True
         return False
