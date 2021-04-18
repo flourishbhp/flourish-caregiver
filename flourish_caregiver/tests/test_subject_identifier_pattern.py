@@ -30,9 +30,8 @@ class TestSubjectIdentifier(TestCase):
             'consent_signature': YES,
             'consent_copy': YES}
 
-
     def test_subject_identifier_bio_mother(self):
-        """Test consent allocates subject identifier starting with a B for a 
+        """Test consent allocates subject identifier starting with a B for a
         biological mother.
         """
         self.eligible_options.update(biological_caregiver=YES)
@@ -41,9 +40,9 @@ class TestSubjectIdentifier(TestCase):
             re.match(
                 subject_identifier,
                 SubjectConsent.objects.all()[0].subject_identifier))
-    
+
     def test_subject_identifier_bio_mother2(self):
-        """Test consent allocates subject identifier starting with a B for a 
+        """Test consent allocates subject identifier starting with a B for a
         biological mother.
         """
         self.eligible_options.update(biological_caregiver=YES)
@@ -52,7 +51,7 @@ class TestSubjectIdentifier(TestCase):
         self.assertTrue(subject_identifier.startswith('B'))
 
     def test_subject_identifier_caregiver(self):
-        """Test consent allocates subject identifier starting with a C for a 
+        """Test consent allocates subject identifier starting with a C for a
         non biological mother.
         """
         self.eligible_options.update(biological_caregiver=NO)
@@ -63,13 +62,11 @@ class TestSubjectIdentifier(TestCase):
                 SubjectConsent.objects.all()[0].subject_identifier))
 
     def test_subject_identifier_caregiver2(self):
-        """Test consent allocates subject identifier starting with a C for a 
+        """Test consent allocates subject identifier starting with a C for a
          non biological mother.
         """
         self.eligible_options.update(biological_caregiver=NO)
         mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
         subject_identifier = SubjectConsent.objects.all()[0].subject_identifier
         self.assertTrue(subject_identifier.startswith('C'))
-
-
 

@@ -165,6 +165,7 @@ class SubjectConsent(
     def natural_key(self):
         return (self.subject_identifier, self.version)
 
+    @property
     def multiple_births(self):
         """Returns value of births if the mother has twins/triplets.
         """
@@ -182,7 +183,7 @@ class SubjectConsent(
             if children.count() == 2:
                 return 'twins'
             elif children.count() == 3:
-                return 'tripplets'
+                return 'triplets'
             elif children.count() > 3:
                 raise ValidationError(
                     'We do not expect more than triplets to exist.')

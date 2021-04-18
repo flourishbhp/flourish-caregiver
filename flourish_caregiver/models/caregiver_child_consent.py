@@ -28,12 +28,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         SubjectConsent,
         on_delete=models.PROTECT)
 
-    study_child_identifier = models.CharField(
-        max_length=150,
-        null=True,
-        editable=False,
-        verbose_name='Study Child Subject Identifier')
-
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",
         max_length=50)
@@ -165,8 +159,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             'flourish_child.childdummysubjectconsent')
         if self.child_dataset:
             if self.subject_consent.multiple_birth:
-                if (self.subject_consent.multiple_births == 'twins' and
-                    self.child_dataset.twin_triplet):
+                if (self.subject_consent.multiple_births == 'twins'
+                        and self.child_dataset.twin_triplet):
                     twin_id = self.subject_consent.subject_identifier + '-' + '25'
                     try:
                         child_dummy_consent_cls.objects.get(
@@ -175,8 +169,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                         child_identifier_postfix = '25'
                     else:
                         child_identifier_postfix = '35'
-                elif (self.subject_consent.multiple_births == 'triplets' and
-                    self.child_dataset.twin_triplet):
+                elif (self.subject_consent.multiple_births == 'triplets'
+                        and self.child_dataset.twin_triplet):
                     twin_id = self.subject_consent.subject_identifier + '-' + '36'
                     try:
                         child_dummy_consent_cls.objects.get(
@@ -208,7 +202,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     def child_dataset(self):
         child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
         try:
-            child_dataset = child_dataset_cls.objects.filter(
+            child_dataset = child_dataset_cls.objects.get(
                 study_child_identifier=self.study_child_identifier)
         except child_dataset_cls.DoesNotExist:
             pass

@@ -24,7 +24,7 @@ class TestInfantSubjectIdentifier(TestCase):
         self.options = {
             'consent_datetime': get_utcnow(),
             'version': '1'}
-        
+
         self.child_dummy_consent_cls = django_apps.get_model(
             'flourish_child.childdummysubjectconsent')
 
@@ -41,12 +41,12 @@ class TestInfantSubjectIdentifier(TestCase):
             'study_maternal_identifier': '89721',
             'study_child_identifier': '1234'}
 
-
     def test_infant_subject_identifier_generated(self):
-        """Test consent allocates subject identifier starting with a B for a 
+        """Test consent allocates subject identifier starting with a B for a
         biological mother.
         """
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4, months=5)
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4,
+                                                                                months=5)
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -56,7 +56,8 @@ class TestInfantSubjectIdentifier(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            **self.child_dataset_options)
+            dob=get_utcnow() - relativedelta(years=4, months=5),
+            ** self.child_dataset_options)
 
         self.subject_helper.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier)
@@ -65,7 +66,7 @@ class TestInfantSubjectIdentifier(TestCase):
             re.match(
                 subject_identifier,
                 self.child_dummy_consent_cls.objects.all()[0].subject_identifier))
-    
+
     def test_infant_subject_identifier_2_children(self):
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
@@ -78,6 +79,13 @@ class TestInfantSubjectIdentifier(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
+            dob=get_utcnow() - relativedelta(years=4, months=9),
+            **self.child_dataset_options)
+
+        self.child_dataset_options['study_child_identifier'] = '1235'
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            dob=get_utcnow() - relativedelta(years=5, months=9),
             **self.child_dataset_options)
 
         mommy.make_recipe(
@@ -101,8 +109,6 @@ class TestInfantSubjectIdentifier(TestCase):
             identity='234513181',
             confirm_identity='234513181',
             child_dob=(get_utcnow() - relativedelta(years=5, months=9)).date(),)
-    
+
         self.assertTrue(first_child.subject_identifier.endswith('10'))
         self.assertTrue(second_child.subject_identifier.endswith('20'))
-
-

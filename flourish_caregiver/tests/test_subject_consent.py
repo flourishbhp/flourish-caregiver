@@ -9,7 +9,7 @@ from model_mommy import mommy
 from ..models import SubjectConsent
 from edc_constants.constants import NO, YES
 
-subject_identifier = '142\-[0-9\-]+'
+subject_identifier = '[B|C]142\-[0-9\-]+'
 
 
 class TestSubjectConsent(TestCase):
@@ -46,7 +46,7 @@ class TestSubjectConsent(TestCase):
         """Test consent allocates subject identifier on save if participant
         is eligible.
         """
-        mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
+        consent = mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
         self.assertTrue(
             re.match(
                 subject_identifier,
