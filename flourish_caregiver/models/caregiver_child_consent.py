@@ -28,12 +28,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         SubjectConsent,
         on_delete=models.PROTECT)
 
-    study_child_identifier = models.CharField(
-        max_length=150,
-        null=True,
-        editable=False,
-        verbose_name='Study Child Subject Identifier')
-
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",
         max_length=50)
