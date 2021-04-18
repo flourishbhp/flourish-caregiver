@@ -171,7 +171,7 @@ class TestVisitScheduleSetup(TestCase):
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
         self.assertEqual(Appointment.objects.filter(
-            subject_identifier=subject_identifier).count(), 0)
+            subject_identifier=subject_identifier).count(), 20)
 
     def test_cohort_b_onschedule_invalid(self):
         """Assert that a 5 year old participant's mother who is on efv regimen is NOT put on
