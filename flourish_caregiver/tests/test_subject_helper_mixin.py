@@ -8,7 +8,6 @@ from ..subject_helper_mixin import SubjectHelperMixin
 from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
 from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
 from ..models import MaternalDataset, ScreeningPriorBhpParticipants, SubjectConsent
-from ..models import ScreeningPregWomen, AntenatalEnrollment, CaregiverChildConsent
 
 
 @tag('sh')
@@ -52,6 +51,7 @@ class TestSubjectHelperMixin(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
+            dob=get_utcnow() - relativedelta(years=2, months=5),
             **self.child_dataset_options)
 
         self.subject_helper.create_TD_efv_enrollment(
@@ -85,7 +85,8 @@ class TestSubjectHelperMixin(TestCase):
 
     def test_enroll_prior_participant_cohort_b(self):
 
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4, months=5)
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4,
+                                                                                months=5)
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -95,6 +96,7 @@ class TestSubjectHelperMixin(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
+            dob=get_utcnow() - relativedelta(years=4, months=5),
             **self.child_dataset_options)
 
         subject_identifier = self.subject_helper.enroll_prior_participant(
@@ -111,7 +113,8 @@ class TestSubjectHelperMixin(TestCase):
     @tag('sh1')
     def test_enroll_prior_participant_assent_cohort_b(self):
 
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7, months=5)
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7,
+                                                                                months=5)
         self.maternal_dataset_options['protocol'] = 'Mpepu'
 
         maternal_dataset_obj = mommy.make_recipe(
@@ -122,6 +125,7 @@ class TestSubjectHelperMixin(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
+            dob=get_utcnow() - relativedelta(years=7, months=5),
             **self.child_dataset_options)
 
         subject_identifier = self.subject_helper.enroll_prior_participant_assent(
@@ -137,7 +141,8 @@ class TestSubjectHelperMixin(TestCase):
 
     def test_enroll_prior_participant_assent_cohort_c(self):
 
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10, months=5)
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10,
+                                                                                months=5)
         self.maternal_dataset_options['protocol'] = 'Mma Bana'
 
         maternal_dataset_obj = mommy.make_recipe(
@@ -148,6 +153,7 @@ class TestSubjectHelperMixin(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
+            dob=get_utcnow() - relativedelta(years=10, months=5),
             **self.child_dataset_options)
 
         subject_identifier = self.subject_helper.enroll_prior_participant_assent(

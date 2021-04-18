@@ -19,6 +19,10 @@ class PreFlourishError(Exception):
     pass
 
 
+class ChildDatasetError(Exception):
+    pass
+
+
 @receiver(post_save, weak=False, sender=LocatorLogEntry,
           dispatch_uid='locator_log_entry_on_post_save')
 def locator_log_entry_on_post_save(sender, instance, raw, created, **kwargs):
@@ -154,12 +158,19 @@ def cohort_assigned(screening_identifier, child_dob):
         return None
     else:
         infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+        infant_dataset_obj = None
         try:
             infant_dataset_obj = infant_dataset_cls.objects.get(
-                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier)
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
+                dob=child_dob)
         except infant_dataset_cls.DoesNotExist:
-            raise
-        else:
+            infant_dataset_obj = None
+        except infant_dataset_cls.MultipleObjectsReturned:
+            infant_dataset_obj = infant_dataset_cls.objects.filter(
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
+                dob=child_dob)[0]
+
+        if infant_dataset_obj:
             cohort = Cohort(
                 child_dob=child_dob,
                 enrollment_date=get_utcnow().date(),

@@ -59,7 +59,7 @@ if settings.APP_NAME == 'flourish_caregiver':
         study_open_datetime = datetime(
             2020, 11, 1, 0, 0, 0, tzinfo=gettz('UTC'))
         study_close_datetime = datetime(
-            2022, 12, 1, 0, 0, 0, tzinfo=gettz('UTC'))
+            2025, 12, 1, 0, 0, 0, tzinfo=gettz('UTC'))
 
     class EdcTimepointAppConfig(BaseEdcTimepointAppConfig):
         timepoints = TimepointCollection(
