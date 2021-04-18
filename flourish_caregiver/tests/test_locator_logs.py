@@ -29,7 +29,6 @@ class TestLocatorLogs(TestCase):
             'piped_water': 'Other water source',
             'protocol': '4',
             'site_name': 'Gaborone',
-            'study_child_identifier': '056-4995621-1-10',
             'study_maternal_identifier': '056-49956',
             'toilet': 2,
             'toilet_indoors': 'Latrine or none',
