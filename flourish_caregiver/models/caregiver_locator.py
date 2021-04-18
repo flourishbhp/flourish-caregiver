@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
 from django.db import models
 from django.utils.safestring import mark_safe
+from django.core.exceptions import ValidationError
 from django_crypto_fields.fields import EncryptedCharField
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_action_item.model_mixins import ActionModelMixin
@@ -183,10 +184,11 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
             action_item_obj = action_item_cls.objects.get(
                 action_identifier=self.action_identifier)
         except action_item_cls.DoesNotExist:
-            action_item_obj = None
+            raise ValidationError('Missing associated ActionItem instance')
         else:
-            action_item_obj.subject_identifier = self.subject_identifier
-            action_item_obj.save()
+            if not action_item_obj.subject_identifier:
+                action_item_obj.subject_identifier = self.subject_identifier
+                action_item_obj.save()
 
     def update_locator_subject_identifier(self):
         locator_cls = django_apps.get_model('flourish_caregiver.caregiverlocator')
