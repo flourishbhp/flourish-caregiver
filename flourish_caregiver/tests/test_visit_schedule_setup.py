@@ -341,11 +341,13 @@ class TestVisitScheduleSetup(TestCase):
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             subject_identifier=self.subject_identifier,
+            twin_triplet=1,
             preg_efv=1,
             **self.maternal_dataset_options)
 
         mommy.make_recipe(
             'flourish_child.childdataset',
+            twin_triplet=1,
             **self.child_dataset_options)
 
         mommy.make_recipe(
@@ -356,6 +358,7 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
             breastfeed_intent=NOT_APPLICABLE,
+            multiple_birth='twins',
             **self.options)
 
         mommy.make_recipe(
@@ -399,6 +402,7 @@ class TestVisitScheduleSetup(TestCase):
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
+    @tag('vs1')
     def test_cohort_b_triplets_onschedule_valid(self):
         self.subject_identifier = self.subject_identifier[:-1] + '7'
         self.study_maternal_identifier = '981237'
@@ -408,11 +412,13 @@ class TestVisitScheduleSetup(TestCase):
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             subject_identifier=self.subject_identifier,
+            twin_triplet=1,
             preg_efv=1,
             **self.maternal_dataset_options)
 
         mommy.make_recipe(
             'flourish_child.childdataset',
+            twin_triplet=1,
             **self.child_dataset_options)
 
         mommy.make_recipe(
@@ -423,6 +429,7 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_caregiver.subjectconsent',
             screening_identifier=maternal_dataset_obj.screening_identifier,
             breastfeed_intent=NOT_APPLICABLE,
+            multiple_birth='triplets',
             **self.options)
 
         mommy.make_recipe(
@@ -471,7 +478,6 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly3_schedule1').count(), 0)
 
-    @tag('vs1')
     def test_cohort_b_multiple_onschedule_valid(self):
         self.subject_identifier = self.subject_identifier[:-1] + '4'
         self.study_maternal_identifier = '981232'
@@ -515,7 +521,7 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(SubjectScheduleHistory.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            onschedule_datetime=child_consent.created).count(), 1)
+            onschedule_datetime=child_consent.created).count(), 2)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,

@@ -159,6 +159,7 @@ class SubjectConsent(
                 self.subject_identifier = self.update_subject_identifier_on_save()
 
             self.update_dataset_identifier()
+            self.update_locator_subject_identifier()
         super().save(*args, **kwargs)
 
     def natural_key(self):
@@ -184,7 +185,7 @@ class SubjectConsent(
                 return 'tripplets'
             elif children.count() > 3:
                 raise ValidationError(
-                    'We do not expect more than trippets to exist.')
+                    'We do not expect more than triplets to exist.')
         return None
 
     @property
@@ -222,6 +223,17 @@ class SubjectConsent(
         else:
             dataset_obj.subject_identifier = self.subject_identifier
             dataset_obj.save()
+
+    def update_locator_subject_identifier(self):
+        locator_cls = django_apps.get_model('flourish_caregiver.caregiverlocator')
+        try:
+            locator_obj = locator_cls.objects.get(
+                screening_identifier=self.screening_identifier)
+        except locator_cls.DoesNotExist:
+            pass
+        else:
+            locator_obj.subject_identifier = self.subject_identifier
+            locator_obj.save()
 
     @property
     def consent_version(self):

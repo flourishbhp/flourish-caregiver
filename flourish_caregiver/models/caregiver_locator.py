@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
 from django.db import models
 from django.utils.safestring import mark_safe
+from django.core.exceptions import ValidationError
 from django_crypto_fields.fields import EncryptedCharField
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_action_item.model_mixins import ActionModelMixin
@@ -163,12 +164,42 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         return action_item
 
     def save(self, *args, **kwargs):
+
         if not self.subject_identifier and not self.action_identifier:
             action_item_cls = ActionItemGetter.action_item_model_cls()
             action_item_obj = action_item_cls.objects.create(
                 action_type=self.action_cls.action_type())
             self.action_identifier = action_item_obj.action_identifier
+        if self.subject_identifier is not None:
+            self.update_action_item()
+
         super().save(*args, **kwargs)
+
+    def update_action_item(self):
+        """Updates the ActionItem instance associated with
+        this model or None.
+        """
+        action_item_cls = django_apps.get_model('edc_action_item.actionitem')
+        try:
+            action_item_obj = action_item_cls.objects.get(
+                action_identifier=self.action_identifier)
+        except action_item_cls.DoesNotExist:
+            raise ValidationError('Missing associated ActionItem instance')
+        else:
+            if not action_item_obj.subject_identifier:
+                action_item_obj.subject_identifier = self.subject_identifier
+                action_item_obj.save()
+
+    def update_locator_subject_identifier(self):
+        locator_cls = django_apps.get_model('flourish_caregiver.caregiverlocator')
+        try:
+            locator_obj = locator_cls.objects.get(
+                screening_identifier=self.screening_identifier)
+        except locator_cls.DoesNotExist:
+            pass
+        else:
+            locator_obj.subject_identifier = self.subject_identifier
+            locator_obj.save()
 
     class Meta:
         app_label = 'flourish_caregiver'
