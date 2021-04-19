@@ -20,8 +20,10 @@ class HIVDisclosureStatusAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'disclosed_status',
                 'plan_to_disclose',
                 'reason_not_disclosed',
+                'reason_not_disclosed_other',
             ]}
          ), audit_fieldset_tuple)
 
     radio_fields = {'disclosed_status': admin.VERTICAL,
+                    'reason_not_disclosed': admin.VERTICAL,
                     'plan_to_disclose': admin.VERTICAL}
