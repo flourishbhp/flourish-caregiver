@@ -55,22 +55,22 @@ class ScreeningPriorBhpParticipants(
         choices=YES_NO)
 
     mother_alive = models.CharField(
-        verbose_name='Is the mother from the previous study alive?',
+        verbose_name='Is the biological mother from the previous study alive?',
         max_length=10,
         choices=YES_NO_UNK_NA,
         default=NOT_APPLICABLE)
 
     flourish_interest = models.CharField(
-        verbose_name='Is there another caregiver within the household '
-                     'that would be interested in learning about FLOURISH '
-                     'study?',
+        verbose_name=('Is there another caregiver (instead of the biological mother'
+                      ') within the household that would be interested in consenting '
+                      'into the FLOURISH study?'),
         max_length=10,
         choices=YES_NO_NA,
         default=NOT_APPLICABLE)
 
     flourish_participation = models.CharField(
         verbose_name='Are you or another caregiver of this child interested in'
-                     ' participating in the FLOURISH Study ',
+                     ' participating in the FLOURISH Study? ',
         max_length=40,
         choices=FLOURISH_PARTICIPATION,
         default=NOT_APPLICABLE)
