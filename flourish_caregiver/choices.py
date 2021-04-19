@@ -351,6 +351,19 @@ REASON_ARV_STOP = (
     (OTHER, 'Other, specify:')
 )
 
+REASONS_NOT_DISCLOSED = (
+    ('fear_of_burdening_the_child', 'Fear of burdening the child'),
+    ('stigma', 'Stigma'),
+    ('fear_of_rejection', 'Fear of rejection'),
+    ('feeling_child_is_immature', 'Feeling child is immature'),
+    ('worry_about_her_mother', 'Does not want the child to worry about her mother'),
+    ('scare_the_child', 'Does not want to scare the child'),
+    ('hurt_by_reactions_of_others', 'Does not want the child to be hurt by reactions of others'),
+    ('feel_the_child_needs_to_know', 'Does not feel the child needs to know'),
+    ('does_not_know_how_to_explain', 'Does not know how to explain this to their child'),
+    (OTHER, 'Other')
+)
+
 REASONS_VACCINES_MISSED = (
     ('missed scheduled vaccination', 'Mother or Caregiver has not '
      'yet taken infant '

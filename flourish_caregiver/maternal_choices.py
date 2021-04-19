@@ -1,4 +1,4 @@
-from edc_constants.choices import YES, NO
+from edc_constants.choices import YES, NO, NOT_APPLICABLE
 from edc_constants.constants import (
     CONTINUOUS, RESTARTED, OTHER, STOPPED, NOT_APPLICABLE, NEW, NEG, POS, IND)
 
@@ -95,20 +95,23 @@ MARITAL_STATUS = (
     ('Cohabiting', 'Cohabiting'),
     ('Widowed', 'Widowed'),
     ('Divorced', 'Divorced'),
-    (OTHER, 'Other, specify'),)
+    (OTHER, 'Other, specify'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 ETHNICITY = (
     ('Black African', 'Black African'),
     ('Caucasian', 'Caucasian'),
     ('Asian', 'Asian'),
-    (OTHER, 'Other, specify'),)
+    (OTHER, 'Other, specify'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 HIGHEST_EDUCATION = (
     ('None', 'None'),
     ('Primary', 'Primary'),
     ('Junior Secondary', 'Junior Secondary'),
     ('Senior Secondary', 'Senior Secondary'),
-    ('Tertiary', 'Tertiary'),)
+    ('Tertiary', 'Tertiary'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 CURRENT_OCCUPATION = (
     ('Housewife', 'Housewife'),
@@ -119,7 +122,8 @@ CURRENT_OCCUPATION = (
     ('Self-employed', 'Self-employed'),
     ('Student', 'Student'),
     ('Unemployed', 'Unemployed'),
-    (OTHER, 'Other, specify'),)
+    (OTHER, 'Other, specify'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 MONEY_PROVIDER = (
     ('You', 'You'),
@@ -136,7 +140,8 @@ MONEY_PROVIDER = (
     ('Friend', 'Friend'),
     ('Work collegues', 'Work collegues'),
     ('Unsure', 'Unsure'),
-    (OTHER, 'Other, specify'),)
+    (OTHER, 'Other, specify'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 MONEY_EARNED = (
     ('None', 'None'),
@@ -150,7 +155,8 @@ MONEY_EARNED = (
     ('>P5000 per month / >P1157 per week',
      '>P5000 per month / >P1157 per week'),
     ('Unsure', 'Unsure'),
-    (OTHER, 'Other, specify'),)
+    (OTHER, 'Other, specify'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 WATER_SOURCE = (
     ('Piped directly into the house', 'Piped directly into the house'),
