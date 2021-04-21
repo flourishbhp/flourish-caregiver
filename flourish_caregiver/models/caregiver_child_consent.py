@@ -134,14 +134,14 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         self.child_age_at_enrollment = (
             self.get_child_age_at_enrollment() if self.child_dob else None)
         if self.is_eligible and not self.id:
-                self.subject_identifier = InfantIdentifier(
-                    maternal_identifier=self.subject_consent.subject_identifier,
-                    birth_order=self.birth_order,
-                    live_infants=self.live_infants,
-                    registration_status=self.registration_status,
-                    registration_datetime=self.consent_datetime,
-                    subject_type=INFANT,
-                    supplied_infant_suffix=self.subject_identifier_sufix).identifier
+            self.subject_identifier = InfantIdentifier(
+                maternal_identifier=self.subject_consent.subject_identifier,
+                birth_order=self.birth_order,
+                live_infants=self.live_infants,
+                registration_status=self.registration_status,
+                registration_datetime=self.consent_datetime,
+                subject_type=INFANT,
+                supplied_infant_suffix=self.subject_identifier_sufix).identifier
         super().save(*args, **kwargs)
 
     @property
@@ -155,17 +155,17 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     @property
     def subject_identifier_sufix(self):
 
-        child_dummy_consent_cls = django_apps.get_model(
-            'flourish_child.childdummysubjectconsent')
+        caregiver_child_consent_cls = django_apps.get_model(self._meta.label_lower)
+        child_identifier_postfix = ''
         if self.child_dataset:
             if self.subject_consent.multiple_birth:
                 if (self.subject_consent.multiple_births == 'twins'
                         and self.child_dataset.twin_triplet):
                     twin_id = self.subject_consent.subject_identifier + '-' + '25'
                     try:
-                        child_dummy_consent_cls.objects.get(
+                        caregiver_child_consent_cls.objects.get(
                             subject_identifier=twin_id)
-                    except child_dummy_consent_cls.DoesNotExist:
+                    except caregiver_child_consent_cls.DoesNotExist:
                         child_identifier_postfix = '25'
                     else:
                         child_identifier_postfix = '35'
@@ -173,26 +173,26 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                         and self.child_dataset.twin_triplet):
                     twin_id = self.subject_consent.subject_identifier + '-' + '36'
                     try:
-                        child_dummy_consent_cls.objects.get(
+                        caregiver_child_consent_cls.objects.get(
                             subject_identifier=twin_id)
-                    except child_dummy_consent_cls.DoesNotExist:
+                    except caregiver_child_consent_cls.DoesNotExist:
                         child_identifier_postfix = '36'
                     else:
                         twin_id = self.subject_consent.subject_identifier + '-' + '46'
                         try:
-                            child_dummy_consent_cls.objects.get(
+                            caregiver_child_consent_cls.objects.get(
                                 subject_identifier=twin_id)
-                        except child_dummy_consent_cls.DoesNotExist:
+                        except caregiver_child_consent_cls.DoesNotExist:
                             child_identifier_postfix = '46'
                         else:
                             child_identifier_postfix = '56'
             else:
-                children_count = 1 + child_dummy_consent_cls.objects.filter(
+                children_count = 1 + caregiver_child_consent_cls.objects.filter(
                     subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
                         identity=self.identity).count()
                 child_identifier_postfix = str(children_count * 10)
         else:
-            children_count = 1 + child_dummy_consent_cls.objects.filter(
+            children_count = 1 + caregiver_child_consent_cls.objects.filter(
                     subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
                         identity=self.identity).count()
             child_identifier_postfix = str(children_count * 10)
@@ -216,9 +216,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     @property
     def birth_order(self):
-        child_dummy_consent_cls = django_apps.get_model(
-            'flourish_child.childdummysubjectconsent')
-        return child_dummy_consent_cls.objects.filter(
+        caregiver_child_consent_cls = django_apps.get_model(self._meta.label_lower)
+        return caregiver_child_consent_cls.objects.filter(
             subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
                 identity=self.identity).count() + 1
 
