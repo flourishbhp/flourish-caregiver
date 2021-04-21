@@ -258,7 +258,8 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         return super_actions
 
     def get_readonly_fields(self, request, obj=None):
-        return (super().get_readonly_fields(request, obj=obj) + audit_fields)
+        fields = super().get_readonly_fields(request, obj) + ('biological_caregiver', )
+        return (fields + audit_fields)
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)

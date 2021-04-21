@@ -6,7 +6,7 @@ from edc_identifier.subject_identifier import SubjectIdentifier as BaseSubjectId
 class SubjectIdentifier(BaseSubjectIdentifier):
 
     template = '{protocol_number}-0{site_id}{device_id}{sequence}'
-    
+
     def __init__(self, caregiver_type=None, **kwargs):
         self.caregiver_type = caregiver_type
         super().__init__(**kwargs)
@@ -41,12 +41,10 @@ class InfantIdentifier(BaseInfantIdentifier):
     def __init__(self, supplied_infant_suffix=None, **kwargs):
         self.supplied_infant_suffix = supplied_infant_suffix
         super().__init__(**kwargs)
-    
+
     @property
     def infant_suffix(self):
         return self.supplied_infant_suffix
-    
-
 
 
 class PreFlourishIdentifier(BaseSubjectIdentifier):

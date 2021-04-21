@@ -104,7 +104,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 subject_identifier__icontains=instance.subject_consent.subject_identifier
                 ).exclude(identity=instance.identity,).count()
             child_age = age(instance.child_dob, get_utcnow()).years
-
             if child_age and child_age < 7:
                 if instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
                     put_on_schedule((cohort + '_enrol' + str(children_count)),

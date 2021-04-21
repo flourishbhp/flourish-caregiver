@@ -28,6 +28,9 @@ class TestInfantSubjectIdentifier(TestCase):
         self.child_dummy_consent_cls = django_apps.get_model(
             'flourish_child.childdummysubjectconsent')
 
+        self.caregiver_child_consent_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverchildconsent')
+
         self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
             'mom_enrolldate': get_utcnow(),
@@ -112,3 +115,26 @@ class TestInfantSubjectIdentifier(TestCase):
 
         self.assertTrue(first_child.subject_identifier.endswith('10'))
         self.assertTrue(second_child.subject_identifier.endswith('20'))
+
+    def test_infant_subject_identifier_assent(self):
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(
+            years=7, months=5)
+
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            preg_efv=1,
+            screening_identifier='123456',
+            **self.maternal_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            dob=get_utcnow() - relativedelta(years=7, months=5),
+            ** self.child_dataset_options)
+
+        self.subject_helper.enroll_prior_participant_assent(
+            maternal_dataset_obj.screening_identifier)
+
+        self.assertTrue(
+            re.match(
+                subject_identifier,
+                self.child_dummy_consent_cls.objects.all()[0].subject_identifier))

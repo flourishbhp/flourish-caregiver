@@ -13,6 +13,7 @@ from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO, GENDER, YES_NO_NA
+from edc_constants.constants import NO, YES
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 from edc_search.model_mixins import SearchSlugManager
@@ -93,7 +94,8 @@ class SubjectConsent(
     biological_caregiver = models.CharField(
         max_length=3,
         verbose_name='Are you the biological mother to the child or children?',
-        choices=YES_NO)
+        choices=YES_NO,
+        blank=True)
 
     hiv_testing = models.CharField(
         max_length=3,
@@ -143,6 +145,7 @@ class SubjectConsent(
         return f'{self.subject_identifier} V{self.version}'
 
     def save(self, *args, **kwargs):
+        self.biological_caregiver = self.is_biological_mother()
         eligibility_criteria = ConsentEligibility(
             self.remain_in_study, self.hiv_testing, self.breastfeed_intent,
             self.consent_reviewed, self.citizen, self.study_questions,
@@ -235,6 +238,31 @@ class SubjectConsent(
         else:
             locator_obj.subject_identifier = self.subject_identifier
             locator_obj.save()
+
+    def is_biological_mother(self):
+        # To refactor to include new enrollees !!
+        prior_screening_cls = django_apps.get_model(
+            'flourish_caregiver.screeningpriorbhpparticipants')
+        preg_women_screening_cls = django_apps.get_model(
+            'flourish_caregiver.screeningpregwomen')
+        screening = None
+        is_biological_mother = NO
+        try:
+            screening = prior_screening_cls.objects.get(
+                screening_identifier=self.screening_identifier)
+        except prior_screening_cls.DoesNotExist:
+            try:
+                screening = preg_women_screening_cls.objects.get(
+                    screening_identifier=self.screening_identifier)
+            except preg_women_screening_cls.DoesNotExist:
+                is_biological_mother = NO
+            else:
+                is_biological_mother = YES
+        else:
+            if (screening.mother_alive == YES and
+                    screening.flourish_participation == 'interested'):
+                is_biological_mother = YES
+        return is_biological_mother
 
     @property
     def consent_version(self):
