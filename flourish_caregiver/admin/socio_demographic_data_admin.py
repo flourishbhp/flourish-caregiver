@@ -17,10 +17,12 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     list_display = ('maternal_visit',
                     'marital_status',
                     'ethnicity',
-                    'highest_education')
+                    'highest_education',
+                    'own_phone')
     list_filter = ('marital_status',
                    'ethnicity',
-                   'highest_education')
+                   'highest_education',
+                   'own_phone')
 
     fieldsets = (
         (None, {
@@ -38,7 +40,17 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'provides_money_other',
                 'money_earned',
                 'money_earned_other',
-                'stay_with_child']}
+                'stay_with_child',
+                'own_phone',
+                'water_source',
+                'house_electrified',
+                'house_fridge',
+                'cooking_method',
+                'toilet_facility',
+                'toilet_facility_other',
+                'house_people_number',
+                'house_members_18older',
+                'house_type']}
          ), audit_fieldset_tuple)
 
     radio_fields = {'marital_status': admin.VERTICAL,
@@ -47,6 +59,13 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'current_occupation': admin.VERTICAL,
                     'provides_money': admin.VERTICAL,
                     'money_earned': admin.VERTICAL,
+                    'own_phone': admin.VERTICAL,
+                    'water_source': admin.VERTICAL,
+                    'house_electrified': admin.VERTICAL,
+                    'house_fridge': admin.VERTICAL,
+                    'cooking_method': admin.VERTICAL,
+                    'toilet_facility': admin.VERTICAL,
+                    'house_type': admin.VERTICAL,
                     'stay_with_child': admin.VERTICAL,
                     'socio_demographic_changed': admin.VERTICAL}
 
