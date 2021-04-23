@@ -22,8 +22,8 @@ class HivViralLoadCd4Admin(CrfModelAdminMixin, admin.ModelAdmin):
                 'cd4_count_date',
                 'last_vl_known',
                 'vl_detectable',
-                'recent_vl_results',
                 'hiv_results_quantifier',
+                'recent_vl_results',
                 'last_vl_date'
             ]}
          ), audit_fieldset_tuple)
