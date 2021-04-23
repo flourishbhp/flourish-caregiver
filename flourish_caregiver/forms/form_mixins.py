@@ -17,11 +17,9 @@ class SubjectModelFormMixin(SiteModelFormMixin, FormValidatorMixin,
     visit_attr = None
 
     def clean(self):
-        visit_codes = ['1000M', '1010M', '1020M']
         cleaned_data = super().clean()
         if (cleaned_data.get('maternal_visit')
-                and cleaned_data.get('maternal_visit').visit_code
-                not in visit_codes):
+                and cleaned_data.get('maternal_visit').visit_code):
             if cleaned_data.get('report_datetime'):
                 try:
                     CrfDateValidator(
