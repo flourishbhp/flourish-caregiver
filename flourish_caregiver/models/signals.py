@@ -8,11 +8,13 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 from ..helper_classes.cohort import Cohort
 from .antenatal_enrollment import AntenatalEnrollment
-from .maternal_dataset import MaternalDataset
-from .locator_logs import LocatorLog, LocatorLogEntry
 from .caregiver_child_consent import CaregiverChildConsent
-from .maternal_delivery import MaternalDelivery
-from flourish_caregiver.models.subject_consent import SubjectConsent
+from .caregiver_locator import CaregiverLocator
+from .locator_logs import LocatorLog, LocatorLogEntry
+from .maternal_dataset import MaternalDataset
+from flourish_follow.models import WorkList
+# from .maternal_delivery import MaternalDelivery
+# from flourish_caregiver.models.subject_consent import SubjectConsent
 
 
 class PreFlourishError(Exception):
@@ -31,14 +33,18 @@ def locator_log_entry_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw:
         if created:
+            try:
+                locator_group = Group.objects.get(name='locator users')
+            except Group.DoesNotExist:
+                locator_group = Group.objects.create(name='locator users')
             if not User.objects.filter(username=instance.user_created,
                                        groups__name='locator users').exists():
                 try:
-                    User.objects.get(username=instance.user_created)
+                    user = User.objects.get(username=instance.user_created)
                 except User.DoesNotExist:
                     raise ValueError(f'The user {instance.user_created}, does not exist.')
                 else:
-                    Group.objects.get(name='locator users')
+                    locator_group.user_set.add(user)
 
 
 @receiver(post_save, weak=False, sender=MaternalDataset,
@@ -53,6 +59,29 @@ def maternal_dataset_on_post_save(sender, instance, raw, created, **kwargs):
                 LocatorLog.objects.get(maternal_dataset=instance)
             except LocatorLog.DoesNotExist:
                 LocatorLog.objects.create(maternal_dataset=instance)
+
+
+@receiver(post_save, weak=False, sender=CaregiverLocator,
+          dispatch_uid='caregiver_locator_on_post_save')
+def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
+    """
+    - Create locator log entry
+    """
+    if not raw:
+        if created:
+            try:
+                maternal_dataset = MaternalDataset.objects.get(
+                    study_maternal_identifier=instance.study_maternal_identifier)
+            except MaternalDataset.DoesNotExist:
+                pass
+            else:
+                try:
+                    WorkList.objects.get(
+                        study_maternal_identifier=instance.study_maternal_identifier)
+                except WorkList.DoesNotExist:
+                    WorkList.objects.create(
+                        study_maternal_identifier=instance.study_maternal_identifier,
+                        prev_study=maternal_dataset.protocol)
 
 
 @receiver(post_save, weak=False, sender=AntenatalEnrollment,
