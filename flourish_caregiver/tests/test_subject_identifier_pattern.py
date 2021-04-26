@@ -1,6 +1,6 @@
 import re
 
-from django.test import TestCase
+from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
@@ -15,6 +15,7 @@ class TestSubjectIdentifier(TestCase):
 
     def setUp(self):
         import_holidays()
+
         self.subject_screening = mommy.make_recipe(
             'flourish_caregiver.screeningpriorbhpparticipants')
 
@@ -45,7 +46,12 @@ class TestSubjectIdentifier(TestCase):
         """Test consent allocates subject identifier starting with a B for a
         biological mother.
         """
-        self.eligible_options.update(biological_caregiver=YES)
+        subject_screening = mommy.make_recipe(
+            'flourish_caregiver.screeningpriorbhpparticipants', mother_alive=YES)
+        self.eligible_options.update(
+            screening_identifier=subject_screening.screening_identifier,
+            biological_caregiver=YES)
+
         mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
         subject_identifier = SubjectConsent.objects.all()[0].subject_identifier
         self.assertTrue(subject_identifier.startswith('B'))

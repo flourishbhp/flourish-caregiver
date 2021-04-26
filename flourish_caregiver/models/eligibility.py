@@ -35,20 +35,16 @@ class AntenatalEnrollmentEligibility:
 class BHPPriorEligibilty:
 
     def __init__(self, child_alive=None, mother_alive=None,
-                 flourish_interest=None, flourish_participation=None):
+                 flourish_participation=None):
         """checks if prior BHP participants are eligible otherwise
             error message is the reason for eligibility test failed."""
         self.error_message = []
         self.child_alive = child_alive
         self.mother_alive = mother_alive
-        self.flourish_interest = flourish_interest
         self.flourish_participation = flourish_participation
         if self.child_alive in [NO, UNKNOWN]:
             self.error_message.append(
                 'The child from the previous study is not alive.')
-        if self.mother_alive in [NO, UNKNOWN] and self.flourish_interest == NO:
-            self.error_message.append(
-                'Child caregiver not interested in learning about flourish.')
         if self.flourish_participation in [NO, 'undecided']:
             self.error_message.append(
                 'Not interested in participating in the Flourish study.')
