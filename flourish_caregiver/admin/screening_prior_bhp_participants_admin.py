@@ -22,7 +22,6 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
                        'report_datetime',
                        'child_alive',
                        'mother_alive',
-                       'flourish_interest',
                        'flourish_participation', )},
          ),
         audit_fieldset_tuple
@@ -30,7 +29,6 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     radio_fields = {'child_alive': admin.VERTICAL,
                     'mother_alive': admin.VERTICAL,
-                    'flourish_interest': admin.VERTICAL,
                     'flourish_participation': admin.VERTICAL}
 
     list_display = (

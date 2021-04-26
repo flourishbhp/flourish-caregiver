@@ -60,14 +60,6 @@ class ScreeningPriorBhpParticipants(
         choices=YES_NO_UNK_NA,
         default=NOT_APPLICABLE)
 
-    flourish_interest = models.CharField(
-        verbose_name=('Is there another caregiver (instead of the biological mother'
-                      ') within the household that would be interested in consenting '
-                      'into the FLOURISH study?'),
-        max_length=10,
-        choices=YES_NO_NA,
-        default=NOT_APPLICABLE)
-
     flourish_participation = models.CharField(
         verbose_name='Are you or another caregiver of this child interested in'
                      ' participating in the FLOURISH Study? ',
@@ -99,8 +91,7 @@ class ScreeningPriorBhpParticipants(
 
     def save(self, *args, **kwargs):
         eligibility_criteria = BHPPriorEligibilty(
-            self.child_alive, self.mother_alive, self.flourish_interest,
-            self.flourish_participation)
+            self.child_alive, self.mother_alive, self.flourish_participation)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         if not self.screening_identifier:
