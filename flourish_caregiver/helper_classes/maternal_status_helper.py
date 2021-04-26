@@ -1,7 +1,8 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
+from django.core.exceptions import ValidationError
 
-from edc_constants.constants import POS, NEG, UNK, IND
+from edc_constants.constants import POS, NEG, UNK, IND, YES
 
 
 class MaternalStatusHelper(object):
@@ -53,6 +54,18 @@ class MaternalStatusHelper(object):
             return status
 
     @property
+    def subject_consent(self):
+        subject_consent_cls = django_apps.get_model(
+            'flourish_caregiver.subjectconsent')
+        try:
+            subject_consent = subject_consent_cls.objects.get(
+                subject_identifier=self.subject_identifier)
+        except subject_consent_cls.DoesNotExist:
+            return None
+        else:
+            return subject_consent
+
+    @property
     def enrollment_hiv_status(self):
         """Returns caregiver's current hiv status.
         """
@@ -65,27 +78,33 @@ class MaternalStatusHelper(object):
 
         antenatal_enrollment_cls = django_apps.get_model(
             'flourish_caregiver.antenatalenrollment')
+
         try:
-            maternal_dataset_obj = maternal_dataset_cls.objects.get(
+            previous_enrollment = previous_enrollment_cls.objects.get(
                 subject_identifier=self.subject_identifier)
-        except maternal_dataset_cls.DoesNotExist:
+        except previous_enrollment_cls.DoesNotExist:
             try:
                 antenatal_enrollment = antenatal_enrollment_cls.objects.get(
                     subject_identifier=self.subject_identifier)
             except antenatal_enrollment_cls.DoesNotExist:
-                try:
-                    previous_enrollment = previous_enrollment_cls.objects.get(
-                        subject_identifier=self.subject_identifier)
-                except previous_enrollment_cls.DoesNotExist:
-                    return None
-                else:
-                    return previous_enrollment.current_hiv_status
+                # To refactor to include new enrollees
+                return None
             else:
                 return antenatal_enrollment.current_hiv_status
         else:
-            status_dict = {'HIV-infected': POS,
-                           'HIV-uninfected': NEG}
-            return status_dict.get(maternal_dataset_obj.mom_hivstatus)
+            if self.subject_consent.biological_caregiver == YES:
+                return previous_enrollment.current_hiv_status
+            else:
+                try:
+                    maternal_dataset_obj = maternal_dataset_cls.objects.get(
+                        subject_identifier=self.subject_identifier)
+                except maternal_dataset_cls.DoesNotExist:
+                    raise ValidationError('Maternal Dataset does not exist')
+                else:
+                    status_dict = {'HIV-infected': POS,
+                                   'HIV-uninfected': NEG}
+                    return status_dict.get(
+                        maternal_dataset_obj.mom_hivstatus)
 
     @property
     def eligible_for_cd4(self):
