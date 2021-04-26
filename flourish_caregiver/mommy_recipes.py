@@ -33,7 +33,6 @@ locatorlogentry = Recipe(
 screeningpriorbhpparticipants = Recipe(
     ScreeningPriorBhpParticipants,
     child_alive=YES,
-    flourish_interest=YES,
     flourish_participation='interested')
 
 screeningpregwomen = Recipe(
