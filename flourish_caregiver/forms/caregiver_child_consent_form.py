@@ -20,6 +20,9 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
 
     form_validator_cls = CaregiverChildConsentFormValidator
 
+    def has_changed(self):
+        return True
+
     class Meta:
         model = CaregiverChildConsent
         fields = '__all__'
