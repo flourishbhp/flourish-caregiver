@@ -145,9 +145,11 @@ class MaternalStatusHelper(object):
         if getattr(instance_result_date_tuple[0], instance_result_date_tuple[1]) == IND:
             return IND
         elif (getattr(instance_result_date_tuple[0], instance_result_date_tuple[1]) == NEG
-              and getattr(instance_result_date_tuple[0], instance_result_date_tuple[2])
-              and getattr(instance_result_date_tuple[0], instance_result_date_tuple[2])
-              > (self.maternal_visit.report_datetime.date() - relativedelta(months=3))):
+              and getattr(instance_result_date_tuple[0], instance_result_date_tuple[2])):
+            if (self.maternal_visit
+                and getattr(instance_result_date_tuple[0], instance_result_date_tuple[2])
+                    > (self.maternal_visit.report_datetime.date() - relativedelta(months=3))):
+                return NEG
             return NEG
         else:
             return UNK

@@ -99,6 +99,9 @@ COHORTS = (
     ('cohort_a', 'Cohort A'),
     ('cohort_b', 'Cohort B'),
     ('cohort_c', 'Cohort C'),
+    ('cohort_a_sec', 'Cohort A Secondary Aims'),
+    ('cohort_b_sec', 'Cohort B Secondary Aims'),
+    ('cohort_c_sec', 'Cohort C Secondary Aims'),
     ('cohort_pool', 'Cohort Pool'),)
 
 CONSENT_VERSION = (
@@ -558,7 +561,6 @@ VISIT_REASON = [
     (LOST_VISIT, 'Lost to follow-up (use only when taking subject off study)'),
     (FAILED_ELIGIBILITY, 'Subject failed enrollment eligibility'),
     (COMPLETED_PROTOCOL_VISIT, 'Subject has completed the study')]
-
 
 ZERO_ONE = (
     ('0', '0'),

@@ -47,5 +47,5 @@ from .offschedule import CaregiverOffSchedule
 from .onschedule import OnScheduleCohortAEnrollment, OnScheduleCohortABirth
 from .onschedule import OnScheduleCohortAQuarterly, OnScheduleCohortBEnrollment
 from .onschedule import OnScheduleCohortBQuarterly, OnScheduleCohortCEnrollment
-from .onschedule import OnScheduleCohortCQuarterly, OnScheduleCohortCPool, OnScheduleSecA
-from .onschedule import OnScheduleSecB, OnScheduleSecC
+from .onschedule import OnScheduleCohortCQuarterly, OnScheduleCohortCPool, OnScheduleCohortASec
+from .onschedule import OnScheduleCohortBSec, OnScheduleCohortCSec

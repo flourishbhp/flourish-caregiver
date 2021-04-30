@@ -71,13 +71,13 @@ class OnScheduleCohortCPool(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleSecA(OnScheduleModelMixin):
+class OnScheduleCohortASec(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleSecB(OnScheduleModelMixin):
+class OnScheduleCohortBSec(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleSecC(OnScheduleModelMixin):
+class OnScheduleCohortCSec(OnScheduleModelMixin):
     pass

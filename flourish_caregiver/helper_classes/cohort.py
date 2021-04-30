@@ -54,18 +54,18 @@ class Cohort:
         # month so that we can subtract and find out
         # the difference
         if (birth_month > current_month):
-            current_year = current_year - 1;
-            current_month = current_month + 12;
+            current_year = current_year - 1
+            current_month = current_month + 12
 
         # calculate date, month, year
-        calculated_month = current_month - birth_month;
-        calculated_year = current_year - birth_year;
+        calculated_month = current_month - birth_month
+        calculated_year = current_year - birth_year
 
         age = str(calculated_year) + '.' + str(calculated_month)
         return float(re.search(r'\d+.\d+', age).group())
 
     @property
-    def hiv_exposed_uninfected(self,):
+    def hiv_exposed_uninfected(self):
         """Return True is an infant is HEU.
         """
         return self.infant_hiv_exposed == 'Exposed'
@@ -159,14 +159,32 @@ class Cohort:
         """Returns total enrolled Tshilo Dikotla HUU infants.
         """
 
+        caregiver_child_consent_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverchildconsent')
+
+        child_offstudy_cls = django_apps.get_model(
+            'flourish_prn.childoffstudy')
+
         study_maternal_identifiers = MaternalDataset.objects.values_list(
             'study_maternal_identifier', flat=True).filter(
-                screening_identifier__in=self._screening_identifiers)
+            protocol=protocol)
 
-        child_dataset = ChildDataset.objects.filter(
+        study_child_identifiers = ChildDataset.objects.filter(
             study_maternal_identifier__in=study_maternal_identifiers,
-            infant_hiv_exposed='Unexposed')
-        return child_dataset.count()
+            infant_hiv_exposed='Unexposed').values_list(
+            'study_child_identifier', flat=True)
+
+        child_offstudies = child_offstudy_cls.objects.all().values_list(
+            'subject_identifier', flat=True)
+
+        child_subject_identifiers = caregiver_child_consent_cls.objects.values_list(
+            'subject_identifier', flat=True).filter(
+                child_age_at_enrollment__lte=2.5,
+                study_child_identifier=study_child_identifiers)
+
+        onstudy_huu = list(set(child_subject_identifiers) - set(child_offstudies))
+
+        return len(onstudy_huu)
 
     def total_huu_adolescents(self, protocol=None):
         """Return total enrolled infant that are HUU adolescents.
@@ -201,24 +219,32 @@ class Cohort:
         """Return True if the infant mother pair meets criteria for cohort A.
         """
         # TODO: Cater for 200 newly enrolled pregnant woman.
-        return (self.age_at_enrollment() <= 2.5 and self.protocol == 'Tshilo Dikotla' and
-                self.total_HEU(protocol='Tshilo Dikotla') < 200 and
-                self.total_HUU(protocol='Tshilo Dikotla') < 175 and self.age_at_year_3 <= 4.5)
+        if self.age_at_enrollment() <= 2.5 and self.age_at_year_3 <= 4.5:
+            if (self.protocol == 'Tshilo Dikotla' and self.hiv_exposed_uninfected
+                    and self.total_HEU(protocol='Tshilo Dikotla') < 200):
+                return 'cohort_a'
+            elif(self.protocol == 'Tshilo Dikotla' and self.hiv_unexposed_uninfected
+                    and self.total_HUU(protocol='Tshilo Dikotla') < 75):
+                return 'cohort_a'
+            return 'cohort_a_sec'
 
     def cohort_b(self):
         """Return True id an infant mother pair meets criteria for cohort B.
         """
         protocols = ['Tshilo Dikotla', 'Mpepu', 'Tshipidi']
-        if (self.age_at_enrollment() >= 4 and self.age_at_enrollment() <= 8.5 and
-                self.protocol in protocols and self.age_at_year_3 >= 6 and
-                self.age_at_year_3 <= 10.5):
-            if self.efv_regime and self.total_efv_regime < 100:
-                return True
-            if self.dtg_regime and self.total_dtg_regime:
-                return True
-            if self.no_hiv_during_preg and self.total_no_hiv_during_preg:
-                return True
-        return False
+        if (self.age_at_enrollment() >= 4 and self.age_at_enrollment() <= 8.5
+                and self.age_at_year_3 >= 6 and self.age_at_year_3 <= 10.5):
+
+            if self.protocol in protocols and self.efv_regime:
+                return 'cohort_b' if self.total_efv_regime < 100 else 'cohort_b_sec'
+
+            elif self.protocol in protocols and self.dtg_regime:
+                return 'cohort_b' if self.total_dtg_regime < 100 else 'cohort_b_sec'
+
+            elif self.protocol in protocols and self.no_hiv_during_preg:
+                return 'cohort_b' if self.total_no_hiv_during_preg < 100 else 'cohort_b_sec'
+
+            return 'cohort_b_sec'
 
     def cohort_c(self):
         """Return True id an infant mother pair meets criteria for cohort C.
@@ -226,20 +252,15 @@ class Cohort:
         # TODO: cater for 125 new enrolled adolescents
         if (self.age_at_enrollment() >= 8 and self.age_at_enrollment() <= 17
                 and self.age_at_year_3 >= 10):
-            if self.huu_adolescents and self.total_huu_adolescents(protocol='Mashi') < 75:
+            if self.huu_adolescents:
+                return ('cohort_c' if self.total_huu_adolescents(protocol='Mashi') < 75
+                        else 'cohort_c_sec')
                 return True
-            if (self.pi_regime and self.protocol in ['Mma Bana', 'Mpepu', 'Tshipidi'] and
-                    self.total_pi_regime < 100):
-                return True
-        return False
+            elif self.pi_regime:
+                return ('cohort_c' if self.protocol in ['Mma Bana', 'Mpepu', 'Tshipidi']
+                        and self.total_pi_regime < 100 else 'cohort_c_sec')
+            return 'cohort_c_sec'
 
     @property
     def cohort_variable(self):
-        if self.cohort_a():
-            return 'cohort_a'
-        elif self.cohort_b():
-            return 'cohort_b'
-        elif self.cohort_c():
-            return 'cohort_c'
-#         else:
-#             return 'pool'
+        return self.cohort_a() or self.cohort_b() or self.cohort_c()

@@ -135,10 +135,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             child_age = age(instance.child_dob, get_utcnow()).years
             if child_age and child_age < 7:
                 if instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
-                    put_on_schedule((cohort + '_enrol' + str(children_count)),
-                                    instance=instance)
-                    put_on_schedule((cohort + '_quarterly' + str(children_count)),
-                                    instance=instance)
+                    put_cohort_onschedule(cohort, children_count, instance)
 
                 try:
                     child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
@@ -166,14 +163,23 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 except child_dummy_consent_cls.DoesNotExist:
                     pass
                 else:
-                    put_on_schedule((cohort + '_enrol' + str(children_count)),
-                                    instance=instance)
-                    put_on_schedule((cohort + '_quarterly' + str(children_count)),
-                                    instance=instance)
+                    put_cohort_onschedule(cohort, children_count, instance)
 
             instance.cohort = cohort
             instance.caregiver_visit_count = children_count
             instance.save_base(raw=True)
+
+
+def put_cohort_onschedule(cohort, children_count, instance):
+
+    if cohort is not None and 'sec' in cohort:
+        put_on_schedule((cohort + str(children_count)),
+                        instance=instance)
+    else:
+        put_on_schedule((cohort + '_enrol' + str(children_count)),
+                        instance=instance)
+        put_on_schedule((cohort + '_quarterly' + str(children_count)),
+                        instance=instance)
 
 
 def cohort_assigned(screening_identifier, child_dob):
