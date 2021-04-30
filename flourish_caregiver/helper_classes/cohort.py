@@ -250,7 +250,7 @@ class Cohort:
         """Return True id an infant mother pair meets criteria for cohort C.
         """
         # TODO: cater for 125 new enrolled adolescents
-        if (self.age_at_enrollment() >= 8 and self.age_at_enrollment() <= 17
+        if (self.age_at_enrollment() >= 8 and self.age_at_enrollment() <= 17.9
                 and self.age_at_year_3 >= 10):
             if self.huu_adolescents:
                 return ('cohort_c' if self.total_huu_adolescents(protocol='Mashi') < 75
