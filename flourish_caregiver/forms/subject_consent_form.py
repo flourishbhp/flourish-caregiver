@@ -30,7 +30,8 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
         if child_consent == NO and int(caregiver_child_consent) != 0:
             msg = {'child_consent':
                    'Participant is not willing to consent on behalf of child.'
-                   'Caregiver child consent should not be completed. '}
+                   'Caregiver child consent should not be completed. To proceed, '
+                   'close Caregiver Child Consent.' }
             raise forms.ValidationError(msg)
         elif child_consent == YES and int(caregiver_child_consent) == 0:
             raise forms.ValidationError('Please complete the Caregiver '
