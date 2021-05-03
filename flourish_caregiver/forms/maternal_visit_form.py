@@ -34,6 +34,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
 
         self.validate_study_status()
 
+        self.validate_lost_to_fu()
+
         self.validate_death()
 
         self.validate_is_present()
@@ -76,6 +78,17 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
                 raise forms.ValidationError(
                     'Participant is scheduled to be taken offstudy without '
                     'any new data collection. Cannot capture any new data.')
+
+    def validate_lost_to_fu(self):
+
+        reason = self.cleaned_data.get('reason')
+
+        if (reason == LOST_VISIT and
+                self.cleaned_data.get('info_source') == 'other_contact'):
+            msg = {'info_source': 'Source of information cannot be other contact with '
+                   'participant if participant has been lost to follow up.'}
+            self._errors.update(msg)
+            raise ValidationError(msg)
 
     def validate_is_present(self):
 
