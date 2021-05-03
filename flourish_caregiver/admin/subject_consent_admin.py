@@ -293,8 +293,26 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'child_knows_status': admin.VERTICAL,
                     'identity_type': admin.VERTICAL}
 
-    list_display = ('identity', 'subject_identifier', 'first_name', 'last_name',
-                    'consent_datetime',)
+    list_display = ('subject_identifier',
+                    'verified_by',
+                    'is_verified',
+                    'is_verified_datetime',
+                    'first_name',
+                    'last_name',
+                    'gender',
+                    'child_dob',
+                    'consent_datetime',
+                    'created',
+                    'modified',
+                    'user_created',
+                    'user_modified')
+
+    list_filter = ('is_verified',
+                   'gender',
+                   'child_remain_in_study',
+                   'child_knows_status',
+                   'child_preg_test',
+                   'identity_type')
 
     search_fields = ['subject_identifier', 'subject_consent__subject_identifier', ]
 
@@ -303,3 +321,30 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             SubjectConsent.objects.filter(id=request.GET.get('subject_consent'))
         return super(CaregiverChildConsentAdmin, self).render_change_form(
             request, context, *args, **kwargs)
+
+    def get_actions(self, request):
+
+        super_actions = super().get_actions(request)
+
+        if ('flourish_caregiver.change_caregiverchildconsent'
+                in request.user.get_group_permissions()):
+
+            consent_actions = [
+                flag_as_verified_against_paper,
+                unflag_as_verified_against_paper]
+
+            # Add actions from this ModelAdmin.
+            actions = (self.get_action(action) for action in consent_actions)
+            # get_action might have returned None, so filter any of those out.
+            actions = filter(None, actions)
+
+            actions = self._filter_actions_by_permissions(request, actions)
+            # Convert the actions into an OrderedDict keyed by name.
+            actions = OrderedDict(
+                (name, (func, name, desc))
+                for func, name, desc in actions
+            )
+
+            super_actions.update(actions)
+
+        return super_actions

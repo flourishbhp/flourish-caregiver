@@ -9,6 +9,7 @@ from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_constants.choices import GENDER, YES_NO_NA, YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
+from edc_consent.field_mixins import ReviewFieldsMixin, VerificationFieldsMixin
 
 from .eligibility import CaregiverChildConsentEligibility
 from .subject_consent import SubjectConsent
@@ -21,7 +22,9 @@ INFANT = 'infant'
 
 
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin,
-                            IdentityFieldsMixin, BaseUuidModel):
+                            IdentityFieldsMixin, ReviewFieldsMixin,
+                            VerificationFieldsMixin, BaseUuidModel):
+
     """Inline table for caregiver's children"""
 
     subject_consent = models.ForeignKey(
