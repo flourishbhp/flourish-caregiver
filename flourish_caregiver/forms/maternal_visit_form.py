@@ -2,7 +2,7 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from edc_action_item.site_action_items import site_action_items
-from edc_constants.constants import PARTICIPANT, ALIVE, NO
+from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
 from edc_constants.constants import OFF_STUDY, DEAD, YES, ON_STUDY, NEW, OTHER
 from edc_base.sites import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
@@ -181,6 +181,12 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
                 raise forms.ValidationError(
                     'Participant is scheduled to go offstudy.'
                     ' Cannot edit visit until offstudy form is completed.')
+
+        if (self.cleaned_data.get('reason') == FAILED_ELIGIBILITY
+                and self.cleaned_data.get('study_status') == ON_STUDY):
+            raise forms.ValidationError(
+                {'study_status': 'Participant failed eligibility, they cannot be  indicated '
+                 'as on study.'})
 
     def validate_required_fields(self):
 

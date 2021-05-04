@@ -1,12 +1,11 @@
 from edc_constants.constants import (
-    OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA, OTHER)
+    OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA)
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN
-from edc_constants.constants import YES, NO, UNKNOWN, POS, NEG
+from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
-from .constants import BREASTFEED_ONLY, NEVER_STARTED, MODIFIED, TUBERCULOSIS
-from .constants import NO_MODIFICATIONS, START
+from .constants import BREASTFEED_ONLY
 from flourish_caregiver.constants import NONE
 
 ABLE_TO_LAUGH = (
@@ -64,17 +63,10 @@ ARV_DRUG_LIST = (
     ('Tenoforvir', 'TDF'),
     ('Lamivudine', '3TC'),
     ('Emtricitabine', 'FTC'),
-    #     ('Didanosine', 'DDI'),
-    #     ('Stavudine', 'D4T'),
     ('Nevirapine', 'NVP'),
     ('Efavirenz', 'EFV'),
-    #     ('Lopinavir', 'LPV'),
     ('Aluvia', 'ALU'),
-    #     ('Atazanavir', 'ATV'),
-    #     ('Ritonavir', 'RTV'),
-    #     ('Raltegravir', 'RAL'),
     ('Dolutegravir', 'DTG'),
-    #     ('Nelfinavir', 'NFV'),
     ('HAART,unknown', 'HAART,unknown'),
 )
 

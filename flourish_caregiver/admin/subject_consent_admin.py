@@ -258,7 +258,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         return super_actions
 
     def get_readonly_fields(self, request, obj=None):
-        fields = super().get_readonly_fields(request, obj) + ('biological_caregiver', )
+        fields = super().get_readonly_fields(request, obj) + ('biological_caregiver',)
         return (fields + audit_fields)
 
 
