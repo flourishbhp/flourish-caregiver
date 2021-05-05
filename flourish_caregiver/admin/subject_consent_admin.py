@@ -47,7 +47,8 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
         return redirect_url
 
 
-class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
+class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
+                                  admin.StackedInline):
 
     model = CaregiverChildConsent
     form = CaregiverChildConsentForm
@@ -120,6 +121,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
                 })
 
         formset = super().get_formset(request, obj=obj, **kwargs)
+        formset.form = self.auto_number(formset.form)
         formset.__init__ = partialmethod(formset.__init__, initial=initial)
         return formset
 
