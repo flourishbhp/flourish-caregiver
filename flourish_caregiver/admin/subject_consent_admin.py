@@ -67,7 +67,6 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 'child_dob',
                 'child_test',
                 'child_remain_in_study',
-
                 'child_preg_test',
                 'child_knows_status',
                 'identity',
@@ -154,6 +153,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
     fieldsets = (
         (None, {
             'fields': (
+                'biological_caregiver',
                 'screening_identifier',
                 'subject_identifier',
                 'first_name',
@@ -176,7 +176,6 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'remain_in_study',
                 'hiv_testing',
                 'breastfeed_intent',
-                'biological_caregiver',
                 'child_consent')}),
         ('Review Questions', {
             'fields': (
