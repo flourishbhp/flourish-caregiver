@@ -2,7 +2,7 @@ from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 
-from edc_constants.constants import POS, NEG, UNK, IND, YES
+from edc_constants.constants import POS, NEG, UNK, IND, NO
 
 
 class MaternalStatusHelper(object):
@@ -92,7 +92,7 @@ class MaternalStatusHelper(object):
             else:
                 return antenatal_enrollment.current_hiv_status
         else:
-            if self.subject_consent.biological_caregiver == YES:
+            if self.subject_consent.biological_caregiver == NO:
                 return previous_enrollment.current_hiv_status
             else:
                 try:
