@@ -92,7 +92,7 @@ class MaternalStatusHelper(object):
             else:
                 return antenatal_enrollment.current_hiv_status
         else:
-            if self.subject_consent.biological_caregiver == NO:
+            if previous_enrollment.current_hiv_status is not None:
                 return previous_enrollment.current_hiv_status
             else:
                 try:
