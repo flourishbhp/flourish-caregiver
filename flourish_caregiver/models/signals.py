@@ -81,7 +81,8 @@ def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
                 except WorkList.DoesNotExist:
                     WorkList.objects.create(
                         study_maternal_identifier=instance.study_maternal_identifier,
-                        prev_study=maternal_dataset.protocol)
+                        prev_study=maternal_dataset.protocol,
+                        user_created=instance.user_created)
 
 
 @receiver(post_save, weak=False, sender=AntenatalEnrollment,
