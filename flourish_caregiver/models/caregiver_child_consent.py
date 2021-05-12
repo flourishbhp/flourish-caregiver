@@ -1,11 +1,11 @@
 from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.field_mixins import IdentityFieldsMixin
+from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_constants.choices import GENDER, YES_NO_NA, YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
@@ -23,7 +23,7 @@ INFANT = 'infant'
 
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin,
                             IdentityFieldsMixin, ReviewFieldsMixin,
-                            VerificationFieldsMixin, BaseUuidModel):
+                            PersonalFieldsMixin, VerificationFieldsMixin, BaseUuidModel):
 
     """Inline table for caregiver's children"""
 
@@ -40,14 +40,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         max_length=50,
         null=True,
         blank=True)
-
-    first_name = FirstnameField(
-        blank=False
-    )
-
-    last_name = LastnameField(
-        blank=False
-    )
 
     gender = models.CharField(
         verbose_name="Gender",
@@ -91,6 +83,18 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         max_length=5,
         choices=YES_NO_NA,
         help_text='If no, participant is not eligible.')
+
+    future_studies_contact = models.CharField(
+        verbose_name=('Do you give us permission for us to contact you or your child'
+                      ' for future studies?'),
+        max_length=3,
+        choices=YES_NO,)
+
+    future_sample_use = models.CharField(
+        verbose_name=('Do you give us permission for us to use your child\'s blood '
+                      'samples for future studies?'),
+        max_length=3,
+        choices=YES_NO,)
 
     child_age_at_enrollment = models.DecimalField(
         decimal_places=2,
