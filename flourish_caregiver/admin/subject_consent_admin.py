@@ -73,7 +73,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 'identity_type',
                 'confirm_identity',
                 'future_studies_contact',
-                'future_sample_use',
+                'specimen_consent',
                 'consent_datetime'
                 ]}
          ),)
@@ -84,7 +84,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                     'child_preg_test': admin.VERTICAL,
                     'child_knows_status': admin.VERTICAL,
                     'identity_type': admin.VERTICAL,
-                    'future_sample_use': admin.VERTICAL,
+                    'specimen_consent': admin.VERTICAL,
                     'future_studies_contact': admin.VERTICAL}
 
     child_dataset_cls = django_apps.get_model('flourish_child.childdataset')

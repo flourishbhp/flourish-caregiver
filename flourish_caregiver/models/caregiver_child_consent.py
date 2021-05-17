@@ -90,7 +90,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         max_length=3,
         choices=YES_NO,)
 
-    future_sample_use = models.CharField(
+    specimen_consent = models.CharField(
         verbose_name=('Do you give us permission for us to use your child\'s blood '
                       'samples for future studies?'),
         max_length=3,

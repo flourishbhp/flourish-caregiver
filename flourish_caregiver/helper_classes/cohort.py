@@ -253,7 +253,8 @@ class Cohort:
         if (self.age_at_enrollment() >= 8 and self.age_at_enrollment() <= 17.9
                 and self.age_at_year_3 >= 10):
             if self.huu_adolescents:
-                return ('cohort_c' if self.total_huu_adolescents(protocol='Mashi') < 75
+                return ('cohort_c' if self.protocol == 'Tshipidi'
+                        and self.total_huu_adolescents(protocol='Tshipidi') < 75
                         else 'cohort_c_sec')
                 return True
             elif self.pi_regime:

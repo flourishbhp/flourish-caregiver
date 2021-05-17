@@ -9,7 +9,7 @@ from .models import CaregiverLocator, MaternalDataset
 
 class SubjectHelperMixin:
 
-    def create_cohort_c_dataset(self,):
+    def create_cohort_c_dataset(self):
 
         self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=10, months=2),
