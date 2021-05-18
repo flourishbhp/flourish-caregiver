@@ -14,8 +14,8 @@ class MedicalHistory(CrfModelMixin):
 
     chronic_since = models.CharField(
         max_length=25,
-        choices=YES_NO_NA,
-        verbose_name='Does the caregiver have any chronic conditions?', )
+        choices=YES_NO,
+        verbose_name='Does the caregiver have any chronic conditions?',)
 
     caregiver_chronic = models.ManyToManyField(
         ChronicConditions,

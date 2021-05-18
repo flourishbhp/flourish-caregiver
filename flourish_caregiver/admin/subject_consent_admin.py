@@ -72,7 +72,10 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 'identity',
                 'identity_type',
                 'confirm_identity',
-                'consent_datetime']}
+                'future_studies_contact',
+                'specimen_consent',
+                'consent_datetime'
+                ]}
          ),)
 
     radio_fields = {'gender': admin.VERTICAL,
@@ -80,7 +83,9 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                     'child_remain_in_study': admin.VERTICAL,
                     'child_preg_test': admin.VERTICAL,
                     'child_knows_status': admin.VERTICAL,
-                    'identity_type': admin.VERTICAL}
+                    'identity_type': admin.VERTICAL,
+                    'specimen_consent': admin.VERTICAL,
+                    'future_studies_contact': admin.VERTICAL}
 
     child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
 
