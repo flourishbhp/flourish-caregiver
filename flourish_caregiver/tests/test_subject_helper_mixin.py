@@ -5,8 +5,8 @@ from django.test import TestCase, tag
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 from ..subject_helper_mixin import SubjectHelperMixin
-from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
-from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
+from ..models import OnScheduleCohortBInPerson, OnScheduleCohortBQuarterly
+from ..models import OnScheduleCohortCInPerson, OnScheduleCohortCQuarterly
 from ..models import MaternalDataset, ScreeningPriorBhpParticipants, SubjectConsent
 
 
@@ -102,13 +102,17 @@ class TestSubjectHelperMixin(TestCase):
         subject_identifier = self.subject_helper.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_fu1_schedule1').count(), 1)
 
     @tag('sh1')
     def test_enroll_prior_participant_assent_cohort_b(self):
@@ -131,13 +135,17 @@ class TestSubjectHelperMixin(TestCase):
         subject_identifier = self.subject_helper.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_fu1_schedule1').count(), 1)
 
     def test_enroll_prior_participant_assent_cohort_c(self):
 
@@ -159,10 +167,15 @@ class TestSubjectHelperMixin(TestCase):
         subject_identifier = self.subject_helper.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortCInPerson.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortCQuarterly.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortCInPerson.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='c_fu1_schedule1').count(), 1)
+

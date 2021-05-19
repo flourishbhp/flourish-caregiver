@@ -17,7 +17,7 @@ class SubjectHelperMixin:
             'mom_hivstatus': 'HIV-infected',
             'study_maternal_identifier': '8907-21',
             'preg_pi': 1,
-            'protocol': 'Mashi'}
+            'protocol': 'Tshipidi'}
 
         self.child_dataset_options = {
             'infant_hiv_exposed': 'Unexposed',

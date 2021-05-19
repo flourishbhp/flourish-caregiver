@@ -181,6 +181,8 @@ def put_cohort_onschedule(cohort, children_count, instance):
                         instance=instance)
         put_on_schedule((cohort + '_quarterly' + str(children_count)),
                         instance=instance)
+        put_on_schedule((cohort + '_fu' + str(children_count)),
+                        instance=instance)
 
 
 def cohort_assigned(screening_identifier, child_dob):
@@ -238,7 +240,9 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
         cohort_label_lower = ''.join(cohort[:-1].split('_'))
 
         if 'enrol' in cohort:
-            cohort_label_lower = cohort_label_lower.replace('enrol', 'enrollment')
+            cohort_label_lower = cohort_label_lower.replace('enrol', 'inperson')
+        elif '_fu' in cohort:
+            cohort_label_lower = cohort_label_lower.replace('fu', 'inperson')
 
         onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
 

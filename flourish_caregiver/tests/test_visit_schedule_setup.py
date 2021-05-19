@@ -1,16 +1,16 @@
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
-from edc_constants.constants import YES, NO, NOT_APPLICABLE
+from edc_constants.constants import YES, NOT_APPLICABLE
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 from edc_visit_schedule.models import SubjectScheduleHistory
 from edc_appointment.models import Appointment
 
-from ..models import OnScheduleCohortAEnrollment, OnScheduleCohortABirth
+from ..models import OnScheduleCohortAInPerson, OnScheduleCohortABirth
 from ..models import OnScheduleCohortAQuarterly
-from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
-from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
+from ..models import OnScheduleCohortBInPerson, OnScheduleCohortBQuarterly
+from ..models import OnScheduleCohortCInPerson, OnScheduleCohortCQuarterly
 from ..models import OnScheduleCohortASec, OnScheduleCohortBSec, OnScheduleCohortCSec
 from ..subject_helper_mixin import SubjectHelperMixin
 
@@ -60,7 +60,7 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=subject_consent.subject_identifier,)
 
-        self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortAInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_enrol1_schedule1').count(), 1)
 
@@ -124,13 +124,17 @@ class TestVisitScheduleSetup(TestCase):
             subject_consent=subject_consent,
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
 
-        self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortAInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortAInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='a_fu1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -167,13 +171,17 @@ class TestVisitScheduleSetup(TestCase):
             subject_consent=subject_consent,
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
 
-        self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortAInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortAInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='a_fu1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -204,13 +212,17 @@ class TestVisitScheduleSetup(TestCase):
         subject_identifier = sh.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_fu1_schedule1').count(), 1)
 
         self.assertEqual(Appointment.objects.filter(
             subject_identifier=subject_identifier).count(), 20)
@@ -287,13 +299,17 @@ class TestVisitScheduleSetup(TestCase):
         subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_fu1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_identifier).count(), 0)
@@ -304,7 +320,7 @@ class TestVisitScheduleSetup(TestCase):
         """
         self.subject_identifier = self.subject_identifier[:-1] + '4'
 
-        self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['protocol'] = 'Tshipidi'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10,
                                                                                 months=2)
         self.maternal_dataset_options['preg_pi'] = 1
@@ -328,13 +344,17 @@ class TestVisitScheduleSetup(TestCase):
         subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortCInPerson.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortCQuarterly.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_quarterly1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortCInPerson.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='c_fu1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_identifier).count(), 0)
@@ -345,7 +365,7 @@ class TestVisitScheduleSetup(TestCase):
         """
         self.subject_identifier = self.subject_identifier[:-1] + '4'
 
-        self.maternal_dataset_options['protocol'] = 'Mashi'
+        self.maternal_dataset_options['protocol'] = 'Mpepu'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=16,
                                                                                 months=4)
         self.maternal_dataset_options['preg_pi'] = 1
@@ -376,6 +396,10 @@ class TestVisitScheduleSetup(TestCase):
         self.assertEqual(Appointment.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_sec1_schedule1').count(), 19)
+
+        self.assertEqual(OnScheduleCohortCSec.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='c_fu1_schedule1').count(), 1)
 
     def test_cohort_b_twins_onschedule_valid(self):
         """Assert that a 9 year old twin participants' mother from  Mpepu study is put on
@@ -430,15 +454,15 @@ class TestVisitScheduleSetup(TestCase):
             confirm_identity='234513181',
             child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol2_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol3_schedule1').count(), 0)
 
@@ -453,6 +477,18 @@ class TestVisitScheduleSetup(TestCase):
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly2_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_fu1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_fu2_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_fu3_schedule1').count(), 0)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
@@ -526,15 +562,15 @@ class TestVisitScheduleSetup(TestCase):
             confirm_identity='234513182',
             child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol2_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol3_schedule1').count(), 0)
 
@@ -549,6 +585,18 @@ class TestVisitScheduleSetup(TestCase):
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly3_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_fu1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_fu2_schedule1').count(), 0)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_fu3_schedule1').count(), 0)
 
     def test_cohort_b_multiple_onschedule_valid(self):
         """Assert that a 4 year old and 5 years participants' mother from  Mpepu study is put
@@ -603,9 +651,9 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(SubjectScheduleHistory.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            onschedule_datetime=child_consent.created).count(), 2)
+            onschedule_datetime=child_consent.created).count(), 3)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
@@ -613,17 +661,25 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_fu1_schedule1').count(), 1)
+
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol2_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly2_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='b_fu2_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
