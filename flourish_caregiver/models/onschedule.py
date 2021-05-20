@@ -39,7 +39,11 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
         abstract = True
 
 
-class OnScheduleCohortAInPerson(OnScheduleModelMixin):
+class OnScheduleCohortAEnrollment(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortAFU(OnScheduleModelMixin):
     pass
 
 
@@ -55,7 +59,11 @@ class OnScheduleCohortAQuarterly(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortBInPerson(OnScheduleModelMixin):
+class OnScheduleCohortBEnrollment(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortBFU(OnScheduleModelMixin):
     pass
 
 
@@ -63,7 +71,11 @@ class OnScheduleCohortBQuarterly(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortCInPerson(OnScheduleModelMixin):
+class OnScheduleCohortCEnrollment(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortCFU(OnScheduleModelMixin):
     pass
 
 

@@ -240,9 +240,7 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
         cohort_label_lower = ''.join(cohort[:-1].split('_'))
 
         if 'enrol' in cohort:
-            cohort_label_lower = cohort_label_lower.replace('enrol', 'inperson')
-        elif '_fu' in cohort:
-            cohort_label_lower = cohort_label_lower.replace('fu', 'inperson')
+            cohort_label_lower = cohort_label_lower.replace('enrol', 'enrollment')
 
         onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
 
