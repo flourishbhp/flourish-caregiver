@@ -1,6 +1,8 @@
 from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django_crypto_fields.fields import IdentityField
+
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
@@ -46,10 +48,22 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         choices=GENDER,
         max_length=1)
 
+    identity = IdentityField(
+        verbose_name='Identity number',
+        null=True,
+        blank=True)
+
     identity_type = models.CharField(
         verbose_name='What type of identity number is this?',
         max_length=25,
-        choices=CHILD_IDENTITY_TYPE)
+        choices=CHILD_IDENTITY_TYPE,
+        null=True,
+        blank=True)
+
+    confirm_identity = IdentityField(
+        help_text='Retype the identity number',
+        null=True,
+        blank=True)
 
     child_dob = models.DateField(
         verbose_name="Date of birth",
