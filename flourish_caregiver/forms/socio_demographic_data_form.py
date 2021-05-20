@@ -11,10 +11,12 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.pop('initial', {})
-        if self.previous_instance:
+        instance = kwargs.get('instance')
+        previous_instance = getattr(self, 'previous_instance', None)
+        if not instance and previous_instance:
             for key in self.base_fields.keys():
                 if key not in ['maternal_visit', 'report_datetime']:
-                    initial[key] = getattr(self.previous_instance, key)
+                    initial[key] = getattr(previous_instance, key)
         kwargs['initial'] = initial
         super().__init__(*args, **kwargs)
 
