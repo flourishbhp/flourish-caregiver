@@ -7,11 +7,12 @@ from model_mommy import mommy
 from edc_visit_schedule.models import SubjectScheduleHistory
 from edc_appointment.models import Appointment
 
-from ..models import OnScheduleCohortAInPerson, OnScheduleCohortABirth
-from ..models import OnScheduleCohortAQuarterly
-from ..models import OnScheduleCohortBInPerson, OnScheduleCohortBQuarterly
-from ..models import OnScheduleCohortCInPerson, OnScheduleCohortCQuarterly
+from ..models import OnScheduleCohortAEnrollment, OnScheduleCohortABirth
+from ..models import OnScheduleCohortAQuarterly, OnScheduleCohortAFU
+from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
+from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
 from ..models import OnScheduleCohortASec, OnScheduleCohortBSec, OnScheduleCohortCSec
+from ..models import OnScheduleCohortBFU, OnScheduleCohortCFU
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
@@ -124,7 +125,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_consent=subject_consent,
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
 
-        self.assertEqual(OnScheduleCohortAInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_enrol1_schedule1').count(), 1)
 
@@ -132,7 +133,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortAInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortAFU.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_fu1_schedule1').count(), 1)
 
@@ -171,7 +172,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_consent=subject_consent,
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
 
-        self.assertEqual(OnScheduleCohortAInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_enrol1_schedule1').count(), 1)
 
@@ -179,7 +180,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortAInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortAFU.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_fu1_schedule1').count(), 1)
 
@@ -212,7 +213,7 @@ class TestVisitScheduleSetup(TestCase):
         subject_identifier = sh.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
@@ -220,7 +221,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_fu1_schedule1').count(), 1)
 
@@ -299,7 +300,7 @@ class TestVisitScheduleSetup(TestCase):
         subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
@@ -307,7 +308,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_fu1_schedule1').count(), 1)
 
@@ -344,7 +345,7 @@ class TestVisitScheduleSetup(TestCase):
         subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(OnScheduleCohortCInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_enrol1_schedule1').count(), 1)
 
@@ -352,7 +353,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='c_quarterly1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortCInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortCFU.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_fu1_schedule1').count(), 1)
 
@@ -454,15 +455,15 @@ class TestVisitScheduleSetup(TestCase):
             confirm_identity='234513181',
             child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol2_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol3_schedule1').count(), 0)
 
@@ -478,15 +479,15 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly2_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_fu1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_fu2_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_fu3_schedule1').count(), 0)
 
@@ -562,15 +563,15 @@ class TestVisitScheduleSetup(TestCase):
             confirm_identity='234513182',
             child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol2_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol3_schedule1').count(), 0)
 
@@ -586,15 +587,15 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly3_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_fu1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_fu2_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_fu3_schedule1').count(), 0)
 
@@ -653,7 +654,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             onschedule_datetime=child_consent.created).count(), 3)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
@@ -661,7 +662,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_fu1_schedule1').count(), 1)
 
@@ -669,7 +670,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 0)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_enrol2_schedule1').count(), 1)
 
@@ -677,7 +678,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly2_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBInPerson.objects.filter(
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_fu2_schedule1').count(), 1)
 
