@@ -25,7 +25,7 @@ class MedicalHistoryForm(SubjectModelFormMixin, forms.ModelForm):
                     key_manager = getattr(previous_instance, key)
                     initial[key] = [obj.id for obj in key_manager.all()]
                     continue
-                if key not in ['maternal_visit', 'report_datetime']:
+                if key not in ['maternal_visit', 'report_datetime', 'med_history_changed']:
                     initial[key] = getattr(previous_instance, key)
         kwargs['initial'] = initial
         super().__init__(*args, **kwargs)

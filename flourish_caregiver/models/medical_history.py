@@ -1,7 +1,6 @@
 from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO, YES_NO_NA
-from edc_constants.constants import NOT_APPLICABLE
 
 from ..maternal_choices import KNOW_HIV_STATUS
 from .list_models import ChronicConditions, CaregiverMedications, WcsDxAdult
@@ -73,8 +72,8 @@ class MedicalHistory(CrfModelMixin):
     med_history_changed = models.CharField(
         verbose_name='Has any of your following medical history changed?',
         max_length=20,
-        choices=YES_NO_NA,
-        default=NOT_APPLICABLE)
+        choices=YES_NO,
+        null=True)
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
