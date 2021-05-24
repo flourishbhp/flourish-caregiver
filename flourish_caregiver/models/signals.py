@@ -180,9 +180,10 @@ def put_cohort_onschedule(cohort, children_count, instance):
         put_on_schedule((cohort + '_enrol' + str(children_count)),
                         instance=instance)
         put_on_schedule((cohort + '_quarterly' + str(children_count)),
-                        instance=instance)
+                        instance=instance,)
         put_on_schedule((cohort + '_fu' + str(children_count)),
-                        instance=instance)
+                        instance=instance, base_appt_datetime=django_apps.get_app_config(
+                    'edc_protocol').study_open_datetime)
 
 
 def cohort_assigned(screening_identifier, child_dob):
@@ -232,7 +233,7 @@ def get_assent_onschedule_datetime(subject_identifier):
         return assent_obj.created
 
 
-def put_on_schedule(cohort, instance=None, subject_identifier=None):
+def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_datetime=None):
 
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
@@ -265,7 +266,8 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
             schedule.put_on_schedule(
                 subject_identifier=subject_identifier,
                 onschedule_datetime=assent_onschedule_datetime or instance.created,
-                schedule_name=schedule_name)
+                schedule_name=schedule_name,
+                base_appt_datetime=base_appt_datetime)
         else:
             schedule.refresh_schedule(
                 subject_identifier=subject_identifier,

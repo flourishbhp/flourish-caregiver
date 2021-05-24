@@ -150,7 +150,8 @@ class SubjectHelperMixin:
             mommy.make_recipe(
                 'flourish_follow.worklist',
                 subject_identifier=None,
-                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
+                user_created='flourish')
 
         call = mommy.make_recipe(
             'flourish_follow.call',
@@ -163,7 +164,8 @@ class SubjectHelperMixin:
         mommy.make_recipe(
             'flourish_follow.logentry',
             log=log,
-            study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
+            study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
+            user_created='flourish')
         return caregiver_locator
 
     def enroll_prior_participant(self, screening_identifier):

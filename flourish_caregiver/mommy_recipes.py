@@ -23,12 +23,14 @@ maternaldataset = Recipe(
 caregiverlocator = Recipe(
     CaregiverLocator,
     first_name=fake.first_name,
-    last_name=fake.last_name,)
+    last_name=fake.last_name,
+    user_created='flourish')
 
 locatorlogentry = Recipe(
     LocatorLogEntry,
     report_datetime=get_utcnow(),
-    log_status='exist')
+    log_status='exist',
+    user_created='flourish')
 
 screeningpriorbhpparticipants = Recipe(
     ScreeningPriorBhpParticipants,
