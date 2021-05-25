@@ -100,9 +100,9 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
         put_on_schedule(('cohort_a_enrol' + str(children_count)),
                         instance=instance,
                         subject_identifier=instance.subject_identifier)
-        put_on_schedule(('cohort_a_quarterly' + str(children_count)),
-                        instance=instance,
-                        subject_identifier=instance.subject_identifier)
+        # put_on_schedule(('cohort_a_quarterly' + str(children_count)),
+                        # instance=instance,
+                        # subject_identifier=instance.subject_identifier)
 
 # @receiver(post_save, weak=False, sender=MaternalDelivery,
           # dispatch_uid='maternal_delivery_on_post_save')
@@ -179,11 +179,11 @@ def put_cohort_onschedule(cohort, children_count, instance):
     else:
         put_on_schedule((cohort + '_enrol' + str(children_count)),
                         instance=instance)
-        put_on_schedule((cohort + '_quarterly' + str(children_count)),
-                        instance=instance,)
-        put_on_schedule((cohort + '_fu' + str(children_count)),
-                        instance=instance, base_appt_datetime=django_apps.get_app_config(
-                    'edc_protocol').study_open_datetime)
+        # put_on_schedule((cohort + '_quarterly' + str(children_count)),
+                        # instance=instance,)
+        # put_on_schedule((cohort + '_fu' + str(children_count)),
+                        # instance=instance, base_appt_datetime=django_apps.get_app_config(
+                    # 'edc_protocol').study_open_datetime)
 
 
 def cohort_assigned(screening_identifier, child_dob):
