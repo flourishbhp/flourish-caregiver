@@ -47,7 +47,8 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
         return redirect_url
 
 
-class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
+class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
+                                  admin.StackedInline):
 
     model = CaregiverChildConsent
     form = CaregiverChildConsentForm
@@ -66,13 +67,15 @@ class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
                 'child_dob',
                 'child_test',
                 'child_remain_in_study',
-
                 'child_preg_test',
                 'child_knows_status',
                 'identity',
                 'identity_type',
                 'confirm_identity',
-                'consent_datetime']}
+                'future_studies_contact',
+                'specimen_consent',
+                'consent_datetime'
+                ]}
          ),)
 
     radio_fields = {'gender': admin.VERTICAL,
@@ -80,7 +83,9 @@ class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
                     'child_remain_in_study': admin.VERTICAL,
                     'child_preg_test': admin.VERTICAL,
                     'child_knows_status': admin.VERTICAL,
-                    'identity_type': admin.VERTICAL}
+                    'identity_type': admin.VERTICAL,
+                    'specimen_consent': admin.VERTICAL,
+                    'future_studies_contact': admin.VERTICAL}
 
     child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
 
@@ -120,6 +125,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, admin.StackedInline):
                 })
 
         formset = super().get_formset(request, obj=obj, **kwargs)
+        formset.form = self.auto_number(formset.form)
         formset.__init__ = partialmethod(formset.__init__, initial=initial)
         return formset
 
@@ -152,6 +158,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
     fieldsets = (
         (None, {
             'fields': (
+                'biological_caregiver',
                 'screening_identifier',
                 'subject_identifier',
                 'first_name',
@@ -174,7 +181,6 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'remain_in_study',
                 'hiv_testing',
                 'breastfeed_intent',
-                'biological_caregiver',
                 'child_consent')}),
         ('Review Questions', {
             'fields': (
@@ -258,7 +264,7 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         return super_actions
 
     def get_readonly_fields(self, request, obj=None):
-        fields = super().get_readonly_fields(request, obj) + ('biological_caregiver', )
+        fields = super().get_readonly_fields(request, obj) + ('biological_caregiver',)
         return (fields + audit_fields)
 
 
@@ -293,8 +299,26 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                     'child_knows_status': admin.VERTICAL,
                     'identity_type': admin.VERTICAL}
 
-    list_display = ('identity', 'subject_identifier', 'first_name', 'last_name',
-                    'consent_datetime',)
+    list_display = ('subject_identifier',
+                    'verified_by',
+                    'is_verified',
+                    'is_verified_datetime',
+                    'first_name',
+                    'last_name',
+                    'gender',
+                    'child_dob',
+                    'consent_datetime',
+                    'created',
+                    'modified',
+                    'user_created',
+                    'user_modified')
+
+    list_filter = ('is_verified',
+                   'gender',
+                   'child_remain_in_study',
+                   'child_knows_status',
+                   'child_preg_test',
+                   'identity_type')
 
     search_fields = ['subject_identifier', 'subject_consent__subject_identifier', ]
 
@@ -303,3 +327,30 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             SubjectConsent.objects.filter(id=request.GET.get('subject_consent'))
         return super(CaregiverChildConsentAdmin, self).render_change_form(
             request, context, *args, **kwargs)
+
+    def get_actions(self, request):
+
+        super_actions = super().get_actions(request)
+
+        if ('flourish_caregiver.change_caregiverchildconsent'
+                in request.user.get_group_permissions()):
+
+            consent_actions = [
+                flag_as_verified_against_paper,
+                unflag_as_verified_against_paper]
+
+            # Add actions from this ModelAdmin.
+            actions = (self.get_action(action) for action in consent_actions)
+            # get_action might have returned None, so filter any of those out.
+            actions = filter(None, actions)
+
+            actions = self._filter_actions_by_permissions(request, actions)
+            # Convert the actions into an OrderedDict keyed by name.
+            actions = OrderedDict(
+                (name, (func, name, desc))
+                for func, name, desc in actions
+            )
+
+            super_actions.update(actions)
+
+        return super_actions

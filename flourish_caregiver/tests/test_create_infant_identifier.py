@@ -2,12 +2,12 @@ import re
 from dateutil.relativedelta import relativedelta
 
 from django.apps import apps as django_apps
-from django.test import TestCase
+from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 
-from edc_constants.constants import YES, NO, NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 
 from ..subject_helper_mixin import SubjectHelperMixin
 
@@ -44,12 +44,13 @@ class TestInfantSubjectIdentifier(TestCase):
             'study_maternal_identifier': '89721',
             'study_child_identifier': '1234'}
 
+    @tag('f')
     def test_infant_subject_identifier_generated(self):
         """Test consent allocates subject identifier starting with a B for a
         biological mother.
         """
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4,
-                                                                                months=5)
+                                                                                months=9)
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -59,7 +60,7 @@ class TestInfantSubjectIdentifier(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=get_utcnow() - relativedelta(years=4, months=5),
+            dob=get_utcnow() - relativedelta(years=4, months=9),
             ** self.child_dataset_options)
 
         self.subject_helper.enroll_prior_participant(

@@ -81,7 +81,8 @@ def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
                 except WorkList.DoesNotExist:
                     WorkList.objects.create(
                         study_maternal_identifier=instance.study_maternal_identifier,
-                        prev_study=maternal_dataset.protocol)
+                        prev_study=maternal_dataset.protocol,
+                        user_created=instance.user_created)
 
 
 @receiver(post_save, weak=False, sender=AntenatalEnrollment,
@@ -99,9 +100,9 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
         put_on_schedule(('cohort_a_enrol' + str(children_count)),
                         instance=instance,
                         subject_identifier=instance.subject_identifier)
-        put_on_schedule(('cohort_a_quarterly' + str(children_count)),
-                        instance=instance,
-                        subject_identifier=instance.subject_identifier)
+        # put_on_schedule(('cohort_a_quarterly' + str(children_count)),
+                        # instance=instance,
+                        # subject_identifier=instance.subject_identifier)
 
 # @receiver(post_save, weak=False, sender=MaternalDelivery,
           # dispatch_uid='maternal_delivery_on_post_save')
@@ -135,10 +136,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             child_age = age(instance.child_dob, get_utcnow()).years
             if child_age and child_age < 7:
                 if instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
-                    put_on_schedule((cohort + '_enrol' + str(children_count)),
-                                    instance=instance)
-                    put_on_schedule((cohort + '_quarterly' + str(children_count)),
-                                    instance=instance)
+                    put_cohort_onschedule(cohort, children_count, instance)
 
                 try:
                     child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
@@ -166,14 +164,26 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 except child_dummy_consent_cls.DoesNotExist:
                     pass
                 else:
-                    put_on_schedule((cohort + '_enrol' + str(children_count)),
-                                    instance=instance)
-                    put_on_schedule((cohort + '_quarterly' + str(children_count)),
-                                    instance=instance)
+                    put_cohort_onschedule(cohort, children_count, instance)
 
             instance.cohort = cohort
             instance.caregiver_visit_count = children_count
             instance.save_base(raw=True)
+
+
+def put_cohort_onschedule(cohort, children_count, instance):
+
+    if cohort is not None and 'sec' in cohort:
+        put_on_schedule((cohort + str(children_count)),
+                        instance=instance)
+    else:
+        put_on_schedule((cohort + '_enrol' + str(children_count)),
+                        instance=instance)
+        # put_on_schedule((cohort + '_quarterly' + str(children_count)),
+                        # instance=instance,)
+        # put_on_schedule((cohort + '_fu' + str(children_count)),
+                        # instance=instance, base_appt_datetime=django_apps.get_app_config(
+                    # 'edc_protocol').study_open_datetime)
 
 
 def cohort_assigned(screening_identifier, child_dob):
@@ -223,7 +233,7 @@ def get_assent_onschedule_datetime(subject_identifier):
         return assent_obj.created
 
 
-def put_on_schedule(cohort, instance=None, subject_identifier=None):
+def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_datetime=None):
 
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
@@ -256,7 +266,8 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None):
             schedule.put_on_schedule(
                 subject_identifier=subject_identifier,
                 onschedule_datetime=assent_onschedule_datetime or instance.created,
-                schedule_name=schedule_name)
+                schedule_name=schedule_name,
+                base_appt_datetime=base_appt_datetime)
         else:
             schedule.refresh_schedule(
                 subject_identifier=subject_identifier,

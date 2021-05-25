@@ -1,14 +1,17 @@
 from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django_crypto_fields.fields import FirstnameField, LastnameField
+from django_crypto_fields.fields import IdentityField
+
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.field_mixins import IdentityFieldsMixin
+from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_constants.choices import GENDER, YES_NO_NA, YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
+from edc_consent.field_mixins import ReviewFieldsMixin, VerificationFieldsMixin
 
 from .eligibility import CaregiverChildConsentEligibility
 from .subject_consent import SubjectConsent
@@ -21,7 +24,9 @@ INFANT = 'infant'
 
 
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin,
-                            IdentityFieldsMixin, BaseUuidModel):
+                            IdentityFieldsMixin, ReviewFieldsMixin,
+                            PersonalFieldsMixin, VerificationFieldsMixin, BaseUuidModel):
+
     """Inline table for caregiver's children"""
 
     subject_consent = models.ForeignKey(
@@ -38,23 +43,27 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         null=True,
         blank=True)
 
-    first_name = FirstnameField(
-        blank=False
-    )
-
-    last_name = LastnameField(
-        blank=False
-    )
-
     gender = models.CharField(
         verbose_name="Gender",
         choices=GENDER,
         max_length=1)
 
+    identity = IdentityField(
+        verbose_name='Identity number',
+        null=True,
+        blank=True)
+
     identity_type = models.CharField(
         verbose_name='What type of identity number is this?',
         max_length=25,
-        choices=CHILD_IDENTITY_TYPE)
+        choices=CHILD_IDENTITY_TYPE,
+        null=True,
+        blank=True)
+
+    confirm_identity = IdentityField(
+        help_text='Retype the identity number',
+        null=True,
+        blank=True)
 
     child_dob = models.DateField(
         verbose_name="Date of birth",
@@ -88,6 +97,18 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         max_length=5,
         choices=YES_NO_NA,
         help_text='If no, participant is not eligible.')
+
+    future_studies_contact = models.CharField(
+        verbose_name=('Do you give us permission for us to contact you or your child'
+                      ' for future studies?'),
+        max_length=3,
+        choices=YES_NO,)
+
+    specimen_consent = models.CharField(
+        verbose_name=('Do you give us permission for us to use your child\'s blood '
+                      'samples for future studies?'),
+        max_length=3,
+        choices=YES_NO,)
 
     child_age_at_enrollment = models.DecimalField(
         decimal_places=2,

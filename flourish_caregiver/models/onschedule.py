@@ -43,6 +43,14 @@ class OnScheduleCohortAEnrollment(OnScheduleModelMixin):
     pass
 
 
+class OnScheduleCohortAFU(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortAAntenatal(OnScheduleModelMixin):
+    pass
+
+
 class OnScheduleCohortABirth(OnScheduleModelMixin):
     pass
 
@@ -55,11 +63,19 @@ class OnScheduleCohortBEnrollment(OnScheduleModelMixin):
     pass
 
 
+class OnScheduleCohortBFU(OnScheduleModelMixin):
+    pass
+
+
 class OnScheduleCohortBQuarterly(OnScheduleModelMixin):
     pass
 
 
 class OnScheduleCohortCEnrollment(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortCFU(OnScheduleModelMixin):
     pass
 
 
@@ -71,13 +87,13 @@ class OnScheduleCohortCPool(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleSecA(OnScheduleModelMixin):
+class OnScheduleCohortASec(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleSecB(OnScheduleModelMixin):
+class OnScheduleCohortBSec(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleSecC(OnScheduleModelMixin):
+class OnScheduleCohortCSec(OnScheduleModelMixin):
     pass

@@ -46,7 +46,8 @@ class TestSubjectConsent(TestCase):
         """Test consent allocates subject identifier on save if participant
         is eligible.
         """
-        consent = mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
+        consent = mommy.make_recipe('flourish_caregiver.subjectconsent',
+                                    **self.eligible_options)
         self.assertTrue(
             re.match(
                 subject_identifier,

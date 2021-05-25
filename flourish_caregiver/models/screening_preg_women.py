@@ -47,7 +47,7 @@ class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         max_length=3)
 
     breastfeed_intent = models.CharField(
-        verbose_name='Do you intend on breastfeeding your infant? ',
+        verbose_name='Do you intend on breastfeeding your infant?',
         choices=YES_NO,
         max_length=3)
 

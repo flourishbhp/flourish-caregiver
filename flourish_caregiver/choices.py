@@ -1,12 +1,11 @@
 from edc_constants.constants import (
-    OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA, OTHER)
+    OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA)
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN
-from edc_constants.constants import YES, NO, UNKNOWN, POS, NEG
+from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
-from .constants import BREASTFEED_ONLY, NEVER_STARTED, MODIFIED, TUBERCULOSIS
-from .constants import NO_MODIFICATIONS, START
+from .constants import BREASTFEED_ONLY
 from flourish_caregiver.constants import NONE
 
 ABLE_TO_LAUGH = (
@@ -64,17 +63,10 @@ ARV_DRUG_LIST = (
     ('Tenoforvir', 'TDF'),
     ('Lamivudine', '3TC'),
     ('Emtricitabine', 'FTC'),
-    #     ('Didanosine', 'DDI'),
-    #     ('Stavudine', 'D4T'),
     ('Nevirapine', 'NVP'),
     ('Efavirenz', 'EFV'),
-    #     ('Lopinavir', 'LPV'),
     ('Aluvia', 'ALU'),
-    #     ('Atazanavir', 'ATV'),
-    #     ('Ritonavir', 'RTV'),
-    #     ('Raltegravir', 'RAL'),
     ('Dolutegravir', 'DTG'),
-    #     ('Nelfinavir', 'NFV'),
     ('HAART,unknown', 'HAART,unknown'),
 )
 
@@ -99,6 +91,9 @@ COHORTS = (
     ('cohort_a', 'Cohort A'),
     ('cohort_b', 'Cohort B'),
     ('cohort_c', 'Cohort C'),
+    ('cohort_a_sec', 'Cohort A Secondary Aims'),
+    ('cohort_b_sec', 'Cohort B Secondary Aims'),
+    ('cohort_c_sec', 'Cohort C Secondary Aims'),
     ('cohort_pool', 'Cohort Pool'),)
 
 CONSENT_VERSION = (
@@ -558,7 +553,6 @@ VISIT_REASON = [
     (LOST_VISIT, 'Lost to follow-up (use only when taking subject off study)'),
     (FAILED_ELIGIBILITY, 'Subject failed enrollment eligibility'),
     (COMPLETED_PROTOCOL_VISIT, 'Subject has completed the study')]
-
 
 ZERO_ONE = (
     ('0', '0'),

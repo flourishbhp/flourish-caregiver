@@ -9,7 +9,7 @@ from .models import CaregiverLocator, MaternalDataset
 
 class SubjectHelperMixin:
 
-    def create_cohort_c_dataset(self,):
+    def create_cohort_c_dataset(self):
 
         self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=10, months=2),
@@ -17,7 +17,7 @@ class SubjectHelperMixin:
             'mom_hivstatus': 'HIV-infected',
             'study_maternal_identifier': '8907-21',
             'preg_pi': 1,
-            'protocol': 'Mashi'}
+            'protocol': 'Tshipidi'}
 
         self.child_dataset_options = {
             'infant_hiv_exposed': 'Unexposed',
@@ -150,7 +150,8 @@ class SubjectHelperMixin:
             mommy.make_recipe(
                 'flourish_follow.worklist',
                 subject_identifier=None,
-                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
+                user_created='flourish')
 
         call = mommy.make_recipe(
             'flourish_follow.call',
@@ -163,7 +164,8 @@ class SubjectHelperMixin:
         mommy.make_recipe(
             'flourish_follow.logentry',
             log=log,
-            study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
+            study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
+            user_created='flourish')
         return caregiver_locator
 
     def enroll_prior_participant(self, screening_identifier):

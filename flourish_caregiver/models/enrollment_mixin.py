@@ -163,13 +163,11 @@ class EnrollmentMixin(models.Model):
 
     def get_registration_date(self):
         consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
-        try:
-            subject_consent = consent_cls.objects.filter(
-                subject_identifier=self.subject_identifier).order_by(
-                    'consent_datetime')[0]
-        except Exception as e:
-            raise ValidationError(e)
-        else:
+        subject_consents = consent_cls.objects.filter(
+            subject_identifier=self.subject_identifier).order_by(
+                'consent_datetime')
+        if subject_consents:
+            subject_consent = subject_consents[0]
             return subject_consent.consent_datetime.date()
 
     @property

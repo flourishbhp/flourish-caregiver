@@ -8,6 +8,8 @@ from flourish_form_validations.form_validators import CaregiverChildConsentFormV
 
 class CaregiverChildConsentForm(SubjectModelFormMixin):
 
+    form_validator_cls = CaregiverChildConsentFormValidator
+
     subject_identifier = forms.CharField(
         label='Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
@@ -18,7 +20,13 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
 
-    form_validator_cls = CaregiverChildConsentFormValidator
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        subject_identifier = instance.subject_identifier if instance else None
+        if subject_identifier:
+            for key in self.fields.keys():
+                self.fields[key].disabled = True
 
     def has_changed(self):
         return True
