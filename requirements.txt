@@ -19,6 +19,7 @@ git+https://github.com/botswana-harvard/edc-metadata.git@develop#egg=edc_metadat
 git+https://github.com/botswana-harvard/edc-metadata-rules.git@develop#egg=edc_metadata_rules
 git+https://github.com/botswana-harvard/edc-model-wrapper.git@develop#egg=edc_model_wrapper
 git+https://github.com/botswana-harvard/edc-model-admin.git@develop#egg=edc_model_admin
+git+https://github.com/botswana-harvard/edc-odk.git@develop#egg=edc-odk
 git+https://github.com/botswana-harvard/edc-protocol.git@develop#egg=edc_protocol
 git+https://github.com/botswana-harvard/edc-prn.git@develop#egg=edc_prn
 git+https://github.com/botswana-harvard/edc-reference.git@develop#egg=edc_reference
