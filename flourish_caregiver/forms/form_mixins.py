@@ -30,3 +30,8 @@ class SubjectModelFormMixin(SiteModelFormMixin, FormValidatorMixin,
                         CrfReportDateIsFuture) as e:
                     raise forms.ValidationError(e)
         return cleaned_data
+
+
+class InlineSubjectModelFormMixin(FormValidatorMixin, forms.ModelForm):
+
+    visit_model = MaternalVisit

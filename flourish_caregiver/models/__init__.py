@@ -3,6 +3,7 @@ from .arvs_pre_pregnancy import ArvsPrePregnancy
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinical_measurements import CaregiverClinicalMeasurements
 from .caregiver_clinical_measurements_fu import CaregiverClinicalMeasurementsFu
+from .caregiver_clinician_notes import ClinicianNotes, ClinicianNotesImage
 from .caregiver_edinburgh_depr_screening import CaregiverEdinburghDeprScreening
 from .caregiver_edinburgh_referral import CaregiverEdinburghReferral
 from .caregiver_gad_anxiety_screening import CaregiverGadAnxietyScreening
