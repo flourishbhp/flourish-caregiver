@@ -179,8 +179,8 @@ def put_cohort_onschedule(cohort, children_count, instance):
     else:
         put_on_schedule((cohort + '_enrol' + str(children_count)),
                         instance=instance)
-        # put_on_schedule((cohort + '_quarterly' + str(children_count)),
-                        # instance=instance,)
+        put_on_schedule((cohort + '_quarterly' + str(children_count)),
+                        instance=instance,)
         # put_on_schedule((cohort + '_fu' + str(children_count)),
                         # instance=instance, base_appt_datetime=django_apps.get_app_config(
                     # 'edc_protocol').study_open_datetime)
