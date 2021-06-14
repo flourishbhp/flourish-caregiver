@@ -15,11 +15,6 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
 
-    study_child_identifier = forms.CharField(
-        label='Previous study identifier',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
-        required=False)
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)

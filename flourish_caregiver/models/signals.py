@@ -94,7 +94,7 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     child_dummy_consent_cls = django_apps.get_model(
                 'flourish_child.childdummysubjectconsent')
     children_count = 1 + child_dummy_consent_cls.objects.filter(
-                subject_identifier__icontains=instance.subject_identifier).count()
+                subject_identifier__startswith=instance.subject_identifier).count()
 
     if not raw and instance.is_eligible:
         put_on_schedule(('cohort_a_enrol' + str(children_count)),
@@ -124,14 +124,14 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
     """
     if not raw and instance.is_eligible:
 
-        cohort = cohort_assigned(instance.subject_consent.screening_identifier,
+        cohort = cohort_assigned(instance.study_child_identifier,
                                  instance.child_dob)
         if cohort:
             child_dummy_consent_cls = django_apps.get_model(
                 'flourish_child.childdummysubjectconsent')
 
             children_count = 1 + child_dummy_consent_cls.objects.filter(
-                subject_identifier__icontains=instance.subject_consent.subject_identifier
+                subject_identifier__startswith=instance.subject_consent.subject_identifier
                 ).exclude(identity=instance.identity,).count()
             child_age = age(instance.child_dob, get_utcnow()).years
             if child_age and child_age < 7:
@@ -141,6 +141,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 try:
                     child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
+                        subject_identifier=instance.subject_identifier,
                         version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
@@ -186,39 +187,38 @@ def put_cohort_onschedule(cohort, children_count, instance):
                     # 'edc_protocol').study_open_datetime)
 
 
-def cohort_assigned(screening_identifier, child_dob):
+def cohort_assigned(study_child_identifier, child_dob):
     """Calculates participant's cohort based on the maternal and child dataset
     """
+    infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
     try:
-        maternal_dataset_obj = MaternalDataset.objects.get(
-            screening_identifier=screening_identifier)
-    except MaternalDataset.DoesNotExist:
+        infant_dataset_obj = infant_dataset_cls.objects.get(
+            study_child_identifier=study_child_identifier,
+            dob=child_dob)
+    except infant_dataset_cls.DoesNotExist:
         return None
+    except infant_dataset_cls.MultipleObjectsReturned:
+                infant_dataset_obj = infant_dataset_cls.objects.filter(
+                    study_child_identifier=study_child_identifier,
+                    dob=child_dob)[0]
     else:
-        infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
-        infant_dataset_obj = None
         try:
-            infant_dataset_obj = infant_dataset_cls.objects.get(
-                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
-                dob=child_dob)
-        except infant_dataset_cls.DoesNotExist:
-            infant_dataset_obj = None
-        except infant_dataset_cls.MultipleObjectsReturned:
-            infant_dataset_obj = infant_dataset_cls.objects.filter(
-                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
-                dob=child_dob)[0]
-
-        if infant_dataset_obj:
-            cohort = Cohort(
-                child_dob=child_dob,
-                enrollment_date=get_utcnow().date(),
-                infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
-                protocol=maternal_dataset_obj.protocol,
-                mum_hiv_status=maternal_dataset_obj.mom_hivstatus,
-                dtg=maternal_dataset_obj.preg_dtg,
-                efv=maternal_dataset_obj.preg_efv,
-                pi=maternal_dataset_obj.preg_pi).cohort_variable
-            return cohort
+            maternal_dataset_obj = MaternalDataset.objects.get(
+                study_maternal_identifier=infant_dataset_obj.study_maternal_identifier)
+        except MaternalDataset.DoesNotExist:
+            return None
+        else:
+            if infant_dataset_obj:
+                cohort = Cohort(
+                    child_dob=child_dob,
+                    enrollment_date=get_utcnow().date(),
+                    infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
+                    protocol=maternal_dataset_obj.protocol,
+                    mum_hiv_status=maternal_dataset_obj.mom_hivstatus,
+                    dtg=maternal_dataset_obj.preg_dtg,
+                    efv=maternal_dataset_obj.preg_efv,
+                    pi=maternal_dataset_obj.preg_pi).cohort_variable
+                return cohort
 
 
 def get_assent_onschedule_datetime(subject_identifier):
