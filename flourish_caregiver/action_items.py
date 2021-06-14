@@ -27,7 +27,7 @@ class CaregiverLocatorAction(SubjectLocatorAction):
 class MaternalUltrasoundAction(Action):
     name = ULTRASOUND_ACTION
     display_name = 'Submit Maternal Ultrasound'
-    reference_model = 'flourish_caregiver.maternalultrasoundinitial'
+    reference_model = 'flourish_caregiver.ultrasound'
     admin_site_name = 'flourish_caregiver_admin'
     create_by_user = False
 
@@ -59,3 +59,4 @@ class MaternalCovidScreeningAction(Action):
 
 
 site_action_items.register(CaregiverLocatorAction)
+site_action_items.register(MaternalUltrasoundAction)
