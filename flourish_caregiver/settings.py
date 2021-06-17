@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'edc_action_item.apps.AppConfig',
     'edc_dashboard.apps.AppConfig',
     'edc_device.apps.AppConfig',
+    'edc_odk.apps.AppConfig',
     'edc_identifier.apps.AppConfig',
     'edc_registration.apps.AppConfig',
     'edc_reference.apps.AppConfig',

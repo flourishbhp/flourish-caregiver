@@ -168,7 +168,7 @@ class SubjectHelperMixin:
             user_created='flourish')
         return caregiver_locator
 
-    def enroll_prior_participant(self, screening_identifier):
+    def enroll_prior_participant(self, screening_identifier, study_child_identifier=None):
 
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(
@@ -195,13 +195,14 @@ class SubjectHelperMixin:
             mommy.make_recipe(
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
+                study_child_identifier=study_child_identifier,
                 child_dob=maternal_dataset_obj.delivdt,)
 
             mommy.make_recipe(
                     'flourish_caregiver.caregiverpreviouslyenrolled')
             return subject_consent.subject_identifier
 
-    def enroll_prior_participant_assent(self, screening_identifier):
+    def enroll_prior_participant_assent(self, screening_identifier, study_child_identifier=None):
 
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(
@@ -227,6 +228,7 @@ class SubjectHelperMixin:
             caregiver_child_consent_obj = mommy.make_recipe(
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
+                study_child_identifier=study_child_identifier,
                 child_dob=maternal_dataset_obj.delivdt,)
 
             mommy.make_recipe(
