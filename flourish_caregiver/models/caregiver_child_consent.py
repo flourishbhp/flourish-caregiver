@@ -40,7 +40,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     study_child_identifier = models.CharField(
         verbose_name='Previous study identifier',
         max_length=50,
-        unique=True,
         null=True,
         blank=True)
 
