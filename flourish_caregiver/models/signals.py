@@ -125,10 +125,14 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             child_dummy_consent_cls = django_apps.get_model(
                 'flourish_child.childdummysubjectconsent')
 
+            children_count = 1 + child_dummy_consent_cls.objects.filter(
+                subject_identifier__startswith=instance.subject_consent.subject_identifier
+                ).exclude(identity=instance.identity,).count()
+
             child_age = age(instance.child_dob, get_utcnow()).years
             if child_age and child_age < 7:
                 if instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
-                    children_count = put_cohort_onschedule(cohort, instance)
+                    put_cohort_onschedule(cohort, instance)
 
                 try:
                     child_dummy_consent_obj = child_dummy_consent_cls.objects.get(
@@ -157,10 +161,11 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 except child_dummy_consent_cls.DoesNotExist:
                     pass
                 else:
-                    children_count = put_cohort_onschedule(cohort, instance)
+                    put_cohort_onschedule(cohort, instance)
 
+            if created:
+                instance.caregiver_visit_count = children_count
             instance.cohort = cohort
-            instance.caregiver_visit_count = children_count
             instance.save_base(raw=True)
 
 
@@ -170,7 +175,7 @@ def put_cohort_onschedule(cohort, instance):
         put_on_schedule(cohort, instance=instance)
     else:
         put_on_schedule((cohort + '_enrol'), instance=instance)
-        put_on_schedule((cohort + '_quarterly'), instance=instance)
+        return put_on_schedule((cohort + '_quarterly'), instance=instance)
         # put_on_schedule((cohort + '_fu' + str(children_count)),
                         # instance=instance, base_appt_datetime=django_apps.get_app_config(
                     # 'edc_protocol').study_open_datetime)
@@ -284,5 +289,3 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_da
             schedule.refresh_schedule(
                 subject_identifier=subject_identifier,
                 schedule_name=schedule_name)
-
-    return children_count

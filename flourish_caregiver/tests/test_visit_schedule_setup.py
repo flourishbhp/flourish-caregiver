@@ -109,7 +109,7 @@ class TestVisitScheduleSetup(TestCase):
             dob=get_utcnow() - relativedelta(years=2, months=5),
             **self.child_dataset_options)
 
-        mommy.make_recipe(
+        ccc2 = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=self.child_dataset_options['study_child_identifier'],
@@ -122,6 +122,8 @@ class TestVisitScheduleSetup(TestCase):
         self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_quarterly2_schedule1').count(), 1)
+
+        self.assertEqual(ccc2.caregiver_visit_count, 2)
 
     # def test_cohort_a_onschedule_birth_valid(self):
     #
@@ -678,13 +680,14 @@ class TestVisitScheduleSetup(TestCase):
             preg_efv=1,
             **self.maternal_dataset_options)
 
-        mommy.make_recipe(
+        child_dataset1 = mommy.make_recipe(
             'flourish_child.childdataset',
+            twin_triplet=0,
             dob=get_utcnow() - relativedelta(years=4, months=9),
             **self.child_dataset_options)
 
         self.child_dataset_options['study_child_identifier'] = '1235'
-        mommy.make_recipe(
+        child_dataset2 = mommy.make_recipe(
             'flourish_child.childdataset',
             dob=get_utcnow() - relativedelta(years=5, months=9),
             **self.child_dataset_options)
@@ -703,12 +706,13 @@ class TestVisitScheduleSetup(TestCase):
         child_consent = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
+            study_child_identifier=child_dataset1.study_child_identifier,
             child_dob=(get_utcnow() - relativedelta(years=4, months=9)).date(),)
 
         mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
-            study_child_identifier=self.child_dataset_options['study_child_identifier'],
+            study_child_identifier=child_dataset2.study_child_identifier,
             child_dob=(get_utcnow() - relativedelta(years=5, months=9)).date(),)
 
         self.assertEqual(SubjectScheduleHistory.objects.filter(
