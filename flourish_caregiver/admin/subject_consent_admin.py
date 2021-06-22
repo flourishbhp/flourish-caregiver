@@ -101,11 +101,12 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         dummy_consent = django_apps.get_model('flourish_child.childdummysubjectconsent')
 
         if request.GET.get('antenatal') == 'True':
-            if obj:
+            if obj and obj.subject_identifier:
                 self.max_num = dummy_consent.objects.filter(
                     subject_identifier__icontains=obj.subject_identifier).count()
                 try:
-                    maternal_delivery.objects.get(subject_identifier=obj.subject_identifier)
+                    maternal_delivery.objects.get(
+                        subject_identifier=obj.subject_identifier)
                 except maternal_delivery.DoesNotExist:
                     pass
                 else:
