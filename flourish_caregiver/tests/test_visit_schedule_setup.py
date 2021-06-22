@@ -46,7 +46,6 @@ class TestVisitScheduleSetup(TestCase):
             'study_maternal_identifier': self.study_maternal_identifier,
             'study_child_identifier': '1234'}
 
-    @tag('vs9')
     def test_cohort_a_onschedule_antenatal_valid(self):
         """Assert that a pregnant woman is put on cohort a schedule.
         """

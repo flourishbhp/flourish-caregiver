@@ -1,4 +1,5 @@
 from .antenatal_enrollment_admin import AntenatalEnrollmentAdmin
+from .appointment_admin import AppointmentAdmin
 from .arvs_pre_pregnancy_admin import ArvsPrePregnancyForm
 from .caregiver_clinical_measurements_admin import CaregiverClinicalMeasurementsAdmin
 from .caregiver_clinical_measurements_fu_admin import CaregiverClinicalMeasurementsFuAdmin
