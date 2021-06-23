@@ -40,7 +40,11 @@ class AppointmentAdmin(BaseAppointmentAdmin):
         latest_start = extra_context.get('latest_start')
 
         additional_instructions = mark_safe(
-            f'<b>Earliest Start Date: {earliest_start} <Latest Start Date: {latest_start}</b> <BR>'
+            '<div style="background-color: #f8f8f8;padding:10px;margin-top:10px;width:50%;'
+            'border:0.5px solid #f0f0f0">'
+            f'<p style="display:inline">Earliest Start Date: <b>{earliest_start}</b></p>'
+            f'<p style="display:inline;float:right">Latest Start Date: <b>{latest_start}</b></p>'
+            '</div> <BR>'
             'To start or continue to edit FORMS for this subject, change the '
             'appointment status below to "In Progress" and click SAVE. <BR>'
             '<i>Note: You may only edit one appointment at a time. '
