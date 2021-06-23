@@ -163,7 +163,7 @@ EXTRA_PULMONARY_LOC = (
     ('lymph_nodes', 'Lymph nodes'),
     ('abdomen', 'Abdomen '),
     ('bones', 'Bones '),
-    ('brain', 'Brrain'),
+    ('brain', 'Brain'),
     (UNKNOWN, 'Unknown'),
 )
 

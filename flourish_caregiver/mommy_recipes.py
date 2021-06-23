@@ -80,7 +80,7 @@ caregiverchildconsent = Recipe(
     subject_identifier=None,
     gender='M',
     child_test=YES,
-    child_dob=get_utcnow() - relativedelta(years=5),
+    child_dob=(get_utcnow() - relativedelta(years=3)).date(),
     child_remain_in_study=YES,
     child_preg_test=NOT_APPLICABLE,
     child_knows_status=YES,

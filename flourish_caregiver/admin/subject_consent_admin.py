@@ -1,7 +1,14 @@
+import datetime
+import uuid
+import xlwt
+
 from django.apps import apps as django_apps
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 from edc_consent.actions import (
     flag_as_verified_against_paper, unflag_as_verified_against_paper)
@@ -94,11 +101,12 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         dummy_consent = django_apps.get_model('flourish_child.childdummysubjectconsent')
 
         if request.GET.get('antenatal') == 'True':
-            if obj:
+            if obj and obj.subject_identifier:
                 self.max_num = dummy_consent.objects.filter(
                     subject_identifier__icontains=obj.subject_identifier).count()
                 try:
-                    maternal_delivery.objects.get(subject_identifier=obj.subject_identifier)
+                    maternal_delivery.objects.get(
+                        subject_identifier=obj.subject_identifier)
                 except maternal_delivery.DoesNotExist:
                     pass
                 else:
@@ -328,6 +336,61 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         return super(CaregiverChildConsentAdmin, self).render_change_form(
             request, context, *args, **kwargs)
 
+    def export_as_csv(self, request, queryset):
+        queryset = queryset.defer('site_id', 'initials', 'dob',
+                                  'is_dob_estimated', 'guardian_name',
+                                  'subject_type', 'consent_reviewed',
+                                  'study_questions', 'assessment_score',
+                                  'consent_signature', 'consent_copy')
+
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
+            self.get_export_filename())
+
+        wb = xlwt.Workbook(encoding='utf-8', style_compression=2)
+        ws = wb.add_sheet('%s')
+
+        row_num = 0
+
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+        font_style.num_format_str = 'YYYY/MM/DD h:mm:ss'
+
+        field_names = queryset[0].__dict__
+        field_names = [a for a in field_names.keys()]
+        field_names.remove('_state')
+
+        field_names.append('protocol')
+        field_names.append('study_maternal_identifier')
+
+        for col_num in range(len(field_names)):
+            ws.write(row_num, col_num, field_names[col_num], font_style)
+
+        for obj in queryset:
+            obj_data = obj.__dict__
+            maternal_dataset_qs = self.related_maternal_dataset(
+                identifier=obj_data['study_child_identifier'])
+            extra_data = {}
+            if maternal_dataset_qs:
+                extra_data = maternal_dataset_qs.__dict__
+            data = [obj_data[field] if field not in ['protocol', 'study_maternal_identifier']
+                    else extra_data.get(field, '') for field in field_names]
+
+            row_num += 1
+            for col_num in range(len(data)):
+                if isinstance(data[col_num], uuid.UUID):
+                    ws.write(row_num, col_num, str(data[col_num]))
+                elif isinstance(data[col_num], datetime.datetime):
+                    data[col_num] = timezone.make_naive(data[col_num])
+                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(num_format_str='YYYY/MM/DD h:mm:ss'))
+                else:
+                    ws.write(row_num, col_num, data[col_num])
+        wb.save(response)
+        return response
+    export_as_csv.short_description = _(
+        'Export selected %(verbose_name_plural)s')
+    actions = [export_as_csv]
+
     def get_actions(self, request):
 
         super_actions = super().get_actions(request)
@@ -354,3 +417,29 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             super_actions.update(actions)
 
         return super_actions
+
+    def previous_study_dataset(self, identifier=None):
+        childdataset_cls = django_apps.get_model('flourish_child.childdataset')
+        try:
+            dataset_obj = childdataset_cls.objects.get(
+                study_child_identifier=identifier)
+        except childdataset_cls.DoesNotExist:
+            return None
+        else:
+            return dataset_obj
+
+    def related_maternal_dataset(self, identifier=None):
+        maternaldataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
+        childdataset = self.previous_study_dataset(identifier=identifier)
+        if childdataset:
+            maternal_identifier = childdataset.study_maternal_identifier
+            try:
+                dataset_obj = maternaldataset_cls.objects.only(
+                    'study_maternal_identifier', 'protocol').get(
+                    study_maternal_identifier=maternal_identifier)
+            except maternaldataset_cls.DoesNotExist:
+                return None
+            else:
+                return dataset_obj
+        return None

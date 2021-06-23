@@ -208,15 +208,23 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                         else:
                             child_identifier_postfix = '56'
             else:
-                children_count = 1 + caregiver_child_consent_cls.objects.filter(
-                    subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
-                        identity=self.identity).count()
-                child_identifier_postfix = str(children_count * 10)
+                children_count = caregiver_child_consent_cls.objects.filter(
+                    subject_identifier__startswith=self.subject_consent.subject_identifier).exclude(
+                        child_dob=self.child_dob,
+                        first_name=self.first_name).count()
+                if children_count:
+                    child_identifier_postfix = str((children_count + 5) * 10)
+                else:
+                    child_identifier_postfix = 10
         else:
-            children_count = 1 + caregiver_child_consent_cls.objects.filter(
-                    subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
-                        identity=self.identity).count()
-            child_identifier_postfix = str(children_count * 10)
+            children_count = caregiver_child_consent_cls.objects.filter(
+                    subject_identifier__startswith=self.subject_consent.subject_identifier).exclude(
+                        child_dob=self.child_dob,
+                        first_name=self.first_name).count()
+            if children_count:
+                child_identifier_postfix = str((children_count + 5) * 10)
+            else:
+                child_identifier_postfix = 10
         return child_identifier_postfix
 
     @property

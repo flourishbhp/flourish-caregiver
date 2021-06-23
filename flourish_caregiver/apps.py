@@ -10,7 +10,7 @@ class AppConfig(DjangoAppConfig):
     verbose_name = 'Flourish Caregiver'
     admin_site_name = 'flourish_caregiver_admin'
     start_date_year_3 = datetime(
-            2022, 11, 1, 0, 0, 0, tzinfo=gettz('UTC')).date()
+            2022, 8, 14, 0, 0, 0, tzinfo=gettz('UTC')).date()
 
     def ready(self):
         from .models import antenatal_enrollment_on_post_save
@@ -57,9 +57,9 @@ if settings.APP_NAME == 'flourish_caregiver':
         protocol_number = '142'
         protocol_title = ''
         study_open_datetime = datetime(
-            2020, 11, 1, 0, 0, 0, tzinfo=gettz('UTC'))
+            2020, 8, 14, 0, 0, 0, tzinfo=gettz('UTC'))
         study_close_datetime = datetime(
-            2025, 12, 1, 0, 0, 0, tzinfo=gettz('UTC'))
+            2025, 8, 13, 23, 59, 59, tzinfo=gettz('UTC'))
 
     class EdcTimepointAppConfig(BaseEdcTimepointAppConfig):
         timepoints = TimepointCollection(

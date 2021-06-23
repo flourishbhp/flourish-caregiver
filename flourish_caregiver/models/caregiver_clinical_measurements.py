@@ -19,7 +19,7 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         max_digits=5,
         decimal_places=2,
         verbose_name='Caregiver\'s weight? ',
-        validators=[MinValueValidator(30), MaxValueValidator(136), ],
+        validators=[MinValueValidator(30), MaxValueValidator(160), ],
         help_text='Measured in Kilograms (kg)')
 
     systolic_bp = models.IntegerField(

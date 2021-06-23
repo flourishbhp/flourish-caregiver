@@ -115,7 +115,7 @@ class TestInfantSubjectIdentifier(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=5, months=9)).date(),)
 
         self.assertTrue(first_child.subject_identifier.endswith('10'))
-        self.assertTrue(second_child.subject_identifier.endswith('20'))
+        self.assertTrue(second_child.subject_identifier.endswith('60'))
 
     def test_infant_subject_identifier_assent(self):
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(
