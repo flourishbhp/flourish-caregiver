@@ -72,6 +72,17 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 1)
 
+        enrollment_appt = Appointment.objects.get(
+            subject_identifier=subject_consent.subject_identifier,
+            visit_code='1000M')
+
+        first_quart = Appointment.objects.get(
+            subject_identifier=subject_consent.subject_identifier,
+            visit_code='2001M')
+
+        self.assertEqual((first_quart.timepoint_datetime.date() -
+                         enrollment_appt.timepoint_datetime.date()).days, relativedelta(months=3).days)
+
     def test_cohort_a_onschedule_antenatal_and_onsec_valid(self):
         """Assert that a pregnant woman is put on cohort a schedule.
         """
@@ -291,6 +302,42 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertGreater(Appointment.objects.filter(
             subject_identifier=subject_identifier).count(), 15)
+
+    @tag('lt10')
+    def test_cohort_b_lt10(self):
+        """Assert that a participant with a child who is less than 10 years old at beginning of 
+         year 3 goes into cohort b schedule.
+        """
+
+        self.subject_identifier = self.subject_identifier[:-1] + '2'
+        self.study_maternal_identifier = '981232'
+        self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
+                                                                                months=2)
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            subject_identifier=self.subject_identifier,
+            preg_efv=1,
+            **self.maternal_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            dob=get_utcnow() - relativedelta(years=8, months=8),
+            **self.child_dataset_options)
+
+        sh = SubjectHelperMixin()
+
+        subject_identifier = sh.enroll_prior_participant(
+            maternal_dataset_obj.screening_identifier,
+            study_child_identifier=self.child_dataset_options['study_child_identifier'])
+
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_enrol1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_quarterly1_schedule1').count(), 1)
 
     def test_cohort_b_onschedule_sec(self):
         """Assert that a 5 year old participant's mother who is on efv regimen is NOT put on

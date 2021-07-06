@@ -25,8 +25,11 @@ class AppointmentAdmin(BaseAppointmentAdmin):
         latest_start = (app_obj.timepoint_opened_datetime +
                         app_obj.visits.get(app_obj.visit_code).rupper)
 
+        ideal_start = app_obj.timepoint_opened_datetime
+
         extra_context.update({'earliest_start': earliest_start.strftime("%Y/%d/%m, %H:%M:%S"),
-                              'latest_start': latest_start.strftime("%Y/%d/%m, %H:%M:%S"), })
+                              'latest_start': latest_start.strftime("%Y/%d/%m, %H:%M:%S"),
+                              'ideal_start': ideal_start.strftime("%Y/%d/%m, %H:%M:%S"), })
 
         return super().change_view(
             request, object_id, form_url=form_url, extra_context=extra_context)
@@ -38,13 +41,15 @@ class AppointmentAdmin(BaseAppointmentAdmin):
 
         earliest_start = extra_context.get('earliest_start')
         latest_start = extra_context.get('latest_start')
+        ideal_start = extra_context.get('ideal_start')
 
         additional_instructions = mark_safe(
-            '<div style="background-color: #f8f8f8;padding:10px;margin-top:10px;width:50%;'
-            'border:0.5px solid #f0f0f0">'
-            f'<p style="display:inline">Earliest Start Date: <b>{earliest_start}</b></p>'
-            f'<p style="display:inline;float:right">Latest Start Date: <b>{latest_start}</b></p>'
-            '</div> <BR>'
+            '<table style="background-color: #f8f8f8;padding:10px;margin-top:10px;width:60%;'
+            'border:0.5px solid #f0f0f0"><tr>'
+            f'<td colspan="3">Earliest Start: <b>{earliest_start}</b></td>'
+            f'<td colspan="3">Ideal Start: <b>{ideal_start}</b></td>'
+            f'<td colspan="3">Latest Start: <b>{latest_start}</b></td>'
+            '</table></tr> <BR>'
             'To start or continue to edit FORMS for this subject, change the '
             'appointment status below to "In Progress" and click SAVE. <BR>'
             '<i>Note: You may only edit one appointment at a time. '
