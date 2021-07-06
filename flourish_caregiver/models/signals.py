@@ -95,8 +95,6 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     if not raw and instance.is_eligible:
         put_on_schedule('cohort_a_antenatal', instance=instance,
                         subject_identifier=instance.subject_identifier)
-        put_on_schedule('cohort_a_quarterly', instance=instance,
-                        subject_identifier=instance.subject_identifier)
 
 # @receiver(post_save, weak=False, sender=MaternalDelivery,
           # dispatch_uid='maternal_delivery_on_post_save')
