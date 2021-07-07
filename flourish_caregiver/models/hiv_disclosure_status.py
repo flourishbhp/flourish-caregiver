@@ -7,7 +7,7 @@ from .model_mixins import CrfModelMixin
 from ..choices import REASONS_NOT_DISCLOSED
 
 
-class HIVDisclosureStatus(CrfModelMixin):
+class HIVDisclosureStatusMixin(CrfModelMixin):
 
     disclosed_status = models.CharField(
         verbose_name='Have you disclosed your HIV status to your child?',
@@ -33,6 +33,36 @@ class HIVDisclosureStatus(CrfModelMixin):
     reason_not_disclosed_other = OtherCharField()
 
     class Meta(CrfModelMixin.Meta):
+        abstract = True
+
+
+class HIVDisclosureStatusA(HIVDisclosureStatusMixin):
+
+    class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'HIV Disclosure status'
-        verbose_name_plural = 'HIV Disclosure status'
+        verbose_name = 'HIV Disclosure status A'
+        verbose_name_plural = 'HIV Disclosure statusA'
+
+
+class HIVDisclosureStatusB(HIVDisclosureStatusMixin):
+
+    class Meta(CrfModelMixin.Meta):
+        app_label = 'flourish_caregiver'
+        verbose_name = 'HIV Disclosure statusB'
+        verbose_name_plural = 'HIV Disclosure statusB'
+
+
+class HIVDisclosureStatusC(HIVDisclosureStatusMixin):
+
+    class Meta(CrfModelMixin.Meta):
+        app_label = 'flourish_caregiver'
+        verbose_name = 'HIV Disclosure statusC'
+        verbose_name_plural = 'HIV Disclosure statusC'
+
+
+class HIVDisclosureStatusD(HIVDisclosureStatusMixin):
+
+    class Meta(CrfModelMixin.Meta):
+        app_label = 'flourish_caregiver'
+        verbose_name = 'HIV Disclosure statusD'
+        verbose_name_plural = 'HIV Disclosure statusD'
