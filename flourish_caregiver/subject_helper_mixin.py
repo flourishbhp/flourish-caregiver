@@ -168,7 +168,7 @@ class SubjectHelperMixin:
             user_created='flourish')
         return caregiver_locator
 
-    def enroll_prior_participant(self, screening_identifier, study_child_identifier=None):
+    def enroll_prior_participant(self, screening_identifier, study_child_identifier):
 
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(

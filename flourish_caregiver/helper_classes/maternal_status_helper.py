@@ -25,12 +25,13 @@ class MaternalStatusHelper(object):
                     rapid_test_result = rapid_test_result_cls.objects.get(
                         maternal_visit=visit)
                 except rapid_test_result_cls.DoesNotExist:
-                    return self.enrollment_hiv_status
+                    pass
                 else:
                     status = self._evaluate_status_from_rapid_tests(
                         (rapid_test_result, 'result', 'result_date'))
                     if status in [POS, NEG, UNK, IND]:
                         return status
+            return self.enrollment_hiv_status
 
         # If we have exhausted all visits without a concrete status then use
         # enrollment.
@@ -122,8 +123,7 @@ class MaternalStatusHelper(object):
         else:
             three_month_back = latest_visit.report_datetime.date() - relativedelta(months=3)
             if latest_interim_idcc.recent_cd4_date:
-                if (three_month_back
-                    > latest_interim_idcc.recent_cd4_date
+                if (three_month_back > latest_interim_idcc.recent_cd4_date
                         and self.hiv_status == POS):
                     return True
                 else:

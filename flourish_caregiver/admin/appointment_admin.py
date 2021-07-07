@@ -4,6 +4,7 @@ from edc_appointment.admin import AppointmentAdmin as BaseAppointmentAdmin
 from edc_appointment.admin_site import edc_appointment_admin
 from edc_appointment.models import Appointment
 from django.contrib.admin.sites import NotRegistered
+from ..forms import AppointmentForm
 
 try:
     edc_appointment_admin.unregister(Appointment)
@@ -13,6 +14,8 @@ except NotRegistered:
 
 @admin.register(Appointment, site=edc_appointment_admin)
 class AppointmentAdmin(BaseAppointmentAdmin):
+
+    form = AppointmentForm
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
 
@@ -27,9 +30,9 @@ class AppointmentAdmin(BaseAppointmentAdmin):
 
         ideal_start = app_obj.timepoint_opened_datetime
 
-        extra_context.update({'earliest_start': earliest_start.strftime("%Y/%d/%m, %H:%M:%S"),
-                              'latest_start': latest_start.strftime("%Y/%d/%m, %H:%M:%S"),
-                              'ideal_start': ideal_start.strftime("%Y/%d/%m, %H:%M:%S"), })
+        extra_context.update({'earliest_start': earliest_start.strftime("%Y-%m-%d, %H:%M:%S"),
+                              'latest_start': latest_start.strftime("%Y-%m-%d, %H:%M:%S"),
+                              'ideal_start': ideal_start.strftime("%Y-%m-%d, %H:%M:%S"), })
 
         return super().change_view(
             request, object_id, form_url=form_url, extra_context=extra_context)
