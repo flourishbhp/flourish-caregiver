@@ -22,13 +22,13 @@ class AppointmentAdmin(BaseAppointmentAdmin):
         extra_context = extra_context or {}
         app_obj = Appointment.objects.get(id=object_id)
 
-        earliest_start = (app_obj.timepoint_opened_datetime -
+        earliest_start = (app_obj.timepoint_datetime -
                           app_obj.visits.get(app_obj.visit_code).rlower)
 
-        latest_start = (app_obj.timepoint_opened_datetime +
+        latest_start = (app_obj.timepoint_datetime +
                         app_obj.visits.get(app_obj.visit_code).rupper)
 
-        ideal_start = app_obj.timepoint_opened_datetime
+        ideal_start = app_obj.timepoint_datetime
 
         extra_context.update({'earliest_start': earliest_start.strftime("%Y-%m-%d, %H:%M:%S"),
                               'latest_start': latest_start.strftime("%Y-%m-%d, %H:%M:%S"),

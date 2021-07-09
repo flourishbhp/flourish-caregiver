@@ -21,10 +21,10 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
 
             visit_definition = self.instance.visits.get(self.instance.visit_code)
 
-            earliest_appt_date = (self.instance.timepoint_opened_datetime -
+            earliest_appt_date = (self.instance.timepoint_datetime -
                                   visit_definition.rlower).astimezone(
                                       pytz.timezone('Africa/Gaborone'))
-            latest_appt_date = (self.instance.timepoint_opened_datetime +
+            latest_appt_date = (self.instance.timepoint_datetime +
                                 visit_definition.rupper).astimezone(
                                       pytz.timezone('Africa/Gaborone'))
 

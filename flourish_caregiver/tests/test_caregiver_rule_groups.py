@@ -13,6 +13,7 @@ from ..models import MaternalVisit
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
+@tag('rg')
 class TestRuleGroups(TestCase):
 
     def setUp(self):
@@ -39,7 +40,7 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2000M'),
+            appointment=Appointment.objects.get(visit_code='1000M'),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
@@ -48,7 +49,7 @@ class TestRuleGroups(TestCase):
             CrfMetadata.objects.get(
                 model='flourish_caregiver.hivviralloadandcd4',
                 subject_identifier=self.subject_identifier,
-                visit_code='2000M',
+                visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
     def test_arvsprepregnancy_required_cohort_a(self):
@@ -56,7 +57,7 @@ class TestRuleGroups(TestCase):
             CrfMetadata.objects.get(
                 model='flourish_caregiver.arvsprepregnancy',
                 subject_identifier=self.subject_identifier,
-                visit_code='2000M',
+                visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
     def test_arvsduringpregnancy_required_cohort_a(self):
@@ -64,7 +65,7 @@ class TestRuleGroups(TestCase):
             CrfMetadata.objects.get(
                 model='flourish_caregiver.maternalarvduringpreg',
                 subject_identifier=self.subject_identifier,
-                visit_code='2000M',
+                visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
     def test_caregiverphqdeprscreening_required_cohort_a(self):
@@ -72,7 +73,7 @@ class TestRuleGroups(TestCase):
             CrfMetadata.objects.get(
                 model='flourish_caregiver.caregiverphqdeprscreening',
                 subject_identifier=self.subject_identifier,
-                visit_code='2000M',
+                visit_code='1000M',
                 visit_code_sequence='0').entry_status, NOT_REQUIRED)
 
     def test_caregiveredinburghdeprscreening_required_cohort_a(self):
@@ -80,7 +81,7 @@ class TestRuleGroups(TestCase):
             CrfMetadata.objects.get(
                 model='flourish_caregiver.caregiveredinburghdeprscreening',
                 subject_identifier=self.subject_identifier,
-                visit_code='2000M',
+                visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
     def test_ultrasound_required_cohort_a(self):
@@ -88,40 +89,40 @@ class TestRuleGroups(TestCase):
             CrfMetadata.objects.get(
                 model='flourish_caregiver.ultrasound',
                 subject_identifier=self.subject_identifier,
-                visit_code='2000M',
+                visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
     def test_gad_scoregte_10_referral_required(self):
-        visit = MaternalVisit.objects.get(visit_code='2000M')
+        visit = MaternalVisit.objects.get(visit_code='1000M')
         mommy.make_recipe('flourish_caregiver.gadanxietyscreening',
                           maternal_visit=visit)
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.caregivergadreferral',
                 subject_identifier=self.subject_identifier,
-                visit_code='2000M').entry_status, REQUIRED)
+                visit_code='1000M').entry_status, REQUIRED)
 
     def test_phq9gte_5_referral_required(self):
-        visit = MaternalVisit.objects.get(visit_code='2000M')
+        visit = MaternalVisit.objects.get(visit_code='1000M')
         mommy.make_recipe('flourish_caregiver.caregiverphqdeprscreening',
                           maternal_visit=visit)
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.caregiverphqreferral',
                 subject_identifier=self.subject_identifier,
-                visit_code='2000M').entry_status, REQUIRED)
+                visit_code='1000M').entry_status, REQUIRED)
 
     def test_edingte_10_referral_required(self):
-        visit = MaternalVisit.objects.get(visit_code='2000M')
+        visit = MaternalVisit.objects.get(visit_code='1000M')
         mommy.make_recipe('flourish_caregiver.caregiveredinburghdeprscreening',
                           maternal_visit=visit)
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.caregiveredinburghreferral',
                 subject_identifier=self.subject_identifier,
-                visit_code='2000M').entry_status, REQUIRED)
+                visit_code='1000M').entry_status, REQUIRED)
 
-    @tag('hdsc')
+    @tag('hdsc1')
     def test_hiv_disclosure_metadata_required(self):
         self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=15),
@@ -161,7 +162,7 @@ class TestRuleGroups(TestCase):
 
         self.assertEqual(
             CrfMetadata.objects.get(
-                model='flourish_caregiver.hivdisclosurestatus',
+                model='flourish_caregiver.hivdisclosurestatusa',
                 subject_identifier=subject_identifier,
                 visit_code='2000M').entry_status, REQUIRED)
 
@@ -206,6 +207,6 @@ class TestRuleGroups(TestCase):
 
         self.assertEqual(
             CrfMetadata.objects.get(
-                model='flourish_caregiver.hivdisclosurestatus',
+                model='flourish_caregiver.hivdisclosurestatusa',
                 subject_identifier=subject_identifier,
                 visit_code='2000M').entry_status, NOT_REQUIRED)
