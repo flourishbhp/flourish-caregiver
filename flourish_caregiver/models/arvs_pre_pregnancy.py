@@ -35,9 +35,7 @@ class ArvsPrePregnancy(CrfModelMixin):
     art_start_date = models.DateField(
         validators=[
             date_not_future, ],
-        verbose_name="Date of triple antiretrovirals first started",
-        blank=True,
-        null=True)
+        verbose_name="Date of triple antiretrovirals first started")
 
     is_date_estimated = IsDateEstimatedFieldNa(
         verbose_name=("Is the subject's date of triple antiretrovirals estimated?"))
