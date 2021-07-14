@@ -202,7 +202,8 @@ class SubjectHelperMixin:
                     'flourish_caregiver.caregiverpreviouslyenrolled')
             return subject_consent.subject_identifier
 
-    def enroll_prior_participant_assent(self, screening_identifier, study_child_identifier=None):
+    def enroll_prior_participant_assent(self, screening_identifier, study_child_identifier,
+                                        consent_datetime=None):
 
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(
@@ -211,7 +212,7 @@ class SubjectHelperMixin:
             pass
         else:
             self.options = {
-                'consent_datetime': get_utcnow(),
+                'consent_datetime': consent_datetime or get_utcnow(),
                 'version': '1'}
 
             mommy.make_recipe(

@@ -114,10 +114,12 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
     """
     - Put subject on cohort a schedule after consenting on behalf of child.
     """
+
     if not raw and instance.is_eligible:
 
         cohort = cohort_assigned(instance.study_child_identifier,
                                  instance.child_dob)
+
         if cohort:
             children_count = instance.caregiver_visit_count
             child_dummy_consent_cls = django_apps.get_model(
@@ -128,7 +130,9 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 ).exclude(identity=instance.identity,).count()
 
             child_age = age(instance.child_dob, get_utcnow()).years
+
             if child_age and child_age < 7:
+
                 if instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
                     put_cohort_onschedule(cohort, instance)
 
@@ -143,6 +147,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                             subject_identifier=instance.subject_identifier,
                             consent_datetime=instance.consent_datetime,
                             identity=instance.identity,
+                            dob=instance.child_dob,
                             version=instance.subject_consent.version,
                             cohort=cohort)
                 else:
@@ -151,6 +156,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         child_dummy_consent_obj.save()
 
             elif instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
+
                 try:
                     child_dummy_consent_cls.objects.get(
                                 subject_identifier=instance.subject_identifier,
@@ -274,7 +280,6 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_da
                 onschedule_datetime=assent_onschedule_datetime or instance.created,
                 schedule_name=schedule_name,
                 base_appt_datetime=base_appt_datetime)
-            # import pdb; pdb.set_trace()
 
             onschedule_obj = schedule.onschedule_model_cls.objects.get(
                 subject_identifier=subject_identifier,
