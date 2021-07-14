@@ -1,5 +1,6 @@
 import pytz
 from dateutil.relativedelta import relativedelta
+from django.apps import apps as django_apps
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES, NOT_APPLICABLE
@@ -90,16 +91,50 @@ class TestVisitScheduleSetup(TestCase):
         self.assertGreater(Appointment.objects.filter(
             subject_identifier=subject_identifier).count(), 15)
 
+    @tag('vs3')
+    def test_cohort_b_assent_invalid(self):
+        """Assert that a 6 year old whose birthday is within the enrolment month does not get
+         served the assent form.
+        """
+
+        self.subject_identifier = self.subject_identifier[:-1] + '2'
+        self.study_maternal_identifier = '981232'
+        self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=6,
+                                                                                months=11,
+                                                                                days=25)
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            subject_identifier=self.subject_identifier,
+            preg_efv=1,
+            **self.maternal_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            dob=get_utcnow() - relativedelta(years=5, months=2),
+            **self.child_dataset_options)
+
+        sh = SubjectHelperMixin()
+
+        subject_identifier = sh.enroll_prior_participant(
+            maternal_dataset_obj.screening_identifier,
+            study_child_identifier=self.child_dataset_options['study_child_identifier'])
+
+        child_assent_model = django_apps.get_model('flourish_child.childassent')
+
+        self.assertEqual(child_assent_model.objects.get(
+            subject_identifier__startswith=subject_identifier).count(), 0)
+
     @tag('lt10')
     def test_cohort_b_lt10(self):
-        """Assert that a participant with a child who is less than 10 years old at beginning of 
+        """Assert that a participant with a child who is less than 10 years old at beginning of
          year 3 goes into cohort b schedule.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=8,
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7,
                                                                                 months=8)
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -109,7 +144,7 @@ class TestVisitScheduleSetup(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=get_utcnow() - relativedelta(years=8, months=8),
+            dob=get_utcnow() - relativedelta(years=7, months=8),
             **self.child_dataset_options)
 
         sh = SubjectHelperMixin()

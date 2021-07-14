@@ -1,6 +1,6 @@
 import re
 from django.apps import apps as django_apps
-
+from edc_base.utils import age
 from flourish_child.models import ChildDataset
 from ..models.subject_consent import SubjectConsent
 from ..models.maternal_dataset import MaternalDataset
@@ -37,32 +37,11 @@ class Cohort:
         child_dob = child_dob or self.child_dob
         check_date = check_date or self.enrollment_date
 
-        current_date = check_date
-        current_month = check_date.month
-        current_year = check_date.year
-        birth_date = child_dob
-        birth_month = child_dob.month
-        birth_year = child_dob.year
+        child_age = age(child_dob, check_date)
 
-        month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-        if (birth_date > current_date):
-            current_month = current_month - 1
-            current_date = current_date + month[birth_month - 1]
-
-        # if birth month exceeds current month, then
-        # donot count this year and add 12 to the
-        # month so that we can subtract and find out
-        # the difference
-        if (birth_month > current_month):
-            current_year = current_year - 1
-            current_month = current_month + 12
-
-        # calculate date, month, year
-        calculated_month = current_month - birth_month
-        calculated_year = current_year - birth_year
-
-        age = str(calculated_year) + '.' + str(calculated_month)
-        return float(re.search(r'\d+.\d+', age).group())
+        child_age = str(child_age.years) + '.' + str(child_age.months)
+        print(child_age)
+        return float(re.search(r'\d+.\d+', child_age).group())
 
     @property
     def hiv_exposed_uninfected(self):
