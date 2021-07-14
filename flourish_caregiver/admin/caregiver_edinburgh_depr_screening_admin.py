@@ -27,6 +27,7 @@ class CaregiverEdinburghDeprScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin)
                 'miserable_feeling',
                 'unhappy',
                 'self_harm',
+                'depression_score'
             ]}
          ), audit_fieldset_tuple)
 
@@ -39,4 +40,8 @@ class CaregiverEdinburghDeprScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin)
                     'sleeping_difficulty': admin.VERTICAL,
                     'miserable_feeling': admin.VERTICAL,
                     'unhappy': admin.VERTICAL,
-                    'self_harm': admin.VERTICAL,}
+                    'self_harm': admin.VERTICAL, }
+
+    def get_readonly_fields(self, request, obj=None):
+        fields = super().get_readonly_fields(request, obj)
+        return ('depression_score', ) + fields
