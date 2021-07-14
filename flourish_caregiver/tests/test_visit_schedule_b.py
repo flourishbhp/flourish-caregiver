@@ -122,7 +122,7 @@ class TestVisitScheduleSetup(TestCase):
 
         child_assent_model = django_apps.get_model('flourish_child.childassent')
 
-        self.assertEqual(child_assent_model.objects.get(
+        self.assertEqual(child_assent_model.objects.filter(
             subject_identifier__startswith=subject_identifier).count(), 0)
 
     @tag('lt10')
