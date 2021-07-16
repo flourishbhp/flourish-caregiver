@@ -1,8 +1,9 @@
 from dateutil.relativedelta import relativedelta
+from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
-
-from edc_constants.constants import POS, NEG, UNK, IND, NO
+from edc_constants.constants import POS, NEG, UNK, IND
+from .enrollment_helper import EnrollmentHelper
 
 
 class MaternalStatusHelper(object):
@@ -89,9 +90,15 @@ class MaternalStatusHelper(object):
                     subject_identifier=self.subject_identifier)
             except antenatal_enrollment_cls.DoesNotExist:
                 # To refactor to include new enrollees
-                return None
+                return UNK
             else:
-                return antenatal_enrollment.current_hiv_status
+                enrollment_helper = EnrollmentHelper(
+                    instance_antenatal=antenatal_enrollment,
+                    exception_cls=forms.ValidationError)
+                try:
+                    enrollment_helper.enrollment_hiv_status
+                except ValidationError:
+                    return UNK
         else:
             if previous_enrollment.current_hiv_status is not None:
                 return previous_enrollment.current_hiv_status

@@ -13,7 +13,7 @@ from .caregiver_locator import CaregiverLocator
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from flourish_follow.models import WorkList
-# from .maternal_delivery import MaternalDelivery
+from .maternal_delivery import MaternalDelivery
 # from flourish_caregiver.models.subject_consent import SubjectConsent
 
 
@@ -96,16 +96,19 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
         put_on_schedule('cohort_a_antenatal', instance=instance,
                         subject_identifier=instance.subject_identifier)
 
-# @receiver(post_save, weak=False, sender=MaternalDelivery,
-          # dispatch_uid='maternal_delivery_on_post_save')
-# def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
-    # """
-    # - Put new born child on schedule
-    # """
-    # if not raw:
-        # if created and instance.live_infants_to_register == 1:
-        #
-            # pass
+
+@receiver(post_save, weak=False, sender=MaternalDelivery,
+          dispatch_uid='maternal_delivery_on_post_save')
+def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
+    """
+    - Put new born child on schedule
+    """
+    if not raw:
+        if created and instance.live_infants_to_register == 1:
+            put_on_schedule('cohort_a_birth', instance=instance,
+                            subject_identifier=instance.subject_identifier)
+            put_on_schedule('cohort_a_quarterly', instance=instance,
+                            subject_identifier=instance.subject_identifier)
 
 
 @receiver(post_save, weak=False, sender=CaregiverChildConsent,
