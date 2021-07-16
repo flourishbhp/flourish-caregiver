@@ -40,7 +40,6 @@ class Cohort:
         child_age = age(child_dob, check_date)
 
         child_age = str(child_age.years) + '.' + str(child_age.months)
-        print(child_age)
         return float(re.search(r'\d+.\d+', child_age).group())
 
     @property
