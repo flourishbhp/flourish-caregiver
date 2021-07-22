@@ -32,7 +32,6 @@ class MaternalStatusHelper(object):
                         (rapid_test_result, 'result', 'result_date'))
                     if status in [POS, NEG, UNK, IND]:
                         return status
-            return self.enrollment_hiv_status
 
         # If we have exhausted all visits without a concrete status then use
         # enrollment.
@@ -54,6 +53,8 @@ class MaternalStatusHelper(object):
                 if status in [POS, NEG, UNK]:
                     return status
             return status
+
+        return self.enrollment_hiv_status
 
     @property
     def subject_consent(self):
