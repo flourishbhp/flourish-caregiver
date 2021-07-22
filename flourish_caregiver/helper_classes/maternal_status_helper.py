@@ -1,8 +1,9 @@
 from dateutil.relativedelta import relativedelta
+from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
-
-from edc_constants.constants import POS, NEG, UNK, IND, NO
+from edc_constants.constants import POS, NEG, UNK, IND
+from .enrollment_helper import EnrollmentHelper
 
 
 class MaternalStatusHelper(object):
@@ -31,7 +32,6 @@ class MaternalStatusHelper(object):
                         (rapid_test_result, 'result', 'result_date'))
                     if status in [POS, NEG, UNK, IND]:
                         return status
-            return self.enrollment_hiv_status
 
         # If we have exhausted all visits without a concrete status then use
         # enrollment.
@@ -53,6 +53,8 @@ class MaternalStatusHelper(object):
                 if status in [POS, NEG, UNK]:
                     return status
             return status
+
+        return self.enrollment_hiv_status
 
     @property
     def subject_consent(self):
@@ -89,9 +91,15 @@ class MaternalStatusHelper(object):
                     subject_identifier=self.subject_identifier)
             except antenatal_enrollment_cls.DoesNotExist:
                 # To refactor to include new enrollees
-                return None
+                return UNK
             else:
-                return antenatal_enrollment.current_hiv_status
+                enrollment_helper = EnrollmentHelper(
+                    instance_antenatal=antenatal_enrollment,
+                    exception_cls=forms.ValidationError)
+                try:
+                    enrollment_helper.enrollment_hiv_status
+                except ValidationError:
+                    return UNK
         else:
             if previous_enrollment.current_hiv_status is not None:
                 return previous_enrollment.current_hiv_status

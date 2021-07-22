@@ -153,7 +153,7 @@ class TestCohort(TestCase):
 
     def test_efv(self):
         cohort = Cohort(
-            child_dob=date.today() - relativedelta(years=10, months=7),
+            child_dob=date.today() - relativedelta(years=8, months=8),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
             mum_hiv_status='HIV uninfected',
