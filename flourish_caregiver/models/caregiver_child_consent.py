@@ -154,7 +154,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         self.ineligibility = eligibility_criteria.error_message
         self.child_age_at_enrollment = (
             self.get_child_age_at_enrollment() if self.child_dob else None)
-        if self.is_eligible and not self.id:
+        if self.is_eligible and not self.subject_identifier:
             self.subject_identifier = InfantIdentifier(
                 maternal_identifier=self.subject_consent.subject_identifier,
                 birth_order=self.birth_order,

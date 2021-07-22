@@ -27,7 +27,7 @@ from .socio_demographic_data_admin import SocioDemographicDataAdmin
 from .subject_consent_admin import SubjectConsentAdmin, CaregiverChildConsentAdmin
 from .substance_use_during_preg_admin import SubstanceUseDuringPregnancyAdmin
 from .substance_use_prior_preg_admin import SubstanceUsePriorPregnancyAdmin
-from .maternal_arv_during_preg_admin import MaternalArvInlineAdmin
+from .maternal_arv_during_preg_admin import MaternalArvDuringPregAdmin
 from .maternal_diagnoses_admin import MaternalDiagnosesAdmin
 from .maternal_dataset_admin import MaternalDatasetAdmin
 from .maternal_delivery_admin import MaternalDeliveryAdmin
