@@ -97,7 +97,7 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         choices=YES_NO,
         verbose_name=mark_safe(
             'Has the participant given his/her permission for study staff <b>to '
-            'make home visits</b> for follow-up purposes during the study??'))
+            'make home visits</b> for follow-up purposes during the study?'))
 
     has_caretaker = models.CharField(
         verbose_name=(
