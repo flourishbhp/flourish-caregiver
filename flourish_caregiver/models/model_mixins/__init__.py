@@ -1,4 +1,5 @@
 from .crf_model_mixin import CrfModelMixin
+from .consent_version_model_mixin import ConsentVersionModelModelMixin
 from .referral_form_mixin import ReferralFormMixin
 from .review_fields_mixin import ReviewFieldsMixin
 from .search_slug_model_mixin import SearchSlugModelMixin
