@@ -199,7 +199,8 @@ class SubjectHelperMixin:
                 child_dob=maternal_dataset_obj.delivdt,)
 
             mommy.make_recipe(
-                    'flourish_caregiver.caregiverpreviouslyenrolled')
+                    'flourish_caregiver.caregiverpreviouslyenrolled',
+                    subject_identifier=subject_consent.subject_identifier)
             return subject_consent.subject_identifier
 
     def enroll_prior_participant_assent(self, screening_identifier, study_child_identifier,
@@ -244,6 +245,7 @@ class SubjectHelperMixin:
                 version=subject_consent.version)
 
             mommy.make_recipe(
-                    'flourish_caregiver.caregiverpreviouslyenrolled')
+                    'flourish_caregiver.caregiverpreviouslyenrolled',
+                    subject_identifier=subject_consent.subject_identifier)
 
             return subject_consent.subject_identifier
