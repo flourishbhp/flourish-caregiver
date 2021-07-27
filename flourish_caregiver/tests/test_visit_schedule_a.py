@@ -9,9 +9,10 @@ from edc_visit_schedule.models import SubjectScheduleHistory
 from edc_appointment.models import Appointment
 from ..models import OnScheduleCohortAAntenatal
 from ..models import OnScheduleCohortAEnrollment, OnScheduleCohortAQuarterly
+from flourish_caregiver.models.onschedule import OnScheduleCohortABirth
 
 
-@tag('vs')
+@tag('vsa')
 class TestVisitScheduleSetup(TestCase):
 
     databases = '__all__'
@@ -40,11 +41,10 @@ class TestVisitScheduleSetup(TestCase):
             'study_maternal_identifier': self.study_maternal_identifier,
             'study_child_identifier': '1234'}
 
-    @tag('hm')
+    @tag('aa')
     def test_cohort_a_onschedule_antenatal_valid(self):
         """Assert that a pregnant woman is put on cohort a schedule.
         """
-
         screening_preg = mommy.make_recipe(
             'flourish_caregiver.screeningpregwomen',)
 
@@ -62,13 +62,18 @@ class TestVisitScheduleSetup(TestCase):
         self.assertEqual(OnScheduleCohortAAntenatal.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_antenatal1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='a_quarterly1_schedule1').count(), 0)
 
         Appointment.objects.get(
             subject_identifier=subject_consent.subject_identifier,
             visit_code='1000M')
 
+    @tag('a1')
     def test_cohort_a_onschedule_antenatal_and_onsec_valid(self):
-        """Assert that a pregnant woman is put on cohort a schedule.
+        """Assert that a pregnant woman with a toddler is put on 2 seperate cohort a schedules
         """
 
         screening_preg = mommy.make_recipe(
@@ -89,6 +94,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_antenatal1_schedule1').count(), 1)
 
+        # Secondary Aims Data
         mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             subject_identifier=self.subject_identifier,
@@ -105,6 +111,10 @@ class TestVisitScheduleSetup(TestCase):
             study_child_identifier=self.child_dataset_options['study_child_identifier'],
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
 
+        mommy.make_recipe(
+                'flourish_caregiver.caregiverpreviouslyenrolled',
+                subject_identifier=subject_consent.subject_identifier)
+
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_enrol1_schedule1').count(), 1)
@@ -115,29 +125,33 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(ccc2.caregiver_visit_count, 2)
 
-    # def test_cohort_a_onschedule_birth_valid(self):
-    #
-        # screening_preg = mommy.make_recipe(
-            # 'flourish_caregiver.screeningpregwomen',)
-            #
-        # subject_consent = mommy.make_recipe(
-            # 'flourish_caregiver.subjectconsent',
-            # screening_identifier=screening_preg.screening_identifier,
-            # subject_identifier=self.subject_identifier,
-            # breastfeed_intent=YES,
-            # **self.options)
-            #
-        # mommy.make_recipe(
-            # 'flourish_caregiver.antenatalenrollment',
-            # subject_identifier=subject_consent.subject_identifier,)
-            #
-        # mommy.make_recipe(
-            # 'flourish_caregiver.maternaldelivery',
-            # subject_identifier=subject_consent.subject_identifier,)
-            #
-        # self.assertEqual(OnScheduleCohortABirth.objects.filter(
-            # subject_identifier=subject_consent.subject_identifier,
-            # schedule_name='a_birth1_schedule1').count(), 1)
+    def test_cohort_a_onschedule_birth_valid(self):
+
+        screening_preg = mommy.make_recipe(
+            'flourish_caregiver.screeningpregwomen',)
+
+        subject_consent = mommy.make_recipe(
+            'flourish_caregiver.subjectconsent',
+            screening_identifier=screening_preg.screening_identifier,
+            subject_identifier=self.subject_identifier,
+            breastfeed_intent=YES,
+            **self.options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.antenatalenrollment',
+            subject_identifier=subject_consent.subject_identifier,)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=subject_consent.subject_identifier,)
+
+        self.assertEqual(OnScheduleCohortABirth.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='a_birth1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
+            subject_identifier=subject_consent.subject_identifier,
+            schedule_name='a_quarterly1_schedule1').count(), 1)
 
     def test_cohort_a_onschedule_consent_valid(self):
         """Assert that a 2 year old participant's mother is put on cohort a schedule.
@@ -170,6 +184,10 @@ class TestVisitScheduleSetup(TestCase):
             subject_consent=subject_consent,
             study_child_identifier=self.child_dataset_options['study_child_identifier'],
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
+
+        mommy.make_recipe(
+                'flourish_caregiver.caregiverpreviouslyenrolled',
+                subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
@@ -214,6 +232,10 @@ class TestVisitScheduleSetup(TestCase):
             subject_consent=subject_consent,
             study_child_identifier=self.child_dataset_options['study_child_identifier'],
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
+
+        mommy.make_recipe(
+                'flourish_caregiver.caregiverpreviouslyenrolled',
+                subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
