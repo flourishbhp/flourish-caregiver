@@ -37,7 +37,7 @@ class HivViralLoadAndCd4(CrfModelMixin):
 
     recent_vl_results = models.IntegerField(
         verbose_name='Quantitative results of most recent Viral Load test',
-        validators=[MinValueValidator(10), MaxValueValidator(150000)],
+        validators=[MinValueValidator(10), MaxValueValidator(500000)],
         help_text='copies/ml',
         null=True, blank=True, )
 

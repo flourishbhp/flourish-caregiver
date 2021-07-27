@@ -1,12 +1,8 @@
-from django import forms
-
-# from td_maternal_validators.form_validators import MaternalArvFormValidator
-
 from ..models import MaternalArv
-from .form_mixins import SubjectModelFormMixin
+from .form_mixins import InlineSubjectModelFormMixin
 
 
-class MaternalArvForm(SubjectModelFormMixin):
+class MaternalArvForm(InlineSubjectModelFormMixin):
 
     # form_validator_cls = MaternalArvFormValidator
 

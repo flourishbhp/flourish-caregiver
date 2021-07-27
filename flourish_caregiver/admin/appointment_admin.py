@@ -4,6 +4,7 @@ from edc_appointment.admin import AppointmentAdmin as BaseAppointmentAdmin
 from edc_appointment.admin_site import edc_appointment_admin
 from edc_appointment.models import Appointment
 from django.contrib.admin.sites import NotRegistered
+from ..forms import AppointmentForm
 
 try:
     edc_appointment_admin.unregister(Appointment)
@@ -14,19 +15,24 @@ except NotRegistered:
 @admin.register(Appointment, site=edc_appointment_admin)
 class AppointmentAdmin(BaseAppointmentAdmin):
 
+    form = AppointmentForm
+
     def change_view(self, request, object_id, form_url='', extra_context=None):
 
         extra_context = extra_context or {}
         app_obj = Appointment.objects.get(id=object_id)
 
-        earliest_start = (app_obj.timepoint_opened_datetime -
+        earliest_start = (app_obj.timepoint_datetime -
                           app_obj.visits.get(app_obj.visit_code).rlower)
 
-        latest_start = (app_obj.timepoint_opened_datetime +
+        latest_start = (app_obj.timepoint_datetime +
                         app_obj.visits.get(app_obj.visit_code).rupper)
 
-        extra_context.update({'earliest_start': earliest_start.strftime("%Y/%d/%m, %H:%M:%S"),
-                              'latest_start': latest_start.strftime("%Y/%d/%m, %H:%M:%S"), })
+        ideal_start = app_obj.timepoint_datetime
+
+        extra_context.update({'earliest_start': earliest_start.strftime("%Y-%m-%d, %H:%M:%S"),
+                              'latest_start': latest_start.strftime("%Y-%m-%d, %H:%M:%S"),
+                              'ideal_start': ideal_start.strftime("%Y-%m-%d, %H:%M:%S"), })
 
         return super().change_view(
             request, object_id, form_url=form_url, extra_context=extra_context)
@@ -38,13 +44,15 @@ class AppointmentAdmin(BaseAppointmentAdmin):
 
         earliest_start = extra_context.get('earliest_start')
         latest_start = extra_context.get('latest_start')
+        ideal_start = extra_context.get('ideal_start')
 
         additional_instructions = mark_safe(
-            '<div style="background-color: #f8f8f8;padding:10px;margin-top:10px;width:50%;'
-            'border:0.5px solid #f0f0f0">'
-            f'<p style="display:inline">Earliest Start Date: <b>{earliest_start}</b></p>'
-            f'<p style="display:inline;float:right">Latest Start Date: <b>{latest_start}</b></p>'
-            '</div> <BR>'
+            '<table style="background-color: #f8f8f8;padding:10px;margin-top:10px;width:60%;'
+            'border:0.5px solid #f0f0f0"><tr>'
+            f'<td colspan="3">Earliest Start: <b>{earliest_start}</b></td>'
+            f'<td colspan="3">Ideal Start: <b>{ideal_start}</b></td>'
+            f'<td colspan="3">Latest Start: <b>{latest_start}</b></td>'
+            '</table></tr> <BR>'
             'To start or continue to edit FORMS for this subject, change the '
             'appointment status below to "In Progress" and click SAVE. <BR>'
             '<i>Note: You may only edit one appointment at a time. '

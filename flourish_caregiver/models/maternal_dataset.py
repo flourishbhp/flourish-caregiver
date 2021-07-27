@@ -3,9 +3,16 @@ from django_crypto_fields.fields import FirstnameField, LastnameField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
-
+from edc_search.model_mixins import SearchSlugManager
 from ..identifiers import ScreeningIdentifier
 from .model_mixins import SearchSlugModelMixin
+
+
+class MaternalDatasetManager(SearchSlugManager, models.Manager):
+
+    def get_by_natural_key(self, study_maternal_identifier):
+        return self.get(
+            study_maternal_identifier=study_maternal_identifier)
 
 
 class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
@@ -187,6 +194,8 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
     on_worklist = models.BooleanField(
         default=False, blank=True, null=True)
 
+    objects = MaternalDatasetManager()
+
     def __str__(self):
         return self.study_maternal_identifier
 
@@ -199,6 +208,7 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
         fields = super().get_search_slug_fields()
         fields.append('screening_identifier')
         fields.append('study_maternal_identifier')
+        fields.append('first_name')
         return fields
 
     class Meta:

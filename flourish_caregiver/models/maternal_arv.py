@@ -48,7 +48,7 @@ class MaternalArv(BaseUuidModel):
         null=True)
 
     class Meta:
-        app_label = 'td_maternal'
+        app_label = 'flourish_caregiver'
         verbose_name = 'Maternal ARV'
         verbose_name_plural = 'Maternal ARV'
         unique_together = ('maternal_arv_durg_preg', 'arv_code', 'start_date')

@@ -1,8 +1,9 @@
 from dateutil.relativedelta import relativedelta
+from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
-
-from edc_constants.constants import POS, NEG, UNK, IND, NO
+from edc_constants.constants import POS, NEG, UNK, IND
+from .enrollment_helper import EnrollmentHelper
 
 
 class MaternalStatusHelper(object):
@@ -25,7 +26,7 @@ class MaternalStatusHelper(object):
                     rapid_test_result = rapid_test_result_cls.objects.get(
                         maternal_visit=visit)
                 except rapid_test_result_cls.DoesNotExist:
-                    return self.enrollment_hiv_status
+                    pass
                 else:
                     status = self._evaluate_status_from_rapid_tests(
                         (rapid_test_result, 'result', 'result_date'))
@@ -52,6 +53,8 @@ class MaternalStatusHelper(object):
                 if status in [POS, NEG, UNK]:
                     return status
             return status
+
+        return self.enrollment_hiv_status
 
     @property
     def subject_consent(self):
@@ -88,9 +91,15 @@ class MaternalStatusHelper(object):
                     subject_identifier=self.subject_identifier)
             except antenatal_enrollment_cls.DoesNotExist:
                 # To refactor to include new enrollees
-                return None
+                return UNK
             else:
-                return antenatal_enrollment.current_hiv_status
+                enrollment_helper = EnrollmentHelper(
+                    instance_antenatal=antenatal_enrollment,
+                    exception_cls=forms.ValidationError)
+                try:
+                    enrollment_helper.enrollment_hiv_status
+                except ValidationError:
+                    return UNK
         else:
             if previous_enrollment.current_hiv_status is not None:
                 return previous_enrollment.current_hiv_status
@@ -122,8 +131,7 @@ class MaternalStatusHelper(object):
         else:
             three_month_back = latest_visit.report_datetime.date() - relativedelta(months=3)
             if latest_interim_idcc.recent_cd4_date:
-                if (three_month_back
-                    > latest_interim_idcc.recent_cd4_date
+                if (three_month_back > latest_interim_idcc.recent_cd4_date
                         and self.hiv_status == POS):
                     return True
                 else:

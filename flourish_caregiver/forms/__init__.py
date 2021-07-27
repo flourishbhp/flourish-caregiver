@@ -1,9 +1,11 @@
 from .antenatal_enrollment_form import AntenatalEnrollmentForm
+from .appointment_form import AppointmentForm
 from .arvs_pre_pregnancy_form import ArvsPrePregnancyForm
 from .caregiver_child_consent_form import CaregiverChildConsentForm
 from .caregiver_clinical_measurements_form import CaregiverClinicalMeasurementsForm
 from .caregiver_clinical_measurements_fu_form import CaregiverClinicalMeasurementsFuForm
 from .caregiver_clinician_notes_form import ClinicianNotesForm, ClinicianNotesImageForm
+from .caregiver_contact_form import CaregiverContactForm
 from .caregiver_edinburgh_depr_screening_form import CaregiverEdinburghDeprScreeningForm
 from .caregiver_edinburgh_referral_form import CaregiverEdinburghReferralForm
 from .caregiver_gad_anxiety_screening_form import CaregiverGadAnxietyScreeningForm
@@ -15,7 +17,8 @@ from .caregiver_phq_depr_screening_form import CaregiverPhqDeprScreeningForm
 from .caregiver_phq_referral_form import CaregiverPhqReferralForm
 from .enrollment_form import EnrollmentForm
 from .food_security_questionnaire_form import FoodSecurityQuestionnaireForm
-from .hiv_disclosure_status_form import HIVDisclosureStatusForm
+from .hiv_disclosure_status_form import HIVDisclosureStatusFormA, HIVDisclosureStatusFormB
+from .hiv_disclosure_status_form import HIVDisclosureStatusFormC, HIVDisclosureStatusFormD
 from .hiv_rapid_test_counseling_form import HIVRapidTestCounselingForm
 from .hiv_viralload_cd4_form import HivViralLoadCd4Form
 from .locator_logs_form import LocatorLogForm, LocatorLogEntryForm
