@@ -5,6 +5,7 @@ from edc_base.sites import CurrentSiteManager
 from edc_identifier.managers import SubjectIdentifierManager
 
 from edc_visit_schedule.model_mixins import OffScheduleModelMixin
+# from .model_mixins import ConsentVersionModelModelMixin
 
 
 class CaregiverOffSchedule(OffScheduleModelMixin, BaseUuidModel):

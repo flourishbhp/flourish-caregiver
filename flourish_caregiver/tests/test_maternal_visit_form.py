@@ -33,7 +33,7 @@ class TestMaternalVisitFormValidator(TestCase):
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=self.subject_consent.subject_identifier,)
 
-        self.appointment = Appointment.objects.get(visit_code='1000M')
+        self.appointment = Appointment.objects.get(visit_code='2000M')
 
     def test_study_status_on_dead_valid(self):
 
