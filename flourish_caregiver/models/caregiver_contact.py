@@ -39,6 +39,7 @@ class CaregiverContact(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
 
     contact_datetime = models.DateTimeField(
         verbose_name='Contact datetime',
+        validators=[datetime_not_future, datetime_not_before_study_start],
         help_text='This date can be modified.')
 
     call_reason = models.CharField(
