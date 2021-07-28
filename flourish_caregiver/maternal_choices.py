@@ -472,20 +472,19 @@ POS_NEG_IND = (
 )
 
 CALL_REASON = (
-    ('follow_up', 'Follow up'),
-    ('follow_up_pending_delivery', 'Follow up for pending delivery'),
-    ('missed_visit_follow_up', 'Missed visit follow up'),
+    ('follow_up', 'Follow up/Quarterly calls'),
+    ('missed_visit', 'Missed visit'),
     ('scheduled_appointment', 'Confirm scheduled appointment'),
     ('follow_up_delivery', 'Follow up on delivery status'),
     ('follow_up_labs', 'Follow up on abnormal labs'),
-    ('nvp_2_week_adjustment', 'NVP 2 week dose adjustment'),
+    ('re_appointment', 'Re-appointment'),
     (OTHER, 'Other, specify')
 )
 
 CONTACT_TYPE = (
-    ('voice_call', 'Voice Call'),
-    ('text_message', 'Text Message'),
-    ('in_person', 'In person, e.g. Home visit')
+    ('phone_call', 'Phone Call'),
+    ('in_person', 'In person (Home visit)'),
+    ('text_message', 'Text Message')
 )
 
 KHAT_USAGE_FREQUENCY = (
