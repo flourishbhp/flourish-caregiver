@@ -57,35 +57,34 @@ class TestMaternalStatusHelper(TestCase):
 
         maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
+            'screening_identifier': '111111',
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
             'study_maternal_identifier': '89721',
             'protocol': 'Tshilo Dikotla'}
 
-        self.child_dataset_options = {
+        child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
-            'study_maternal_identifier': self.study_maternal_identifier,
-            'study_maternal_identifier': self.study_maternal_identifier,
+            'study_maternal_identifier': '89721',
             'study_child_identifier': '1234'}
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
-            subject_identifier=self.subject_identifier,
-            **self.maternal_dataset_options)
+            **maternal_dataset_options)
 
         mommy.make_recipe(
             'flourish_child.childdataset',
             dob=get_utcnow() - relativedelta(years=2, months=5),
-            **self.child_dataset_options)
+            **child_dataset_options)
 
         sh = SubjectHelperMixin()
 
-        maternal_dataset = sh.create_TD_efv_enrollment(
+        subject_identifier = sh.create_TD_efv_enrollment(
             maternal_dataset_options.get('screening_identifier'))
 
-        subject_identifier = sh.enroll_prior_participant(
-            maternal_dataset.screening_identifier)
+        # subject_identifier = sh.enroll_prior_participant(
+            # maternal_dataset.screening_identifier)
 
         status_helper = MaternalStatusHelper(
             subject_identifier=subject_identifier)
