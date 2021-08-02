@@ -193,7 +193,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     else:
                         if not child_dummy_consent_obj.cohort:
                             child_dummy_consent_obj.cohort = cohort
-                            child_dummy_consent_obj.save()
+                        child_dummy_consent_obj.save()
 
                 elif instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
 
@@ -315,26 +315,20 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_da
 
         assent_onschedule_datetime = get_assent_onschedule_datetime(subject_identifier)
 
-        try:
-            onschedule_model_cls.objects.get(
-                subject_identifier=subject_identifier,
-                schedule_name=schedule_name,)
-        except onschedule_model_cls.DoesNotExist:
-            schedule.put_on_schedule(
+        schedule.put_on_schedule(
                 subject_identifier=subject_identifier,
                 onschedule_datetime=(base_appt_datetime
                                      or assent_onschedule_datetime
                                      or instance.created),
                 schedule_name=schedule_name,
                 base_appt_datetime=base_appt_datetime)
-
+        try:
+            onschedule_model_cls.objects.get(
+                subject_identifier=subject_identifier,
+                schedule_name=schedule_name,)
+        except onschedule_model_cls.DoesNotExist:
             onschedule_obj = schedule.onschedule_model_cls.objects.get(
                 subject_identifier=subject_identifier,
                 schedule_name=schedule_name)
             onschedule_obj.child_subject_identifier = instance.subject_identifier
             onschedule_obj.save()
-
-        else:
-            schedule.refresh_schedule(
-                subject_identifier=subject_identifier,
-                schedule_name=schedule_name)
