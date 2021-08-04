@@ -72,6 +72,39 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
             pk=request.GET.get('appointment'))
         return None
 
+    def get_previous_instance(self, request, instance=None, **kwargs):
+        """Returns a model instance that is the first occurrence of a previous
+        instance relative to this object's appointment.
+        """
+        obj = None
+        appointment = instance or self.get_instance(request)
+        if appointment:
+            while self.get_previous_appointment(request):
+                options = {
+                    '{}__appointment'.format(self.model.visit_model_attr()):
+                    appointment.previous_by_timepoint}
+                try:
+                    obj = self.model.objects.get(**options)
+                except ObjectDoesNotExist:
+                    pass
+                else:
+                    break
+                appointment = self.get_previous_appointment(request)
+        return obj
+
+    def get_previous_appointment(self, request):
+        try:
+            appointment = self.get_appointment(request)
+        except ObjectDoesNotExist:
+            return None
+        else:
+            return appointment.__class__.objects.filter(
+                subject_identifier=appointment.subject_identifier,
+                visit_schedule_name=appointment.visit_schedule_name,
+                schedule_name__endswith=appointment.schedule_name[-11:],
+                timepoint__lt=appointment.timepoint,
+                visit_code_sequence=0).order_by('timepoint').last()
+
     def get_instance(self, request):
         try:
             appointment = self.get_appointment(request)
