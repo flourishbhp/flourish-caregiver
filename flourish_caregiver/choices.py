@@ -436,6 +436,14 @@ SUICIDAL = (
     ('4', 'Attempts at suicide')
 )
 
+TB_SCREENING_LOCATION = (
+    ('antenatal_visit', 'Antenatal Visit'),
+    ('idcc', 'IDCC'),
+    ('postpartum_visit', 'Postpartum visit'),
+    ('hospital', 'Hospital'),
+    (OTHER, 'Other, specify'),
+)
+
 TB_DRUGS_FREQ = (
     ('4_drugs', '4 drugs'),
     ('more_than_4', 'More than 4 drugs'),

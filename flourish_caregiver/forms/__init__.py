@@ -41,6 +41,7 @@ from .medical_history_form import MedicalHistoryForm
 from .offschedule_form import CaregiverOffScheduleForm
 from .tb_history_preg_form import TbHistoryPregForm
 from .tb_presence_household_members_form import TbPresenceHouseholdMembersForm
+from .tb_routine_health_screen_form import TbRoutineHealthScreenForm
 from .tb_screen_preg_form import TbScreenPregForm
 from .ultrasound_form import UltraSoundForm
 from .maternal_visit_form import MaternalVisitForm
