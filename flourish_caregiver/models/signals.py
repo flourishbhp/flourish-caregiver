@@ -154,9 +154,9 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         pass
     else:
         if not raw and instance.is_eligible:
-
             cohort = cohort_assigned(instance.study_child_identifier,
-                                     instance.child_dob)
+                                     instance.child_dob,
+                                     prev_enrolled_obj.created)
 
             if cohort:
                 children_count = instance.caregiver_visit_count
@@ -231,11 +231,10 @@ def put_cohort_onschedule(cohort, instance, base_appt_datetime=None):
                     # 'edc_protocol').study_open_datetime)
 
 
-def cohort_assigned(study_child_identifier, child_dob):
+def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
     """Calculates participant's cohort based on the maternal and child dataset
     """
     infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
-
     try:
         infant_dataset_obj = infant_dataset_cls.objects.get(
             study_child_identifier=study_child_identifier,
@@ -243,9 +242,9 @@ def cohort_assigned(study_child_identifier, child_dob):
     except infant_dataset_cls.DoesNotExist:
         return None
     except infant_dataset_cls.MultipleObjectsReturned:
-                infant_dataset_obj = infant_dataset_cls.objects.filter(
-                    study_child_identifier=study_child_identifier,
-                    dob=child_dob)[0]
+        infant_dataset_obj = infant_dataset_cls.objects.filter(
+            study_child_identifier=study_child_identifier,
+            dob=child_dob)[0]
     else:
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(
@@ -256,7 +255,7 @@ def cohort_assigned(study_child_identifier, child_dob):
             if infant_dataset_obj:
                 cohort = Cohort(
                     child_dob=child_dob,
-                    enrollment_date=get_utcnow().date(),
+                    enrollment_date=enrollment_date,
                     infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
                     protocol=maternal_dataset_obj.protocol,
                     mum_hiv_status=maternal_dataset_obj.mom_hivstatus,
@@ -314,7 +313,6 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_da
         onschedule_model_cls = django_apps.get_model(onschedule_model)
 
         assent_onschedule_datetime = get_assent_onschedule_datetime(subject_identifier)
-
         schedule.put_on_schedule(
                 subject_identifier=subject_identifier,
                 onschedule_datetime=(base_appt_datetime
@@ -325,7 +323,8 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_da
         try:
             onschedule_model_cls.objects.get(
                 subject_identifier=subject_identifier,
-                schedule_name=schedule_name,)
+                schedule_name=schedule_name,
+                child_subject_identifier=instance.subject_identifier)
         except onschedule_model_cls.DoesNotExist:
             onschedule_obj = schedule.onschedule_model_cls.objects.get(
                 subject_identifier=subject_identifier,

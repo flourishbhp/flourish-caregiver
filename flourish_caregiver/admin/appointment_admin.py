@@ -1,3 +1,4 @@
+import pytz
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from edc_appointment.admin import AppointmentAdmin as BaseAppointmentAdmin
@@ -23,12 +24,15 @@ class AppointmentAdmin(BaseAppointmentAdmin):
         app_obj = Appointment.objects.get(id=object_id)
 
         earliest_start = (app_obj.timepoint_datetime -
-                          app_obj.visits.get(app_obj.visit_code).rlower)
+                          app_obj.visits.get(app_obj.visit_code).rlower).astimezone(
+                                      pytz.timezone('Africa/Gaborone'))
 
         latest_start = (app_obj.timepoint_datetime +
-                        app_obj.visits.get(app_obj.visit_code).rupper)
+                        app_obj.visits.get(app_obj.visit_code).rupper).astimezone(
+                                      pytz.timezone('Africa/Gaborone'))
 
-        ideal_start = app_obj.timepoint_datetime
+        ideal_start = app_obj.timepoint_datetime.astimezone(
+                                      pytz.timezone('Africa/Gaborone'))
 
         extra_context.update({'earliest_start': earliest_start.strftime("%Y-%m-%d, %H:%M:%S"),
                               'latest_start': latest_start.strftime("%Y-%m-%d, %H:%M:%S"),
@@ -57,7 +61,7 @@ class AppointmentAdmin(BaseAppointmentAdmin):
             'appointment status below to "In Progress" and click SAVE. <BR>'
             '<i>Note: You may only edit one appointment at a time. '
             'Before you move to another appointment, change the appointment '
-            'status below to "Incomplete or "Done".</i>')
+            'status below to "Incomplete" or "Done".</i>')
 
         extra_context['additional_instructions'] = additional_instructions
         return extra_context
