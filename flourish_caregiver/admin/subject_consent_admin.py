@@ -387,6 +387,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                     ws.write(row_num, col_num, data[col_num])
         wb.save(response)
         return response
+
     export_as_csv.short_description = _(
         'Export selected %(verbose_name_plural)s')
     actions = [export_as_csv]
