@@ -79,6 +79,13 @@ class SocioDemographicData(CrfModelMixin):
         max_length=3,
         choices=YES_NO)
 
+    """Quartely phone calls stem question"""
+    socio_demo_changed = models.CharField(
+        verbose_name='Has any of your following socio demographic data changed?',
+        max_length=3,
+        choices=YES_NO,
+        null=True)
+
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
         verbose_name = "Socio Demographic Data"

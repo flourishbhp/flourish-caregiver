@@ -71,7 +71,7 @@ class MedicalHistory(CrfModelMixin):
     """Quartely phone calls stem question"""
     med_history_changed = models.CharField(
         verbose_name='Has any of your following medical history changed?',
-        max_length=20,
+        max_length=3,
         choices=YES_NO,
         null=True)
 
