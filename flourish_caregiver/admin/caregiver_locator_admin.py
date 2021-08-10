@@ -4,12 +4,17 @@ from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverLocatorForm
 from ..models import CaregiverLocator
 from .modeladmin_mixins import ModelAdminMixin
+from flourish_caregiver.models import MaternalDataset
+from django.shortcuts import redirect, reverse
+from django.conf import settings
 
 
 @admin.register(CaregiverLocator, site=flourish_caregiver_admin)
 class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
-
     form = CaregiverLocatorForm
+
+    def response_add(self, request, obj):
+        return redirect(settings.DASHBOARD_URL_NAMES.get('subject_listboard_url'))
 
     fieldsets = (
         (None, {
@@ -53,8 +58,7 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
         'may_contact_indirectly': admin.VERTICAL,
         'has_caretaker': admin.VERTICAL}
 
-    search_fields = ['subject_identifier', 'study_maternal_identifier',
-                     'first_name', 'last_name', 'subject_cell', 'subject_cell_alt']
+    search_fields = ['subject_identifier', 'study_maternal_identifier']
 
-    list_display = ('study_maternal_identifier', 'subject_identifier', 'may_visit_home',
-                    'may_call', 'may_call_work')
+    list_display = ('study_maternal_identifier', 'subject_identifier', 'may_visit_home', 'may_call',
+                    'may_call_work')
