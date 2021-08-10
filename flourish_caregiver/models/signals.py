@@ -219,14 +219,18 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 def put_cohort_onschedule(cohort, instance, base_appt_datetime=None):
 
     if cohort is not None and 'sec' in cohort:
-        put_on_schedule(cohort, instance=instance, base_appt_datetime=base_appt_datetime)
+        put_on_schedule(cohort, instance=instance,
+                        base_appt_datetime=base_appt_datetime,
+                        caregiver_visit_count=instance.caregiver_visit_count)
     else:
         put_on_schedule((cohort + '_enrol'),
                         instance=instance,
-                        base_appt_datetime=base_appt_datetime)
+                        base_appt_datetime=base_appt_datetime,
+                        caregiver_visit_count=instance.caregiver_visit_count)
         return put_on_schedule((cohort + '_quarterly'),
                                instance=instance,
-                               base_appt_datetime=base_appt_datetime)
+                               base_appt_datetime=base_appt_datetime,
+                               caregiver_visit_count=instance.caregiver_visit_count)
         # put_on_schedule((cohort + '_fu' + str(children_count)),
                         # instance=instance, base_appt_datetime=django_apps.get_app_config(
                     # 'edc_protocol').study_open_datetime)
@@ -278,16 +282,18 @@ def get_assent_onschedule_datetime(subject_identifier):
         return assent_obj.created
 
 
-def get_schedule_sequence(subject_identifier, instance, onschedule_cls):
+def get_schedule_sequence(subject_identifier, instance,
+                          onschedule_cls, caregiver_visit_count=None):
 
-    children_count = (instance.caregiver_visit_count or
+    children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
                           subject_identifier=subject_identifier).exclude(
                               child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
-def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_datetime=None):
+def put_on_schedule(cohort, instance=None, subject_identifier=None,
+                    base_appt_datetime=None, caregiver_visit_count=None):
 
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
@@ -301,7 +307,8 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_da
 
         children_count = str(get_schedule_sequence(subject_identifier,
                                                    instance,
-                                                   django_apps.get_model(onschedule_model)))
+                                                   django_apps.get_model(onschedule_model),
+                                                   caregiver_visit_count=caregiver_visit_count))
         cohort = cohort + children_count
 
         if 'pool' not in cohort:
