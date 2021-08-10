@@ -13,7 +13,7 @@ from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
 from edc_constants.choices import YES_NO, GENDER, YES_NO_NA
-from edc_constants.constants import NO, YES
+from edc_constants.constants import NO, YES, FEMALE
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 from edc_search.model_mixins import SearchSlugManager
@@ -55,7 +55,8 @@ class SubjectConsent(
     gender = models.CharField(
         verbose_name='Gender',
         choices=GENDER,
-        max_length=1,)
+        max_length=1,
+        default=FEMALE)
 
     identity_type = models.CharField(
         verbose_name='What type of identity number is this?',
