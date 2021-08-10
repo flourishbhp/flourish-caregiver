@@ -163,9 +163,10 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 child_dummy_consent_cls = django_apps.get_model(
                     'flourish_child.childdummysubjectconsent')
 
-                children_count = 1 + child_dummy_consent_cls.objects.filter(
-                    subject_identifier__startswith=instance.subject_consent.subject_identifier
-                    ).exclude(identity=instance.identity,).count()
+                if not children_count:
+                    children_count = 1 + child_dummy_consent_cls.objects.filter(
+                        subject_identifier__startswith=instance.subject_consent.subject_identifier
+                        ).exclude(dob=instance.child_dob,).count()
 
                 child_age = age(instance.child_dob, get_utcnow()).years
 
@@ -277,11 +278,12 @@ def get_assent_onschedule_datetime(subject_identifier):
         return assent_obj.created
 
 
-def get_schedule_sequence(subject_identifier, child_subject_identifier, onschedule_cls):
+def get_schedule_sequence(subject_identifier, instance, onschedule_cls):
 
-    children_count = 1 + onschedule_cls.objects.filter(
-        subject_identifier=subject_identifier).exclude(
-            child_subject_identifier=child_subject_identifier).count()
+    children_count = (instance.caregiver_visit_count or
+                      1 + onschedule_cls.objects.filter(
+                          subject_identifier=subject_identifier).exclude(
+                              child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
@@ -298,7 +300,7 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_da
         onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
 
         children_count = str(get_schedule_sequence(subject_identifier,
-                                                   instance.subject_identifier,
+                                                   instance,
                                                    django_apps.get_model(onschedule_model)))
         cohort = cohort + children_count
 
@@ -320,14 +322,20 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None, base_appt_da
                                      or instance.created),
                 schedule_name=schedule_name,
                 base_appt_datetime=base_appt_datetime)
+
         try:
             onschedule_model_cls.objects.get(
                 subject_identifier=subject_identifier,
                 schedule_name=schedule_name,
                 child_subject_identifier=instance.subject_identifier)
         except onschedule_model_cls.DoesNotExist:
-            onschedule_obj = schedule.onschedule_model_cls.objects.get(
-                subject_identifier=subject_identifier,
-                schedule_name=schedule_name)
-            onschedule_obj.child_subject_identifier = instance.subject_identifier
-            onschedule_obj.save()
+            try:
+                onschedule_obj = schedule.onschedule_model_cls.objects.get(
+                    subject_identifier=subject_identifier,
+                    schedule_name=schedule_name,
+                    child_subject_identifier='')
+            except schedule.onschedule_model_cls.DoesNotExist:
+                pass
+            else:
+                onschedule_obj.child_subject_identifier = instance.subject_identifier
+                onschedule_obj.save()
