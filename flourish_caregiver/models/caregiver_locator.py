@@ -170,8 +170,8 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
             action_item_obj = action_item_cls.objects.create(
                 action_type=self.action_cls.action_type())
             self.action_identifier = action_item_obj.action_identifier
-        if self.subject_identifier is not None:
-            self.update_action_item()
+        # if self.subject_identifier is not None:
+        #    self.update_action_item()
 
         super().save(*args, **kwargs)
 
