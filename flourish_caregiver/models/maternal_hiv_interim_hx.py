@@ -51,8 +51,7 @@ class MaternalHivInterimHx(CrfModelMixin):
         default=NOT_APPLICABLE,
         help_text="")
 
-    # TODO: vl_result to be changed to an integer
-    vl_result = models.CharField(
+    vl_result = models.PositiveIntegerField(
         verbose_name="Result of most recent VL test",
         max_length=35,
         blank=True,
