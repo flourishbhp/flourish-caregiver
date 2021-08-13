@@ -3,7 +3,7 @@ from django.apps import apps as django_apps
 from django.test import TestCase, tag
 from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
-from edc_constants.constants import YES, NEG
+from edc_constants.constants import YES, NEG, POS
 from edc_facility.import_holidays import import_holidays
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 from edc_metadata.models import CrfMetadata
@@ -36,7 +36,7 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
-            subject_identifier=self.subject_consent.subject_identifier,)
+            subject_identifier=self.subject_consent.subject_identifier)
 
         self.subject_identifier = self.subject_consent.subject_identifier
 
