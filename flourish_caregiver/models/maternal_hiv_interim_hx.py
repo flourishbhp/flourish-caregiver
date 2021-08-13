@@ -14,8 +14,7 @@ class MaternalHivInterimHx(CrfModelMixin):
 
     has_cd4 = models.CharField(
         verbose_name=("During this pregnancy did the mother have at least"
-                      " one CD4 count"
-                      " performed (outside the study)? "),
+                      " one CD4 count performed (outside the study)? "),
         max_length=3,
         choices=YES_NO)
 
@@ -48,8 +47,7 @@ class MaternalHivInterimHx(CrfModelMixin):
         verbose_name="Was the viral load detectable?",
         max_length=3,
         choices=YES_NO_NA,
-        default=NOT_APPLICABLE,
-        help_text="")
+        default=NOT_APPLICABLE)
 
     # TODO: vl_result to be changed to an integer
     vl_result = models.CharField(
