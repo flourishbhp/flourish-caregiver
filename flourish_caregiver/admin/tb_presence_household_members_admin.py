@@ -1,7 +1,7 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
-from .modeladmin_mixins import ModelAdminMixin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import TbPresenceHouseholdMembersForm
@@ -9,7 +9,7 @@ from ..models import TbPresenceHouseholdMembers
 
 
 @admin.register(TbPresenceHouseholdMembers, site=flourish_caregiver_admin)
-class TbPresenceHouseholdMembersAdmin(ModelAdminMixin, admin.ModelAdmin):
+class TbPresenceHouseholdMembersAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = TbPresenceHouseholdMembersForm
 

@@ -3,7 +3,7 @@ from django.contrib import admin
 from edc_base.utils import get_utcnow
 from edc_model_admin import audit_fieldset_tuple
 
-from .modeladmin_mixins import ModelAdminMixin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import FoodSecurityQuestionnaireForm
@@ -11,7 +11,7 @@ from ..models import FoodSecurityQuestionnaire
 
 
 @admin.register(FoodSecurityQuestionnaire, site=flourish_caregiver_admin)
-class FoodSecurityQuestionnaireAdmin(ModelAdminMixin, admin.ModelAdmin):
+class FoodSecurityQuestionnaireAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = FoodSecurityQuestionnaireForm
 

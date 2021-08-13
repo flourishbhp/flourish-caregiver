@@ -1,6 +1,6 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
-from .modeladmin_mixins import ModelAdminMixin
+from .modeladmin_mixins import CrfModelAdminMixin
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import HIVDisclosureStatusFormA, HIVDisclosureStatusFormB
@@ -9,7 +9,7 @@ from ..models import HIVDisclosureStatusA, HIVDisclosureStatusB
 from ..models import HIVDisclosureStatusC, HIVDisclosureStatusD
 
 
-class HIVDisclosureStatusAdminMixin(ModelAdminMixin, admin.ModelAdmin):
+class HIVDisclosureStatusAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
 
     fieldsets = (
         (None, {
@@ -29,21 +29,25 @@ class HIVDisclosureStatusAdminMixin(ModelAdminMixin, admin.ModelAdmin):
 
 
 @admin.register(HIVDisclosureStatusA, site=flourish_caregiver_admin)
-class HIVDisclosureStatusAdminA(ModelAdminMixin, admin.ModelAdmin):
+class HIVDisclosureStatusAdminA(HIVDisclosureStatusAdminMixin,
+                                admin.ModelAdmin):
 
     form = HIVDisclosureStatusFormA
 
 
 @admin.register(HIVDisclosureStatusB, site=flourish_caregiver_admin)
-class HIVDisclosureStatusAdminB(ModelAdminMixin, admin.ModelAdmin):
+class HIVDisclosureStatusAdminB(HIVDisclosureStatusAdminMixin,
+                                admin.ModelAdmin):
     form = HIVDisclosureStatusFormB
 
 
 @admin.register(HIVDisclosureStatusC, site=flourish_caregiver_admin)
-class HIVDisclosureStatusAdminC(ModelAdminMixin, admin.ModelAdmin):
+class HIVDisclosureStatusAdminC(HIVDisclosureStatusAdminMixin,
+                                admin.ModelAdmin):
     form = HIVDisclosureStatusFormC
 
 
 @admin.register(HIVDisclosureStatusD, site=flourish_caregiver_admin)
-class HIVDisclosureStatusAdminD(ModelAdminMixin, admin.ModelAdmin):
+class HIVDisclosureStatusAdminD(HIVDisclosureStatusAdminMixin,
+                                admin.ModelAdmin):
     form = HIVDisclosureStatusFormD
