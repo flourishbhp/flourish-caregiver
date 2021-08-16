@@ -39,6 +39,7 @@ from .maternal_delivery import MaternalDelivery
 from .medical_history import MedicalHistory
 from .tb_history_preg import TbHistoryPreg
 from .tb_presence_household_members import TbPresenceHouseholdMembers
+from .tb_routine_health_screen import TbRoutineHealthScreen
 from .tb_screen_preg import TbScreenPreg
 from .ultrasound import UltraSound
 from .maternal_visit import MaternalVisit

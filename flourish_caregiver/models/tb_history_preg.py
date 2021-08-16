@@ -43,7 +43,10 @@ class TbHistoryPreg(CrfModelMixin):
         choices=TB_TYPE,
         max_length=30,
         blank=True,
-        null=True)
+        null=True,
+        help_text=('Pulmonary TB is disease in the lungs, whereas extra-pulmonary'
+                   ' TB is disease outside the lungs (ex: lymph nodes, abdomen, '
+                   'bones, brain)'))
 
     extra_pulmonary_loc = models.CharField(
         verbose_name='Where was the location of your extra-pulmonary TB?',
