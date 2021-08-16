@@ -9,10 +9,6 @@ from flourish_form_validations.form_validators import MaternalHivInterimHxFormVa
 class MaternalHivInterimHxForm(SubjectModelFormMixin, forms.ModelForm):
     form_validator_cls = MaternalHivInterimHxFormValidator
 
-    vl_result = forms.CharField(
-        validators=[RegexValidator(r'^[0-9]*$', 'Viral load can only be a number')],
-        max_length=35)
-
     class Meta:
         model = MaternalHivInterimHx
         fields = '__all__'

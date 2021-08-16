@@ -1,3 +1,4 @@
+from django.core.validators import RegexValidator
 from django.db import models
 from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
@@ -53,6 +54,7 @@ class MaternalHivInterimHx(CrfModelMixin):
     vl_result = models.CharField(
         verbose_name="Result of most recent VL test",
         max_length=35,
+        validators=[RegexValidator(r'^[0-9]*$', 'Viral load can only be a number'),],
         blank=True,
         null=True)
 
