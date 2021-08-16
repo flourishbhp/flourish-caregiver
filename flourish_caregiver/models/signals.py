@@ -68,6 +68,7 @@ def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Create locator log entry
     """
+    child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
     if not raw:
         if created:
             try:
@@ -76,14 +77,25 @@ def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
             except MaternalDataset.DoesNotExist:
                 pass
             else:
-                try:
-                    WorkList.objects.get(
-                        study_maternal_identifier=instance.study_maternal_identifier)
-                except WorkList.DoesNotExist:
-                    WorkList.objects.create(
-                        study_maternal_identifier=instance.study_maternal_identifier,
-                        prev_study=maternal_dataset.protocol,
-                        user_created=instance.user_created)
+                offstudy_td = True
+                if maternal_dataset.protocol == 'Tshilo Dikotla':
+                    try:
+                        child_dataset = child_dataset_cls.objects.get(
+                            study_maternal_identifier=maternal_dataset.study_maternal_identifier)
+                    except child_dataset_cls.DoesNotExist:
+                        raise
+                    else:
+                        offstudy_td = child_dataset.infant_offstudy_complete == 1
+
+                if offstudy_td:
+                    try:
+                        WorkList.objects.get(
+                            study_maternal_identifier=instance.study_maternal_identifier)
+                    except WorkList.DoesNotExist:
+                        WorkList.objects.create(
+                            study_maternal_identifier=instance.study_maternal_identifier,
+                            prev_study=maternal_dataset.protocol,
+                            user_created=instance.user_created)
 
 
 @receiver(post_save, weak=False, sender=AntenatalEnrollment,

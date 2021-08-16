@@ -60,5 +60,5 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     search_fields = ['subject_identifier', 'study_maternal_identifier']
 
-    list_display = ('study_maternal_identifier', 'subject_identifier', 'may_visit_home', 'may_call',
-                    'may_call_work')
+    list_display = ('study_maternal_identifier', 'subject_identifier', 'may_visit_home',
+                    'may_call', 'may_call_work')
