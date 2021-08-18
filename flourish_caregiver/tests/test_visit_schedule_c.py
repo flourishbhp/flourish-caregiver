@@ -1,4 +1,5 @@
 import pytz
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
@@ -11,7 +12,7 @@ from ..models import OnScheduleCohortCSec
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
-@tag('vs')
+@tag('vsc')
 class TestVisitScheduleSetup(TestCase):
 
     databases = '__all__'
@@ -37,9 +38,9 @@ class TestVisitScheduleSetup(TestCase):
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
             'study_maternal_identifier': self.study_maternal_identifier,
-            'study_maternal_identifier': self.study_maternal_identifier,
             'study_child_identifier': '1234'}
 
+    @tag('vsc1')
     def test_cohort_c_onschedule_valid(self):
         """Assert that a 10 year old participant's mother who is on the PI regimen from
          Mpepu study is put on cohort c.
@@ -47,8 +48,7 @@ class TestVisitScheduleSetup(TestCase):
         self.subject_identifier = self.subject_identifier[:-1] + '4'
 
         self.maternal_dataset_options['protocol'] = 'Tshipidi'
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10,
-                                                                                months=2)
+        self.maternal_dataset_options['delivdt'] = datetime(2012, 7, 1).date()
         self.maternal_dataset_options['preg_pi'] = 1
 
         self.child_dataset_options['infant_hiv_exposed'] = 'Unexposed'
@@ -57,7 +57,7 @@ class TestVisitScheduleSetup(TestCase):
         mommy.make_recipe(
             'flourish_child.childdataset',
             subject_identifier=self.subject_identifier + '10',
-            dob=get_utcnow() - relativedelta(years=10, months=2),
+            dob=datetime(2012, 6, 30).date(),
             ** self.child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(

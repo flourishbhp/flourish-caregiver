@@ -1,4 +1,5 @@
 import pytz
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.test import TestCase, tag
@@ -41,17 +42,26 @@ class TestVisitScheduleSetup(TestCase):
             'study_maternal_identifier': self.study_maternal_identifier,
             'study_child_identifier': '1234'}
 
-    @tag('vs2')
+    def year_3_age(self, year_3_years, year_3_months):
+        """Returns the age at year 3.
+        """
+        app_config = django_apps.get_app_config('flourish_caregiver')
+        start_date_year_3 = app_config.start_date_year_3
+
+        child_dob = start_date_year_3 - relativedelta(years=year_3_years,
+                                                      months=year_3_months)
+        return child_dob
+
+    @tag('vsb1')
     def test_cohort_b_onschedule_valid(self):
-        """Assert that a 5 year old participant's mother who is on efv regimen from Mpepu study
-         is put on cohort b schedule.
+        """Assert that a 5.1 year old by year 3 participant's mother who is on
+         efv regimen from Mpepu study is put on cohort b schedule.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
-                                                                                months=2)
+        self.maternal_dataset_options['delivdt'] = self.year_3_age(5, 1)
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             subject_identifier=self.subject_identifier,
@@ -60,7 +70,7 @@ class TestVisitScheduleSetup(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=get_utcnow() - relativedelta(years=5, months=2),
+            dob=self.year_3_age(5, 1),
             **self.child_dataset_options)
 
         sh = SubjectHelperMixin()
@@ -90,9 +100,9 @@ class TestVisitScheduleSetup(TestCase):
         self.assertGreater(Appointment.objects.filter(
             subject_identifier=subject_identifier).count(), 15)
 
-    @tag('vs3')
+    @tag('vsb2')
     def test_cohort_b_assent_invalid(self):
-        """Assert that a 6 year old whose birthday is within the enrolment month does not get
+        """Assert that a 6 year old whose birthday is within the enrollment month does not get
          served the assent form.
         """
 
@@ -110,7 +120,7 @@ class TestVisitScheduleSetup(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=get_utcnow() - relativedelta(years=5, months=2),
+            dob=get_utcnow() - relativedelta(years=6, months=11, days=25),
             **self.child_dataset_options)
 
         sh = SubjectHelperMixin()
@@ -124,17 +134,17 @@ class TestVisitScheduleSetup(TestCase):
         self.assertEqual(child_assent_model.objects.filter(
             subject_identifier__startswith=subject_identifier).count(), 0)
 
-    @tag('lt10')
+    @tag('vsb3')
     def test_cohort_b_lt10(self):
-        """Assert that a participant with a child who is less than 10 years old at beginning of
-         year 3 goes into cohort b schedule.
+        """Assert that a participant with a child who is 10.5 years old at beginning
+         of year 3 goes into cohort b schedule.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7,
-                                                                                months=8)
+        self.maternal_dataset_options['delivdt'] = self.year_3_age(10, 5)
+
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             subject_identifier=self.subject_identifier,
@@ -143,12 +153,12 @@ class TestVisitScheduleSetup(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=get_utcnow() - relativedelta(years=7, months=8),
+            dob=self.year_3_age(10, 5),
             **self.child_dataset_options)
 
         sh = SubjectHelperMixin()
 
-        subject_identifier = sh.enroll_prior_participant(
+        subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier,
             study_child_identifier=self.child_dataset_options['study_child_identifier'])
 
@@ -160,6 +170,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
+    @tag('vsb4')
     def test_cohort_b_onschedule_sec(self):
         """Assert that a 5 year old participant's mother who is on efv regimen is NOT put on
          cohort b schedule.
@@ -167,8 +178,7 @@ class TestVisitScheduleSetup(TestCase):
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
-                                                                                months=2)
+        self.maternal_dataset_options['delivdt'] = self.year_3_age(5, 5)
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -179,7 +189,7 @@ class TestVisitScheduleSetup(TestCase):
         mommy.make_recipe(
             'flourish_child.childdataset',
             subject_identifier=self.subject_identifier + '10',
-            dob=get_utcnow() - relativedelta(years=5, months=2),
+            dob=self.year_3_age(5, 5),
             **self.child_dataset_options)
 
         mommy.make_recipe(
@@ -195,9 +205,8 @@ class TestVisitScheduleSetup(TestCase):
         mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
-            subject_identifier=self.subject_identifier,
             study_child_identifier=self.child_dataset_options['study_child_identifier'],
-            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
+            child_dob=self.year_3_age(5, 5),)
 
         mommy.make_recipe(
                 'flourish_caregiver.caregiverpreviouslyenrolled',
@@ -254,13 +263,13 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_identifier).count(), 0)
 
     def test_cohort_b_twins_onschedule_valid(self):
-        """Assert that a 9 year old twin participants' mother from  Mpepu study is put on
+        """Assert that an 8 year old twin participants' mother from  Mpepu study is put on
          cohort c with only one visit schedule.
         """
         self.subject_identifier = self.subject_identifier[:-1] + '9'
         self.study_maternal_identifier = '981231'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=8,
                                                                                 months=2)
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -271,7 +280,7 @@ class TestVisitScheduleSetup(TestCase):
         cd1 = mommy.make_recipe(
             'flourish_child.childdataset',
             twin_triplet=1,
-            dob=get_utcnow() - relativedelta(years=5, months=2),
+            dob=get_utcnow() - relativedelta(years=8, months=2),
             **self.child_dataset_options)
 
         self.child_dataset_options['study_child_identifier'] = '1235'
@@ -279,7 +288,7 @@ class TestVisitScheduleSetup(TestCase):
         cd2 = mommy.make_recipe(
             'flourish_child.childdataset',
             twin_triplet=1,
-            dob=get_utcnow() - relativedelta(years=5, months=2),
+            dob=get_utcnow() - relativedelta(years=8, months=2),
             ** self.child_dataset_options)
 
         mommy.make_recipe(
@@ -296,7 +305,7 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=cd1.study_child_identifier,
-            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
+            child_dob=(get_utcnow() - relativedelta(years=8, months=2)).date(),)
 
         mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
@@ -304,7 +313,7 @@ class TestVisitScheduleSetup(TestCase):
             study_child_identifier=cd2.study_child_identifier,
             identity='234513181',
             confirm_identity='234513181',
-            child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
+            child_dob=(get_utcnow() - relativedelta(years=8, months=2)).date(),)
 
         mommy.make_recipe(
                 'flourish_caregiver.caregiverpreviouslyenrolled',
@@ -350,7 +359,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
     def test_cohort_b_triplets_onschedule_valid(self):
-        """Assert that a 7 year old triplet participants' mother from  Mpepu study is put on
+        """Assert that a 5 year old triplet participants' mother from  Mpepu study is put on
          cohort c with only one visit schedule.
         """
 
@@ -458,7 +467,7 @@ class TestVisitScheduleSetup(TestCase):
             # subject_identifier=subject_consent.subject_identifier,
             # schedule_name='b_fu3_schedule1').count(), 0)
 
-    @tag('vsbb')
+    @tag('vsb7')
     def test_cohort_b_multiple_onschedule_valid(self):
         """Assert that a 4 year old and 5 years participants' mother from  Mpepu study is put
          on two different visit schedules.

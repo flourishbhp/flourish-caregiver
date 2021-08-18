@@ -9,7 +9,7 @@ from .model_mixins import CrfModelMixin
 
 class HIVRapidTestCounseling(CrfModelMixin):
 
-    """ A model completed by the user on the caregiver's hiv rapid testing and 
+    """ A model completed by the user on the caregiver's hiv rapid testing and
         counseling.
     """
 
@@ -19,9 +19,7 @@ class HIVRapidTestCounseling(CrfModelMixin):
         max_length=3)
 
     result_date = models.DateField(
-        validators=[
-            date_not_before_study_start,
-            date_not_future, ],
+        validators=[date_not_before_study_start, date_not_future],
         verbose_name="Date of rapid test",
         blank=True,
         null=True)
