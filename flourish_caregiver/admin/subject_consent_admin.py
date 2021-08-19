@@ -24,34 +24,9 @@ from simple_history.admin import SimpleHistoryAdmin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..models import CaregiverChildConsent, SubjectConsent
-from .exportaction_mixin import ExportActionMixin
+from .modeladmin_mixins import ModelAdminMixin
 from _collections import OrderedDict
 from edc_constants.constants import MALE, FEMALE
-
-
-class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
-                      ModelAdminRevisionMixin, ModelAdminReplaceLabelTextMixin,
-                      ModelAdminInstitutionMixin, ModelAdminReadOnlyMixin,
-                      ExportActionMixin):
-
-    list_per_page = 10
-    date_hierarchy = 'modified'
-    empty_value_display = '-'
-
-    def redirect_url(self, request, obj, post_url_continue=None):
-        redirect_url = super().redirect_url(
-            request, obj, post_url_continue=post_url_continue)
-        if request.GET.dict().get('next'):
-            url_name = request.GET.dict().get('next').split(',')[0]
-            attrs = request.GET.dict().get('next').split(',')[1:]
-            options = {k: request.GET.dict().get(k)
-                       for k in attrs if request.GET.dict().get(k)}
-            try:
-                redirect_url = reverse(url_name, kwargs=options)
-            except NoReverseMatch as e:
-                raise ModelAdminNextUrlRedirectError(
-                    f'{e}. Got url_name={url_name}, kwargs={options}.')
-        return redirect_url
 
 
 class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
@@ -238,10 +213,12 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                     'modified',
                     'user_created',
                     'user_modified')
+
     list_filter = ('language',
                    'is_verified',
                    'is_literate',
                    'identity_type')
+
     search_fields = ('subject_identifier', 'dob',)
 
     def get_actions(self, request):
@@ -275,6 +252,21 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         fields = super().get_readonly_fields(request, obj) + ('biological_caregiver',)
         return (fields + audit_fields)
 
+    def redirect_url(self, request, obj, post_url_continue=None):
+        redirect_url = super().redirect_url(
+            request, obj, post_url_continue=post_url_continue)
+        if request.GET.dict().get('next'):
+            url_name = request.GET.dict().get('next').split(',')[0]
+            attrs = request.GET.dict().get('next').split(',')[1:]
+            options = {k: request.GET.dict().get(k)
+                       for k in attrs if request.GET.dict().get(k)}
+            try:
+                redirect_url = reverse(url_name, kwargs=options)
+            except NoReverseMatch as e:
+                raise ModelAdminNextUrlRedirectError(
+                    f'{e}. Got url_name={url_name}, kwargs={options}.')
+        return redirect_url
+
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
 class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
@@ -298,7 +290,9 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'identity_type',
                 'confirm_identity',
                 'consent_datetime']}
-         ),)
+
+         ),
+        audit_fieldset_tuple)
 
     radio_fields = {'gender': admin.VERTICAL,
                     'child_test': admin.VERTICAL,
