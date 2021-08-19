@@ -277,7 +277,7 @@ class TestRuleGroups(TestCase):
                 subject_identifier=subject_identifier,
                 visit_code='2000M').entry_status, NOT_REQUIRED)
 
-    @tag('hdsc')
+    @tag('hdsc2')
     def test_hiv_disclosure_ab_metadata_required(self):
         self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=10),
@@ -290,13 +290,26 @@ class TestRuleGroups(TestCase):
         self.child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
+            'twin_triplet': 1,
             'study_maternal_identifier': '11123',
             'study_child_identifier': '1234',
+            'dob': get_utcnow() - relativedelta(years=10)}
+
+        self.child_dataset_options1 = {
+            'infant_hiv_exposed': 'Exposed',
+            'infant_enrolldate': get_utcnow(),
+            'twin_triplet': 1,
+            'study_maternal_identifier': '11123',
+            'study_child_identifier': '1236',
             'dob': get_utcnow() - relativedelta(years=10)}
 
         mommy.make_recipe(
             'flourish_child.childdataset',
             ** self.child_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            ** self.child_dataset_options1)
 
         maternal_dataset_obj = mommy.make_recipe(
            'flourish_caregiver.maternaldataset',
@@ -304,49 +317,23 @@ class TestRuleGroups(TestCase):
 
         sh = SubjectHelperMixin()
 
-        sh.enroll_prior_participant_assent(
+        subject_identifier = sh.enroll_prior_participant_twins_assent(
             maternal_dataset_obj.screening_identifier,
-            self.child_dataset_options.get('study_child_identifier'))
-
-        self.maternal_dataset_options1 = {
-            'delivdt': get_utcnow() - relativedelta(years=14),
-            'mom_enrolldate': get_utcnow(),
-            'mom_hivstatus': 'HIV-infected',
-            'study_maternal_identifier': '11124',
-            'protocol': 'Mpepu',
-            'preg_pi': 1}
-
-        self.child_dataset_options1 = {
-            'infant_hiv_exposed': 'Exposed',
-            'infant_enrolldate': get_utcnow(),
-            'study_maternal_identifier': '11124',
-            'study_child_identifier': '1235',
-            'dob': get_utcnow() - relativedelta(years=14)}
-
-        mommy.make_recipe(
-            'flourish_child.childdataset',
-            ** self.child_dataset_options1)
-
-        maternal_dataset_obj1 = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options1)
-
-        subject_identifier1 = sh.enroll_prior_participant_assent(
-            maternal_dataset_obj1.screening_identifier,
+            self.child_dataset_options.get('study_child_identifier'),
             self.child_dataset_options1.get('study_child_identifier'))
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
                 visit_code='2000M',
-                subject_identifier=subject_identifier1),
+                subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.hivdisclosurestatusb',
-                subject_identifier=subject_identifier1,
+                subject_identifier=subject_identifier,
                 visit_code='2000M').entry_status, REQUIRED)
 
     @tag('hdsc')
@@ -392,6 +379,18 @@ class TestRuleGroups(TestCase):
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.hivdisclosurestatusa',
+                subject_identifier=subject_identifier,
+                visit_code='2000M').entry_status, NOT_REQUIRED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.hivdisclosurestatusb',
+                subject_identifier=subject_identifier,
+                visit_code='2000M').entry_status, NOT_REQUIRED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.hivdisclosurestatusc',
                 subject_identifier=subject_identifier,
                 visit_code='2000M').entry_status, NOT_REQUIRED)
 
@@ -444,7 +443,7 @@ class TestRuleGroups(TestCase):
                 subject_identifier=subject_identifier,
                 visit_code='2000M').entry_status, REQUIRED)
 
-    @tag('rt')
+    @tag('rtt')
     def test_hiv_rapid_test_not_required(self):
 
         self.maternal_dataset_options = {

@@ -104,7 +104,6 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on cohort a schedule.
     """
-
     if not raw and instance.is_eligible:
         put_on_schedule('cohort_a_antenatal', instance=instance,
                         subject_identifier=instance.subject_identifier)
@@ -116,12 +115,13 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put new born child on schedule
     """
-    if not raw:
-        if created and instance.live_infants_to_register == 1:
-            put_on_schedule('cohort_a_birth', instance=instance,
-                            subject_identifier=instance.subject_identifier)
-            put_on_schedule('cohort_a_quarterly', instance=instance,
-                            subject_identifier=instance.subject_identifier)
+    pass
+    # if not raw:
+        # if created and instance.live_infants_to_register == 1:
+            # put_on_schedule('cohort_a_birth', instance=instance,
+                            # subject_identifier=instance.subject_identifier)
+            # put_on_schedule('cohort_a_quarterly', instance=instance,
+                            # subject_identifier=instance.subject_identifier)
 
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
@@ -232,19 +232,24 @@ def put_cohort_onschedule(cohort, instance, base_appt_datetime=None):
 
     if cohort is not None and 'sec' in cohort:
         put_on_schedule(cohort, instance=instance,
+                        child_subject_identifier=instance.subject_identifier,
                         base_appt_datetime=base_appt_datetime,
                         caregiver_visit_count=instance.caregiver_visit_count)
     else:
         put_on_schedule((cohort + '_enrol'),
                         instance=instance,
+                        child_subject_identifier=instance.subject_identifier,
                         base_appt_datetime=base_appt_datetime,
                         caregiver_visit_count=instance.caregiver_visit_count)
         return put_on_schedule((cohort + '_quarterly'),
                                instance=instance,
+                               child_subject_identifier=instance.subject_identifier,
                                base_appt_datetime=base_appt_datetime,
                                caregiver_visit_count=instance.caregiver_visit_count)
         # put_on_schedule((cohort + '_fu' + str(children_count)),
-                        # instance=instance, base_appt_datetime=django_apps.get_app_config(
+                        # instance=instance,
+                        # child_subject_identifier=instance.subject_identifier,
+                        # base_appt_datetime=django_apps.get_app_config(
                     # 'edc_protocol').study_open_datetime)
 
 
@@ -305,7 +310,8 @@ def get_schedule_sequence(subject_identifier, instance,
 
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
-                    base_appt_datetime=None, caregiver_visit_count=None):
+                    child_subject_identifier=None, base_appt_datetime=None,
+                    caregiver_visit_count=None):
 
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
@@ -346,7 +352,7 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
             onschedule_model_cls.objects.get(
                 subject_identifier=subject_identifier,
                 schedule_name=schedule_name,
-                child_subject_identifier=instance.subject_identifier)
+                child_subject_identifier=child_subject_identifier)
         except onschedule_model_cls.DoesNotExist:
             try:
                 onschedule_obj = schedule.onschedule_model_cls.objects.get(
