@@ -5,6 +5,7 @@ import xlwt
 from django.apps import apps as django_apps
 from django.contrib import admin
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django.utils import timezone
@@ -21,12 +22,14 @@ from edc_model_admin import StackedInlineMixin
 from functools import partialmethod
 from simple_history.admin import SimpleHistoryAdmin
 
+from django.conf import settings
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..models import CaregiverChildConsent, SubjectConsent
 from .exportaction_mixin import ExportActionMixin
 from _collections import OrderedDict
 from edc_constants.constants import MALE, FEMALE
+from ..models import ScreeningPregWomen
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
@@ -274,6 +277,19 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
     def get_readonly_fields(self, request, obj=None):
         fields = super().get_readonly_fields(request, obj) + ('biological_caregiver',)
         return (fields + audit_fields)
+
+    def response_add(self, request, obj, **kwargs):
+        response = self._redirector(obj)
+        return response if response else super(SubjectConsentAdmin, self).response_add(request, obj)
+
+    def response_change(self, request, obj):
+        response = self._redirector(obj)
+        return response if response else super(SubjectConsentAdmin, self).response_change(request, obj)
+
+    def _redirector(self, obj):
+        caregiver_locator = ScreeningPregWomen.objects.filter(screening_identifier=obj.screening_identifier)
+        if caregiver_locator:
+            return redirect(settings.DASHBOARD_URL_NAMES.get('maternal_screening_listboard_url'))
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)

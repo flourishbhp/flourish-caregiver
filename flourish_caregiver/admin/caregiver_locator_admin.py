@@ -7,14 +7,26 @@ from .modeladmin_mixins import ModelAdminMixin
 from flourish_caregiver.models import MaternalDataset
 from django.shortcuts import redirect, reverse
 from django.conf import settings
+from ..models import SubjectConsent
+from django.http import HttpResponseRedirect
 
 
 @admin.register(CaregiverLocator, site=flourish_caregiver_admin)
 class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
     form = CaregiverLocatorForm
 
-    def response_add(self, request, obj):
-        return redirect(settings.DASHBOARD_URL_NAMES.get('subject_listboard_url'))
+    def response_add(self, request, obj, **kwargs):
+        response = self._redirector(obj)
+        return response if response else super(CaregiverLocatorAdmin, self).response_add(request, obj)
+
+    def response_change(self, request, obj):
+        response = self._redirector(obj)
+        return response if response else super(CaregiverLocatorAdmin, self).response_change(request, obj)
+
+    def _redirector(self, obj):
+        caregiver_locator = SubjectConsent.objects.filter(subject_identifier=obj.subject_identifier)
+        if caregiver_locator:
+            return HttpResponseRedirect(f'/subject/subject_dashboard/{obj.subject_identifier}/')
 
     fieldsets = (
         (None, {
