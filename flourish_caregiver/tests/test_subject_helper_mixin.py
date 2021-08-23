@@ -94,13 +94,14 @@ class TestSubjectHelperMixin(TestCase):
             screening_identifier='123456',
             **self.maternal_dataset_options)
 
-        mommy.make_recipe(
+        child_dataset = mommy.make_recipe(
             'flourish_child.childdataset',
             dob=get_utcnow() - relativedelta(years=4, months=5),
             **self.child_dataset_options)
 
         subject_identifier = self.subject_helper.enroll_prior_participant(
-            maternal_dataset_obj.screening_identifier)
+            maternal_dataset_obj.screening_identifier,
+            child_dataset.study_child_identifier)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_identifier,
@@ -127,13 +128,14 @@ class TestSubjectHelperMixin(TestCase):
             screening_identifier='123453',
             **self.maternal_dataset_options)
 
-        mommy.make_recipe(
+        child_dataset = mommy.make_recipe(
             'flourish_child.childdataset',
             dob=get_utcnow() - relativedelta(years=7, months=5),
             **self.child_dataset_options)
 
         subject_identifier = self.subject_helper.enroll_prior_participant_assent(
-            maternal_dataset_obj.screening_identifier)
+            maternal_dataset_obj.screening_identifier,
+            child_dataset.study_child_identifier)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_identifier,
@@ -159,13 +161,14 @@ class TestSubjectHelperMixin(TestCase):
             preg_pi=1,
             **self.maternal_dataset_options)
 
-        mommy.make_recipe(
+        child_dataset = mommy.make_recipe(
             'flourish_child.childdataset',
             dob=get_utcnow() - relativedelta(years=10, months=5),
             **self.child_dataset_options)
 
         subject_identifier = self.subject_helper.enroll_prior_participant_assent(
-            maternal_dataset_obj.screening_identifier)
+            maternal_dataset_obj.screening_identifier,
+            child_dataset.study_child_identifier)
 
         self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
             subject_identifier=subject_identifier,
