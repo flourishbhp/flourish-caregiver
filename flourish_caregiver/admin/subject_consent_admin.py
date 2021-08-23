@@ -26,40 +26,14 @@ from django.conf import settings
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..models import CaregiverChildConsent, SubjectConsent
-from .exportaction_mixin import ExportActionMixin
+from .modeladmin_mixins import ModelAdminMixin
 from _collections import OrderedDict
 from edc_constants.constants import MALE, FEMALE
 from ..models import ScreeningPregWomen
 
 
-class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
-                      ModelAdminRevisionMixin, ModelAdminReplaceLabelTextMixin,
-                      ModelAdminInstitutionMixin, ModelAdminReadOnlyMixin,
-                      ExportActionMixin):
-
-    list_per_page = 10
-    date_hierarchy = 'modified'
-    empty_value_display = '-'
-
-    def redirect_url(self, request, obj, post_url_continue=None):
-        redirect_url = super().redirect_url(
-            request, obj, post_url_continue=post_url_continue)
-        if request.GET.dict().get('next'):
-            url_name = request.GET.dict().get('next').split(',')[0]
-            attrs = request.GET.dict().get('next').split(',')[1:]
-            options = {k: request.GET.dict().get(k)
-                       for k in attrs if request.GET.dict().get(k)}
-            try:
-                redirect_url = reverse(url_name, kwargs=options)
-            except NoReverseMatch as e:
-                raise ModelAdminNextUrlRedirectError(
-                    f'{e}. Got url_name={url_name}, kwargs={options}.')
-        return redirect_url
-
-
 class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
                                   admin.StackedInline):
-
     model = CaregiverChildConsent
     form = CaregiverChildConsentForm
 
@@ -85,7 +59,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 'future_studies_contact',
                 'specimen_consent',
                 'consent_datetime'
-                ]}
+            ]}
          ),)
 
     radio_fields = {'gender': admin.VERTICAL,
@@ -162,7 +136,6 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)
 class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                           SimpleHistoryAdmin, admin.ModelAdmin):
-
     form = SubjectConsentForm
     inlines = [CaregiverChildConsentInline, ]
 
@@ -241,10 +214,12 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                     'modified',
                     'user_created',
                     'user_modified')
+
     list_filter = ('language',
                    'is_verified',
                    'is_literate',
                    'identity_type')
+
     search_fields = ('subject_identifier', 'dob',)
 
     def get_actions(self, request):
@@ -253,7 +228,6 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
 
         if ('flourish_caregiver.change_subjectconsent'
                 in request.user.get_group_permissions()):
-
             consent_actions = [
                 flag_as_verified_against_paper,
                 unflag_as_verified_against_paper]
@@ -294,7 +268,6 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
 class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
-
     form = CaregiverChildConsentForm
 
     fieldsets = (
@@ -314,7 +287,9 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'identity_type',
                 'confirm_identity',
                 'consent_datetime']}
-         ),)
+
+         ),
+        audit_fieldset_tuple)
 
     radio_fields = {'gender': admin.VERTICAL,
                     'child_test': admin.VERTICAL,
@@ -414,7 +389,6 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
         if ('flourish_caregiver.change_caregiverchildconsent'
                 in request.user.get_group_permissions()):
-
             consent_actions = [
                 flag_as_verified_against_paper,
                 unflag_as_verified_against_paper]
