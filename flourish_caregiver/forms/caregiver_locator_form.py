@@ -4,11 +4,12 @@ from edc_form_validators import FormValidatorMixin
 from flourish_form_validations.form_validators import CaregiverLocatorFormValidator
 
 from ..models import CaregiverLocator
+from ..models import SubjectConsent
+from ..models import CaregiverChildConsent
 
 
 class CaregiverLocatorForm(
-        SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
-
+    SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
     form_validator_cls = CaregiverLocatorFormValidator
 
     screening_identifier = forms.CharField(
@@ -24,6 +25,25 @@ class CaregiverLocatorForm(
         label='Study Caregiver Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
+
+    first_name = forms.CharField(
+        label='First Name',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=True)
+
+    last_name = forms.CharField(
+        label='Last Name',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        subject_identifier = instance.subject_identifier if instance else None
+        consent = SubjectConsent.objects.filter(subject_identifier=subject_identifier)
+        if subject_identifier and consent:
+            instance['first_name'] = consent.first().first_name
+            instance['last_name'] = consent.first().last_name
 
     class Meta:
         model = CaregiverLocator
