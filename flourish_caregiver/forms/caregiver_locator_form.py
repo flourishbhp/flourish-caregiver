@@ -29,21 +29,20 @@ class CaregiverLocatorForm(
     first_name = forms.CharField(
         label='First Name',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
-        required=True)
+        required=False)
 
     last_name = forms.CharField(
         label='Last Name',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
-        required=True)
+        required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        instance = getattr(self, 'instance', None)
-        subject_identifier = instance.subject_identifier if instance else None
-        consent = SubjectConsent.objects.filter(subject_identifier=subject_identifier)
-        if subject_identifier and consent:
-            instance['first_name'] = consent.first().first_name
-            instance['last_name'] = consent.first().last_name
+        subject_identifier = self.initial['subject_identifier']
+        subject_consented = SubjectConsent.objects.filter(subject_identifier=subject_identifier)
+        if subject_consented:
+            self.initial['first_name'] = subject_consented.first().first_name
+            self.initial['last_name'] = subject_consented.first().last_name
 
     class Meta:
         model = CaregiverLocator
