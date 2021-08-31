@@ -19,6 +19,7 @@ class TbHistoryPregAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'maternal_visit',
                 'report_datetime',
                 'prior_tb_infec',
+                'prior_history',
                 'history_of_tbt',
                 'tbt_completed',
                 'prior_tb_history',
@@ -40,4 +41,5 @@ class TbHistoryPregAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'prior_treatmnt_history': admin.VERTICAL,
                     'tb_drugs_freq': admin.VERTICAL,
                     'iv_meds_used': admin.VERTICAL,
+                    'prior_history': admin.VERTICAL,
                     'tb_treatmnt_completed': admin.VERTICAL}
