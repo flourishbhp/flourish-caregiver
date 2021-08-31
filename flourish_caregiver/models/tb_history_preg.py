@@ -21,7 +21,8 @@ class TbHistoryPreg(CrfModelMixin):
     prior_history = models.CharField(
         verbose_name='Do you have prior history of a TB Contact?',
         help_text='TB contact is defined as close contact with someone diagnosed',
-        choices=YES_NO
+        choices=YES_NO,
+        max_length=3
     )
 
     history_of_tbt = models.CharField(
