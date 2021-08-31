@@ -38,7 +38,6 @@ class TestVisitScheduleSetup(TestCase):
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
             'study_maternal_identifier': self.study_maternal_identifier,
-            'study_maternal_identifier': self.study_maternal_identifier,
             'study_child_identifier': '1234'}
 
     @tag('aa')
