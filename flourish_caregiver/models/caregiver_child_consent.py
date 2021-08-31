@@ -128,7 +128,9 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     cohort = models.CharField(
         max_length=12,
-        choices=COHORTS,)
+        choices=COHORTS,
+        blank=True,
+        null=True)
 
     caregiver_visit_count = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(3)],

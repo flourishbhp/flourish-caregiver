@@ -40,7 +40,7 @@ class Cohort:
         child_age = age(child_dob, check_date)
 
         child_age = str(child_age.years) + '.' + str(child_age.months)
-        return float(re.search(r'\d+.\d+', child_age).group())
+        return float(child_age)
 
     @property
     def hiv_exposed_uninfected(self):

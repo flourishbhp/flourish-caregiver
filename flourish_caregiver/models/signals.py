@@ -211,13 +211,16 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 elif instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
 
                     try:
-                        child_dummy_consent_cls.objects.get(
+                        child_dummy_consent = child_dummy_consent_cls.objects.get(
                                     subject_identifier=instance.subject_identifier,
                                     version=instance.subject_consent.version,
                                     identity=instance.identity)
                     except child_dummy_consent_cls.DoesNotExist:
                         pass
                     else:
+                        if not child_dummy_consent.cohort:
+                            child_dummy_consent.cohort = cohort
+                            child_dummy_consent.save()
                         put_cohort_onschedule(cohort,
                                               instance,
                                               base_appt_datetime=prev_enrolled_obj.created)
