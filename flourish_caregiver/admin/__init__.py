@@ -18,7 +18,7 @@ from .caregiver_locator_admin import CaregiverLocatorAdmin
 from .enrollment_admin import EnrollmentAdmin
 from .food_security_questionnaire_admin import FoodSecurityQuestionnaireAdmin
 from .hiv_disclosure_status_admin import HIVDisclosureStatusAdminA, HIVDisclosureStatusAdminB
-from .hiv_disclosure_status_admin import HIVDisclosureStatusAdminC, HIVDisclosureStatusAdminD
+from .hiv_disclosure_status_admin import HIVDisclosureStatusAdminC
 from .hiv_rapid_test_counseling_admin import HIVRapidTestCounselingAdmin
 from .hiv_viralload_cd4_admin import HivViralLoadCd4Admin
 from .locator_logs_admin import LocatorLogEntryAdmin
