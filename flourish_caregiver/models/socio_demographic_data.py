@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
@@ -83,7 +84,7 @@ class SocioDemographicData(CrfModelMixin):
         verbose_name='How many household members live in the your primary home/ compound?',
         help_text='A household member is considered someone who spends more nights on average in your household than '
                   'in any other household in the same community over the last 12 months ',
-        validators=[MinConsentAgeValidator(1), MaxConsentAgeValidator(25)]
+        validators=[MaxValueValidator(1), MinValueValidator(25)]
 
     )
 
