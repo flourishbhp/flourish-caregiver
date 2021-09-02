@@ -84,7 +84,9 @@ class SocioDemographicData(CrfModelMixin):
         verbose_name='How many household members live in the your primary home/ compound?',
         help_text='A household member is considered someone who spends more nights on average in your household than '
                   'in any other household in the same community over the last 12 months ',
-        validators=[MaxValueValidator(1), MinValueValidator(25)]
+        validators=[MaxValueValidator(1), MinValueValidator(25)],
+        null=True,
+        blank=True
 
     )
 

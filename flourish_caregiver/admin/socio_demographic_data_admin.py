@@ -1,8 +1,8 @@
 from django.contrib import admin
-from edc_fieldsets.fieldlist import Insert
+from edc_fieldsets.fieldlist import Insert, Remove
 from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 from edc_model_admin import audit_fieldset_tuple
-
+from ..models import AntenatalEnrollment
 from ..admin_site import flourish_caregiver_admin
 from ..forms import SocioDemographicDataForm
 from ..models import SocioDemographicData
@@ -11,7 +11,6 @@ from .modeladmin_mixins import CrfModelAdminMixin
 
 @admin.register(SocioDemographicData, site=flourish_caregiver_admin)
 class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
-
     form = SocioDemographicDataForm
 
     list_display = ('maternal_visit',
@@ -51,6 +50,17 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'money_earned': admin.VERTICAL,
                     'stay_with_child': admin.VERTICAL,
                     'socio_demo_changed': admin.VERTICAL}
+    # conditional_fieldlists = {}
+    conditional_fieldlists = {
+        'no_of_family_members': Insert('number_of_household_members',
+                                       after='stay_with_child'),
+    }
+
+    def get_key(self, request, obj=None):
+        appointment_subject_identifier = obj.subject_identifier
+        if appointment_subject_identifier and AntenatalEnrollment.objects.filter(
+                subject_identifier=appointment_subject_identifier):
+            return 'no_of_family_members'
 
     custom_form_labels = [
         FormLabel(
@@ -58,7 +68,7 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             label=('Since the last time you spoke to a FLOURISH study member, has any of your'
                    ' following Socio-demographic information changed'),
             previous_appointment=True)
-        ]
+    ]
 
     quartely_schedules = ['a_quarterly1_schedule1', 'a_quarterly2_schedule1',
                           'a_quarterly3_schedule1', 'a_sec1_schedule1',
@@ -70,7 +80,7 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                           'c_sec1_schedule1', 'c_sec2_schedule1', 'c_sec3_schedule1',
                           'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1']
 
-    conditional_fieldlists = {}
+
     for schedule in quartely_schedules:
         conditional_fieldlists.update(
             {schedule: Insert('socio_demo_changed', after='report_datetime')})
