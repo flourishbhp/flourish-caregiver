@@ -5,14 +5,13 @@ from django.dispatch import receiver
 
 from edc_base.utils import age, get_utcnow
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-
+import flourish_follow.models
 from ..helper_classes.cohort import Cohort
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_locator import CaregiverLocator
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
-from flourish_follow.models import WorkList
 from .maternal_delivery import MaternalDelivery
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 # from flourish_caregiver.models.subject_consent import SubjectConsent
@@ -89,10 +88,11 @@ def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
 
                 if offstudy_td:
                     try:
-                        WorkList.objects.get(
+
+                        flourish_follow.models.WorkList.objects.get(
                             study_maternal_identifier=instance.study_maternal_identifier)
-                    except WorkList.DoesNotExist:
-                        WorkList.objects.create(
+                    except flourish_follow.models.WorkList.DoesNotExist:
+                        flourish_follow.models.WorkList.objects.create(
                             study_maternal_identifier=instance.study_maternal_identifier,
                             prev_study=maternal_dataset.protocol,
                             user_created=instance.user_created)
