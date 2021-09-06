@@ -1,4 +1,6 @@
 from django.db import models
+from edc_constants.choices import YES_NO
+
 from ..choices import (EXTRA_PULMONARY_LOC, TB_DRUGS_FREQ, TB_TYPE,
                        YES_NO_UNK_DWTA)
 
@@ -15,6 +17,13 @@ class TbHistoryPreg(CrfModelMixin):
                    'who are infected by the bacterium, M. tuberculosis, but '
                    'have no TB symptoms. TB infection is diagnosed with a positive '
                    'tuberculin skin test (TST) or IGRA lab test. '))
+
+    prior_history = models.CharField(
+        verbose_name='Do you have prior history of a TB Contact?',
+        help_text='TB contact is defined as close contact with someone diagnosed',
+        choices=YES_NO,
+        max_length=3
+    )
 
     history_of_tbt = models.CharField(
         verbose_name=('Do you have a prior history of taking isoniazid for TB '

@@ -1,6 +1,8 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
+from edc_base.model_validators import MinConsentAgeValidator, MaxConsentAgeValidator
 
 from ..maternal_choices import CURRENT_OCCUPATION, MONEY_PROVIDER, MONEY_EARNED
 from ..maternal_choices import MARITAL_STATUS, ETHNICITY, HIGHEST_EDUCATION
@@ -8,7 +10,6 @@ from .model_mixins import CrfModelMixin
 
 
 class SocioDemographicData(CrfModelMixin):
-
     """ A model completed by the user on Demographics form for all mothers.
     """
 
@@ -21,7 +22,7 @@ class SocioDemographicData(CrfModelMixin):
         max_length=35,
         verbose_name="if other specify...",
         blank=True,
-        null=True,)
+        null=True, )
 
     ethnicity = models.CharField(
         max_length=25,
@@ -32,7 +33,7 @@ class SocioDemographicData(CrfModelMixin):
         max_length=35,
         verbose_name="if other specify...",
         blank=True,
-        null=True,)
+        null=True, )
 
     highest_education = models.CharField(
         max_length=25,
@@ -48,7 +49,7 @@ class SocioDemographicData(CrfModelMixin):
         max_length=35,
         verbose_name="if other specify...",
         blank=True,
-        null=True,)
+        null=True, )
 
     provides_money = models.CharField(
         max_length=50,
@@ -59,7 +60,7 @@ class SocioDemographicData(CrfModelMixin):
         max_length=35,
         verbose_name="if other specify...",
         blank=True,
-        null=True,)
+        null=True, )
 
     money_earned = models.CharField(
         max_length=50,
@@ -70,7 +71,7 @@ class SocioDemographicData(CrfModelMixin):
         max_length=35,
         verbose_name="if other specify...",
         blank=True,
-        null=True,)
+        null=True, )
 
     stay_with_child = models.CharField(
         verbose_name=(
@@ -78,6 +79,14 @@ class SocioDemographicData(CrfModelMixin):
             'who is also participating in the FLOURISH study?'),
         max_length=3,
         choices=YES_NO)
+
+    number_of_household_members = models.PositiveSmallIntegerField(
+        verbose_name='How many household members live in the your primary home/ compound?',
+        help_text='A household member is considered someone who spends more nights on average in your household than '
+                  'in any other household in the same community over the last 12 months ',
+        validators=[MaxValueValidator(1), MinValueValidator(25)]
+
+    )
 
     """Quartely phone calls stem question"""
     socio_demo_changed = models.CharField(

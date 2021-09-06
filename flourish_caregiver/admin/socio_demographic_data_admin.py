@@ -38,7 +38,9 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'provides_money_other',
                 'money_earned',
                 'money_earned_other',
-                'stay_with_child']}
+                'stay_with_child',
+                'number_of_household_members'
+            ]}
          ), audit_fieldset_tuple)
 
     radio_fields = {'marital_status': admin.VERTICAL,
