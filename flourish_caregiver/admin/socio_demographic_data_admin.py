@@ -50,17 +50,8 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'money_earned': admin.VERTICAL,
                     'stay_with_child': admin.VERTICAL,
                     'socio_demo_changed': admin.VERTICAL}
-    # conditional_fieldlists = {}
-    conditional_fieldlists = {
-        'no_of_family_members': Insert('number_of_household_members',
-                                       after='stay_with_child'),
-    }
 
-    def get_key(self, request, obj=None):
-        appointment_subject_identifier = obj.subject_identifier
-        if appointment_subject_identifier and AntenatalEnrollment.objects.filter(
-                subject_identifier=appointment_subject_identifier):
-            return 'no_of_family_members'
+    conditional_fieldlists = {}
 
     custom_form_labels = [
         FormLabel(
@@ -79,7 +70,6 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                           'b_sec1_schedule1', 'b_sec2_schedule1', 'b_sec3_schedule1',
                           'c_sec1_schedule1', 'c_sec2_schedule1', 'c_sec3_schedule1',
                           'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1']
-
 
     for schedule in quartely_schedules:
         conditional_fieldlists.update(
