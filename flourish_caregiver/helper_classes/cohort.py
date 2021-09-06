@@ -40,7 +40,7 @@ class Cohort:
         child_age = age(child_dob, check_date)
 
         child_age = str(child_age.years) + '.' + str(child_age.months)
-        return float(re.search(r'\d+.\d+', child_age).group())
+        return float(child_age)
 
     @property
     def hiv_exposed_uninfected(self):
@@ -197,7 +197,7 @@ class Cohort:
         """Return True if the infant mother pair meets criteria for cohort A.
         """
         # TODO: Cater for 200 newly enrolled pregnant woman.
-        if self.age_at_enrollment() <= 2.5 and self.age_at_year_3 <= 4.5:
+        if self.age_at_enrollment() <= 2.5 and self.age_at_year_3 <= 5:
             if (self.protocol == 'Tshilo Dikotla' and self.hiv_exposed_uninfected
                     and self.total_HEU(protocol='Tshilo Dikotla') < 200):
                 return 'cohort_a'
@@ -210,8 +210,7 @@ class Cohort:
         """Return True id an infant mother pair meets criteria for cohort B.
         """
         protocols = ['Tshilo Dikotla', 'Mpepu', 'Tshipidi']
-        if (self.age_at_enrollment() >= 4 and self.age_at_enrollment() <= 8.5
-                and self.age_at_year_3 >= 6 and self.age_at_year_3 <= 10.5):
+        if (self.age_at_year_3 >= 5.1 and self.age_at_year_3 <= 10.5):
 
             if self.protocol in protocols and self.efv_regime:
                 return 'cohort_b' if self.total_efv_regime < 100 else 'cohort_b_sec'
@@ -228,8 +227,7 @@ class Cohort:
         """Return True id an infant mother pair meets criteria for cohort C.
         """
         # TODO: cater for 125 new enrolled adolescents
-        if (self.age_at_enrollment() >= 8 and self.age_at_enrollment() <= 17.9
-                and self.age_at_year_3 >= 10):
+        if self.age_at_year_3 >= 10:
             if self.huu_adolescents:
                 return ('cohort_c' if self.protocol == 'Tshipidi'
                         and self.total_huu_adolescents(protocol='Tshipidi') < 75
