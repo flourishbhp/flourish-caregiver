@@ -83,7 +83,7 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
             while appointment:
                 options = {
                     '{}__appointment'.format(self.model.visit_model_attr()):
-                    appointment.previous_by_timepoint}
+                    self.get_previous_appt_instance(appointment)}
                 try:
                     obj = self.model.objects.get(**options)
                 except ObjectDoesNotExist:
