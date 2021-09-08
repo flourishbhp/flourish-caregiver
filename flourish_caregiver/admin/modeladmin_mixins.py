@@ -78,18 +78,17 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
         """
         obj = None
         appointment = instance or self.get_instance(request)
-        if appointment:
-            while self.get_previous_appointment(request):
-                options = {
-                    '{}__appointment'.format(self.model.visit_model_attr()):
-                    appointment.previous_by_timepoint}
-                try:
-                    obj = self.model.objects.get(**options)
-                except ObjectDoesNotExist:
-                    pass
-                else:
-                    break
-                appointment = self.get_previous_appointment(request)
+        while appointment:
+            options = {
+                '{}__appointment'.format(self.model.visit_model_attr()):
+                appointment.previous_by_timepoint}
+            try:
+                obj = self.model.objects.get(**options)
+            except ObjectDoesNotExist:
+                pass
+            else:
+                break
+            appointment = self.get_previous_appointment(request)
         return obj
 
     def get_previous_appointment(self, request):
