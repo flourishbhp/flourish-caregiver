@@ -7,6 +7,7 @@ from edc_base.model_validators import MinConsentAgeValidator, MaxConsentAgeValid
 from ..maternal_choices import CURRENT_OCCUPATION, MONEY_PROVIDER, MONEY_EARNED
 from ..maternal_choices import MARITAL_STATUS, ETHNICITY, HIGHEST_EDUCATION
 from .model_mixins import CrfModelMixin
+from .antenatal_enrollment import AntenatalEnrollment
 
 
 class SocioDemographicData(CrfModelMixin):
@@ -84,7 +85,9 @@ class SocioDemographicData(CrfModelMixin):
         verbose_name='How many household members live in the your primary home/ compound?',
         help_text='A household member is considered someone who spends more nights on average in your household than '
                   'in any other household in the same community over the last 12 months ',
-        validators=[MaxValueValidator(1), MinValueValidator(25)]
+        validators=[MinValueValidator(1), MaxValueValidator(25)],
+        null=True,
+        blank=True
 
     )
 
@@ -94,6 +97,10 @@ class SocioDemographicData(CrfModelMixin):
         max_length=3,
         choices=YES_NO,
         null=True)
+
+    @property
+    def is_pregnant(self):
+        return AntenatalEnrollment.objects.filter(subject_identifier=self.subject_identifier)
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
