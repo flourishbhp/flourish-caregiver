@@ -18,7 +18,7 @@ from .caregiver_phq_referral_form import CaregiverPhqReferralForm
 from .enrollment_form import EnrollmentForm
 from .food_security_questionnaire_form import FoodSecurityQuestionnaireForm
 from .hiv_disclosure_status_form import HIVDisclosureStatusFormA, HIVDisclosureStatusFormB
-from .hiv_disclosure_status_form import HIVDisclosureStatusFormC, HIVDisclosureStatusFormD
+from .hiv_disclosure_status_form import HIVDisclosureStatusFormC
 from .hiv_rapid_test_counseling_form import HIVRapidTestCounselingForm
 from .hiv_viralload_cd4_form import HivViralLoadCd4Form
 from .locator_logs_form import LocatorLogForm, LocatorLogEntryForm

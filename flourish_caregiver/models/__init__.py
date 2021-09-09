@@ -17,8 +17,9 @@ from .caregiver_phq_referral import CaregiverPhqReferral
 from .enrollment import Enrollment
 from .flourish_consent_version import FlourishConsentVersion
 from .food_security_questionnaire import FoodSecurityQuestionnaire
-from .hiv_disclosure_status import HIVDisclosureStatusA, HIVDisclosureStatusB
-from .hiv_disclosure_status import HIVDisclosureStatusC, HIVDisclosureStatusD
+from .hiv_disclosure_status import HIVDisclosureStatusA
+from .hiv_disclosure_status import HIVDisclosureStatusB
+from .hiv_disclosure_status import HIVDisclosureStatusC
 from .hiv_rapid_test_counseling import HIVRapidTestCounseling
 from .hiv_viralload_cd4 import HivViralLoadAndCd4
 from .locator_logs import LocatorLog, LocatorLogEntry
