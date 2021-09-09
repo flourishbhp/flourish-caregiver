@@ -38,11 +38,14 @@ class CaregiverLocatorForm(
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        subject_identifier = self.initial['subject_identifier']
-        subject_consented = SubjectConsent.objects.filter(subject_identifier=subject_identifier)
-        if subject_consented:
-            self.initial['first_name'] = subject_consented.first().first_name
-            self.initial['last_name'] = subject_consented.first().last_name
+
+        try:
+            subject_consented = SubjectConsent.objects.filter(subject_identifier=self.initial['subject_identifier'])
+            if subject_consented:
+                self.initial['first_name'] = subject_consented.first().first_name
+                self.initial['last_name'] = subject_consented.first().last_name
+        except:
+            pass
 
     class Meta:
         model = CaregiverLocator
