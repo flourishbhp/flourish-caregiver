@@ -7,7 +7,6 @@ from itertools import chain
 from .form_mixins import SubjectModelFormMixin
 from ..models import MedicalHistory
 
-
 from ..helper_classes import MaternalStatusHelper
 
 
@@ -19,6 +18,7 @@ class MedicalHistoryForm(SubjectModelFormMixin, forms.ModelForm):
         initial = kwargs.pop('initial', {})
         instance = kwargs.get('instance')
         previous_instance = getattr(self, 'previous_instance', None)
+
         if not instance and previous_instance:
             for key in self.base_fields.keys():
                 if key in ['caregiver_chronic', 'who', 'caregiver_medications']:
@@ -27,6 +27,7 @@ class MedicalHistoryForm(SubjectModelFormMixin, forms.ModelForm):
                     continue
                 if key not in ['maternal_visit', 'report_datetime', 'med_history_changed']:
                     initial[key] = getattr(previous_instance, key)
+
         kwargs['initial'] = initial
         super().__init__(*args, **kwargs)
 
