@@ -155,7 +155,7 @@ class EnrollmentMixin(models.Model):
         eligibility_criteria = AntenatalEnrollmentEligibility(
             will_breastfeed=self.will_breastfeed,
             ga_lmp_enrollment_wks=self.ga_lmp_enrollment_wks,
-            enrollment_hiv_status=self.enrollment_hiv_status,
+            # enrollment_hiv_status=self.enrollment_hiv_status,
             will_get_arvs=self.will_get_arvs, pending_ultrasound=self.pending_ultrasound)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
