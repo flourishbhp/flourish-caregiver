@@ -1,4 +1,3 @@
-import re
 from django.apps import apps as django_apps
 from edc_base.utils import age
 from flourish_child.models import ChildDataset
@@ -28,6 +27,8 @@ class Cohort:
         self.dtg = dtg
         self.pi = pi
         self.efv = efv
+        self.caregiver_child_consent_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverchildconsent')
         self._screening_identifiers = SubjectConsent.objects.values_list(
             'screening_identifier', flat=True).distinct()
 
@@ -64,7 +65,7 @@ class Cohort:
     def no_hiv_during_preg(self):
         """Return True if the infant had no explore to HIV during pregnancy.
         """
-        return self.mum_hiv_status == 'HIV uninfected'
+        return self.mum_hiv_status == 'HIV-uninfected'
 
     @property
     def efv_regime(self):
@@ -83,35 +84,53 @@ class Cohort:
         """
         return self.pi == 1
 
-    @property
-    def total_efv_regime(self):
+    def total_efv_regime(self, cohort=None):
         """Return total enrolled infant for a specified protocol with EFV regime.
         """
 
-        maternal_dataset = MaternalDataset.objects.filter(
-            screening_identifier__in=self._screening_identifiers,
-            preg_efv=1)
-        return maternal_dataset.count()
+        maternal_dataset_ids = MaternalDataset.objects.filter(
+            preg_efv=1).values_list('screening_identifier', flat=True)
 
-    @property
-    def total_dtg_regime(self):
+        efv_consents = SubjectConsent.objects.filter(
+            screening_identifier__in=maternal_dataset_ids)
+
+        efv_consented = self.caregiver_child_consent_cls.objects.filter(
+            subject_consent__in=efv_consents,
+            cohort=cohort)
+
+        return efv_consented.count()
+
+    def total_dtg_regime(self, cohort=None):
         """Return total enrolled infant for a specified protocol with DTG regime.
         """
-        maternal_dataset = MaternalDataset.objects.filter(
-            screening_identifier__in=self._screening_identifiers,
-            preg_dtg=1)
-        return maternal_dataset.count()
+        maternal_dataset_ids = MaternalDataset.objects.filter(
+            preg_dtg=1).values_list('screening_identifier', flat=True)
 
-    @property
-    def total_pi_regime(self):
+        dtg_consents = SubjectConsent.objects.filter(
+            screening_identifier__in=maternal_dataset_ids)
+
+        dtg_consented = self.caregiver_child_consent_cls.objects.filter(
+            subject_consent__in=dtg_consents,
+            cohort=cohort)
+
+        return dtg_consented.count()
+
+    def total_pi_regime(self, cohort=None):
         """Returns total enrolled infants for a specified protocol with PI regime.
         """
-        maternal_dataset = MaternalDataset.objects.filter(
-            screening_identifier__in=self._screening_identifiers,
-            preg_pi=1)
-        return maternal_dataset.count()
+        maternal_dataset_ids = MaternalDataset.objects.filter(
+            preg_pi=1).values_list('screening_identifier', flat=True)
 
-    def total_HEU(self, protocol=None):
+        pi_consents = SubjectConsent.objects.filter(
+            screening_identifier__in=maternal_dataset_ids)
+
+        pi_consented = self.caregiver_child_consent_cls.objects.filter(
+            subject_consent__in=pi_consents,
+            cohort=cohort)
+
+        return pi_consented.count()
+
+    def total_HEU(self, x=None):
         """Return total enrolled Tshilo Dikotla HEU.
         """
 
@@ -124,14 +143,20 @@ class Cohort:
             infant_hiv_exposed='Exposed')
         return child_dataset.count()
 
-    @property
-    def total_no_hiv_during_preg(self):
+    def total_no_hiv_during_preg(self, cohort=None):
         """Return total number of infants with no HIV expore.
         """
-        maternal_dataset = MaternalDataset.objects.filter(
-            screening_identifier__in=self._screening_identifiers,
-            mom_hivstatus='HIV uninfected')
-        return maternal_dataset.count()
+        maternal_dataset_ids = MaternalDataset.objects.filter(
+            mom_hivstatus='HIV-uninfected')
+
+        no_hiv_consents = SubjectConsent.objects.filter(
+            screening_identifier__in=maternal_dataset_ids)
+
+        no_hiv_consented = self.caregiver_child_consent_cls.objects.filter(
+            subject_consent__in=no_hiv_consents,
+            cohort=cohort)
+
+        return no_hiv_consented.count()
 
     def total_HUU(self, protocol=None):
         """Returns total enrolled Tshilo Dikotla HUU infants.
@@ -210,16 +235,17 @@ class Cohort:
         """Return True id an infant mother pair meets criteria for cohort B.
         """
         protocols = ['Tshilo Dikotla', 'Mpepu', 'Tshipidi']
+
         if (self.age_at_year_3 >= 5.1 and self.age_at_year_3 <= 10.5):
 
             if self.protocol in protocols and self.efv_regime:
-                return 'cohort_b' if self.total_efv_regime < 100 else 'cohort_b_sec'
+                return 'cohort_b' if self.total_efv_regime(cohort='cohort_b') < 100 else 'cohort_b_sec'
 
             elif self.protocol in protocols and self.dtg_regime:
-                return 'cohort_b' if self.total_dtg_regime < 100 else 'cohort_b_sec'
+                return 'cohort_b' if self.total_dtg_regime(cohort='cohort_b') < 100 else 'cohort_b_sec'
 
             elif self.protocol in protocols and self.no_hiv_during_preg:
-                return 'cohort_b' if self.total_no_hiv_during_preg < 100 else 'cohort_b_sec'
+                return 'cohort_b' if self.total_no_hiv_during_preg(cohort='cohort_b') < 100 else 'cohort_b_sec'
 
             return 'cohort_b_sec'
 
@@ -235,7 +261,7 @@ class Cohort:
                 return True
             elif self.pi_regime:
                 return ('cohort_c' if self.protocol in ['Mma Bana', 'Mpepu', 'Tshipidi']
-                        and self.total_pi_regime < 100 else 'cohort_c_sec')
+                        and self.total_pi_regime(cohort='cohort_c') < 100 else 'cohort_c_sec')
             return 'cohort_c_sec'
 
     @property

@@ -170,6 +170,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             cohort = cohort_assigned(instance.study_child_identifier,
                                      instance.child_dob,
                                      instance.subject_consent.created)
+
             if cohort:
                 children_count = instance.caregiver_visit_count
                 child_dummy_consent_cls = django_apps.get_model(

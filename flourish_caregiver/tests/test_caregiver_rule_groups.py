@@ -54,6 +54,7 @@ class TestRuleGroups(TestCase):
                 visit_code='1000M',
                 visit_code_sequence='0').entry_status, NOT_REQUIRED)
 
+    @tag('rg1')
     def test_hiv_test_required_cohort_a(self):
         self.assertEqual(
             CrfMetadata.objects.get(
@@ -133,14 +134,14 @@ class TestRuleGroups(TestCase):
                 visit_code='1000M').entry_status, REQUIRED)
 
     def test_hiv_viralload_cd4_required_cohort_a(self):
-        self.maternal_dataset_options = {
+        maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
             'study_maternal_identifier': '11123',
             'protocol': 'Tshilo Dikotla'}
 
-        self.child_dataset_options = {
+        child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
             'study_maternal_identifier': '11123',
             'study_child_identifier': '1234',
@@ -148,17 +149,18 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
            'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+           **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
         subject_identifier = sh.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier,
-            self.child_dataset_options.get('study_child_identifier'))
+            child_dataset_options.get('study_child_identifier'),
+            hiv_status=POS)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -177,14 +179,14 @@ class TestRuleGroups(TestCase):
 
     @tag('hiv')
     def test_hiv_test_required_cohort_a1(self):
-        self.maternal_dataset_options = {
+        maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
             'study_maternal_identifier': '11123',
             'protocol': 'Tshilo Dikotla'}
 
-        self.child_dataset_options = {
+        child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
             'study_maternal_identifier': '11123',
             'dob': get_utcnow() - relativedelta(years=2, months=5),
@@ -192,17 +194,18 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
            'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+           **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
         subject_identifier = sh.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier,
-            self.child_dataset_options.get('study_child_identifier'))
+            child_dataset_options.get('study_child_identifier'),
+            hiv_status=POS)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -226,9 +229,9 @@ class TestRuleGroups(TestCase):
                 visit_code='2000M',
                 visit_code_sequence='0').entry_status, NOT_REQUIRED)
 
-    @tag('hdsc1')
+    @tag('hdsc')
     def test_hiv_disclosure_metadata_required(self):
-        self.maternal_dataset_options = {
+        maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=14),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
@@ -236,7 +239,7 @@ class TestRuleGroups(TestCase):
             'protocol': 'Mpepu',
             'preg_pi': 1}
 
-        self.child_dataset_options = {
+        child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
             'study_maternal_identifier': '11123',
@@ -245,17 +248,18 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
            'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+           **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
         subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier,
-            self.child_dataset_options.get('study_child_identifier'))
+            child_dataset_options.get('study_child_identifier'),
+            hiv_status=POS)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -277,10 +281,10 @@ class TestRuleGroups(TestCase):
                 subject_identifier=subject_identifier,
                 visit_code='2000M').entry_status, NOT_REQUIRED)
 
-    @tag('hdsc2')
+    @tag('hdsc1')
     def test_hiv_disclosure_ab_metadata_required(self):
         self.maternal_dataset_options = {
-            'delivdt': get_utcnow() - relativedelta(years=10),
+            'delivdt': get_utcnow() - relativedelta(years=11),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
             'study_maternal_identifier': '11123',
@@ -293,7 +297,7 @@ class TestRuleGroups(TestCase):
             'twin_triplet': 1,
             'study_maternal_identifier': '11123',
             'study_child_identifier': '1234',
-            'dob': get_utcnow() - relativedelta(years=10)}
+            'dob': get_utcnow() - relativedelta(years=11)}
 
         self.child_dataset_options1 = {
             'infant_hiv_exposed': 'Exposed',
@@ -301,7 +305,7 @@ class TestRuleGroups(TestCase):
             'twin_triplet': 1,
             'study_maternal_identifier': '11123',
             'study_child_identifier': '1236',
-            'dob': get_utcnow() - relativedelta(years=10)}
+            'dob': get_utcnow() - relativedelta(years=11)}
 
         mommy.make_recipe(
             'flourish_child.childdataset',
@@ -320,7 +324,8 @@ class TestRuleGroups(TestCase):
         subject_identifier = sh.enroll_prior_participant_twins_assent(
             maternal_dataset_obj.screening_identifier,
             self.child_dataset_options.get('study_child_identifier'),
-            self.child_dataset_options1.get('study_child_identifier'))
+            self.child_dataset_options1.get('study_child_identifier'),
+            hiv_status=POS)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -366,7 +371,66 @@ class TestRuleGroups(TestCase):
 
         subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier,
-            self.child_dataset_options.get('study_child_identifier'))
+            self.child_dataset_options.get('study_child_identifier'),
+            hiv_status=POS)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2000M',
+                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.hivdisclosurestatusa',
+                subject_identifier=subject_identifier,
+                visit_code='2000M').entry_status, NOT_REQUIRED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.hivdisclosurestatusb',
+                subject_identifier=subject_identifier,
+                visit_code='2000M').entry_status, NOT_REQUIRED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.hivdisclosurestatusc',
+                subject_identifier=subject_identifier,
+                visit_code='2000M').entry_status, NOT_REQUIRED)
+
+    @tag('hdsc')
+    def test_hiv_disclosure_metadata_not_required2(self):
+
+        self.maternal_dataset_options = {
+            'delivdt': get_utcnow() - relativedelta(years=8),
+            'mom_enrolldate': get_utcnow(),
+            'mom_hivstatus': 'HIV-uninfected',
+            'study_maternal_identifier': '11123',
+            'protocol': 'Mpepu'}
+
+        self.child_dataset_options = {
+            'infant_hiv_exposed': 'Unexposed',
+            'infant_enrolldate': get_utcnow(),
+            'study_maternal_identifier': '11123',
+            'study_child_identifier': '1234',
+            'dob': get_utcnow() - relativedelta(years=8)}
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            ** self.child_dataset_options)
+
+        maternal_dataset_obj = mommy.make_recipe(
+           'flourish_caregiver.maternaldataset',
+           **self.maternal_dataset_options)
+
+        sh = SubjectHelperMixin()
+
+        subject_identifier = sh.enroll_prior_participant_assent(
+            maternal_dataset_obj.screening_identifier,
+            self.child_dataset_options.get('study_child_identifier'),
+            hiv_status=NEG)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -423,11 +487,8 @@ class TestRuleGroups(TestCase):
 
         subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier,
-            self.child_dataset_options.get('study_child_identifier'))
-
-        mommy.make_recipe(
-           'flourish_caregiver.caregiverpreviouslyenrolled',
-           subject_identifier=subject_identifier)
+            self.child_dataset_options.get('study_child_identifier'),
+            hiv_status=NEG)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -473,11 +534,8 @@ class TestRuleGroups(TestCase):
 
         subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier,
-            self.child_dataset_options.get('study_child_identifier'))
-
-        mommy.make_recipe(
-           'flourish_caregiver.caregiverpreviouslyenrolled',
-           subject_identifier=subject_identifier)
+            self.child_dataset_options.get('study_child_identifier'),
+            hiv_status=POS)
 
         history_model = 'edc_visit_schedule.subjectschedulehistory'
 

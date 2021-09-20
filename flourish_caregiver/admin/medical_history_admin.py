@@ -14,8 +14,8 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = MedicalHistoryForm
 
-    list_display = ('maternal_visit', 'chronic_since', )
-    list_filter = ('chronic_since', )
+    list_display = ('maternal_visit', 'chronic_since',)
+    list_filter = ('chronic_since',)
 
     fieldsets = (
         (None, {
