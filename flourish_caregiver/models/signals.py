@@ -170,6 +170,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             cohort = cohort_assigned(instance.study_child_identifier,
                                      instance.child_dob,
                                      instance.subject_consent.created)
+
             if cohort:
                 children_count = instance.caregiver_visit_count
                 child_dummy_consent_cls = django_apps.get_model(
@@ -233,22 +234,23 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
 def put_cohort_onschedule(cohort, instance, base_appt_datetime=None):
 
-    if cohort is not None and 'sec' in cohort:
-        put_on_schedule(cohort, instance=instance,
-                        child_subject_identifier=instance.subject_identifier,
-                        base_appt_datetime=base_appt_datetime,
-                        caregiver_visit_count=instance.caregiver_visit_count)
-    else:
-        put_on_schedule((cohort + '_enrol'),
-                        instance=instance,
-                        child_subject_identifier=instance.subject_identifier,
-                        base_appt_datetime=base_appt_datetime,
-                        caregiver_visit_count=instance.caregiver_visit_count)
-        return put_on_schedule((cohort + '_quarterly'),
-                               instance=instance,
-                               child_subject_identifier=instance.subject_identifier,
-                               base_appt_datetime=base_appt_datetime,
-                               caregiver_visit_count=instance.caregiver_visit_count)
+    if cohort is not None:
+        if 'sec' in cohort:
+            put_on_schedule(cohort, instance=instance,
+                            child_subject_identifier=instance.subject_identifier,
+                            base_appt_datetime=base_appt_datetime,
+                            caregiver_visit_count=instance.caregiver_visit_count)
+        else:
+            put_on_schedule((cohort + '_enrol'),
+                            instance=instance,
+                            child_subject_identifier=instance.subject_identifier,
+                            base_appt_datetime=base_appt_datetime,
+                            caregiver_visit_count=instance.caregiver_visit_count)
+            return put_on_schedule((cohort + '_quarterly'),
+                                   instance=instance,
+                                   child_subject_identifier=instance.subject_identifier,
+                                   base_appt_datetime=base_appt_datetime,
+                                   caregiver_visit_count=instance.caregiver_visit_count)
         # put_on_schedule((cohort + '_fu' + str(children_count)),
                         # instance=instance,
                         # child_subject_identifier=instance.subject_identifier,

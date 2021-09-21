@@ -59,15 +59,15 @@ class EnrollmentMixin(models.Model):
         max_length=30,
         help_text=("if POS or NEG, ask for documentation."))
 
-    evidence_hiv_status = models.CharField(
-        verbose_name="(Interviewer) Have you seen evidence of the HIV result?",
-        max_length=15,
-        null=True,
-        blank=False,
-        choices=YES_NO_NA,
-        help_text=(
-            "evidence = clinic and/or IDCC records. check regimes/drugs. "
-            "If NO, more criteria required."))
+    # evidence_hiv_status = models.CharField(
+    #     verbose_name="(Interviewer) Have you seen evidence of the HIV result?",
+    #     max_length=15,
+    #     null=True,
+    #     blank=False,
+    #     choices=YES_NO_NA,
+    #     help_text=(
+    #         "evidence = clinic and/or IDCC records. check regimes/drugs. "
+    #         "If NO, more criteria required."))
 
     week32_test = models.CharField(
         verbose_name=(
@@ -80,23 +80,23 @@ class EnrollmentMixin(models.Model):
         verbose_name="Date of HIV Test",
         validators=[date_not_future, ])
 
-    week32_result = models.CharField(
-        verbose_name="What was your result?",
-        choices=POS_NEG,
-        max_length=15,
-        null=True,
-        blank=True)
+    # week32_result = models.CharField(
+    #     verbose_name="What was your result?",
+    #     choices=POS_NEG,
+    #     max_length=15,
+    #     null=True,
+    #     blank=True)
 
-    evidence_32wk_hiv_status = models.CharField(
-        verbose_name=(
-            "(Interviewer) Have you seen evidence of the result from "
-            "HIV test on or before this pregnancy?"),
-        max_length=15,
-        null=True,
-        blank=False,
-        choices=YES_NO_NA,
-        help_text=(
-            "evidence = clinic and/or IDCC records. check regimes/drugs."))
+    # evidence_32wk_hiv_status = models.CharField(
+    #     verbose_name=(
+    #         "(Interviewer) Have you seen evidence of the result from "
+    #         "HIV test on or before this pregnancy?"),
+    #     max_length=15,
+    #     null=True,
+    #     blank=False,
+    #     choices=YES_NO_NA,
+    #     help_text=(
+    #         "evidence = clinic and/or IDCC records. check regimes/drugs."))
 
     will_get_arvs = models.CharField(
         verbose_name=("(Interviewer) If HIV+ve, do records show that "
@@ -155,7 +155,7 @@ class EnrollmentMixin(models.Model):
         eligibility_criteria = AntenatalEnrollmentEligibility(
             will_breastfeed=self.will_breastfeed,
             ga_lmp_enrollment_wks=self.ga_lmp_enrollment_wks,
-            enrollment_hiv_status=self.enrollment_hiv_status,
+            # enrollment_hiv_status=self.enrollment_hiv_status,
             will_get_arvs=self.will_get_arvs, pending_ultrasound=self.pending_ultrasound)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
