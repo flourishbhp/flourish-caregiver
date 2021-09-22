@@ -162,9 +162,6 @@ class Cohort:
         """Returns total enrolled Tshilo Dikotla HUU infants.
         """
 
-        caregiver_child_consent_cls = django_apps.get_model(
-            'flourish_caregiver.caregiverchildconsent')
-
         child_offstudy_cls = django_apps.get_model(
             'flourish_prn.childoffstudy')
 
@@ -180,7 +177,7 @@ class Cohort:
         child_offstudies = child_offstudy_cls.objects.all().values_list(
             'subject_identifier', flat=True)
 
-        child_subject_identifiers = caregiver_child_consent_cls.objects.values_list(
+        child_subject_identifiers = self.caregiver_child_consent_cls.objects.values_list(
             'subject_identifier', flat=True).filter(
                 child_age_at_enrollment__lte=2.5,
                 study_child_identifier=study_child_identifiers)
