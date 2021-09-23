@@ -39,9 +39,7 @@ class ExportActionMixin:
             obj_data = obj.__dict__
             
             # Add subject identifier and visit code
-            try:
-                obj_data.get('subject_identifier')
-            except ValueError:
+            if not obj_data.get('subject_identifier'):
                 try:
                     obj.subject_identifier
                 except AttributeError:
@@ -49,9 +47,7 @@ class ExportActionMixin:
                 else:
                     obj_data.update(subject_identifier=obj.subject_identifier)
             
-            try:
-                obj_data.get('visit_code')
-            except ValueError:
+            if not obj_data.get('visit_code'):
                 try:
                     obj.visit_code
                 except AttributeError:
