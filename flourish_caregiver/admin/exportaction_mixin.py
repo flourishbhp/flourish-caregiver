@@ -37,30 +37,31 @@ class ExportActionMixin:
 
         for obj in queryset:
             obj_data = obj.__dict__
-            screening_identifier = getattr(obj, 'screening_identifier', None)
-            previous_study = self.previous_bhp_study(screening_identifier=screening_identifier)
-            data = [obj_data[field] if field != 'previous study name' else previous_study for field in field_names]
-        
-            # Add subject identifier
+            
+            # Add subject identifier and visit code
             try:
-                data.get('subject_identifier')
+                obj_data.get('subject_identifier')
             except ValueError:
                 try:
                     obj.subject_identifier
                 except AttributeError:
                     pass
                 else:
-                    data.update(subject_identifier=obj.subject_identifier)
+                    obj_data.update(subject_identifier=obj.subject_identifier)
             
             try:
-                data.get('visit_code')
+                obj_data.get('visit_code')
             except ValueError:
                 try:
                     obj.visit_code
                 except AttributeError:
                     pass
                 else:
-                    data.update(visit_code=obj.visit_code)
+                    obj_data.update(visit_code=obj.visit_code)
+            
+            screening_identifier = getattr(obj, 'screening_identifier', None)
+            previous_study = self.previous_bhp_study(screening_identifier=screening_identifier)
+            data = [obj_data[field] if field != 'previous study name' else previous_study for field in field_names]
 
             row_num += 1
             for col_num in range(len(data)):
