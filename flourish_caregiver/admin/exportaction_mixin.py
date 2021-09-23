@@ -40,6 +40,27 @@ class ExportActionMixin:
             screening_identifier = getattr(obj, 'screening_identifier', None)
             previous_study = self.previous_bhp_study(screening_identifier=screening_identifier)
             data = [obj_data[field] if field != 'previous study name' else previous_study for field in field_names]
+        
+            # Add subject identifier
+            try:
+                data.get('subject_identifier')
+            except ValueError:
+                try:
+                    obj.subject_identifier
+                except AttributeError:
+                    pass
+                else:
+                    data.update(subject_identifier=obj.subject_identifier)
+            
+            try:
+                data.get('visit_code')
+            except ValueError:
+                try:
+                    obj.visit_code
+                except AttributeError:
+                    pass
+                else:
+                    data.update(visit_code=obj.visit_code)
 
             row_num += 1
             for col_num in range(len(data)):
@@ -77,3 +98,4 @@ class ExportActionMixin:
     def is_consent(self, obj):
         consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
         return isinstance(obj, consent_cls)
+
