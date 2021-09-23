@@ -1,11 +1,11 @@
 import datetime
 import uuid
-import xlwt
 
 from django.apps import apps as django_apps
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+import xlwt
 
 
 class ExportActionMixin:
@@ -32,29 +32,21 @@ class ExportActionMixin:
         if queryset and self.is_consent(queryset[0]):
             field_names.append('previous study name')
 
+        if queryset and getattr(queryset[0], 'maternal_visit', None):
+            field_names.insert(14, 'subject_identifier')
+            field_names.insert(17, 'visit_code')
+
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
 
         for obj in queryset:
             obj_data = obj.__dict__
-            
+
             # Add subject identifier and visit code
-            if not obj_data.get('subject_identifier'):
-                try:
-                    obj.subject_identifier
-                except AttributeError:
-                    pass
-                else:
-                    obj_data.update(subject_identifier=obj.subject_identifier)
-            
-            if not obj_data.get('visit_code'):
-                try:
-                    obj.visit_code
-                except AttributeError:
-                    pass
-                else:
-                    obj_data.update(visit_code=obj.visit_code)
-            
+            if getattr(obj, 'maternal_visit', None):
+                obj_data['visit_code'] = obj.maternal_visit.visit_code
+                obj_data['subject_identifier'] = obj.maternal_visit.subject_identifier
+
             screening_identifier = getattr(obj, 'screening_identifier', None)
             previous_study = self.previous_bhp_study(screening_identifier=screening_identifier)
             data = [obj_data[field] if field != 'previous study name' else previous_study for field in field_names]
