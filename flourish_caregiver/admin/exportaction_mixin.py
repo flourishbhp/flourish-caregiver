@@ -35,7 +35,7 @@ class ExportActionMixin:
         if queryset and getattr(queryset[0], 'maternal_visit', None):
             field_names.insert(0, 'subject_identifier')
             field_names.insert(1, 'study_maternal_identifier')
-            field_names.insert(2, 'previous study')
+            field_names.insert(2, 'previous_study')
             field_names.insert(3, 'visit_code')
 
         for col_num in range(len(field_names)):
