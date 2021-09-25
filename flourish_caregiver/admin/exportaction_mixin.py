@@ -55,7 +55,7 @@ class ExportActionMixin:
             study_maternal_identifier = self.study_maternal_identifier(screening_identifier=screening_identifier)
             obj_data['previous_study'] = previous_study
             obj_data['study_maternal_identifier'] = study_maternal_identifier
-            data = [obj_data[field] if field != 'previous study name' else previous_study for field in field_names]
+            data = [obj_data[field] for field in field_names]
 
             row_num += 1
             for col_num in range(len(data)):
