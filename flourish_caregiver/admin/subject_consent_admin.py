@@ -1,35 +1,29 @@
+from _collections import OrderedDict
 import datetime
+from functools import partialmethod
 import uuid
-import xlwt
 
 from django.apps import apps as django_apps
+from django.conf import settings
 from django.contrib import admin
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.urls.base import reverse
-from django.urls.exceptions import NoReverseMatch
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 from edc_consent.actions import (
     flag_as_verified_against_paper, unflag_as_verified_against_paper)
-from edc_model_admin import (
-    ModelAdminFormAutoNumberMixin, ModelAdminInstitutionMixin,
-    audit_fieldset_tuple, audit_fields, ModelAdminNextUrlRedirectMixin,
-    ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
-from edc_model_admin import ModelAdminBasicMixin, ModelAdminReadOnlyMixin
+from edc_constants.constants import MALE, FEMALE
+from edc_model_admin import ModelAdminBasicMixin
+from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, audit_fields
 from edc_model_admin import StackedInlineMixin
-from functools import partialmethod
 from simple_history.admin import SimpleHistoryAdmin
+import xlwt
 
-from django.conf import settings
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..models import CaregiverChildConsent, SubjectConsent
-from .modeladmin_mixins import ModelAdminMixin
-from _collections import OrderedDict
-from edc_constants.constants import MALE, FEMALE
 from ..models import ScreeningPregWomen
+from .modeladmin_mixins import ModelAdminMixin
 
 
 class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
@@ -72,25 +66,6 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                     'future_studies_contact': admin.VERTICAL}
 
     child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
-
-    def get_max_num(self, request, obj=None, **kwargs):
-        maternal_delivery = django_apps.get_model('flourish_caregiver.maternaldelivery')
-        dummy_consent = django_apps.get_model('flourish_child.childdummysubjectconsent')
-
-        if request.GET.get('antenatal') == 'True':
-            if obj and obj.subject_identifier:
-                self.max_num = dummy_consent.objects.filter(
-                    subject_identifier__icontains=obj.subject_identifier).count()
-                try:
-                    maternal_delivery.objects.get(
-                        subject_identifier=obj.subject_identifier)
-                except maternal_delivery.DoesNotExist:
-                    pass
-                else:
-                    self.max_num += 1
-            else:
-                self.max_num = 0
-        return super().get_max_num(request, obj=None, **kwargs)
 
     def get_formset(self, request, obj=None, **kwargs):
         initial = []
@@ -254,16 +229,20 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
 
     def response_add(self, request, obj, **kwargs):
         response = self._redirector(obj)
-        return response if response else super(SubjectConsentAdmin, self).response_add(request, obj)
+        return response if response else super(
+            SubjectConsentAdmin, self).response_add(request, obj)
 
     def response_change(self, request, obj):
         response = self._redirector(obj)
-        return response if response else super(SubjectConsentAdmin, self).response_change(request, obj)
+        return response if response else super(
+            SubjectConsentAdmin, self).response_change(request, obj)
 
     def _redirector(self, obj):
-        caregiver_locator = ScreeningPregWomen.objects.filter(screening_identifier=obj.screening_identifier)
+        caregiver_locator = ScreeningPregWomen.objects.filter(
+            screening_identifier=obj.screening_identifier)
         if caregiver_locator:
-            return redirect(settings.DASHBOARD_URL_NAMES.get('maternal_screening_listboard_url'))
+            return redirect(settings.DASHBOARD_URL_NAMES.get(
+                'maternal_screening_listboard_url'))
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)

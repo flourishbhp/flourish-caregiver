@@ -2,23 +2,21 @@ from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django_crypto_fields.fields import IdentityField
-
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_consent.field_mixins import PersonalFieldsMixin
+from edc_consent.field_mixins import ReviewFieldsMixin, VerificationFieldsMixin
 from edc_constants.choices import GENDER, YES_NO_NA, YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
-from edc_consent.field_mixins import ReviewFieldsMixin, VerificationFieldsMixin
 
-from .eligibility import CaregiverChildConsentEligibility
-from .subject_consent import SubjectConsent
 from ..choices import CHILD_IDENTITY_TYPE, COHORTS
 from ..helper_classes.cohort import Cohort
-
 from ..subject_identifier import InfantIdentifier
+from .eligibility import CaregiverChildConsentEligibility
+from .subject_consent import SubjectConsent
 
 INFANT = 'infant'
 
@@ -46,7 +44,9 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     gender = models.CharField(
         verbose_name="Gender",
         choices=GENDER,
-        max_length=1)
+        max_length=1,
+        null=True,
+        blank=True)
 
     identity = IdentityField(
         verbose_name='Identity number',
@@ -67,7 +67,9 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     child_dob = models.DateField(
         verbose_name="Date of birth",
-        validators=[date_not_future, ])
+        validators=[date_not_future, ],
+        null=True,
+        blank=True)
 
     child_test = models.CharField(
         verbose_name='Will you allow for HIV testing and counselling of '
@@ -155,7 +157,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         self.child_age_at_enrollment = (
-            self.get_child_age_at_enrollment() if self.child_dob else None)
+            self.get_child_age_at_enrollment() if self.child_dob else 0)
         if self.is_eligible and not self.subject_identifier:
             self.subject_identifier = InfantIdentifier(
                 maternal_identifier=self.subject_consent.subject_identifier,

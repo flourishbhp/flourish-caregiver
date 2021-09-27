@@ -1,8 +1,10 @@
 from django.apps import apps as django_apps
 from edc_base.utils import age
+
 from flourish_child.models import ChildDataset
-from ..models.subject_consent import SubjectConsent
+
 from ..models.maternal_dataset import MaternalDataset
+from ..models.subject_consent import SubjectConsent
 
 
 class CohortError(Exception):
@@ -130,13 +132,14 @@ class Cohort:
 
         return pi_consented.count()
 
-    def total_HEU(self, x=None):
+    def total_HEU(self, protocol=None):
         """Return total enrolled Tshilo Dikotla HEU.
         """
 
         study_maternal_identifiers = MaternalDataset.objects.values_list(
             'study_maternal_identifier', flat=True).filter(
-                screening_identifier__in=self._screening_identifiers)
+                screening_identifier__in=self._screening_identifiers,
+                protocol=protocol)
 
         child_dataset = ChildDataset.objects.filter(
             study_maternal_identifier__in=study_maternal_identifiers,
