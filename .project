@@ -3,7 +3,6 @@
 	<name>flourish-caregiver</name>
 	<comment></comment>
 	<projects>
-		<project>edc-identifier</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
