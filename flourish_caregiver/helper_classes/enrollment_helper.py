@@ -1,7 +1,8 @@
 from dateutil.relativedelta import relativedelta
 from django import forms
-from edc_constants.constants import NO, YES, POS, NEG
 from django.core.validators import ValidationError
+from edc_constants.constants import NO, YES, POS, NEG
+
 
 class EnrollmentError(Exception):
     pass
@@ -47,7 +48,7 @@ class EnrollmentHelper(object):
         Note: the EnrollmentError should never be excepted!!
         """
 
-        pos = self.known_hiv_pos_with_evidence()
+        pos = self.known_hiv_pos()
 
         neg = (self.tested_neg_at32wks() or
                self.tested_neg_previously_result_within_3_months())
@@ -63,21 +64,14 @@ class EnrollmentHelper(object):
             raise forms.ValidationError(
                 'Unable to determine maternal hiv status at enrollment. '
                 f'Got current_hiv_status={self.instance_antenatal.current_hiv_status},'
-                # f'evidence_hiv_status={self.instance_antenatal.evidence_hiv_status},'
                 f'rapid_test_done={self.instance_antenatal.rapid_test_done}')
 
-    def known_hiv_pos_with_evidence(self):
+    def known_hiv_pos(self):
         """"""
-        if (self.instance_antenatal.current_hiv_status == POS and
-                self.instance_antenatal.evidence_hiv_status == YES):
-            return True
-        return False
+        return self.instance_antenatal.current_hiv_status == POS
 
     def tested_pos_at32wks(self):
-        if (self.instance_antenatal.week32_result == POS and
-                self.instance_antenatal.evidence_32wk_hiv_status == YES):
-            return True
-        return False
+        return self.instance_antenatal.week32_result == POS
 
     def rapidtest_result(self):
         if self.instance_antenatal.rapid_test_done == YES:
@@ -87,8 +81,7 @@ class EnrollmentHelper(object):
         """"""
         if (self.instance_antenatal.week32_test == YES and
                 self.test_date_is_on_or_after_32wks() and
-                self.instance_antenatal.week32_result == NEG and
-                self.instance_antenatal.evidence_32wk_hiv_status == YES):
+                self.instance_antenatal.current_hiv_status == NEG):
             return True
         return False
 
@@ -96,7 +89,8 @@ class EnrollmentHelper(object):
         """Returns true if the 32 week test date is within 3months else
         false
         """
-        if (self.instance_antenatal.week32_test == YES and
+        if (self.instance_antenatal.week32_test_date and
+                self.instance_antenatal.week32_test == YES and
                 self.instance_antenatal.week32_test_date >
                 (self.instance_antenatal.report_datetime.date() -
                  relativedelta(months=3))):
@@ -117,9 +111,10 @@ class EnrollmentHelper(object):
                 raise self.exception_cls(
                     'Rapid test date cannot precede test date on or '
                     'after 32 weeks')
-        return (
-            self.instance_antenatal.week32_test_date >=
-            self.date_at_32wks if self.date_at_32wks else None)
+        if self.instance_antenatal.week32_test_date:
+            return (
+                self.instance_antenatal.week32_test_date >=
+                self.date_at_32wks if self.date_at_32wks else None)
 
     @property
     def validate_rapid_test(self):
