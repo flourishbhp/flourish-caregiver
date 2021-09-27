@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django_crypto_fields.fields import FirstnameField, LastnameField
 from django_crypto_fields.fields import IdentityField
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future, date_not_future
@@ -34,6 +35,13 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",
         max_length=50)
+
+    first_name = FirstnameField(
+        null=True, blank=True)
+
+    last_name = LastnameField(
+        verbose_name="Last name",
+        null=True, blank=True)
 
     study_child_identifier = models.CharField(
         verbose_name='Previous study identifier',
