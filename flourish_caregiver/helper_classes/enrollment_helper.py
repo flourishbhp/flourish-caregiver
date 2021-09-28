@@ -121,7 +121,7 @@ class EnrollmentHelper(object):
         """Returns True to indicate that a rapid test is not required,
         False to indicate a rapid test is required.
         """
-        if (self.known_hiv_pos_with_evidence() or
+        if (self.known_hiv_pos() or
                 self.rapidtest_result() in [POS, NEG]):
             return True
         return False
