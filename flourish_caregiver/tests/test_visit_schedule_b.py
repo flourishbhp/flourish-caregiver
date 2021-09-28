@@ -1,14 +1,15 @@
-import pytz
-from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
-from edc_constants.constants import YES, NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
-from edc_visit_schedule.models import SubjectScheduleHistory
+import pytz
+
 from edc_appointment.models import Appointment
+from edc_visit_schedule.models import SubjectScheduleHistory
+
 from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
 from ..models import OnScheduleCohortBSec
 from ..subject_helper_mixin import SubjectHelperMixin
