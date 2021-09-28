@@ -30,6 +30,10 @@ class CrfModelMixin(BaseCrfModelMixin, SubjectScheduleCrfModelMixin,
     def subject_identifier(self):
         return self.maternal_visit.appointment.subject_identifier
 
+    @property
+    def visit_code(self):
+        return self.maternal_visit.visit_code
+
     def natural_key(self):
         return self.maternal_visit.natural_key()
 
