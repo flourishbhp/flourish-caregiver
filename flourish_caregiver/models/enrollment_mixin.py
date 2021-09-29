@@ -14,7 +14,6 @@ from ..helper_classes import EnrollmentHelper
 
 
 class EnrollmentMixin(models.Model):
-
     """Base Model for antenal enrollment"""
 
     report_datetime = models.DateTimeField(
@@ -59,16 +58,6 @@ class EnrollmentMixin(models.Model):
         max_length=30,
         help_text=("if POS or NEG, ask for documentation."))
 
-    # evidence_hiv_status = models.CharField(
-    #     verbose_name="(Interviewer) Have you seen evidence of the HIV result?",
-    #     max_length=15,
-    #     null=True,
-    #     blank=False,
-    #     choices=YES_NO_NA,
-    #     help_text=(
-    #         "evidence = clinic and/or IDCC records. check regimes/drugs. "
-    #         "If NO, more criteria required."))
-
     week32_test = models.CharField(
         verbose_name=(
             "Have you tested for HIV before or during this pregnancy?"),
@@ -79,24 +68,6 @@ class EnrollmentMixin(models.Model):
     week32_test_date = models.DateField(
         verbose_name="Date of HIV Test",
         validators=[date_not_future, ])
-
-    # week32_result = models.CharField(
-    #     verbose_name="What was your result?",
-    #     choices=POS_NEG,
-    #     max_length=15,
-    #     null=True,
-    #     blank=True)
-
-    # evidence_32wk_hiv_status = models.CharField(
-    #     verbose_name=(
-    #         "(Interviewer) Have you seen evidence of the result from "
-    #         "HIV test on or before this pregnancy?"),
-    #     max_length=15,
-    #     null=True,
-    #     blank=False,
-    #     choices=YES_NO_NA,
-    #     help_text=(
-    #         "evidence = clinic and/or IDCC records. check regimes/drugs."))
 
     will_get_arvs = models.CharField(
         verbose_name=("(Interviewer) If HIV+ve, do records show that "
@@ -142,8 +113,7 @@ class EnrollmentMixin(models.Model):
 
     def save(self, *args, **kwargs):
         enrollment_helper = EnrollmentHelper(instance_antenatal=self)
-#      if not enrollment_helper.validate_rapid_test():
-#        raise ValidationError('Ensure a rapid test id done for this subject.')
+
 
         self.edd_by_lmp = enrollment_helper.evaluate_edd_by_lmp
         self.ga_lmp_enrollment_wks = enrollment_helper.evaluate_ga_lmp(
@@ -165,7 +135,7 @@ class EnrollmentMixin(models.Model):
         consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
         subject_consents = consent_cls.objects.filter(
             subject_identifier=self.subject_identifier).order_by(
-                'consent_datetime')
+            'consent_datetime')
         if subject_consents:
             subject_consent = subject_consents[0]
             return subject_consent.consent_datetime.date()

@@ -38,3 +38,8 @@ class ClinicianNotesImage(BaseUuidModel):
 
     clinician_notes_image.short_description = 'Clinician Notes Image'
     clinician_notes_image.allow_tags = True
+
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Caregiver Clinician Notes Image'
+        verbose_name_plural = 'Caregiver Clinician Notes Images'
