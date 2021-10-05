@@ -221,6 +221,7 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_sec1_schedule1').count(), 15)
 
+    @tag('yoh')
     def test_cohort_b_assent_onschedule_valid(self):
         """Assert that a 7 year old participant's mother who is HIV- from Mpepu study
          is put on cohort b schedule after assent.
@@ -228,7 +229,7 @@ class TestVisitScheduleSetup(TestCase):
 
         self.subject_identifier = self.subject_identifier[:-1] + '3'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['mom_hivstatus'] = 'HIV uninfected'
+        self.maternal_dataset_options['mom_hivstatus'] = 'HIV-uninfected'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7,
                                                                                 months=2)
 
@@ -476,8 +477,8 @@ class TestVisitScheduleSetup(TestCase):
         self.subject_identifier = self.subject_identifier[:-1] + '4'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4,
-                                                                                months=9)
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
+                                                                                months=1)
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             subject_identifier=self.subject_identifier,
@@ -487,7 +488,7 @@ class TestVisitScheduleSetup(TestCase):
         child_dataset1 = mommy.make_recipe(
             'flourish_child.childdataset',
             twin_triplet=0,
-            dob=get_utcnow() - relativedelta(years=4, months=9),
+            dob=get_utcnow() - relativedelta(years=5, months=1),
             **self.child_dataset_options)
 
         # self.child_dataset_options['study_child_identifier'] = '1235'
@@ -511,7 +512,7 @@ class TestVisitScheduleSetup(TestCase):
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=child_dataset1.study_child_identifier,
-            child_dob=(get_utcnow() - relativedelta(years=4, months=9)).date(),)
+            child_dob=(get_utcnow() - relativedelta(years=5, months=1)).date(),)
 
         mommy.make_recipe(
                 'flourish_caregiver.caregiverpreviouslyenrolled',
@@ -525,7 +526,7 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(SubjectScheduleHistory.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            onschedule_datetime=child_consent.created).count(), 1)
+            onschedule_datetime=child_consent.created.replace(microsecond=0)).count(), 2)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,

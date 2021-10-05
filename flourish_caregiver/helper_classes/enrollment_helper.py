@@ -70,9 +70,6 @@ class EnrollmentHelper(object):
         """"""
         return self.instance_antenatal.current_hiv_status == POS
 
-    def tested_pos_at32wks(self):
-        return self.instance_antenatal.week32_result == POS
-
     def rapidtest_result(self):
         if self.instance_antenatal.rapid_test_done == YES:
             return self.instance_antenatal.rapid_test_result
@@ -91,9 +88,10 @@ class EnrollmentHelper(object):
         """
         if (self.instance_antenatal.week32_test_date and
                 self.instance_antenatal.week32_test == YES and
-                self.instance_antenatal.week32_test_date >
+                self.instance_antenatal.week32_test_date >=
                 (self.instance_antenatal.report_datetime.date() -
-                 relativedelta(months=3))):
+                 relativedelta(months=3)) and
+                self.instance_antenatal.current_hiv_status == NEG):
             return True
         return False
 
