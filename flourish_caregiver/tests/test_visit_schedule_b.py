@@ -2,7 +2,7 @@ from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
-from edc_constants.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE, YES
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 import pytz
@@ -264,6 +264,7 @@ class TestVisitScheduleSetup(TestCase):
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_identifier).count(), 0)
 
+    @tag('pp')
     def test_cohort_b_twins_onschedule_valid(self):
         """Assert that an 8 year old twin participants' mother from  Mpepu study is put on
          cohort c with only one visit schedule.
@@ -303,19 +304,41 @@ class TestVisitScheduleSetup(TestCase):
             breastfeed_intent=NOT_APPLICABLE,
             **self.options)
 
-        mommy.make_recipe(
+        child_consent1 = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=cd1.study_child_identifier,
             child_dob=(get_utcnow() - relativedelta(years=8, months=2)).date(),)
 
         mommy.make_recipe(
+                'flourish_child.childassent',
+                subject_identifier=child_consent1.subject_identifier,
+                first_name=child_consent1.first_name,
+                last_name=child_consent1.last_name,
+                dob=child_consent1.child_dob,
+                identity=child_consent1.identity,
+                confirm_identity=child_consent1.identity,
+                remain_in_study=YES,
+                version=subject_consent.version)
+
+        child_consent2 = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=cd2.study_child_identifier,
             identity='234513181',
             confirm_identity='234513181',
             child_dob=(get_utcnow() - relativedelta(years=8, months=2)).date(),)
+
+        mommy.make_recipe(
+                'flourish_child.childassent',
+                subject_identifier=child_consent2.subject_identifier,
+                first_name=child_consent2.first_name,
+                last_name=child_consent2.last_name,
+                dob=child_consent2.child_dob,
+                identity=child_consent2.identity,
+                confirm_identity=child_consent2.identity,
+                remain_in_study=YES,
+                version=subject_consent.version)
 
         mommy.make_recipe(
                 'flourish_caregiver.caregiverpreviouslyenrolled',
