@@ -226,34 +226,45 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
                     elif instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
 
-                        try:
-                            child_dummy_consent = child_dummy_consent_cls.objects.get(
-                                        subject_identifier=instance.subject_identifier,
-                                        version=instance.subject_consent.version,
-                                        identity=instance.identity)
-                        except child_dummy_consent_cls.DoesNotExist:
-                            pass
-                        else:
-                            if not child_dummy_consent.cohort:
-                                child_dummy_consent.cohort = instance.cohort
-                            child_dummy_consent.save()
                             put_cohort_onschedule(
                                 instance.cohort,
                                 instance,
                                 base_appt_datetime=prev_enrolled_obj.created.replace(
                                     microsecond=0))
 
+                    try:
+                        child_dummy_consent = child_dummy_consent_cls.objects.get(
+                                    subject_identifier=instance.subject_identifier,
+                                    version=instance.subject_consent.version,
+                                    identity=instance.identity)
+                    except child_dummy_consent_cls.DoesNotExist:
+                        pass
+                    else:
+                        if not child_dummy_consent.cohort:
+                            child_dummy_consent.cohort = instance.cohort
+                        child_dummy_consent.save()
 
 # @receiver(post_save, weak=False, sender=MaternalVisit,
           # dispatch_uid='maternal_visit_on_post_save')
 # def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     # """
-    # - Put subject on quarterly schedule on enrollment visit.
+    # - Put subject on quarterly schedule at enrollment visit.
     # """
+    # if not raw and created and instance.visit_code == '2000M':
     #
-    # cohort = cohort_assigned(instance.study_child_identifier,
-                                     # instance.child_dob,
-                                     # instance.subject_consent.created)
+        # try:
+            # CaregiverChildConsent.objects.get(
+                # subject_consent__subject_identifier=instance.screening_identifier)
+        # except CaregiverChildConsent.DoesNotExist:
+            # pass
+        # else:
+            # return True
+            #
+        # cohort = cohort_assigned(instance.study_child_identifier,
+                                         # instance.child_dob,
+                                         # instance.subject_consent.created)
+
+
 def screening_preg_exists(caregiver_child_consent_obj):
 
     preg_women_screening_cls = django_apps.get_model('flourish_caregiver.screeningpregwomen')
