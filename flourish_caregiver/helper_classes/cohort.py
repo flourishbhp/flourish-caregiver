@@ -49,13 +49,13 @@ class Cohort:
     def hiv_exposed_uninfected(self):
         """Return True is an infant is HEU.
         """
-        return self.infant_hiv_exposed == 'Exposed'
+        return self.infant_hiv_exposed in ['Exposed', 'exposed']
 
     @property
     def hiv_unexposed_uninfected(self):
         """Returns True if an infant is HUU
         """
-        return self.infant_hiv_exposed == 'Unexposed'
+        return self.infant_hiv_exposed in ['Unexposed', 'unexposed']
 
     @property
     def huu_adolescents(self):
@@ -222,7 +222,7 @@ class Cohort:
         """Return True if the infant mother pair meets criteria for cohort A.
         """
         # TODO: Cater for 200 newly enrolled pregnant woman.
-        if self.age_at_enrollment() <= 2.5 and self.age_at_year_3 <= 5:
+        if self.age_at_year_3 <= 5:
             if (self.protocol == 'Tshilo Dikotla' and self.hiv_exposed_uninfected
                     and self.total_HEU(protocol='Tshilo Dikotla') < 200):
                 return 'cohort_a'
