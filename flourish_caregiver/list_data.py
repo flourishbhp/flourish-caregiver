@@ -137,8 +137,34 @@ list_data = {
          'Atypical disseminated leishmaniasis'),
         ('Sympt nephropathy/cardiomyopathy',
          'Sympt nephropathy/cardiomyopathy'),
-        (NOT_APPLICABLE, 'Not Applicable')
+        (NOT_APPLICABLE, 'Not Applicable'),
     ],
+    'flourish_caregiver.covidsymptoms': [
+        ('chest_pain', 'Chest pain'),
+        ('chills', 'Chills'),
+        ('Cough', 'Cough'),
+        ('Diarrhea ', 'Diarrhea '),
+        ('Fever', 'Fever > 37.5 Degree Celsius'),
+        ('muscle_aches', 'Muscle aches'),
+        ('nasal_congestion', 'Nasal Congestion'),
+        ('Nausea_or_vomiting  ', 'Nausea/vomiting'),
+        ('shortness_of_breath', 'Shortness of breath'),
+        ('sore_throat', 'Sore throat'),
+    ],
+
+    'flourish_caregiver.covidsymptomsafter14days': [
+        ('chest_pain', 'Chest pain'),
+        ('chills', 'Chills'),
+        ('Cough', 'Cough'),
+        ('Diarrhea ', 'Diarrhea '),
+        ('Fever', 'Fever > 37.5 Degree Celsius'),
+        ('muscle_aches', 'Muscle aches'),
+        ('nasal_congestion', 'Nasal Congestion'),
+        ('Nausea_or_vomiting  ', 'Nausea/vomiting'),
+        ('shortness_of_breath', 'Shortness of breath'),
+        ('sore_throat', 'Sore throat'),
+    ],
+
 }
 
 preload_data = PreloadData(

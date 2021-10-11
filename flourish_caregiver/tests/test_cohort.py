@@ -1,5 +1,6 @@
-from dateutil.relativedelta import relativedelta
 from datetime import date
+
+from dateutil.relativedelta import relativedelta
 from django.test import tag
 from django.test.testcases import TestCase
 from django.utils import timezone
@@ -118,7 +119,7 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=10, months=7),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla')
         self.assertTrue(cohort.no_hiv_during_preg)
 
@@ -127,7 +128,7 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=10, months=7),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla',
             pi=1)
         self.assertTrue(cohort.pi_regime)
@@ -137,7 +138,7 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=10, months=7),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla',
             pi=0)
         self.assertFalse(cohort.pi_regime)
@@ -147,7 +148,7 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=10, months=7),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla')
         self.assertFalse(cohort.pi_regime)
 
@@ -156,7 +157,7 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=8, months=8),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla',
             efv=1)
         self.assertTrue(cohort.efv_regime)
@@ -166,7 +167,7 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=10, months=7),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla',
             efv=0)
         self.assertFalse(cohort.efv_regime)
@@ -176,7 +177,7 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=10, months=7),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla')
         self.assertFalse(cohort.efv_regime)
 
@@ -185,7 +186,7 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=10, months=7),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla',
             dtg=1)
         self.assertTrue(cohort.dtg_regime)
@@ -195,7 +196,7 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=10, months=7),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla',
             dtg=0)
         self.assertFalse(cohort.dtg_regime)
@@ -205,6 +206,6 @@ class TestCohort(TestCase):
             child_dob=date.today() - relativedelta(years=10, months=7),
             enrollment_date=timezone.now().date(),
             infant_hiv_exposed='Exposed',
-            mum_hiv_status='HIV uninfected',
+            mum_hiv_status='HIV-uninfected',
             protocol='Tshilo Dikotla')
         self.assertFalse(cohort.dtg_regime)

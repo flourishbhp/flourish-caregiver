@@ -17,7 +17,7 @@ class MaternalDiagnosesList(ListModelMixin, BaseUuidModel):
     pass
 
 
-class PriorArv (ListModelMixin, BaseUuidModel):
+class PriorArv(ListModelMixin, BaseUuidModel):
     pass
 
 
@@ -26,4 +26,11 @@ class PhoneNumType(ListModelMixin, BaseUuidModel):
 
 
 class WcsDxAdult(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class CovidSymptoms(ListModelMixin, BaseUuidModel):
+    pass
+
+class CovidSymptomsAfter14Days(ListModelMixin, BaseUuidModel):
     pass

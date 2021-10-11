@@ -43,3 +43,4 @@ from .tb_screen_preg_admin import TbScreenPregAdmin
 from .ultrasound_admin import UltraSoundAdmin
 from .maternal_visit_admin import MaternalVisitAdmin
 from .obsterical_history_admin import ObstericalHistoryAdmin
+from .covid_19_admin import Covid19Admin

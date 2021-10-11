@@ -1,13 +1,14 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
-from edc_base.utils import get_utcnow
 from django.test import TestCase, tag
+from edc_base.utils import get_utcnow
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
-from ..subject_helper_mixin import SubjectHelperMixin
+
+from ..models import MaternalDataset, ScreeningPriorBhpParticipants, SubjectConsent
 from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
 from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
-from ..models import MaternalDataset, ScreeningPriorBhpParticipants, SubjectConsent
+from ..subject_helper_mixin import SubjectHelperMixin
 
 
 @tag('sh')
@@ -65,7 +66,7 @@ class TestSubjectHelperMixin(TestCase):
 
     def test_prepare_prior_participant_enrollmment(self):
 
-        self.maternal_dataset_options['mom_hivstatus'] = 'HIV uninfected'
+        self.maternal_dataset_options['mom_hivstatus'] = 'HIV-uninfected'
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',

@@ -98,7 +98,7 @@ class SubjectHelperMixin:
     def create_TD_no_hiv_enrollment(self, screening_identifier, **kwargs):
         import_holidays()
 
-        self.maternal_dataset_options['mom_hivstatus'] = 'HIV uninfected'
+        self.maternal_dataset_options['mom_hivstatus'] = 'HIV-uninfected'
 
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(

@@ -1,5 +1,4 @@
-from edc_constants.constants import (
-    OFF_STUDY, ON_STUDY, FAILED_ELIGIBILITY, PARTICIPANT, DWTA)
+from edc_constants.constants import *
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN
 from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
@@ -297,7 +296,7 @@ LOCATION_FOR_CONTACT = (
 LOCATOR_LOG_STATUS = (
     ('exist', 'Exists'),
     ('not_found', 'Not found')
-    )
+)
 
 MATERNAL_VISIT_STUDY_STATUS = (
     (ON_STUDY, 'On study'),
@@ -327,16 +326,16 @@ PANICK = (
 )
 
 PHONE_NUM_TYPE = (
-        ('cell_contact', 'Cell Phone'),
-        ('alt_cell_contact', 'Cell Phone (alternative)'),
-        ('tel_contact', 'Telephone'),
-        ('alt_tel_contact', 'Telephone (alternative)'),
-        ('work_contact', 'Work contact number'),
-        ('cell_alt_contact', 'Alternative contact person cell phone'),
-        ('tel_alt_contact', 'Alternative contact person telephone'),
-        ('cell_resp_person', 'Responsible person cell phone'),
-        ('tel_resp_person', 'Responsible person telephone'),
-        (NONE, 'None')
+    ('cell_contact', 'Cell Phone'),
+    ('alt_cell_contact', 'Cell Phone (alternative)'),
+    ('tel_contact', 'Telephone'),
+    ('alt_tel_contact', 'Telephone (alternative)'),
+    ('work_contact', 'Work contact number'),
+    ('cell_alt_contact', 'Alternative contact person cell phone'),
+    ('tel_alt_contact', 'Alternative contact person telephone'),
+    ('cell_resp_person', 'Responsible person cell phone'),
+    ('tel_resp_person', 'Responsible person telephone'),
+    (NONE, 'None')
 )
 
 REASON_ARV_STOP = (
@@ -361,8 +360,8 @@ REASONS_NOT_DISCLOSED = (
 
 REASONS_VACCINES_MISSED = (
     ('missed scheduled vaccination', 'Mother or Caregiver has not '
-     'yet taken infant '
-        'to clinic for this scheduled vaccination'),
+                                     'yet taken infant '
+                                     'to clinic for this scheduled vaccination'),
     ('caregiver declines vaccination',
      'Mother or Caregiver declines this vaccicnation'),
     ('no stock', 'Stock out at clinic'),
@@ -565,4 +564,51 @@ VISIT_REASON = [
 ZERO_ONE = (
     ('0', '0'),
     ('1', '1')
+)
+
+'''
+Choices for the covid form
+'''
+
+YES_NO_COVID_FORM = (
+    (YES, 'Yes'),
+    (NO, 'No'),
+    ('tried_but_could_not_get_tested', 'Tried, but could not get tested '),
+    (UNKNOWN, 'Unknown'),
+
+)
+
+TESTING_REASONS = (
+    ('pre-traveling_screening ', 'Pre-Traveling screening '),
+    ('routine_testing ', 'Routine testing '),
+    ('contact_tracing', 'Contact tracing'),
+    (OTHER, 'Other')
+)
+
+POS_NEG_PENDING_UNKNOWN = (
+    (POS, 'Positive'),
+    (NEG, 'Negative'),
+    ('PENDING', 'Pending'),
+    (UNKNOWN, 'Unknown'),
+)
+
+ISOLATION_LOCATION = (
+    ('home', 'Home'),
+    ('hospital', 'Hospital'),
+    ('clinic', 'Clinic'),
+    (OTHER, 'Other'),
+)
+
+YES_NO_PARTIALLY = (
+    (YES, 'Yes'),
+    (NO, 'No'),
+    ('partially_jab', 'Partially (one jab)'),
+
+)
+
+VACCINATION_TYPE = (
+    ('astrazeneca', 'AstraZeneca'),
+    ('sinovac', 'Sinovac'),
+    ('pfizer', 'Pfizer'),
+    (OTHER, 'Other')
 )
