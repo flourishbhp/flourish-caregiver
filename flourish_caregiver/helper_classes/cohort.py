@@ -180,10 +180,12 @@ class Cohort:
         child_offstudies = child_offstudy_cls.objects.all().values_list(
             'subject_identifier', flat=True)
 
-        child_subject_identifiers = self.caregiver_child_consent_cls.objects.values_list(
-            'subject_identifier', flat=True).filter(
+        child_subject_identifiers = self.caregiver_child_consent_cls.objects.filter(
                 child_age_at_enrollment__lte=2.5,
-                study_child_identifier=study_child_identifiers)
+                study_child_identifier__in=study_child_identifiers).values_list(
+            'subject_identifier', flat=True)
+
+        import pdb; pdb.set_trace()
 
         onstudy_huu = list(set(child_subject_identifiers) - set(child_offstudies))
 
