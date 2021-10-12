@@ -185,8 +185,6 @@ class Cohort:
                 study_child_identifier__in=study_child_identifiers).values_list(
             'subject_identifier', flat=True)
 
-        import pdb; pdb.set_trace()
-
         onstudy_huu = list(set(child_subject_identifiers) - set(child_offstudies))
 
         return len(onstudy_huu)
