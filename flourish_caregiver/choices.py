@@ -1,11 +1,12 @@
-from edc_constants.constants import *
-from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN
+from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN, \
+    FAILED_ELIGIBILITY, PARTICIPANT, DWTA, POS, NEG, ON_STUDY, OFF_STUDY
 from edc_constants.constants import YES, NO
+
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
+from flourish_caregiver.constants import NONE
 
 from .constants import BREASTFEED_ONLY
-from flourish_caregiver.constants import NONE
 
 ABLE_TO_LAUGH = (
     ('0', 'As much as I always could'),
@@ -215,7 +216,8 @@ GUILT_FEELINGS = (
     ('1', 'Self-reproach, feels he/she has let people down'),
     ('2', 'Ideas of guilt or rumination over past errors or sinful deeds.'),
     ('3', 'Present illness is a punishment; delusions of guilt'),
-    ('4', 'Hears accusatory or denunciatory voices and/or experiences threatening visual hallucinations.')
+    ('4', 'Hears accusatory or denunciatory voices and/or experiences threatening'
+     ' visual hallucinations.')
 )
 
 HARM = (
@@ -308,7 +310,7 @@ MATERNAL_VISIT_STUDY_STATUS = (
 MEALS = (
     ('0', 'Yes'),
     ('1', 'No'),
-    ("2", "I don’t know"),
+    ('2', "I don’t know"),
 )
 
 MISERABLE_FEELING = (
@@ -320,7 +322,7 @@ MISERABLE_FEELING = (
 
 PANICK = (
     ('3', 'Yes, quite a lot'),
-    ('2, sometimes', 'Yes, sometimes'),
+    ('2', 'Yes, sometimes'),
     ('1', 'No, not much'),
     ('0', 'No, not at all')
 )
