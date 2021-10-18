@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
+from django.core.exceptions import ObjectDoesNotExist
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
@@ -17,7 +18,6 @@ from edc_visit_tracking.modeladmin_mixins import (
     CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin)
 
 from .exportaction_mixin import ExportActionMixin
-from django.core.exceptions import ObjectDoesNotExist
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,

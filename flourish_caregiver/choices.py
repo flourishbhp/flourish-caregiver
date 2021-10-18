@@ -23,6 +23,10 @@ AGITATION = (
     ('4', 'Hand wringing, nail biting, hair-pulling, biting of lips.')
 )
 
+STUDY_SITES = (
+    ('40', 'Gaborone'),
+)
+
 ALIVE_DEAD_UNKNOWN = (
     (ALIVE, 'Alive'),
     (DEAD, 'Dead'),
@@ -359,6 +363,13 @@ REASONS_NOT_DISCLOSED = (
     ('does_not_know_how_to_explain', 'Does not know how to explain this to their child'),
     (OTHER, 'Other')
 )
+
+REASON_NOT_DRAWN = (
+    ('collection_failed', 'Tried, but unable to obtain sample from patient'),
+    ('absent', 'Patient did not attend visit'),
+    ('refused', 'Patient refused'),
+    ('no_supplies', 'No supplies'),
+    (OTHER, 'Other'),)
 
 REASONS_VACCINES_MISSED = (
     ('missed scheduled vaccination', 'Mother or Caregiver has not '
