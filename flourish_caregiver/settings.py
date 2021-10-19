@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-from pathlib import Path
-
 import os
+from pathlib import Path
 import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,6 +30,7 @@ ETC_DIR = '/etc/'
 
 APP_NAME = 'flourish_caregiver'
 SITE_ID = 40
+DEFAULT_STUDY_SITE = 40
 REVIEWER_SITE_ID = 1
 
 ALLOWED_HOSTS = []
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'edc_action_item.apps.AppConfig',
     'edc_dashboard.apps.AppConfig',
     'edc_device.apps.AppConfig',
+    'edc_lab.apps.AppConfig',
     'edc_odk.apps.AppConfig',
     'edc_identifier.apps.AppConfig',
     'edc_registration.apps.AppConfig',
@@ -64,6 +65,7 @@ INSTALLED_APPS = [
     'flourish_child.apps.AppConfig',
     'pre_flourish.apps.AppConfig',
     'flourish_follow.apps.AppConfig',
+    'flourish_labs.apps.AppConfig',
     'flourish_caregiver.apps.EdcAppointmentAppConfig',
     'flourish_caregiver.apps.EdcFacilityAppConfig',
     'flourish_caregiver.apps.EdcMetadataAppConfig',

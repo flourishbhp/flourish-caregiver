@@ -2,17 +2,18 @@ from dateutil.relativedelta import relativedelta
 from edc_base.utils import get_utcnow
 from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT, \
     NOT_APPLICABLE, FEMALE, NEG
-from edc_visit_tracking.constants import SCHEDULED
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
-from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery
-from .models import CaregiverPreviouslyEnrolled
-from .models import MaternalDataset, CaregiverLocator, MaternalVisit
-from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
-from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
+from edc_visit_tracking.constants import SCHEDULED
+
 from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
                      CaregiverEdinburghDeprScreening)
+from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery
+from .models import CaregiverPreviouslyEnrolled
+from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
+from .models import MaternalDataset, CaregiverLocator, MaternalVisit
+from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
 
 fake = Faker()
 
@@ -97,8 +98,6 @@ antenatalenrollment = Recipe(
     date_at_32wks=(get_utcnow() - relativedelta(months=3)).date(),
     edd_by_lmp=(get_utcnow() + relativedelta(months=4)).date(),
     enrollment_hiv_status=POS,
-    evidence_32wk_hiv_status=YES,
-    evidence_hiv_status=YES,
     ga_lmp_anc_wks=26,
     ga_lmp_enrollment_wks=24,
     is_diabetic=NO,
@@ -109,7 +108,6 @@ antenatalenrollment = Recipe(
     rapid_test_date=None,
     rapid_test_done='N/A',
     rapid_test_result=None,
-    week32_result=None,
     week32_test=YES,
     week32_test_date=(get_utcnow() - relativedelta(months=2)).date(),
     will_breastfeed=YES,

@@ -9,8 +9,8 @@ from edc_constants.constants import NO
 from edc_protocol.validators import date_not_before_study_start
 from edc_protocol.validators import datetime_not_before_study_start
 
-from .eligibility import AntenatalEnrollmentEligibility
 from ..helper_classes import EnrollmentHelper
+from .eligibility import AntenatalEnrollmentEligibility
 
 
 class EnrollmentMixin(models.Model):
@@ -113,7 +113,6 @@ class EnrollmentMixin(models.Model):
 
     def save(self, *args, **kwargs):
         enrollment_helper = EnrollmentHelper(instance_antenatal=self)
-
 
         self.edd_by_lmp = enrollment_helper.evaluate_edd_by_lmp
         self.ga_lmp_enrollment_wks = enrollment_helper.evaluate_ga_lmp(

@@ -1,8 +1,10 @@
 from django.apps import apps as django_apps
 from edc_base.utils import age
+
 from flourish_child.models import ChildDataset
-from ..models.subject_consent import SubjectConsent
+
 from ..models.maternal_dataset import MaternalDataset
+from ..models.subject_consent import SubjectConsent
 
 
 class CohortError(Exception):
@@ -47,13 +49,13 @@ class Cohort:
     def hiv_exposed_uninfected(self):
         """Return True is an infant is HEU.
         """
-        return self.infant_hiv_exposed == 'Exposed'
+        return self.infant_hiv_exposed in ['Exposed', 'exposed']
 
     @property
     def hiv_unexposed_uninfected(self):
         """Returns True if an infant is HUU
         """
-        return self.infant_hiv_exposed == 'Unexposed'
+        return self.infant_hiv_exposed in ['Unexposed', 'unexposed']
 
     @property
     def huu_adolescents(self):
@@ -130,13 +132,14 @@ class Cohort:
 
         return pi_consented.count()
 
-    def total_HEU(self, x=None):
+    def total_HEU(self, protocol=None):
         """Return total enrolled Tshilo Dikotla HEU.
         """
 
         study_maternal_identifiers = MaternalDataset.objects.values_list(
             'study_maternal_identifier', flat=True).filter(
-                screening_identifier__in=self._screening_identifiers)
+                screening_identifier__in=self._screening_identifiers,
+                protocol=protocol)
 
         child_dataset = ChildDataset.objects.filter(
             study_maternal_identifier__in=study_maternal_identifiers,
@@ -177,10 +180,10 @@ class Cohort:
         child_offstudies = child_offstudy_cls.objects.all().values_list(
             'subject_identifier', flat=True)
 
-        child_subject_identifiers = self.caregiver_child_consent_cls.objects.values_list(
-            'subject_identifier', flat=True).filter(
+        child_subject_identifiers = self.caregiver_child_consent_cls.objects.filter(
                 child_age_at_enrollment__lte=2.5,
-                study_child_identifier=study_child_identifiers)
+                study_child_identifier__in=study_child_identifiers).values_list(
+            'subject_identifier', flat=True)
 
         onstudy_huu = list(set(child_subject_identifiers) - set(child_offstudies))
 
@@ -219,7 +222,7 @@ class Cohort:
         """Return True if the infant mother pair meets criteria for cohort A.
         """
         # TODO: Cater for 200 newly enrolled pregnant woman.
-        if self.age_at_enrollment() <= 2.5 and self.age_at_year_3 <= 5:
+        if self.age_at_year_3 <= 5:
             if (self.protocol == 'Tshilo Dikotla' and self.hiv_exposed_uninfected
                     and self.total_HEU(protocol='Tshilo Dikotla') < 200):
                 return 'cohort_a'
