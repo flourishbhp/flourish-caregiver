@@ -1,7 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from edc_base.model_fields import OtherCharField
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_base.model_validators import MinConsentAgeValidator, MaxConsentAgeValidator
 
 from ..maternal_choices import CURRENT_OCCUPATION, MONEY_PROVIDER, MONEY_EARNED
@@ -79,7 +79,7 @@ class SocioDemographicData(CrfModelMixin):
             'Are you currently living in the same household as child '
             'who is also participating in the FLOURISH study?'),
         max_length=3,
-        choices=YES_NO)
+        choices=YES_NO_NA)
 
     number_of_household_members = models.PositiveSmallIntegerField(
         verbose_name='How many household members live in the your primary home/ compound?',
