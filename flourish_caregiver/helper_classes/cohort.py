@@ -253,6 +253,7 @@ class Cohort:
         """Return True id an infant mother pair meets criteria for cohort C.
         """
         # TODO: cater for 125 new enrolled adolescents
+
         if self.age_at_year_3 >= 10:
             if self.huu_adolescents:
                 return ('cohort_c' if self.protocol == 'Tshipidi'

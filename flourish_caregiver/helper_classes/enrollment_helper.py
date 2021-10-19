@@ -50,8 +50,7 @@ class EnrollmentHelper(object):
 
         pos = self.known_hiv_pos()
 
-        neg = (self.tested_neg_at32wks() or
-               self.tested_neg_previously_result_within_3_months())
+        neg = self.tested_neg_previously_result_within_3_months()
 
         if self.rapidtest_result() in [POS, NEG]:
             return self.rapidtest_result()
