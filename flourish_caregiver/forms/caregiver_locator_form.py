@@ -28,26 +28,24 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
 
     first_name = forms.CharField(
         label='First Name',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
 
     last_name = forms.CharField(
         label='Last Name',
-        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         try:
-            subject_consented = SubjectConsent.objects.filter(subject_identifier=self.initial[
+            subject_consented = SubjectConsent.objects.get(subject_identifier=self.initial[
                 'subject_identifier'])
             if subject_consented:
+                self.fields['first_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
+                self.fields['last_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
                 self.initial['first_name'] = subject_consented.first().first_name
                 self.initial['last_name'] = subject_consented.first().last_name
         except:
             pass
-
     class Meta:
         model = CaregiverLocator
         fields = '__all__'
