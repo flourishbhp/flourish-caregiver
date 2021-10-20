@@ -369,7 +369,8 @@ REASON_NOT_DRAWN = (
     ('absent', 'Patient did not attend visit'),
     ('refused', 'Patient refused'),
     ('no_supplies', 'No supplies'),
-    (OTHER, 'Other'),)
+    (OTHER, 'Other'),
+    (NOT_APPLICABLE, 'Not Applicable'))
 
 REASONS_VACCINES_MISSED = (
     ('missed scheduled vaccination', 'Mother or Caregiver has not '
