@@ -103,7 +103,7 @@ class Covid19(CrfModelMixin):
     symptoms_for_past_14days = models.ManyToManyField(
         CovidSymptomsAfter14Days,
         verbose_name='In the last 14 days, have you experienced any of the following symptoms',
-        blank=True
+        blank=False
     )
 
     fully_vaccinated = models.CharField(
