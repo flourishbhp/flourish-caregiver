@@ -41,7 +41,7 @@ class Covid19(CrfModelMixin):
     )
 
     result_of_test = models.CharField(
-        verbose_name='What was the reason for testing?',
+        verbose_name='What was the result of the test?',
         choices=POS_NEG_PENDING_UNKNOWN,
         max_length=30,
         null=True,
