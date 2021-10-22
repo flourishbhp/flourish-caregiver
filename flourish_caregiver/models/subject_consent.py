@@ -168,9 +168,10 @@ class SubjectConsent(
             self.update_locator_subject_identifier()
 
         if self.caregiver_locator_obj:
-            self.caregiver_locator_obj.first_name = self.first_name
-            self.caregiver_locator_obj.last_name = self.last_name
-            self.caregiver_locator_obj.save()
+            if not self.caregiver_locator_obj.first_name and not self.caregiver_locator_obj.last_name:
+                self.caregiver_locator_obj.first_name = self.first_name
+                self.caregiver_locator_obj.last_name = self.last_name
+                self.caregiver_locator_obj.save()
 
         super().save(*args, **kwargs)
 
