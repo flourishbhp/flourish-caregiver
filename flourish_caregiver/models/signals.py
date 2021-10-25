@@ -15,6 +15,7 @@ from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
+from .maternal_visit import MaternalVisit
 
 
 # from flourish_caregiver.models.subject_consent import SubjectConsent
@@ -215,22 +216,12 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 pass
             else:
                 if child_age:
-                    if child_age < 7:
-
-                        if instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
-                            put_cohort_onschedule(
-                                instance.cohort,
-                                instance,
-                                base_appt_datetime=prev_enrolled_obj.created.replace(
-                                    microsecond=0))
-
-                    elif instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
-
-                            put_cohort_onschedule(
-                                instance.cohort,
-                                instance,
-                                base_appt_datetime=prev_enrolled_obj.created.replace(
-                                    microsecond=0))
+                    if instance.subject_identifier[-3:] not in ['-35', '-46', '-56']:
+                        put_cohort_onschedule(
+                            instance.cohort,
+                            instance,
+                            base_appt_datetime=prev_enrolled_obj.created.replace(
+                                microsecond=0))
 
                     try:
                         child_dummy_consent = child_dummy_consent_cls.objects.get(
@@ -244,25 +235,36 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                             child_dummy_consent.cohort = instance.cohort
                         child_dummy_consent.save()
 
-# @receiver(post_save, weak=False, sender=MaternalVisit,
-          # dispatch_uid='maternal_visit_on_post_save')
-# def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
-    # """
-    # - Put subject on quarterly schedule at enrollment visit.
-    # """
-    # if not raw and created and instance.visit_code == '2000M':
-    #
-        # try:
-            # CaregiverChildConsent.objects.get(
-                # subject_consent__subject_identifier=instance.screening_identifier)
-        # except CaregiverChildConsent.DoesNotExist:
-            # pass
-        # else:
-            # return True
-            #
-        # cohort = cohort_assigned(instance.study_child_identifier,
-                                         # instance.child_dob,
-                                         # instance.subject_consent.created)
+
+@receiver(post_save, weak=False, sender=MaternalVisit,
+          dispatch_uid='maternal_visit_on_post_save')
+def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
+    """
+    - Put subject on quarterly schedule at enrollment visit.
+    """
+
+    if not raw and created and instance.visit_code == '2000M':
+
+        if 'sec' in instance.schedule_name:
+
+            cohort_list = instance.schedule_name.split('_')
+
+            caregiver_visit_count = cohort_list[1][-1:]
+
+            cohort = '_'.join(['cohort', cohort_list[0], 'sec_quart'])
+
+        else:
+            cohort_list = instance.schedule_name.split('_')
+
+            caregiver_visit_count = cohort_list[1][-1:]
+
+            cohort = '_'.join(['cohort', cohort_list[0], 'quarterly'])
+
+        put_on_schedule(cohort, instance=instance,
+                        subject_identifier=instance.subject_identifier,
+                        child_subject_identifier=instance.subject_identifier,
+                        base_appt_datetime=instance.created.replace(microsecond=0),
+                        caregiver_visit_count=caregiver_visit_count)
 
 
 def screening_preg_exists(caregiver_child_consent_obj):
@@ -292,11 +294,7 @@ def put_cohort_onschedule(cohort, instance, base_appt_datetime=None):
                             child_subject_identifier=instance.subject_identifier,
                             base_appt_datetime=base_appt_datetime,
                             caregiver_visit_count=instance.caregiver_visit_count)
-            return put_on_schedule((cohort + '_quarterly'),
-                                   instance=instance,
-                                   child_subject_identifier=instance.subject_identifier,
-                                   base_appt_datetime=base_appt_datetime,
-                                   caregiver_visit_count=instance.caregiver_visit_count)
+
         # put_on_schedule((cohort + '_fu' + str(children_count)),
                         # instance=instance,
                         # child_subject_identifier=instance.subject_identifier,

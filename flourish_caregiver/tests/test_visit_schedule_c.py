@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.test import TestCase, tag
@@ -10,14 +8,15 @@ import pytz
 
 from edc_appointment.models import Appointment
 from edc_visit_schedule.models import SubjectScheduleHistory
+from edc_visit_tracking.constants import SCHEDULED
 
 from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
-from ..models import OnScheduleCohortCSec
+from ..models import OnScheduleCohortCSec, OnScheduleCohortCSecQuart
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
 @tag('vsc')
-class TestVisitScheduleSetup(TestCase):
+class TestVisitScheduleSetupC(TestCase):
 
     databases = '__all__'
     utc = pytz.UTC
@@ -91,6 +90,18 @@ class TestVisitScheduleSetup(TestCase):
 
         self.assertEqual(OnScheduleCohortCQuarterly.objects.filter(
             subject_identifier=subject_identifier,
+            schedule_name='c_quarterly1_schedule1').count(), 0)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2000M',
+                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(OnScheduleCohortCQuarterly.objects.filter(
+            subject_identifier=subject_identifier,
             schedule_name='c_quarterly1_schedule1').count(), 1)
 
         # self.assertEqual(OnScheduleCohortCFU.objects.filter(
@@ -135,6 +146,22 @@ class TestVisitScheduleSetup(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='c_sec1_schedule1').count(), 1)
 
+        self.assertEqual(OnScheduleCohortCSecQuart.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_sec1_quart_schedule1').count(), 0)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2000M',
+                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(OnScheduleCohortCSecQuart.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_sec1_quart_schedule1').count(), 1)
+
         self.assertGreater(Appointment.objects.filter(
             subject_identifier=subject_identifier,
-            schedule_name='c_sec1_schedule1').count(), 15)
+            schedule_name='b_sec1_quart_schedule1').count(), 15)
