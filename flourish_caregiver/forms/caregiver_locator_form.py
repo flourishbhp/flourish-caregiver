@@ -39,13 +39,13 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
         try:
             subject_consented = SubjectConsent.objects.get(subject_identifier=self.initial[
                 'subject_identifier'])
-            if subject_consented:
-                self.fields['first_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
-                self.fields['last_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
-                self.initial['first_name'] = subject_consented.first().first_name
-                self.initial['last_name'] = subject_consented.first().last_name
-        except:
+        except SubjectConsent.DoesNotExist:
             pass
+        else:
+            self.fields['first_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
+            self.fields['last_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
+            self.initial['first_name'] = subject_consented.first().first_name
+            self.initial['last_name'] = subject_consented.first().last_name
     class Meta:
         model = CaregiverLocator
         fields = '__all__'
