@@ -38,7 +38,7 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
         super().__init__(*args, **kwargs)
         try:
             subject_consented = SubjectConsent.objects.get(
-                subject_identifier=self.initial['subject_identifier'])
+                subject_identifier=self.initial.get('subject_identifier', None))
         except SubjectConsent.DoesNotExist:
             pass
         else:
