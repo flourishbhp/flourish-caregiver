@@ -1,7 +1,7 @@
-import pytz
 from django import forms
 from edc_base.sites.forms import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
+import pytz
 
 from edc_appointment.form_validators import AppointmentFormValidator
 from edc_appointment.models import Appointment
@@ -17,7 +17,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
     def clean(self):
         cleaned_data = self.cleaned_data
 
-        if cleaned_data.get('appt_datetime'):
+        if (self.instance.visit_code not in ['1000M', '2000M']
+                and cleaned_data.get('appt_datetime')):
 
             visit_definition = self.instance.visits.get(self.instance.visit_code)
 
