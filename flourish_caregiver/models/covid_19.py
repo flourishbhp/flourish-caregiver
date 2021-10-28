@@ -96,8 +96,6 @@ class Covid19(CrfModelMixin):
                      'COVID-19',
         max_length=10,
         choices=YES_NO_UNKNOWN,
-        null=True,
-        blank=True
     )
 
     symptoms_for_past_14days = models.ManyToManyField(
