@@ -2,9 +2,10 @@ from django.contrib import admin
 from edc_fieldsets.fieldlist import Insert, Remove
 from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 from edc_model_admin import audit_fieldset_tuple
-from ..models import AntenatalEnrollment
+
 from ..admin_site import flourish_caregiver_admin
 from ..forms import SocioDemographicDataForm
+from ..models import AntenatalEnrollment
 from ..models import SocioDemographicData
 from .modeladmin_mixins import CrfModelAdminMixin
 
@@ -62,13 +63,14 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     ]
 
     quartely_schedules = ['a_quarterly1_schedule1', 'a_quarterly2_schedule1',
-                          'a_quarterly3_schedule1', 'a_sec1_schedule1',
-                          'a_sec2_schedule1', 'a_sec3_schedule1',
+                          'a_quarterly3_schedule1', 'a_sec_quart1_schedule1',
+                          'a_sec_quart2_schedule1', 'a_sec_quart3_schedule1',
                           'b_quarterly1_schedule1', 'b_quarterly2_schedule1',
                           'b_quarterly3_schedule1', 'c_quarterly2_schedule1',
                           'c_quarterly1_schedule1', 'c_quarterly3_schedule1',
-                          'b_sec1_schedule1', 'b_sec2_schedule1', 'b_sec3_schedule1',
-                          'c_sec1_schedule1', 'c_sec2_schedule1', 'c_sec3_schedule1',
+                          'b_sec_quart1_schedule1', 'b_sec_quart2_schedule1',
+                          'b_sec_quart3_schedule1', 'c_sec_quart1_schedule1',
+                          'c_sec_quart2_schedule1', 'c_sec_quart3_schedule1',
                           'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1']
 
     for schedule in quartely_schedules:
