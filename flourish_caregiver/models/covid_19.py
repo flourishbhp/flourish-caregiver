@@ -96,8 +96,6 @@ class Covid19(CrfModelMixin):
                      'COVID-19',
         max_length=10,
         choices=YES_NO_UNKNOWN,
-        null=True,
-        blank=True
     )
 
     symptoms_for_past_14days = models.ManyToManyField(
@@ -108,7 +106,7 @@ class Covid19(CrfModelMixin):
 
     fully_vaccinated = models.CharField(
         verbose_name='Have you been fully vaccinated for COVID-19',
-        max_length=20,
+        max_length=25,
         choices=YES_NO_PARTIALLY
     )
 

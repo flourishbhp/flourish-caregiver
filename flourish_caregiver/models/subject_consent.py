@@ -286,11 +286,11 @@ class SubjectConsent(
         """
         if self.is_eligible:
             return super().registration_update_or_create()
-    
+
     @property
     def caregiver_locator_model_cls(self):
         return django_apps.get_model(self.caregiver_locator_model)
-    
+
     @property
     def caregiver_locator_obj(self):
         try:
