@@ -616,7 +616,7 @@ ISOLATION_LOCATION = (
 YES_NO_PARTIALLY = (
     (YES, 'Yes'),
     (NO, 'No'),
-    ('partially_jab_or_one_jab', 'Partially (one jab)'),
+    ('partially_jab_or_one_jab', 'Partially / one jab'),
 
 )
 
