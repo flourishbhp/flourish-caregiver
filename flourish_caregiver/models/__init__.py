@@ -41,12 +41,12 @@ from .obsterical_history import ObstericalHistory
 from .offschedule import CaregiverOffSchedule
 from .onschedule import OnScheduleCohortABirth, OnScheduleCohortBFU, OnScheduleCohortCFU
 from .onschedule import OnScheduleCohortAEnrollment, OnScheduleCohortAFU
-from .onschedule import OnScheduleCohortAQuartSec, OnScheduleCohortBQuartSec
 from .onschedule import OnScheduleCohortAQuarterly, OnScheduleCohortBEnrollment
+from .onschedule import OnScheduleCohortASecQuart, OnScheduleCohortBSecQuart
 from .onschedule import OnScheduleCohortBQuarterly, OnScheduleCohortCEnrollment
 from .onschedule import OnScheduleCohortBSec, OnScheduleCohortCSec, OnScheduleCohortAAntenatal
-from .onschedule import OnScheduleCohortCQuartSec
 from .onschedule import OnScheduleCohortCQuarterly, OnScheduleCohortCPool, OnScheduleCohortASec
+from .onschedule import OnScheduleCohortCSecQuart
 from .screening_preg_women import ScreeningPregWomen
 from .screening_prior_bhp_participants import ScreeningPriorBhpParticipants
 from .signals import antenatal_enrollment_on_post_save
@@ -61,3 +61,4 @@ from .tb_presence_household_members import TbPresenceHouseholdMembers
 from .tb_routine_health_screen import TbRoutineHealthScreen
 from .tb_screen_preg import TbScreenPreg
 from .ultrasound import UltraSound
+

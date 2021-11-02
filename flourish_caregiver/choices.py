@@ -369,7 +369,8 @@ REASON_NOT_DRAWN = (
     ('absent', 'Patient did not attend visit'),
     ('refused', 'Patient refused'),
     ('no_supplies', 'No supplies'),
-    (OTHER, 'Other'),)
+    (OTHER, 'Other'),
+    (NOT_APPLICABLE, 'Not Applicable'))
 
 REASONS_VACCINES_MISSED = (
     ('missed scheduled vaccination', 'Mother or Caregiver has not '
@@ -615,7 +616,7 @@ ISOLATION_LOCATION = (
 YES_NO_PARTIALLY = (
     (YES, 'Yes'),
     (NO, 'No'),
-    ('partially_jab', 'Partially (one jab)'),
+    ('partially_jab_or_one_jab', 'Partially / one jab'),
 
 )
 

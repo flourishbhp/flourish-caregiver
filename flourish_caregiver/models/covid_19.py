@@ -41,7 +41,7 @@ class Covid19(CrfModelMixin):
     )
 
     result_of_test = models.CharField(
-        verbose_name='What was the reason for testing?',
+        verbose_name='What was the result of the test?',
         choices=POS_NEG_PENDING_UNKNOWN,
         max_length=30,
         null=True,
@@ -96,19 +96,17 @@ class Covid19(CrfModelMixin):
                      'COVID-19',
         max_length=10,
         choices=YES_NO_UNKNOWN,
-        null=True,
-        blank=True
     )
 
     symptoms_for_past_14days = models.ManyToManyField(
         CovidSymptomsAfter14Days,
         verbose_name='In the last 14 days, have you experienced any of the following symptoms',
-        blank=True
+        blank=False
     )
 
     fully_vaccinated = models.CharField(
         verbose_name='Have you been fully vaccinated for COVID-19',
-        max_length=20,
+        max_length=25,
         choices=YES_NO_PARTIALLY
     )
 
