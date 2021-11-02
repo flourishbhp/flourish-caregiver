@@ -1,11 +1,11 @@
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group, User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from edc_base.utils import age, get_utcnow
 
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-import flourish_follow.models
 
 from ..helper_classes.cohort import Cohort
 from .antenatal_enrollment import AntenatalEnrollment
@@ -15,6 +15,8 @@ from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
+from ..models import CaregiverOffSchedule
+
 
 
 # from flourish_caregiver.models.subject_consent import SubjectConsent
@@ -27,7 +29,7 @@ class ChildDatasetError(Exception):
 
 
 @receiver(post_save, weak=False, sender=LocatorLogEntry,
-          dispatch_uid='locator_log_entry_on_post_save')
+        dispatch_uid='locator_log_entry_on_post_save')
 def locator_log_entry_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Create locator log entry
@@ -39,7 +41,7 @@ def locator_log_entry_on_post_save(sender, instance, raw, created, **kwargs):
             except Group.DoesNotExist:
                 locator_group = Group.objects.create(name='locator users')
             if not User.objects.filter(username=instance.user_created,
-                                       groups__name='locator users').exists():
+                                    groups__name='locator users').exists():
                 try:
                     user = User.objects.get(username=instance.user_created)
                 except User.DoesNotExist:
@@ -49,7 +51,7 @@ def locator_log_entry_on_post_save(sender, instance, raw, created, **kwargs):
 
 
 @receiver(post_save, weak=False, sender=MaternalDataset,
-          dispatch_uid='maternal_dataset_on_post_save')
+        dispatch_uid='maternal_dataset_on_post_save')
 def maternal_dataset_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Create locator log entry
@@ -63,7 +65,7 @@ def maternal_dataset_on_post_save(sender, instance, raw, created, **kwargs):
 
 
 @receiver(post_save, weak=False, sender=CaregiverLocator,
-          dispatch_uid='caregiver_locator_on_post_save')
+        dispatch_uid='caregiver_locator_on_post_save')
 def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Create locator log entry
@@ -100,7 +102,7 @@ def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
 
 
 @receiver(post_save, weak=False, sender=AntenatalEnrollment,
-          dispatch_uid='antenatal_enrollment_on_post_save')
+        dispatch_uid='antenatal_enrollment_on_post_save')
 def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on cohort a schedule.
@@ -111,7 +113,7 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
 
 
 @receiver(post_save, weak=False, sender=MaternalDelivery,
-          dispatch_uid='maternal_delivery_on_post_save')
+        dispatch_uid='maternal_delivery_on_post_save')
 def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put new born child on schedule
@@ -126,7 +128,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
 
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
-          dispatch_uid='caregiver_previously_enrolled_on_post_save')
+        dispatch_uid='caregiver_previously_enrolled_on_post_save')
 def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject with participation on schedule after consenting.
@@ -154,7 +156,7 @@ def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created, *
 
 
 @receiver(post_save, weak=False, sender=CaregiverChildConsent,
-          dispatch_uid='caregiver_child_consent_on_post_save')
+        dispatch_uid='caregiver_child_consent_on_post_save')
 def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on cohort a schedule after consenting on behalf of child.
@@ -178,8 +180,8 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if not instance.cohort:
 
             cohort = cohort_assigned(instance.study_child_identifier,
-                                     instance.child_dob,
-                                     instance.subject_consent.created.replace(microsecond=0))
+                                    instance.child_dob,
+                                    instance.subject_consent.created.replace(microsecond=0))
 
             if not cohort and screening_preg_exists(instance):
                 cohort = 'cohort_a'
@@ -416,3 +418,27 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
             else:
                 onschedule_obj.child_subject_identifier = instance.subject_identifier
                 onschedule_obj.save()
+
+
+@receiver(post_save, weak=False, sender=CaregiverOffSchedule,
+        dispatch_uid='caregiver_off_schedule_on_post_save')
+def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
+    for visit_schedule in site_visit_schedules.visit_schedules.values():
+            for schedule in visit_schedule.schedules.values():
+                if onschedule_model_obj:
+                    try:
+                        onschedule_model_obj = get_onschedule_model_obj(schedule,instance.subject_identifier)
+                    except onschedule_model_obj.ObjectDoesNotExist:
+                        pass
+                    else:
+                        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                        onschedule_model=onschedule_model_obj._meta.label_lower,name=onschedule_model_obj.schedule_name)
+                        schedule.take_off_schedule(subject_identifier=instance.subject_identifier)
+
+def get_onschedule_model_obj(schedule, subject_identifier):
+        try:
+            return schedule.onschedule_model_cls.objects.get(
+                subject_identifier=subject_identifier)
+        except ObjectDoesNotExist:
+            return None
+    
