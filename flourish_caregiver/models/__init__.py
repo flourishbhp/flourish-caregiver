@@ -1,3 +1,4 @@
+
 from .antenatal_enrollment import AntenatalEnrollment
 from .arvs_pre_pregnancy import ArvsPrePregnancy
 from .caregiver_child_consent import CaregiverChildConsent
@@ -52,6 +53,7 @@ from .screening_prior_bhp_participants import ScreeningPriorBhpParticipants
 from .signals import antenatal_enrollment_on_post_save
 from .signals import caregiver_child_consent_on_post_save
 from .signals import maternal_dataset_on_post_save
+from .signals import subject_consent_on_post_save
 from .socio_demographic_data import SocioDemographicData
 from .subject_consent import SubjectConsent
 from .substance_use_during_preg import SubstanceUseDuringPregnancy
@@ -61,4 +63,3 @@ from .tb_presence_household_members import TbPresenceHouseholdMembers
 from .tb_routine_health_screen import TbRoutineHealthScreen
 from .tb_screen_preg import TbScreenPreg
 from .ultrasound import UltraSound
-

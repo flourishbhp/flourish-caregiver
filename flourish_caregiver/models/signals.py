@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from edc_base.utils import age, get_utcnow
 
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-import flourish_follow.models
+from flourish_follow.models import WorkList
 
 from ..helper_classes.cohort import Cohort
 from .antenatal_enrollment import AntenatalEnrollment
@@ -16,15 +16,43 @@ from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
+from .subject_consent import SubjectConsent
+from debugpy._vendored.pydevd.pydevd_attach_to_process.winappdbg.win32.defines import TRUE
 
 
-# from flourish_caregiver.models.subject_consent import SubjectConsent
 class PreFlourishError(Exception):
     pass
 
 
 class ChildDatasetError(Exception):
     pass
+
+
+@receiver(post_save, weak=False, sender=SubjectConsent,
+          dispatch_uid='subject_consent_on_post_save')
+def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
+    """
+    - Create locator log entry
+    """
+    if not raw:
+        if created:
+            try:
+                maternal_dataset = MaternalDataset.objects.get(
+                    screening_identifier=instance.screening_identifier)
+            except MaternalDataset.DoesNotExist:
+                pass
+            else:
+                study_maternal_identifier = maternal_dataset.study_maternal_identifier
+                try:
+                    worklist = WorkList.objects.get(
+                        study_maternal_identifier=study_maternal_identifier)
+                except WorkList.DoesNotExist:
+                    pass
+                else:
+                    worklist.consented = True
+                    worklist.assigned = None
+                    worklist.date_assigned = None
+                    worklist.save()
 
 
 @receiver(post_save, weak=False, sender=LocatorLogEntry,
