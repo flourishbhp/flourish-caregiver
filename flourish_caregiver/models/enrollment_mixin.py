@@ -125,7 +125,7 @@ class EnrollmentMixin(models.Model):
             will_breastfeed=self.will_breastfeed,
             ga_lmp_enrollment_wks=self.ga_lmp_enrollment_wks,
             # enrollment_hiv_status=self.enrollment_hiv_status,
-            will_get_arvs=self.will_get_arvs, pending_ultrasound=self.pending_ultrasound)
+            will_get_arvs=self.will_get_arvs)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         super(EnrollmentMixin, self).save(*args, **kwargs)
