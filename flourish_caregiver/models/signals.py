@@ -17,7 +17,6 @@ from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
-from debugpy._vendored.pydevd.pydevd_attach_to_process.winappdbg.win32.defines import TRUE
 
 
 class PreFlourishError(Exception):
