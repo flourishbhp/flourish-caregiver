@@ -1,15 +1,16 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.test import TestCase, tag
-from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES, NEG, POS
 from edc_facility.import_holidays import import_holidays
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 from edc_metadata.models import CrfMetadata
-from edc_visit_tracking.constants import SCHEDULED
-from edc_visit_schedule.subject_schedule import SubjectSchedule
 from model_mommy import mommy
+
+from edc_appointment.models import Appointment
+from edc_visit_schedule.subject_schedule import SubjectSchedule
+from edc_visit_tracking.constants import SCHEDULED
 
 from ..models import MaternalVisit
 from ..subject_helper_mixin import SubjectHelperMixin
@@ -53,6 +54,15 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
                 visit_code_sequence='0').entry_status, NOT_REQUIRED)
+
+    @tag('sub')
+    def test_substanceuse_prior_to_preg_required_cohort_a(self):
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.substanceusepriorpregnancy',
+                subject_identifier=self.subject_identifier,
+                visit_code='1000M',
+                visit_code_sequence='0').entry_status, REQUIRED)
 
     @tag('rg1')
     def test_hiv_test_required_cohort_a(self):
@@ -133,6 +143,7 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M').entry_status, REQUIRED)
 
+    @tag('sub')
     def test_hiv_viralload_cd4_required_cohort_a(self):
         maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
@@ -173,6 +184,13 @@ class TestRuleGroups(TestCase):
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.hivviralloadandcd4',
+                subject_identifier=subject_identifier,
+                visit_code='2000M',
+                visit_code_sequence='0').entry_status, NOT_REQUIRED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.substanceusepriorpregnancy',
                 subject_identifier=subject_identifier,
                 visit_code='2000M',
                 visit_code_sequence='0').entry_status, NOT_REQUIRED)
