@@ -8,6 +8,7 @@ from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
+from django.core.exceptions import ObjectDoesNotExist
 
 from ..helper_classes.cohort import Cohort
 from .antenatal_enrollment import AntenatalEnrollment
