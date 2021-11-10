@@ -423,15 +423,12 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
 def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
     for visit_schedule in site_visit_schedules.visit_schedules.values():
             for schedule in visit_schedule.schedules.values():
+                onschedule_model_obj = get_onschedule_model_obj(schedule,instance.subject_identifier)
                 if onschedule_model_obj:
-                    try:
-                        onschedule_model_obj = get_onschedule_model_obj(schedule,instance.subject_identifier)
-                    except onschedule_model_obj.ObjectDoesNotExist:
-                        pass
-                    else:
-                        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                    _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
                         onschedule_model=onschedule_model_obj._meta.label_lower,name=onschedule_model_obj.schedule_name)
-                        schedule.take_off_schedule(subject_identifier=instance.subject_identifier)
+                    schedule.take_off_schedule(subject_identifier=instance.subject_identifier)
+                        
 
 def get_onschedule_model_obj(schedule, subject_identifier):
         try:
