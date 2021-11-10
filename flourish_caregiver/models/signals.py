@@ -1,20 +1,13 @@
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group, User
-<<<<<<< HEAD
-from django.core.exceptions import ObjectDoesNotExist
-=======
 from django.db.models import Q
->>>>>>> f4813fed065682dfcdb7e1202827bb4b4d512496
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-<<<<<<< HEAD
-=======
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
->>>>>>> f4813fed065682dfcdb7e1202827bb4b4d512496
 
 from ..helper_classes.cohort import Cohort
 from .antenatal_enrollment import AntenatalEnrollment
