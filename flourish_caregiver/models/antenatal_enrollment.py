@@ -31,13 +31,13 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
     ga_lmp_enrollment_wks = models.IntegerField(
         verbose_name="GA by LMP at enrollment.",
         help_text=" (weeks of gestation at enrollment, LMP). Eligible if"
-        " >16 and <30 weeks GA",
+        " >22 and <28 weeks GA",
         null=True,
         blank=True,)
 
     ga_lmp_anc_wks = models.IntegerField(
         verbose_name="What is the mother's gestational age according to"
-        " ANC records?",
+        " ANC records (or from midwife if LMP is not known)?",
         validators=[MinValueValidator(1), MaxValueValidator(40)],
         null=True,
         blank=True,
