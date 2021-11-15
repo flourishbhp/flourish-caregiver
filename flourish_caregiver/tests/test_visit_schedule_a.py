@@ -139,6 +139,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         self.assertEqual(ccc2.caregiver_visit_count, 2)
 
+    @tag('bb')
     def test_cohort_a_onschedule_birth_valid(self):
 
         screening_preg = mommy.make_recipe(
@@ -162,10 +163,6 @@ class TestVisitScheduleSetupA(TestCase):
         self.assertEqual(OnScheduleCohortABirth.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_birth1_schedule1').count(), 1)
-
-        self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
-            subject_identifier=subject_consent.subject_identifier,
-            schedule_name='a_quarterly1_schedule1').count(), 1)
 
     @tag('aa1')
     def test_cohort_a_onschedule_consent_valid(self):
