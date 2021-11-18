@@ -1,11 +1,11 @@
-from edc_locator.action_items import SubjectLocatorAction
-
 from edc_action_item import Action, site_action_items, HIGH_PRIORITY
+from edc_locator.action_items import SubjectLocatorAction
 
 CAREGIVEROFF_STUDY_ACTION = 'submit-caregiveroff-study'
 CAREGIVER_LOCATOR_ACTION = 'submit-caregiver-locator'
 ULTRASOUND_ACTION = 'submit-ultrasound'
 MATERNAL_COVID_SCREENING_ACTION = 'update-maternal-covid-results'
+MATERNAL_VISIT_ACTION = 'maternal-visit'
 
 
 class CaregiverOffStudyAction(Action):

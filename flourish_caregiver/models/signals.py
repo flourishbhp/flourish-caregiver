@@ -1,5 +1,6 @@
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group, User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -8,9 +9,10 @@ from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
-from django.core.exceptions import ObjectDoesNotExist
 
+from flourish_prn.action_items import DEATH_REPORT_ACTION
 from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_locator import CaregiverLocator
@@ -18,8 +20,6 @@ from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
-from ..models import CaregiverOffSchedule
-
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
@@ -200,7 +200,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob, ).count()
+            ).exclude(dob=instance.child_dob,).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow()).years
@@ -220,7 +220,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-                        version=instance.subject_consent.version, )
+                        version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -271,6 +271,14 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on quarterly schedule at enrollment visit.
     """
+
+    survival_status = instance.survival_status
+    death_report_cls = django_apps.get_model('flourish_prn.deathreport')
+    if survival_status == 'dead':
+
+        trigger_action_item(death_report_cls,
+                                    DEATH_REPORT_ACTION,
+                                    instance.subject_identifier)
 
     if not raw and created and instance.visit_code == '2000M':
 
@@ -445,12 +453,12 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
 def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
     for visit_schedule in site_visit_schedules.visit_schedules.values():
             for schedule in visit_schedule.schedules.values():
-                onschedule_model_obj = get_onschedule_model_obj(schedule,instance.subject_identifier)
+                onschedule_model_obj = get_onschedule_model_obj(schedule, instance.subject_identifier)
                 if onschedule_model_obj:
                     _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
-                        onschedule_model=onschedule_model_obj._meta.label_lower,name=onschedule_model_obj.schedule_name)
+                        onschedule_model=onschedule_model_obj._meta.label_lower, name=onschedule_model_obj.schedule_name)
                     schedule.take_off_schedule(subject_identifier=instance.subject_identifier)
-                        
+
 
 def get_onschedule_model_obj(schedule, subject_identifier):
         try:
@@ -458,7 +466,8 @@ def get_onschedule_model_obj(schedule, subject_identifier):
                 subject_identifier=subject_identifier)
         except ObjectDoesNotExist:
             return None
-    
+
+
 @receiver(post_save, weak=False, sender=UltraSound,
         dispatch_uid='ultrasound_on_post_save')
 def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):

@@ -1,4 +1,5 @@
 from django.db import models
+from edc_appointment.models import Appointment
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_not_future
@@ -8,8 +9,6 @@ from edc_consent.model_mixins import RequiresConsentFieldsModelMixin
 from edc_constants.constants import ALIVE, PARTICIPANT
 from edc_metadata.model_mixins.creates import CreatesMetadataModelMixin
 from edc_protocol.validators import date_not_before_study_start
-
-from edc_appointment.models import Appointment
 from edc_reference.model_mixins import ReferenceModelMixin
 from edc_visit_tracking.constants import MISSED_VISIT
 from edc_visit_tracking.managers import VisitModelManager
