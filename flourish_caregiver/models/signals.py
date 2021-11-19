@@ -11,7 +11,7 @@ from edc_constants.constants import OPEN, NEW
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 
-from flourish_prn.action_items import DEATH_REPORT_ACTION
+from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from ..helper_classes.cohort import Cohort
 from ..models import CaregiverOffSchedule
 from .antenatal_enrollment import AntenatalEnrollment
@@ -302,11 +302,11 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     """
 
     survival_status = instance.survival_status
-    death_report_cls = django_apps.get_model('flourish_prn.deathreport')
+    death_report_cls = django_apps.get_model('flourish_prn.caregiverdeathreport')
     if survival_status == 'dead':
 
         trigger_action_item(death_report_cls,
-                                    DEATH_REPORT_ACTION,
+                                    CAREGIVER_DEATH_REPORT_ACTION,
                                     instance.subject_identifier)
 
     if not raw and created and instance.visit_code in ['2000M', '2000D']:
