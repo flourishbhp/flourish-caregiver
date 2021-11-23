@@ -1,11 +1,10 @@
 from django.contrib import admin
-from edc_fieldsets.fieldlist import Insert, Remove
+from edc_fieldsets.fieldlist import Insert
 from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 from edc_model_admin import audit_fieldset_tuple
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import SocioDemographicDataForm
-from ..models import AntenatalEnrollment
 from ..models import SocioDemographicData
 from .modeladmin_mixins import CrfModelAdminMixin
 

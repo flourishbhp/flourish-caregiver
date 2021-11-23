@@ -9,9 +9,9 @@ from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
 
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-from flourish_follow.models import WorkList
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 
+from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from ..helper_classes.cohort import Cohort
 from ..models import CaregiverOffSchedule
 from .antenatal_enrollment import AntenatalEnrollment
@@ -44,6 +44,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Create locator log entry
     """
+    worklist_cls = django_apps.get_model('flourish_follow.worklist')
     if not raw:
         if created:
             try:
@@ -54,9 +55,9 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
             else:
                 study_maternal_identifier = maternal_dataset.study_maternal_identifier
                 try:
-                    worklist = WorkList.objects.get(
+                    worklist = worklist_cls.objects.get(
                         study_maternal_identifier=study_maternal_identifier)
-                except WorkList.DoesNotExist:
+                except worklist_cls.DoesNotExist:
                     pass
                 else:
                     worklist.consented = True
@@ -148,12 +149,13 @@ def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
                         offstudy_td = child_dataset.infant_offstudy_complete == 1
 
                 if offstudy_td:
+                    worklist_cls = django_apps.get_model('flourish_follow.worklist')
                     try:
 
-                        WorkList.objects.get(
+                        worklist_cls.objects.get(
                             study_maternal_identifier=instance.study_maternal_identifier)
-                    except WorkList.DoesNotExist:
-                        WorkList.objects.create(
+                    except worklist_cls.DoesNotExist:
+                        worklist_cls.objects.create(
                             study_maternal_identifier=instance.study_maternal_identifier,
                             prev_study=maternal_dataset.protocol,
                             user_created=instance.user_created)
@@ -176,13 +178,10 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put new born child on schedule
     """
-    pass
-    # if not raw:
-    # if created and instance.live_infants_to_register == 1:
-    # put_on_schedule('cohort_a_birth', instance=instance,
-    # subject_identifier=instance.subject_identifier)
-    # put_on_schedule('cohort_a_quarterly', instance=instance,
-    # subject_identifier=instance.subject_identifier)
+    if not raw:
+        if created and instance.live_infants_to_register == 1:
+            put_on_schedule('cohort_a_birth', instance=instance,
+                            subject_identifier=instance.subject_identifier)
 
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
@@ -244,7 +243,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             if not cohort and screening_preg_exists(instance):
                 cohort = 'cohort_a'
 
-            if child_age and child_age < 7 or not instance.child_dob:
+            if child_age and child_age < 7:
 
                 try:
                     child_dummy_consent_cls.objects.get(
@@ -302,7 +301,15 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     - Put subject on quarterly schedule at enrollment visit.
     """
 
-    if not raw and created and instance.visit_code == '2000M':
+    survival_status = instance.survival_status
+    death_report_cls = django_apps.get_model('flourish_prn.caregiverdeathreport')
+    if survival_status == 'dead':
+
+        trigger_action_item(death_report_cls,
+                                    CAREGIVER_DEATH_REPORT_ACTION,
+                                    instance.subject_identifier)
+
+    if not raw and created and instance.visit_code in ['2000M', '2000D']:
 
         if 'sec' in instance.schedule_name:
 
@@ -363,7 +370,6 @@ def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
     """Calculates participant's cohort based on the maternal and child dataset
     """
     infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
-
     try:
         infant_dataset_obj = infant_dataset_cls.objects.get(
             study_child_identifier=study_child_identifier,
