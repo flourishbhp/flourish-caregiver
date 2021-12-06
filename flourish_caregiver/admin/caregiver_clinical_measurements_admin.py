@@ -1,10 +1,10 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
-from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverClinicalMeasurementsForm
 from ..models import CaregiverClinicalMeasurements
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(CaregiverClinicalMeasurements, site=flourish_caregiver_admin)
@@ -24,7 +24,11 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'weight_kg',
                 'systolic_bp',
                 'diastolic_bp',
+                'is_preg',
                 'waist_circ',
                 'hip_circ'
             ]}
          ), audit_fieldset_tuple)
+
+    radio_fields = {
+        'is_preg': admin.VERTICAL, }
