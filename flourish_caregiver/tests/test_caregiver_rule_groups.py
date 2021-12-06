@@ -47,6 +47,7 @@ class TestRuleGroups(TestCase):
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
+    @tag('bbh')
     def test_hiv_viralload_cd4_not_required_cohort_a(self):
         self.assertEqual(
             CrfMetadata.objects.get(

@@ -40,9 +40,11 @@ class Cohort:
         child_dob = child_dob or self.child_dob
         check_date = check_date or self.enrollment_date
 
-        child_age = age(child_dob, check_date)
-
-        child_age = str(child_age.years) + '.' + str(child_age.months)
+        if check_date > child_dob:
+            child_age = age(child_dob, check_date)
+            child_age = str(child_age.years) + '.' + str(child_age.months)
+        else:
+            child_age = 0
         return float(child_age)
 
     @property
