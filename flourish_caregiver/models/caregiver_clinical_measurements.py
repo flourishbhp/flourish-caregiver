@@ -1,5 +1,6 @@
-from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
+from edc_constants.choices import YES_NO
 
 from .model_mixins import CrfModelMixin
 
@@ -32,6 +33,11 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         verbose_name='Caregiver\'s diastolic blood pressure?',
         validators=[MinValueValidator(35), MaxValueValidator(150), ],
         help_text='in hg e.g. 80, should be between 35 and 150.')
+
+    is_preg = models.CharField(
+        verbose_name='Is the caregiver pregnant? ',
+        max_length=3,
+        choices=YES_NO)
 
     waist_circ = models.DecimalField(
         max_digits=5,
