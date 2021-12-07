@@ -22,14 +22,16 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
                        'report_datetime',
                        'child_alive',
                        'mother_alive',
-                       'flourish_participation', )},
+                       'flourish_participation',
+                       'reason_not_to_participate')},
          ),
         audit_fieldset_tuple
     )
 
     radio_fields = {'child_alive': admin.VERTICAL,
                     'mother_alive': admin.VERTICAL,
-                    'flourish_participation': admin.VERTICAL}
+                    'flourish_participation': admin.VERTICAL,
+                    'reason_not_to_participate': admin.VERTICAL}
 
     list_display = (
         'report_datetime', 'screening_identifier', 'study_maternal_identifier',
