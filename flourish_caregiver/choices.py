@@ -627,3 +627,35 @@ VACCINATION_TYPE = (
     ('johnson_and_johnson', 'Johnson & Johnson '),
     (OTHER, 'Other')
 )
+
+REASONS_NOT_PARTICIPATE = (
+    ('not_interested_in_participating', 'Not interested in participating'),
+    ('busy_during_the_suggested_times ', 'Busy during the suggested times'),
+    ('out_of_town_during_the_suggested_times', 'Out of town during the suggested times'),
+    ('not_available_during_the_suggested_times', 'Not available during the suggested times'),
+    ('prefers_not_to_say_why_unwilling', 'Prefers not to say why unwilling'),
+    ('caregiver_is_busy_and_does_not_want_to_participate ', 'Caregiver is busy and does not want to participate '),
+    ('caregiver_does_not_live_in_study_area', 'Caregiver does not live in study area'),
+    ('caregiver_is_not_willing_to_disclose_status_to_their_child',
+     'Caregiver is not willing to disclose status to their child'),
+    ('caregiver_does_not_want_to_join_another_study', 'Caregiver does not want to join another study  '),
+    ('caregiver_has_work_constraints  ', 'Caregiver has work constraints  '),
+    ('caregiver_has_fears_of_joining_study_or_traveling_during_covid ',
+     'Caregiver has fears of joining study/traveling during COVID '),
+    ('caregivers_partner_does_not_want_or_allow_them_to_participate',
+     'Caregiver’s partner does not want/allow them to participate'),
+    ('caregiver_has_many_other_doctor_appointments', 'Caregiver has many other doctor appointments'),
+    ('caregiver_fears_stigmatization', 'Caregiver fears stigmatization'),
+    ('child_is_busy_and_does_not_want_to_participate', 'Child is busy and does not want to participate'),
+    ('child_is_not_interested_in_joining_study', 'Child is not interested in joining study'),
+    ('child_does_not_live_in_study_area', 'Child does not live in study area'),
+    ('child_has_fears_of_joining_study_or_traveling_during_covid',
+     'Child has fears of joining study/traveling during COVID'),
+    ('child_has_many_other_doctor_appointments', 'Child has many other doctor appointments'),
+    ('caregiver_fears_stigmatization', 'Caregiver fears stigmatization'),
+    ('child_is_late_has_passed_away', 'Child is late (has passed away)'),
+    ('biological_mother_is_late_has_passed_away, and caregiver is unwilling',
+     'Biological mother is late (has passed away), and caregiver is unwilling'),
+    ('child_is_unwilling_and_prefers_not_to_say_why', 'Child is unwilling and prefers not to say why'),
+    (NOT_APPLICABLE, 'Not Applicable')
+)
