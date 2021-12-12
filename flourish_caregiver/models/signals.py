@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
+from django.db import transaction
 from django.contrib.auth.models import Group, User
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -182,6 +183,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
         if created and instance.live_infants_to_register == 1:
             put_on_schedule('cohort_a_birth', instance=instance,
                             subject_identifier=instance.subject_identifier)
+            create_registered_infant(instance)
 
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
@@ -243,7 +245,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             if not cohort and screening_preg_exists(instance):
                 cohort = 'cohort_a'
 
-            if child_age and child_age < 7:
+            if child_age is not None and child_age < 7:
 
                 try:
                     child_dummy_consent_cls.objects.get(
@@ -519,6 +521,39 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
                 trigger_action_item(caregiver_offstudy_cls,
                                     CAREGIVEROFF_STUDY_ACTION,
                                     instance.subject_identifier)
+
+
+def create_registered_infant(instance):
+
+    #  Create infant registered subject
+    if isinstance(instance, MaternalDelivery):
+        if instance.live_infants_to_register == 1:
+            maternal_consent = SubjectConsent.objects.filter(
+                subject_identifier=instance.subject_identifier
+            ).order_by('version').last()
+            try:
+                UltraSound.objects.filter(
+                    maternal_visit__subject_identifier=instance.subject_identifier
+                ).order_by('report_datetime').last()
+            except UltraSound.DoesNotExist:
+                raise ValidationError(
+                    'Maternal Ultrasound must exist for {instance.subject_identifier}')
+            else:
+                with transaction.atomic():
+                    caregiver_child_consent_cls = django_apps.get_model(
+                        'flourish_caregiver.caregiverchildconsent')
+
+                    # Create caregiver child consent
+                    try:
+                        caregiver_child_consent_cls.objects.get(
+                            subject_identifier__startswith=instance.subject_identifier)
+                    except caregiver_child_consent_cls.DoesNotExist:
+                        caregiver_child_consent_cls.objects.create(
+                            subject_consent=maternal_consent,
+                            version=maternal_consent.version,
+                            child_dob=instance.delivery_datetime.date(),
+                            consent_datetime=get_utcnow(),
+                            is_eligible=True)
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier, repeat=False):
