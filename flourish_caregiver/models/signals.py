@@ -308,8 +308,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     if survival_status == 'dead':
 
         trigger_action_item(death_report_cls,
-                                    CAREGIVER_DEATH_REPORT_ACTION,
-                                    instance.subject_identifier)
+                            CAREGIVER_DEATH_REPORT_ACTION,
+                            instance.subject_identifier)
 
     if not raw and created and instance.visit_code in ['2000M', '2000D']:
 

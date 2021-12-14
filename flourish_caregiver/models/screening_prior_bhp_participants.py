@@ -12,7 +12,7 @@ from edc_search.model_mixins import SearchSlugManager
 
 from .eligibility import BHPPriorEligibilty
 from .model_mixins import SearchSlugModelMixin
-from ..choices import FLOURISH_PARTICIPATION, YES_NO_UNK_NA
+from ..choices import FLOURISH_PARTICIPATION, YES_NO_UNK_NA, REASONS_NOT_PARTICIPATE
 from ..identifiers import ScreeningIdentifier
 
 
@@ -66,6 +66,13 @@ class ScreeningPriorBhpParticipants(
         max_length=40,
         choices=FLOURISH_PARTICIPATION,
         default=NOT_APPLICABLE)
+
+    reason_not_to_participate = models.CharField(
+        verbose_name='What is the reason the participant is unwilling to participate in the study:',
+        max_length=80,
+        choices=REASONS_NOT_PARTICIPATE,
+        default=NOT_APPLICABLE
+    )
 
     ineligibility = models.TextField(
         verbose_name="Reason not eligible",
