@@ -1,7 +1,7 @@
 from django.apps import apps as django_apps
-from django.db import transaction
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import transaction
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -11,8 +11,8 @@ from edc_constants.constants import OPEN, NEW
 
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
-
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
+
 from ..helper_classes.cohort import Cohort
 from ..models import CaregiverOffSchedule
 from .antenatal_enrollment import AntenatalEnrollment
@@ -240,7 +240,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
             cohort = cohort_assigned(instance.study_child_identifier,
                                      instance.child_dob,
-                                     instance.subject_consent.created.replace(microsecond=0))
+                                     instance.subject_consent.created.date())
 
             if not cohort and screening_preg_exists(instance):
                 cohort = 'cohort_a'
