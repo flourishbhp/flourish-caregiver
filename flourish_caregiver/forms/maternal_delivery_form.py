@@ -18,16 +18,6 @@ class MaternalDeliveryForm(
 
         super(MaternalDeliveryForm, self).__init__(*args, **kwargs)
 
-        subject_identifier = self.initial.get('subject_identifier', None)
-
-        try:
-            pre_pregnancy = ArvsPrePregnancy.objects.get(
-                maternal_visit__appointment__subject_identifier=subject_identifier)
-        except ArvsPrePregnancy.DoesNotExist:
-            pass
-        else:
-            self.fields['arv_initiation_date'].widget = forms.TextInput(attrs={'readonly': 'readonly'}, )
-            self.initial['arv_initiation_date'] = pre_pregnancy.art_start_date
 
     class Meta:
         model = MaternalDelivery
