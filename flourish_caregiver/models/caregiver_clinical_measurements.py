@@ -44,6 +44,8 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         decimal_places=2,
         verbose_name='Caregiver\'s waist circumference',
         validators=[MinValueValidator(50), MaxValueValidator(420), ],
+        null=True,
+        blank=True,
         help_text=('only measure waist circumference for caregivers who are '
                    'not pregnant'))
 
@@ -52,6 +54,8 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         decimal_places=2,
         verbose_name='Caregiver\'s hip circumference',
         validators=[MinValueValidator(50), MaxValueValidator(420), ],
+        null=True,
+        blank=True,
         help_text=('only measure waist circumference for caregivers who are '
                    'not pregnant'))
 
