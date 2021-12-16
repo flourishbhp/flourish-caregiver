@@ -15,6 +15,7 @@ class MaternalDeliveryForm(
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     def __init__(self, *args, **kwargs):
+
         super(MaternalDeliveryForm, self).__init__(*args, **kwargs)
 
         subject_identifier = self.initial.get('subject_identifier', None)
