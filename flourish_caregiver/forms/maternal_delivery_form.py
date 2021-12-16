@@ -7,8 +7,7 @@ from ..models import MaternalDelivery
 
 
 class MaternalDeliveryForm(
-        SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
-
+    SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
     form_validator_cls = MaternalDeliveryFormValidator
 
     subject_identifier = forms.CharField(
@@ -20,12 +19,14 @@ class MaternalDeliveryForm(
 
         subject_identifier = self.initial.get('subject_identifier', None)
 
-        pre_pregnancy = ArvsPrePregnancy.objects.get(
-            maternal_visit__appointment__subject_identifier=subject_identifier)
-
-        self.fields['arv_initiation_date'].widget = forms.TextInput(attrs={'readonly': 'readonly'}, )
-        self.initial['arv_initiation_date'] = pre_pregnancy.art_start_date
-
+        try:
+            pre_pregnancy = ArvsPrePregnancy.objects.get(
+                maternal_visit__appointment__subject_identifier=subject_identifier)
+        except ArvsPrePregnancy.DoesNotExist:
+            pass
+        else:
+            self.fields['arv_initiation_date'].widget = forms.TextInput(attrs={'readonly': 'readonly'}, )
+            self.initial['arv_initiation_date'] = pre_pregnancy.art_start_date
 
     class Meta:
         model = MaternalDelivery
