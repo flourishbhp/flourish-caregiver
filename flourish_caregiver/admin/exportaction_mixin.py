@@ -27,6 +27,7 @@ class ExportActionMixin:
 
         field_names = queryset[0].__dict__
         field_names = [a for a in field_names.keys()]
+        field_names.append('on_study')
         field_names.remove('_state')
 
         if queryset and self.is_consent(queryset[0]):
@@ -38,6 +39,7 @@ class ExportActionMixin:
             field_names.insert(2, 'previous_study')
             field_names.insert(3, 'visit_code')
 
+
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
 
@@ -48,6 +50,7 @@ class ExportActionMixin:
             if getattr(obj, 'maternal_visit', None):
                 obj_data['visit_code'] = obj.maternal_visit.visit_code
                 obj_data['subject_identifier'] = obj.maternal_visit.subject_identifier
+                # obj_data['on_study'] = "ONSTUDY/OFFSTUDY"
 
             subject_identifier = obj_data.get('subject_identifier', None)
             screening_identifier = self.screening_identifier(subject_identifier=subject_identifier)
@@ -55,6 +58,9 @@ class ExportActionMixin:
             study_maternal_identifier = self.study_maternal_identifier(screening_identifier=screening_identifier)
             obj_data['previous_study'] = previous_study
             obj_data['study_maternal_identifier'] = study_maternal_identifier
+            obj_data['on_study'] = self.on_study(subject_identifier=subject_identifier)
+
+
             data = [obj_data[field] for field in field_names]
 
             row_num += 1
@@ -113,3 +119,9 @@ class ExportActionMixin:
     def is_consent(self, obj):
         consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
         return isinstance(obj, consent_cls)
+
+    def on_study(self, subject_identifier):
+        caregiver_offstudy_cls = django_apps.get_model('flourish_prn.caregiveroffstudy')
+        is_offstudy = caregiver_offstudy_cls.objects.filter(subject_identifier=subject_identifier).exists()
+
+        return 'No' if is_offstudy else 'Yes'
