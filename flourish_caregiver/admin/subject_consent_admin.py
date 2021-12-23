@@ -352,7 +352,11 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                     ws.write(row_num, col_num, str(data[col_num]))
                 elif isinstance(data[col_num], datetime.datetime):
                     data[col_num] = timezone.make_naive(data[col_num])
-                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(num_format_str='YYYY/MM/DD h:mm:ss'))
+                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
+                        num_format_str='YYYY/MM/DD h:mm:ss'))
+                elif isinstance(data[col_num], datetime.date):
+                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
+                        num_format_str='YYYY/MM/DD'))
                 else:
                     ws.write(row_num, col_num, data[col_num])
         wb.save(response)
