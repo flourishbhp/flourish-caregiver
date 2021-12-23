@@ -11,7 +11,7 @@ from .enrollment_mixin import EnrollmentMixin
 
 
 class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
-                        EnrollmentMixin, BaseUuidModel):
+                          EnrollmentMixin, BaseUuidModel):
 
     knows_lmp = models.CharField(
         verbose_name="Does the mother know the approximate date "
