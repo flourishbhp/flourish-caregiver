@@ -12,7 +12,7 @@ class MaternalDiagnoses(CrfModelMixin):
     new_diagnoses = models.CharField(
         max_length=25,
         verbose_name='Have there been any new diagnoses or '
-                     'medical problems in the mother\'s health since last visit?',
+                     'medical problems in the caregiver\'s health since last visit?',
         choices=YES_NO,
     )
 
@@ -32,7 +32,7 @@ class MaternalDiagnoses(CrfModelMixin):
 
     has_who_dx = models.CharField(
         verbose_name=(
-            "During this pregnancy, did the mother have any new diagnoses "
+            "During this pregnancy, did the caregiver have any new diagnoses "
             "listed in the WHO Adult/Adolescent HIV clinical staging document "
             "which  is/are NOT reported?"),
         max_length=3,
