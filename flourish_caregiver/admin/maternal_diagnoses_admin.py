@@ -17,9 +17,16 @@ class MaternalDiagnosesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             'fields': [
                 'maternal_visit',
                 'report_datetime',
+                'new_diagnoses',
+                'diagnoses',
+                'diagnoses_other',
                 'has_who_dx',
                 'who']}
          ), audit_fieldset_tuple)
 
-    radio_fields = {'has_who_dx': admin.VERTICAL}
-    filter_horizontal = ('who',)
+    radio_fields = {
+        'has_who_dx': admin.VERTICAL,
+        'new_diagnoses': admin.VERTICAL,
+    }
+
+    filter_horizontal = ('who','diagnoses')
