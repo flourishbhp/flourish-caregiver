@@ -167,6 +167,23 @@ list_data = {
         ('no_symptoms', 'No Symptoms'),
     ],
 
+    'flourish_caregiver.maternaldiagnoseslist': [
+        ('Pneumonia', 'Pneumonia'),
+        ('Chlamydia', 'Chlamydia'),
+        ('Tuberculosis', 'Tuberculosis'),
+        ('Depression', 'Depression'),
+        ('Pre-eclampsia', 'Pre-eclampsia'),
+        ('Gonorrhea', 'Gonorrhea'),
+        ('Liver Problems', 'Liver Problems'),
+        ('Hepatitis C', 'Hepatitis C'),
+        ('Syphillis', 'Syphillis'),
+        ('Asthma requiring steroids', 'Asthma requiring steroids'),
+        ('Genital Herpes', 'Genital Herpes'),
+        ('Gestational Hypertension', 'Gestational Hypertension'),
+        (NOT_APPLICABLE, 'Not Applicable'),
+        ('Other, specify', 'Other, specify')
+    ]
+
 }
 
 preload_data = PreloadData(
