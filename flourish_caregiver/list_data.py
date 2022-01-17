@@ -37,22 +37,6 @@ list_data = {
         ('Other', 'Other'),
         ('None', 'None')
     ],
-    'flourish_caregiver.maternaldiagnoseslist': [
-        ('Pneumonia', 'Pneumonia'),
-        ('Chlamydia', 'Chlamydia'),
-        ('Tuberculosis', 'Tuberculosis'),
-        ('Depression', 'Depression'),
-        ('Pre-eclampsia', 'Pre-eclampsia'),
-        ('Gonorrhea', 'Gonorrhea'),
-        ('Liver Problems', 'Liver Problems'),
-        ('Hepatitis C', 'Hepatitis C'),
-        ('Syphillis', 'Syphillis'),
-        ('Asthma requiring steroids', 'Asthma requiring steroids'),
-        ('Genital Herpes', 'Genital Herpes'),
-        ('Gestational Hypertension', 'Gestational Hypertension'),
-        (NOT_APPLICABLE, 'Not Applicable'),
-        ('Other, specify', 'Other, specify')
-    ],
     'flourish_caregiver.phonenumtype': [
         ('cell_phone', 'Cell Phone'),
         ('cell_phone_alt', 'Cell Phone (alternative)'),
@@ -168,20 +152,20 @@ list_data = {
     ],
 
     'flourish_caregiver.maternaldiagnoseslist': [
-        ('Pneumonia', 'Pneumonia'),
-        ('Chlamydia', 'Chlamydia'),
-        ('Tuberculosis', 'Tuberculosis'),
-        ('Depression', 'Depression'),
-        ('Pre-eclampsia', 'Pre-eclampsia'),
-        ('Gonorrhea', 'Gonorrhea'),
-        ('Liver Problems', 'Liver Problems'),
-        ('Hepatitis C', 'Hepatitis C'),
-        ('Syphillis', 'Syphillis'),
-        ('Asthma requiring steroids', 'Asthma requiring steroids'),
-        ('Genital Herpes', 'Genital Herpes'),
-        ('Gestational Hypertension', 'Gestational Hypertension'),
+        ('pneumonia', 'Pneumonia'),
+        ('chlamydia', 'Chlamydia'),
+        ('tuberculosis', 'Tuberculosis'),
+        ('depression', 'Depression'),
+        ('pre_eclampsia', 'Pre-eclampsia'),
+        ('gonorrhea', 'Gonorrhea'),
+        ('liver_Problems', 'Liver Problems'),
+        ('hepatitis_c', 'Hepatitis C'),
+        ('syphillis', 'Syphillis'),
+        ('asthma_requiring_steroids', 'Asthma requiring steroids'),
+        ('genital_herpes', 'Genital Herpes'),
+        ('gestational_hypertension', 'Gestational Hypertension'),
         (NOT_APPLICABLE, 'Not Applicable'),
-        ('Other, specify', 'Other, specify')
+        (OTHER, 'Other, specify')
     ]
 
 }
