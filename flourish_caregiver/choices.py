@@ -102,7 +102,7 @@ COHORTS = (
 
 CONSENT_VERSION = (
     ('1', 'Consent version 1'),
-    ('3', 'Consent version 3')
+    ('2', 'Consent version 2')
 )
 
 CONTACT_FAIL_REASON = (
