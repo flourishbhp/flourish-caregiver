@@ -1,4 +1,6 @@
 from django.contrib import admin
+from edc_metadata import KEYED
+from edc_metadata.models import CrfMetadata
 from edc_model_admin import audit_fieldset_tuple
 
 from ..admin_site import flourish_caregiver_admin
@@ -10,6 +12,8 @@ from .modeladmin_mixins import CrfModelAdminMixin
 @admin.register(Covid19, site=flourish_caregiver_admin)
 class Covid19Admin(CrfModelAdminMixin, admin.ModelAdmin):
     form = Covid19Form
+
+    add_form_template = 'flourish_caregiver/add_covid19_form.html'
 
     fieldsets = (
         (None, {
@@ -50,6 +54,17 @@ class Covid19Admin(CrfModelAdminMixin, admin.ModelAdmin):
     }
 
     filter_horizontal = ('isolations_symptoms', 'symptoms_for_past_14days')
+
+
+    def add_view(self, request, form_url='', extra_context=None):
+        subject_identifier = self.get_appointment(request).subject_identifier
+
+        covid_crf = Covid19.objects.filter(maternal_visit__appointment__subject_identifier=subject_identifier)\
+            .order_by('-report_datetime')
+        if covid_crf:
+            extra_context = {'followup_question': f'Since the last FLOURISH visit on ',
+                             'followup_question_date': covid_crf.first().report_datetime}
+        return super().add_view(request, form_url='', extra_context=extra_context)
 
     # filter_vertical = {}
     #
