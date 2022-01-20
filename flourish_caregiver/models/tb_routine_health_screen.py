@@ -1,15 +1,16 @@
 from django.db import models
-from ..choices import TB_SCREENING_LOCATION, YES_NO_UNK_DWTA
+from edc_base.model_fields import OtherCharField
 
 from .model_mixins import CrfModelMixin
+from ..choices import TB_SCREENING_LOCATION, YES_NO_UNK_DWTA
 
 
 class TbRoutineHealthScreen(CrfModelMixin):
-
     tb_screened = models.CharField(
-        verbose_name=('Were you screened for TB at a routine healthcare encounter '
-                      'with the four screening questions (cough for 2 weeks, '
-                      'fever, weight loss, night sweats) since conception?'),
+        verbose_name=(
+            'Were you screened for TB at a routine healthcare encounter '
+            'with the four screening questions (cough for 2 weeks, '
+            'fever, weight loss, night sweats) since conception?'),
         max_length=20,
         choices=YES_NO_UNK_DWTA)
 
@@ -19,6 +20,8 @@ class TbRoutineHealthScreen(CrfModelMixin):
         null=True,
         blank=True,
         choices=TB_SCREENING_LOCATION)
+
+    screen_location_other = OtherCharField()
 
     pos_screen = models.CharField(
         verbose_name='Did you screen positive for the TB symptom screen?',
