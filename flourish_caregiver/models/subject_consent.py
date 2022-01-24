@@ -156,6 +156,10 @@ class SubjectConsent(
                 screening_identifier=self.screening_identifier)
         except consent_version_cls.DoesNotExist:
             self.version = '2'
+            consent_version = consent_version_cls(
+                screening_identifier=self.screening_identifier,
+                version='2')
+            consent_version.save()
         else:
             self.version = consent_version_obj.version
 
