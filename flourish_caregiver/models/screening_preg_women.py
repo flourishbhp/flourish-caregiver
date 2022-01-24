@@ -82,15 +82,6 @@ class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
 
-        consent_version_cls = django_apps.get_model(
-            'flourish_caregiver.flourishconsentversion')
-
-        consent_version = consent_version_cls(
-                screening_identifier=self.screening_identifier,
-                version='2')
-
-        consent_version.save()
-
         super().save(*args, **kwargs)
 
     def get_search_slug_fields(self):
