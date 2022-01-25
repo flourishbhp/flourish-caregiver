@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from django.db import models
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
@@ -9,9 +10,9 @@ from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugManager
 
+from ..identifiers import ScreeningIdentifier
 from .eligibility import PregWomenEligibility
 from .model_mixins import SearchSlugModelMixin
-from ..identifiers import ScreeningIdentifier
 
 
 class ScreeningPregWomenManager(SearchSlugManager, models.Manager):
@@ -80,6 +81,7 @@ class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         self.ineligibility = eligibility_criteria.error_message
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
+
         super().save(*args, **kwargs)
 
     def get_search_slug_fields(self):

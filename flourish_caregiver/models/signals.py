@@ -8,13 +8,12 @@ from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
-
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 
 from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_locator import CaregiverLocator
@@ -589,3 +588,18 @@ def trigger_action_item(model_cls, action_name, subject_identifier, repeat=False
             pass
         else:
             action_item.delete()
+
+
+@receiver(post_save, weak=False, sender=ScreeningPregWomen,
+          dispatch_uid='screening_preg_women_on_post_save')
+def screening_preg_women(sender, instance, raw, created, **kwargs):
+
+    if not raw:
+        if created:
+            consent_version_cls = django_apps.get_model(
+                'flourish_caregiver.flourishconsentversion')
+
+            consent_version = consent_version_cls(
+                    screening_identifier=instance.screening_identifier,
+                    version='2')
+            consent_version.save()
