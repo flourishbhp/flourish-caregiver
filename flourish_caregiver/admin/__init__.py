@@ -45,3 +45,5 @@ from .tb_presence_household_members_admin import TbPresenceHouseholdMembersAdmin
 from .tb_routine_health_screen_admin import TbRoutineHealthScreenAdmin
 from .tb_screen_preg_admin import TbScreenPregAdmin
 from .ultrasound_admin import UltraSoundAdmin
+from .flourish_consent_version_admin import FlourishConsentVersionAdmin
+

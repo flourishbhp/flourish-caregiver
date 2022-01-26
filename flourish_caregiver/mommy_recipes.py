@@ -11,6 +11,7 @@ from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
                      CaregiverEdinburghDeprScreening)
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery
 from .models import CaregiverPreviouslyEnrolled
+from .models import FlourishConsentVersion
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
@@ -42,6 +43,10 @@ screeningpregwomen = Recipe(
     ScreeningPregWomen,
     hiv_testing=YES,
     breastfeed_intent=YES)
+
+flourishconsentversion = Recipe(
+    FlourishConsentVersion,
+    )
 
 subjectconsent = Recipe(
     SubjectConsent,

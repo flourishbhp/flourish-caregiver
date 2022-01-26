@@ -32,6 +32,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
 
         self.validate_against_consent_datetime(self.cleaned_data.get('report_datetime'))
 
+        self.validate_against_onschedule_datetime()
+
         self.validate_study_status()
 
         self.validate_lost_to_fu()
@@ -41,6 +43,27 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         self.validate_is_present()
 
         self.validate_last_alive_date(id=id)
+
+    def validate_against_onschedule_datetime(self):
+        onschedule_model_cls = self.cleaned_data.get(
+            'appointment').schedule.onschedule_model_cls
+        try:
+            onschedule_obj = onschedule_model_cls.objects.get(
+                subject_identifier=self.subject_identifier)
+        except onschedule_model_cls.DoesNotExist:
+            msg = {'__all__': 'OnSchedule object for this visit does not exist.'}
+            self._errors.update(msg)
+            raise ValidationError(msg)
+        else:
+            report_datetime = self.cleaned_data.get('report_datetime')
+            onschedule_datetime = onschedule_obj.onschedule_datetime
+            if report_datetime < onschedule_datetime:
+                msg = {'report_datetime':
+                       'Report datetime cannot be before Onschedule datetime.'
+                       f'Got Report datetime: {report_datetime}, and Onschedule '
+                       f'datetime: {onschedule_datetime}'}
+                self._errors.update(msg)
+                raise ValidationError(msg)
 
     def validate_data_collection(self):
         if (self.cleaned_data.get('reason') == SCHEDULED
