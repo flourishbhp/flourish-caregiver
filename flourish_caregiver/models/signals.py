@@ -246,7 +246,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 cohort = 'cohort_a'
 
             if child_age is not None and child_age < 7:
-
                 try:
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
@@ -545,7 +544,7 @@ def create_registered_infant(instance):
 
                     # Create caregiver child consent
                     try:
-                        caregiver_child_consent_cls.objects.get(
+                        caregiver_child_consent_obj = caregiver_child_consent_cls.objects.get(
                             subject_identifier__startswith=instance.subject_identifier)
                     except caregiver_child_consent_cls.DoesNotExist:
                         caregiver_child_consent_cls.objects.create(
@@ -554,6 +553,19 @@ def create_registered_infant(instance):
                             child_dob=instance.delivery_datetime.date(),
                             consent_datetime=get_utcnow(),
                             is_eligible=True)
+                    else:
+                        child_dummy_consent_cls = django_apps.get_model(
+                                'flourish_child.childdummysubjectconsent')
+                        try:
+                            dummy_consent_obj = child_dummy_consent_cls.objects.get(
+                                subject_identifier=instance.subject_identifier)
+                        except child_dummy_consent_cls.DoesNotExist:
+                            child_dummy_consent_cls.objects.create(
+                                        subject_identifier=caregiver_child_consent_obj.subject_identifier,
+                                        consent_datetime=caregiver_child_consent_obj.consent_datetime,
+                                        dob=caregiver_child_consent_obj.dob,
+                                        cohort=caregiver_child_consent_obj.cohort,
+                                        version=caregiver_child_consent_obj.version)
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier, repeat=False):

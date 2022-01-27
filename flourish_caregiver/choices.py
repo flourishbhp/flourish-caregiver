@@ -454,7 +454,7 @@ TB_SCREENING_LOCATION = (
     ('idcc', 'IDCC'),
     ('postpartum_visit', 'Postpartum visit'),
     ('hospital', 'Hospital'),
-    (OTHER, 'Other, specify'),
+    (OTHER, 'Other (specify)'),
 )
 
 TB_DRUGS_FREQ = (
