@@ -44,12 +44,14 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
     protocol = models.CharField(max_length=150)
 
     delivdt = models.DateField(
-        verbose_name='Delivery date')
+        verbose_name='Delivery date',
+        blank=True, null=True)
 
     site_name = models.CharField(max_length=150)
 
     mom_enrolldate = models.DateField(
-        verbose_name='Maternal enrollment date')
+        verbose_name='Maternal enrollment date',
+        blank=True, null=True)
 
     delivmeth = models.CharField(
         verbose_name='Method of delivery',
@@ -78,11 +80,13 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
 
     mom_education = models.CharField(
         verbose_name='Maternal education level',
-        max_length=150)
+        max_length=150,
+        blank=True, null=True)
 
     mom_maritalstatus = models.CharField(
         verbose_name='Maternal marital status',
-        max_length=150)
+        max_length=150,
+        blank=True, null=True)
 
     mom_personal_earnings = models.CharField(
         verbose_name='Mother\'s personal earnings',
@@ -91,11 +95,13 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
 
     mom_moneysource = models.CharField(
         verbose_name='Maternal source of income',
-        max_length=150)
+        max_length=150,
+        blank=True, null=True)
 
     mom_occupation = models.CharField(
         verbose_name='Mother\'s occupation',
-        max_length=150)
+        max_length=150,
+         blank=True, null=True)
 
     mom_pregarv_strat = models.CharField(
         verbose_name='Maternal ARVs during pregnancy',

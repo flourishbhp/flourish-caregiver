@@ -31,12 +31,12 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
     def flourish_consent_version(self):
         consent_version_cls = django_apps.get_model('flourish_caregiver.flourishconsentversion')
 
-        version = '2'
+        version = None
         try:
             consent_version_obj = consent_version_cls.objects.get(
                 screening_identifier=self.screening_obj.screening_identifier)
         except consent_version_cls.DoesNotExist:
-            pass
+            version = '1'
         else:
             version = consent_version_obj.version
         return version

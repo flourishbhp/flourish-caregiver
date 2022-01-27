@@ -12,6 +12,9 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 
+from ..helper_classes.cohort import Cohort
+from ..models import (CaregiverOffSchedule, ScreeningPregWomen,
+                      ScreeningPriorBhpParticipants)
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_locator import CaregiverLocator
@@ -261,7 +264,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
                 cohort = 'cohort_a'
 
             if child_age is not None and child_age < 7:
-
                 try:
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
@@ -567,7 +569,7 @@ def create_registered_infant(instance):
 
                     # Create caregiver child consent
                     try:
-                        caregiver_child_consent_cls.objects.get(
+                        caregiver_child_consent_obj = caregiver_child_consent_cls.objects.get(
                             subject_identifier__startswith=instance.subject_identifier)
                     except caregiver_child_consent_cls.DoesNotExist:
                         caregiver_child_consent_cls.objects.create(
@@ -576,6 +578,19 @@ def create_registered_infant(instance):
                             child_dob=instance.delivery_datetime.date(),
                             consent_datetime=get_utcnow(),
                             is_eligible=True)
+                    else:
+                        child_dummy_consent_cls = django_apps.get_model(
+                                'flourish_child.childdummysubjectconsent')
+                        try:
+                            dummy_consent_obj = child_dummy_consent_cls.objects.get(
+                                subject_identifier=instance.subject_identifier)
+                        except child_dummy_consent_cls.DoesNotExist:
+                            child_dummy_consent_cls.objects.create(
+                                        subject_identifier=caregiver_child_consent_obj.subject_identifier,
+                                        consent_datetime=caregiver_child_consent_obj.consent_datetime,
+                                        dob=caregiver_child_consent_obj.dob,
+                                        cohort=caregiver_child_consent_obj.cohort,
+                                        version=caregiver_child_consent_obj.version)
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
@@ -616,12 +631,21 @@ def trigger_action_item(model_cls, action_name, subject_identifier,
 @receiver(post_save, weak=False, sender=ScreeningPregWomen,
           dispatch_uid='screening_preg_women_on_post_save')
 def screening_preg_women(sender, instance, raw, created, **kwargs):
-    if not raw:
-        if created:
-            consent_version_cls = django_apps.get_model(
-                'flourish_caregiver.flourishconsentversion')
+    if not raw and created:
+        create_consent_version(instance)
 
-            consent_version = consent_version_cls(
-                screening_identifier=instance.screening_identifier,
-                version='2')
-            consent_version.save()
+
+@receiver(post_save, weak=False, sender=ScreeningPriorBhpParticipants,
+          dispatch_uid='screening_prior_bhp_participants_on_post_save')
+def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
+    if not raw and created:
+        create_consent_version(instance)
+
+
+def create_consent_version(instance):
+        consent_version_cls = django_apps.get_model(
+                'flourish_caregiver.flourishconsentversion')
+        consent_version = consent_version_cls(
+                    screening_identifier=instance.screening_identifier,
+                    version='2')
+        consent_version.save()
