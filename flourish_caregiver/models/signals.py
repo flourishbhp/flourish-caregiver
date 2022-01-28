@@ -580,17 +580,17 @@ def create_registered_infant(instance):
                             is_eligible=True)
                     else:
                         child_dummy_consent_cls = django_apps.get_model(
-                                'flourish_child.childdummysubjectconsent')
+                            'flourish_child.childdummysubjectconsent')
                         try:
                             dummy_consent_obj = child_dummy_consent_cls.objects.get(
                                 subject_identifier=instance.subject_identifier)
                         except child_dummy_consent_cls.DoesNotExist:
                             child_dummy_consent_cls.objects.create(
-                                        subject_identifier=caregiver_child_consent_obj.subject_identifier,
-                                        consent_datetime=caregiver_child_consent_obj.consent_datetime,
-                                        dob=caregiver_child_consent_obj.dob,
-                                        cohort=caregiver_child_consent_obj.cohort,
-                                        version=caregiver_child_consent_obj.version)
+                                subject_identifier=caregiver_child_consent_obj.subject_identifier,
+                                consent_datetime=caregiver_child_consent_obj.consent_datetime,
+                                dob=caregiver_child_consent_obj.dob,
+                                cohort=caregiver_child_consent_obj.cohort,
+                                version=caregiver_child_consent_obj.version)
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
@@ -643,9 +643,9 @@ def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
 
 
 def create_consent_version(instance):
-        consent_version_cls = django_apps.get_model(
-                'flourish_caregiver.flourishconsentversion')
-        consent_version = consent_version_cls(
-                    screening_identifier=instance.screening_identifier,
-                    version='2')
-        consent_version.save()
+    consent_version_cls = django_apps.get_model(
+        'flourish_caregiver.flourishconsentversion')
+    consent_version = consent_version_cls(
+        screening_identifier=instance.screening_identifier,
+        version='2')
+    consent_version.save()
