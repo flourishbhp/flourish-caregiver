@@ -1,11 +1,10 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
-from .modeladmin_mixins import CrfModelAdminMixin
-
 from ..admin_site import flourish_caregiver_admin
 from ..forms import TbRoutineHealthScreenForm
 from ..models import TbRoutineHealthScreen
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(TbRoutineHealthScreen, site=flourish_caregiver_admin)
@@ -20,6 +19,7 @@ class TbRoutineHealthScreenAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'report_datetime',
                 'tb_screened',
                 'screen_location',
+                'screen_location_other',
                 'pos_screen',
                 'diagnostic_referral',
             ]}
