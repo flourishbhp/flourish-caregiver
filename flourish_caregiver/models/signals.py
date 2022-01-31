@@ -71,12 +71,18 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
             """
             - Update subject identifier on the screening obj when created
             """
+            screening_obj = None
             try:
                 screening_obj = ScreeningPregWomen.objects.get(
                     screening_identifier=instance.screening_identifier)
             except ScreeningPregWomen.DoesNotExist:
-                pass
-            else:
+                try:
+                    screening_obj = ScreeningPriorBhpParticipants.objects.get(
+                        screening_identifier=instance.screening_identifier)
+                except ScreeningPriorBhpParticipants.DoesNotExist:
+                    pass
+
+            if screening_obj:
                 screening_obj.subject_identifier = instance.subject_identifier
                 screening_obj.save()
 

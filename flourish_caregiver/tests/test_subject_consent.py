@@ -1,13 +1,13 @@
 import re
 
-from django.test import TestCase
+from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
+from edc_constants.constants import NO, YES
 from edc_facility.import_holidays import import_holidays
 from edc_registration.models import RegisteredSubject
 from model_mommy import mommy
 
-from ..models import SubjectConsent
-from edc_constants.constants import NO, YES
+from ..models import SubjectConsent, ScreeningPregWomen, ScreeningPriorBhpParticipants
 
 subject_identifier = '[B|C]142\-[0-9\-]+'
 
@@ -71,3 +71,15 @@ class TestSubjectConsent(TestCase):
         self.assertEquals(RegisteredSubject.objects.all().count(), 0)
         mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
         self.assertEquals(RegisteredSubject.objects.all().count(), 1)
+
+    @tag('identifiers')
+    def test_screening_updates_subject_identifier(self):
+        """Test if subject identifiers for the screening model is being updated after
+        saving the consent
+        """
+        consent_obj = mommy.make_recipe('flourish_caregiver.subjectconsent',
+                                        **self.eligible_options)
+        screening_obj = ScreeningPriorBhpParticipants.objects.get(
+            screening_identifier=consent_obj.screening_identifier)
+        self.assertEquals(screening_obj.subject_identifier,
+                          consent_obj.subject_identifier)
