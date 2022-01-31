@@ -8,18 +8,30 @@ class ConsentVersionModelModelMixin:
     """
 
     def get_consent_version(self):
-        subject_screening_cls = django_apps.get_model(
-            'flourish_caregiver.subjectscreening')
+        preg_subject_screening_cls = django_apps.get_model(
+            'flourish_caregiver.screeningpregwomen')
+        prior_subject_screening_cls = django_apps.get_model(
+            'flourish_caregiver.screeningpriorbhpparticipants')
+
         consent_version_cls = django_apps.get_model(
             'flourish_caregiver.flourishconsentversion')
+
+        subject_screening_obj = None
+
         try:
-            subject_screening_obj = subject_screening_cls.objects.get(
+            subject_screening_obj = preg_subject_screening_cls.objects.get(
                 subject_identifier=self.subject_identifier)
-        except subject_screening_cls.DoesNotExist:
-            raise ValidationError(
-                'Missing Subject Screening form. Please complete '
-                'it before proceeding.')
-        else:
+        except preg_subject_screening_cls.DoesNotExist:
+
+            try:
+                subject_screening_obj = prior_subject_screening_cls.objects.get(
+                    subject_identifier=self.subject_identifier)
+            except prior_subject_screening_cls.DoesNotExist:
+                raise ValidationError(
+                    'Missing Subject Screening form. Please complete '
+                    'it before proceeding.')
+
+        if subject_screening_obj:
             try:
                 consent_version_obj = consent_version_cls.objects.get(
                     screening_identifier=subject_screening_obj.screening_identifier)
@@ -31,7 +43,7 @@ class ConsentVersionModelModelMixin:
 
     def save(self, *args, **kwargs):
         self.consent_version = self.get_consent_version()
-        super(ConsentVersionModelModelMixin, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         abstract = True
