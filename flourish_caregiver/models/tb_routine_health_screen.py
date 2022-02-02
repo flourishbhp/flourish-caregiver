@@ -3,14 +3,15 @@ from edc_base.model_fields.custom_fields import OtherCharField
 
 from ..choices import TB_SCREENING_LOCATION, YES_NO_UNK_DWTA
 from .model_mixins import CrfModelMixin
+from ..choices import TB_SCREENING_LOCATION, YES_NO_UNK_DWTA
 
 
 class TbRoutineHealthScreen(CrfModelMixin):
-
     tb_screened = models.CharField(
-        verbose_name=('Were you screened for TB at a routine healthcare encounter '
-                      'with the four screening questions (cough for 2 weeks, '
-                      'fever, weight loss, night sweats) since conception?'),
+        verbose_name=(
+            'Were you screened for TB at a routine healthcare encounter '
+            'with the four screening questions (cough for 2 weeks, '
+            'fever, weight loss, night sweats) since conception?'),
         max_length=20,
         choices=YES_NO_UNK_DWTA)
 
