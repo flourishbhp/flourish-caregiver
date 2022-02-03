@@ -8,13 +8,16 @@ from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
+
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 
 from ..helper_classes.cohort import Cohort
+from ..helper_classes.cohort import Cohort
 from ..models import (CaregiverOffSchedule, ScreeningPregWomen,
                       ScreeningPriorBhpParticipants)
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_locator import CaregiverLocator
@@ -25,8 +28,6 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
 
 
 class PreFlourishError(Exception):
@@ -255,7 +256,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob, ).count()
+            ).exclude(dob=instance.child_dob,).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow()).years
@@ -274,7 +275,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-                        version=instance.subject_consent.version, )
+                        version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -637,21 +638,36 @@ def trigger_action_item(model_cls, action_name, subject_identifier,
 @receiver(post_save, weak=False, sender=ScreeningPregWomen,
           dispatch_uid='screening_preg_women_on_post_save')
 def screening_preg_women(sender, instance, raw, created, **kwargs):
-    if not raw and created:
-        create_consent_version(instance)
+    if not raw:
+        try:
+            SubjectConsent.objects.get(
+                screening_identifier=instance.screening_identifier)
+        except SubjectConsent.DoesNotExist:
+            create_consent_version(instance, version=2)
 
 
 @receiver(post_save, weak=False, sender=ScreeningPriorBhpParticipants,
           dispatch_uid='screening_prior_bhp_participants_on_post_save')
 def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
-    if not raw and created:
-        create_consent_version(instance)
+    if not raw:
+        try:
+            SubjectConsent.objects.get(
+                screening_identifier=instance.screening_identifier)
+        except SubjectConsent.DoesNotExist:
+            create_consent_version(instance, version=2)
+        else:
+            create_consent_version(instance, version=1)
 
 
-def create_consent_version(instance):
+def create_consent_version(instance, version):
     consent_version_cls = django_apps.get_model(
         'flourish_caregiver.flourishconsentversion')
-    consent_version = consent_version_cls(
-        screening_identifier=instance.screening_identifier,
-        version='2')
-    consent_version.save()
+
+    try:
+        consent_version_cls.objects.get(
+            screening_identifier=instance.screening_identifier)
+    except consent_version_cls.DoesNotExist:
+        consent_version = consent_version_cls(
+            screening_identifier=instance.screening_identifier,
+            version=version)
+        consent_version.save()
