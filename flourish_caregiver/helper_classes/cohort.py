@@ -176,7 +176,7 @@ class Cohort:
 
         study_child_identifiers = ChildDataset.objects.filter(
             study_maternal_identifier__in=study_maternal_identifiers,
-            infant_hiv_exposed='Unexposed').values_list(
+            infant_hiv_exposed__in=['Unexposed', 'unexposed']).values_list(
             'study_child_identifier', flat=True)
 
         child_offstudies = child_offstudy_cls.objects.all().values_list(
@@ -209,7 +209,7 @@ class Cohort:
 
         child_dataset = ChildDataset.objects.filter(
             study_maternal_identifier__in=study_maternal_identifiers,
-            infant_hiv_exposed='Unexposed')
+            infant_hiv_exposed__in=['Unexposed', 'unexposed'])
         return child_dataset.count()
 
     @property

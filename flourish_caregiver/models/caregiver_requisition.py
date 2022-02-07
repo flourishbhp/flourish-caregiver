@@ -21,7 +21,7 @@ from edc_visit_tracking.model_mixins import PreviousVisitModelMixin
 
 from ..choices import STUDY_SITES, REASON_NOT_DRAWN
 from .maternal_visit import MaternalVisit
-from .model_mixins import SearchSlugModelMixin
+from .model_mixins import SearchSlugModelMixin, ConsentVersionModelModelMixin
 
 
 class Manager(VisitTrackingCrfModelManager, SearchSlugManager):
@@ -29,8 +29,8 @@ class Manager(VisitTrackingCrfModelManager, SearchSlugManager):
 
 
 class CaregiverRequisition(
-        NonUniqueSubjectIdentifierFieldMixin, RequisitionModelMixin,
-        RequisitionStatusMixin, RequisitionIdentifierMixin,
+        NonUniqueSubjectIdentifierFieldMixin, ConsentVersionModelModelMixin,
+        RequisitionModelMixin, RequisitionStatusMixin, RequisitionIdentifierMixin,
         VisitTrackingCrfModelMixin, SubjectScheduleCrfModelMixin,
         RequiresConsentFieldsModelMixin, PreviousVisitModelMixin,
         RequisitionReferenceModelMixin, UpdatesRequisitionMetadataModelMixin,
