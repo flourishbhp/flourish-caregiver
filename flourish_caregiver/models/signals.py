@@ -243,6 +243,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
     """
     - Put subject on cohort a schedule after consenting on behalf of child.
     """
+
     if not raw and instance.is_eligible:
 
         child_dummy_consent_cls = django_apps.get_model(
@@ -397,6 +398,7 @@ def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
     """Calculates participant's cohort based on the maternal and child dataset
     """
     infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+
     try:
         infant_dataset_obj = infant_dataset_cls.objects.get(
             study_child_identifier=study_child_identifier,
