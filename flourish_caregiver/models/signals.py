@@ -669,5 +669,7 @@ def create_consent_version(instance, version):
     except consent_version_cls.DoesNotExist:
         consent_version = consent_version_cls(
             screening_identifier=instance.screening_identifier,
-            version=version)
+            version=version,
+            user_created=instance.user_modified or instance.user_created,
+            created=get_utcnow())
         consent_version.save()
