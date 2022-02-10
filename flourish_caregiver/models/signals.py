@@ -642,11 +642,7 @@ def screening_preg_women(sender, instance, raw, created, **kwargs):
         subject_consents = SubjectConsent.objects.filter(
                 screening_identifier=instance.screening_identifier)
 
-        if subject_consents:
-            latest_consent = subject_consents.latest('consent_datetime')
-            create_consent_version(instance,
-                                   version=latest_consent.version)
-        else:
+        if not subject_consents:
             create_consent_version(instance, version=2)
 
 
@@ -659,11 +655,7 @@ def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
         subject_consents = SubjectConsent.objects.filter(
                 screening_identifier=instance.screening_identifier)
 
-        if subject_consents:
-            latest_consent = subject_consents.latest('consent_datetime')
-            create_consent_version(instance,
-                                   version=latest_consent.version)
-        else:
+        if not subject_consents:
             create_consent_version(instance, version=2)
 
 
