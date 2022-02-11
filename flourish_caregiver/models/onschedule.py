@@ -1,9 +1,9 @@
+from django.apps import apps as django_apps
 from django.db import models
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import CurrentSiteManager
 from edc_identifier.managers import SubjectIdentifierManager
-
 from edc_visit_schedule.model_mixins import OnScheduleModelMixin as BaseOnScheduleModelMixin
 
 
@@ -27,11 +27,37 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
 
     history = HistoricalRecords()
 
+    @property
+    def flourish_consent_version(self):
+        consent_version_cls = django_apps.get_model('flourish_caregiver.flourishconsentversion')
+
+        version = None
+        try:
+            consent_version_obj = consent_version_cls.objects.get(
+                screening_identifier=self.screening_obj.screening_identifier)
+        except consent_version_cls.DoesNotExist:
+            version = '1'
+        else:
+            version = consent_version_obj.version
+        return version
+
+    @property
+    def screening_obj(self):
+
+        caregiver_consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
+        try:
+            screening_obj = caregiver_consent_cls.objects.get(
+                 subject_identifier=self.subject_identifier,)
+        except self.caregiver_consent_cls.DoesNotExist:
+            pass
+        else:
+            return screening_obj
+
     def put_on_schedule(self):
         pass
 
     def save(self, *args, **kwargs):
-        self.consent_version = '1'
+        self.consent_version = self.flourish_consent_version
         super().save(*args, **kwargs)
 
     class Meta:

@@ -66,6 +66,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                     'future_studies_contact': admin.VERTICAL}
 
     child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+    preg_women_cls = django_apps.get_model('flourish_caregiver.screeningpregwomen')
+    consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
 
     def get_formset(self, request, obj=None, **kwargs):
         initial = []
@@ -84,6 +86,25 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                     'child_dob': child.dob
                 })
 
+        subject_identifier = request.GET.get('subject_identifier')
+        screening_identifier = request.GET.get('screening_identifier')
+
+        if subject_identifier and screening_identifier:
+            preg_women_obj = self.preg_women_cls.objects.filter(
+                    screening_identifier=screening_identifier)
+            caregiver_child_consents = self.consent_cls.objects.filter(
+                subject_consent__subject_identifier=subject_identifier, version='1')
+            if preg_women_obj and caregiver_child_consents:
+                for caregiver_child_consent in caregiver_child_consents:
+
+                    caregiver_child_consents_dict = caregiver_child_consent.__dict__
+                    exclude_options = ['consent_datetime', 'id', '_state',
+                                       'created', 'modified', 'user_created',
+                                       'user_modified']
+                    for option in exclude_options:
+                        del caregiver_child_consents_dict[option]
+                    initial.append(caregiver_child_consents_dict)
+
         formset = super().get_formset(request, obj=obj, **kwargs)
         formset.form = self.auto_number(formset.form)
         formset.__init__ = partialmethod(formset.__init__, initial=initial)
@@ -92,6 +113,14 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
     def get_extra(self, request, obj=None, **kwargs):
         extra = super().get_extra(request, obj, **kwargs)
         study_maternal_id = request.GET.get('study_maternal_identifier')
+        subject_identifier = request.GET.get('subject_identifier')
+
+        if subject_identifier:
+            caregiver_child_consents = self.consent_cls.objects.filter(
+                subject_consent__subject_identifier=subject_identifier, version='1')
+            if not obj:
+                extra = caregiver_child_consents.count()
+
         if study_maternal_id:
             child_datasets = self.child_dataset_cls.objects.filter(
                 study_maternal_identifier=study_maternal_id)
@@ -352,7 +381,11 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                     ws.write(row_num, col_num, str(data[col_num]))
                 elif isinstance(data[col_num], datetime.datetime):
                     data[col_num] = timezone.make_naive(data[col_num])
-                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(num_format_str='YYYY/MM/DD h:mm:ss'))
+                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
+                        num_format_str='YYYY/MM/DD h:mm:ss'))
+                elif isinstance(data[col_num], datetime.date):
+                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
+                        num_format_str='YYYY/MM/DD'))
                 else:
                     ws.write(row_num, col_num, data[col_num])
         wb.save(response)

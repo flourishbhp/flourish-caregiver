@@ -22,7 +22,6 @@ class ScreeningPregWomenManager(SearchSlugManager, models.Manager):
 
 class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
                          SearchSlugModelMixin, BaseUuidModel):
-
     identifier_cls = ScreeningIdentifier
 
     screening_identifier = models.CharField(
@@ -80,6 +79,7 @@ class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         self.ineligibility = eligibility_criteria.error_message
         if not self.screening_identifier:
             self.screening_identifier = self.identifier_cls().identifier
+
         super().save(*args, **kwargs)
 
     def get_search_slug_fields(self):

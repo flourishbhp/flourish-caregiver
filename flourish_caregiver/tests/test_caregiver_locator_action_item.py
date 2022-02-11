@@ -1,13 +1,10 @@
+from dateutil.relativedelta import relativedelta
 from django.test import TestCase
 from edc_action_item.models.action_item import ActionItem
 from edc_base.utils import get_utcnow
 from edc_constants.constants import CLOSED
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
-
-from edc_appointment.models import Appointment
-from dateutil.relativedelta import relativedelta
-from edc_appointment.constants import INCOMPLETE_APPT
 
 from ..models import CaregiverLocator
 from ..subject_helper_mixin import SubjectHelperMixin
@@ -61,7 +58,6 @@ class TestCaregiverLocatorAction(TestCase):
         self.sh = SubjectHelperMixin()
 
     def test_caregiver_locator_subject_identifier_updated(self):
-
         subject_identifier = self.sh.enroll_prior_participant(
             self.maternal_dataset_obj.screening_identifier)
 
@@ -72,7 +68,6 @@ class TestCaregiverLocatorAction(TestCase):
             caregiver_locator_obj.subject_identifier, subject_identifier)
 
     def test_action_item_subject_identifier_updated(self):
-
         subject_identifier = self.sh.enroll_prior_participant(
             self.maternal_dataset_obj.screening_identifier)
 
@@ -93,4 +88,4 @@ class TestCaregiverLocatorAction(TestCase):
         self.assertEqual(ActionItem.objects.filter(
             status=CLOSED,
             subject_identifier=subject_identifier,
-            reference_model='flourish_caregiver.caregiverlocator',).count(), 1)
+            reference_model='flourish_caregiver.caregiverlocator', ).count(), 1)

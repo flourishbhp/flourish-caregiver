@@ -14,11 +14,6 @@ class MaternalDeliveryForm(
         label='Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
-    def __init__(self, *args, **kwargs):
-
-        super(MaternalDeliveryForm, self).__init__(*args, **kwargs)
-
-
     class Meta:
         model = MaternalDelivery
         fields = '__all__'

@@ -148,6 +148,17 @@ class SubjectConsent(
         return f'{self.subject_identifier} V{self.version}'
 
     def save(self, *args, **kwargs):
+
+        consent_version_cls = django_apps.get_model(
+            'flourish_caregiver.flourishconsentversion')
+        try:
+            consent_version_obj = consent_version_cls.objects.get(
+                screening_identifier=self.screening_identifier)
+        except consent_version_cls.DoesNotExist:
+            self.version = '2'
+        else:
+            self.version = consent_version_obj.version
+
         self.biological_caregiver = self.is_biological_mother()
         eligibility_criteria = ConsentEligibility(
             self.remain_in_study, self.hiv_testing, self.breastfeed_intent,
@@ -156,7 +167,6 @@ class SubjectConsent(
             self.child_consent)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
-        self.version = '1'
         if self.multiple_births in ['twins', 'triplets']:
             self.multiple_birth = True
         if self.is_eligible:
@@ -286,6 +296,12 @@ class SubjectConsent(
         """
         if self.is_eligible:
             return super().registration_update_or_create()
+
+    def get_search_slug_fields(self):
+        fields = super().get_search_slug_fields()
+        fields.append('first_name')
+        fields.append('last_name')
+        return fields
 
     @property
     def caregiver_locator_model_cls(self):

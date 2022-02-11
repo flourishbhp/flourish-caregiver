@@ -18,8 +18,8 @@ class AntenatalEnrollmentEligibility:
             self.is_eligible = False
         else:
             lmp_to_use = ga_lmp_enrollment_wks
-            if lmp_to_use and (lmp_to_use < 22 or lmp_to_use > 28):
-                self.error_message.append('Gestation not 22 to 28 weeks.')
+            if lmp_to_use and (lmp_to_use < 16 or lmp_to_use > 30):
+                self.error_message.append('Gestation not 16 to 30 weeks.')
                 self.is_eligible = False
             if will_breastfeed == NO:
                 self.error_message.append('Will not breastfeed.')
