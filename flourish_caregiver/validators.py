@@ -2,9 +2,9 @@ from django.core.exceptions import ValidationError
 
 
 def validate_bpd(value):
-    if value < 5 or value > 300:
+    if value < 0 or value > 300:
         raise ValidationError(
-            f'BPD has to be between 5 and 300. You entered {value}')
+            f'BPD has to be between 0 and 300. You entered {value}')
 
 
 def validate_hc(value):
