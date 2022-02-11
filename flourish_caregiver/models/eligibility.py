@@ -1,5 +1,6 @@
+import imp
 from edc_constants.constants import NO, UNKNOWN, POS
-
+from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_AGE_OF_CONSENT
 
 class AntenatalEnrollmentEligibility:
 
@@ -18,7 +19,7 @@ class AntenatalEnrollmentEligibility:
             self.is_eligible = False
         else:
             lmp_to_use = ga_lmp_enrollment_wks
-            if lmp_to_use and (lmp_to_use < 16 or lmp_to_use > 30):
+            if lmp_to_use and (lmp_to_use < MIN_AGE_OF_CONSENT or lmp_to_use > MAX_GA_LMP_ENROL_WEEKS):
                 self.error_message.append('Gestation not 16 to 30 weeks.')
                 self.is_eligible = False
             if will_breastfeed == NO:

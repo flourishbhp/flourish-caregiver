@@ -16,3 +16,7 @@ DISCONTINUED = 'discontinued'
 NEVER_STARTED = 'never_started'
 TUBERCULOSIS = 'TB'
 NONE = 'none'
+
+# Change GA LMP Enrollment Weeks here, it will update ultrasound and eligibility criteria
+MAX_GA_LMP_ENROL_WEEKS = 30
+MIN_GA_LMP_ENROL_WEEKS = 16
