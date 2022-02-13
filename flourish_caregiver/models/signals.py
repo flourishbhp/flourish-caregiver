@@ -549,7 +549,7 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
             weeks_diff = (instance.report_datetime - consent_datetime).days / 7
 
             ga_confirmed_after = instance.ga_confirmed - weeks_diff
-            if ga_confirmed_after < 22 or ga_confirmed_after > 28:
+            if ga_confirmed_after < 16 or ga_confirmed_after > 30:
                 trigger_action_item(caregiver_offstudy_cls,
                                     CAREGIVEROFF_STUDY_ACTION,
                                     instance.subject_identifier)
@@ -612,6 +612,7 @@ def trigger_action_item(model_cls, action_name, subject_identifier,
         trigger = True
     else:
         trigger = repeat
+
     if trigger:
         try:
             action_item_obj = action_item_model_cls.objects.get(
