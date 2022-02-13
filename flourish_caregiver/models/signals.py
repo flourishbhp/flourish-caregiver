@@ -582,7 +582,8 @@ def create_registered_infant(instance):
                     # Create caregiver child consent
                     try:
                         caregiver_child_consent_obj = caregiver_child_consent_cls.objects.get(
-                            subject_identifier__startswith=instance.subject_identifier)
+                            subject_identifier__startswith=instance.subject_identifier,
+                            version=maternal_consent.version)
                     except caregiver_child_consent_cls.DoesNotExist:
                         caregiver_child_consent_cls.objects.create(
                             subject_consent=maternal_consent,
@@ -595,7 +596,8 @@ def create_registered_infant(instance):
                             'flourish_child.childdummysubjectconsent')
                         try:
                             dummy_consent_obj = child_dummy_consent_cls.objects.get(
-                                subject_identifier=instance.subject_identifier)
+                                subject_identifier=caregiver_child_consent_obj.subject_identifier,
+                                version=caregiver_child_consent_obj.version)
                         except child_dummy_consent_cls.DoesNotExist:
                             child_dummy_consent_cls.objects.create(
                                 subject_identifier=caregiver_child_consent_obj.subject_identifier,
