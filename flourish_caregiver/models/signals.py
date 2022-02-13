@@ -553,6 +553,11 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
                 trigger_action_item(caregiver_offstudy_cls,
                                     CAREGIVEROFF_STUDY_ACTION,
                                     instance.subject_identifier)
+            else:
+                trigger_action_item(caregiver_offstudy_cls,
+                                    CAREGIVEROFF_STUDY_ACTION,
+                                    instance.subject_identifier,
+                                    opt_trigger=False)
 
 
 def create_registered_infant(instance):
@@ -601,7 +606,7 @@ def create_registered_infant(instance):
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
-                        repeat=False):
+                        repeat=False, opt_trigger=True):
     action_cls = site_action_items.get(
         model_cls.action_name)
     action_item_model_cls = action_cls.action_item_model_cls()
@@ -609,7 +614,7 @@ def trigger_action_item(model_cls, action_name, subject_identifier,
     try:
         model_cls.objects.get(subject_identifier=subject_identifier)
     except model_cls.DoesNotExist:
-        trigger = True
+        trigger = opt_trigger and True
     else:
         trigger = repeat
 
