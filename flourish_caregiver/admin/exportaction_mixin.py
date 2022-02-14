@@ -38,6 +38,7 @@ class ExportActionMixin:
             field_names.insert(2, 'previous_study')
             field_names.insert(3, 'visit_code')
 
+
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
 

@@ -26,6 +26,7 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 
 
 class PreFlourishError(Exception):
@@ -549,10 +550,17 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
             weeks_diff = (instance.report_datetime - consent_datetime).days / 7
 
             ga_confirmed_after = instance.ga_confirmed - weeks_diff
-            if ga_confirmed_after < 22 or ga_confirmed_after > 28:
+
+            if ga_confirmed_after < MIN_GA_LMP_ENROL_WEEKS or ga_confirmed_after > MAX_GA_LMP_ENROL_WEEKS:
+
                 trigger_action_item(caregiver_offstudy_cls,
                                     CAREGIVEROFF_STUDY_ACTION,
                                     instance.subject_identifier)
+            else:
+                trigger_action_item(caregiver_offstudy_cls,
+                                    CAREGIVEROFF_STUDY_ACTION,
+                                    instance.subject_identifier,
+                                    opt_trigger=False)
 
 
 def create_registered_infant(instance):
@@ -577,7 +585,8 @@ def create_registered_infant(instance):
                     # Create caregiver child consent
                     try:
                         caregiver_child_consent_obj = caregiver_child_consent_cls.objects.get(
-                            subject_identifier__startswith=instance.subject_identifier)
+                            subject_identifier__startswith=instance.subject_identifier,
+                            version=maternal_consent.version)
                     except caregiver_child_consent_cls.DoesNotExist:
                         caregiver_child_consent_cls.objects.create(
                             subject_consent=maternal_consent,
@@ -590,7 +599,8 @@ def create_registered_infant(instance):
                             'flourish_child.childdummysubjectconsent')
                         try:
                             dummy_consent_obj = child_dummy_consent_cls.objects.get(
-                                subject_identifier=instance.subject_identifier)
+                                subject_identifier=caregiver_child_consent_obj.subject_identifier,
+                                version=caregiver_child_consent_obj.version)
                         except child_dummy_consent_cls.DoesNotExist:
                             child_dummy_consent_cls.objects.create(
                                 subject_identifier=caregiver_child_consent_obj.subject_identifier,
@@ -601,7 +611,7 @@ def create_registered_infant(instance):
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
-                        repeat=False):
+                        repeat=False, opt_trigger=True):
     action_cls = site_action_items.get(
         model_cls.action_name)
     action_item_model_cls = action_cls.action_item_model_cls()
@@ -609,9 +619,10 @@ def trigger_action_item(model_cls, action_name, subject_identifier,
     try:
         model_cls.objects.get(subject_identifier=subject_identifier)
     except model_cls.DoesNotExist:
-        trigger = True
+        trigger = opt_trigger and True
     else:
         trigger = repeat
+
     if trigger:
         try:
             action_item_obj = action_item_model_cls.objects.get(
@@ -669,5 +680,7 @@ def create_consent_version(instance, version):
     except consent_version_cls.DoesNotExist:
         consent_version = consent_version_cls(
             screening_identifier=instance.screening_identifier,
-            version=version)
+            version=version,
+            user_created=instance.user_modified or instance.user_created,
+            created=get_utcnow())
         consent_version.save()

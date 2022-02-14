@@ -32,6 +32,7 @@ class WcsDxAdult(ListModelMixin, BaseUuidModel):
 class CovidSymptoms(ListModelMixin, BaseUuidModel):
     pass
 
+
 class CovidSymptomsAfter14Days(ListModelMixin, BaseUuidModel):
     pass
 

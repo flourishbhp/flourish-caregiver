@@ -297,6 +297,12 @@ class SubjectConsent(
         if self.is_eligible:
             return super().registration_update_or_create()
 
+    def get_search_slug_fields(self):
+        fields = super().get_search_slug_fields()
+        fields.append('first_name')
+        fields.append('last_name')
+        return fields
+
     @property
     def caregiver_locator_model_cls(self):
         return django_apps.get_model(self.caregiver_locator_model)
