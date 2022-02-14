@@ -1,13 +1,15 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from edc_base.sites.forms import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
 import pytz
 
 from edc_appointment.form_validators import AppointmentFormValidator
 from edc_appointment.models import Appointment
-from ..models.subject_consent import SubjectConsent
+from flourish_caregiver.models.caregiver_child_consent import CaregiverChildConsent
 from flourish_child.models import ChildAssent
-from django.core.exceptions import ValidationError
+
+from ..models.subject_consent import SubjectConsent
 
 
 class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
@@ -46,14 +48,16 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
 
         child_assents_exists = []
 
-        child_consents = SubjectConsent.objects.get(
-            subject_identifier=subject_identifier).caregiverchildconsent_set \
-            .only('child_age_at_enrollment', 'is_eligible') \
-            .filter(is_eligible=True, child_age_at_enrollment__gte=7)
+        child_consents = CaregiverChildConsent.objects.filter(
+            subject_consent__subject_identifier=subject_identifier,
+            is_eligible=True, child_age_at_enrollment__gte=7)
+
         if child_consents.exists():
 
             for child_consent in child_consents:
-                exists = ChildAssent.objects.filter(subject_identifier=child_consent.subject_identifier).exists()
+                exists = ChildAssent.objects.filter(
+                    subject_identifier=child_consent.subject_identifier,
+                    version=child_consent.version).exists()
                 child_assents_exists.append(exists)
 
             child_assents_exists = all(child_assents_exists)
