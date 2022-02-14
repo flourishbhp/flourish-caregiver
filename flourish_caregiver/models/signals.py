@@ -26,6 +26,7 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 
 
 class PreFlourishError(Exception):
@@ -549,7 +550,9 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
             weeks_diff = (instance.report_datetime - consent_datetime).days / 7
 
             ga_confirmed_after = instance.ga_confirmed - weeks_diff
-            if ga_confirmed_after < 16 or ga_confirmed_after > 30:
+
+            if ga_confirmed_after < MIN_GA_LMP_ENROL_WEEKS or ga_confirmed_after > MAX_GA_LMP_ENROL_WEEKS:
+
                 trigger_action_item(caregiver_offstudy_cls,
                                     CAREGIVEROFF_STUDY_ACTION,
                                     instance.subject_identifier)
