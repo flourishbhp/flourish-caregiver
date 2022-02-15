@@ -1,11 +1,10 @@
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN, \
     FAILED_ELIGIBILITY, PARTICIPANT, DWTA, POS, NEG, ON_STUDY, OFF_STUDY
 from edc_constants.constants import YES, NO
-
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
-from flourish_caregiver.constants import NONE
 
+from flourish_caregiver.constants import NONE
 from .constants import BREASTFEED_ONLY
 
 ABLE_TO_LAUGH = (
@@ -107,7 +106,8 @@ CONSENT_VERSION = (
 
 CONTACT_FAIL_REASON = (
     ('no_response', 'Phone rang, no response but voicemail left'),
-    ('no_response_vm_not_left', 'Phone rang no response and no option to leave voicemail'),
+    (
+    'no_response_vm_not_left', 'Phone rang no response and no option to leave voicemail'),
     ('disconnected', 'Phone did not ring/number disconnected'),
     ('number_changed', 'No longer the phone number of BHP participant'),
     (NOT_APPLICABLE, 'Not Applicable'),
@@ -221,7 +221,7 @@ GUILT_FEELINGS = (
     ('2', 'Ideas of guilt or rumination over past errors or sinful deeds.'),
     ('3', 'Present illness is a punishment; delusions of guilt'),
     ('4', 'Hears accusatory or denunciatory voices and/or experiences threatening'
-     ' visual hallucinations.')
+          ' visual hallucinations.')
 )
 
 HARM = (
@@ -284,7 +284,8 @@ INSOMNIA_INITIAL = (
 INSOMIA_MIDNIGHT = (
     ('0', 'No difficulty.'),
     ('1', 'Patient complains of being restless and disturbed during the night.'),
-    ('2', 'Waking during the night – any getting out of bed rates 2 (except for purposes of voiding).')
+    ('2',
+     'Waking during the night – any getting out of bed rates 2 (except for purposes of voiding).')
 )
 
 INSOMNIA_EARLY = (
@@ -358,7 +359,8 @@ REASONS_NOT_DISCLOSED = (
     ('feeling_child_is_immature', 'Feeling child is immature'),
     ('worry_about_her_mother', 'Does not want the child to worry about her mother'),
     ('scare_the_child', 'Does not want to scare the child'),
-    ('hurt_by_reactions_of_others', 'Does not want the child to be hurt by reactions of others'),
+    ('hurt_by_reactions_of_others',
+     'Does not want the child to be hurt by reactions of others'),
     ('feel_the_child_needs_to_know', 'Does not feel the child needs to know'),
     ('does_not_know_how_to_explain', 'Does not know how to explain this to their child'),
     (OTHER, 'Other')
@@ -436,7 +438,8 @@ SELF_BLAME = (
 
 SOMATIC_SYMPTOMS = (
     ('0', 'None'),
-    ('1', 'Loss of appetite but eating without staff encouragement. Heavy feelings in abdomen.'),
+    ('1',
+     'Loss of appetite but eating without staff encouragement. Heavy feelings in abdomen.'),
     ('2', ('Difficulty eating without staff urging. Requests or requires '
            'laxatives or medication for bowels or medication for gastro-intestinal symptoms.')),
 )
@@ -632,30 +635,39 @@ REASONS_NOT_PARTICIPATE = (
     ('not_interested_in_participating', 'Not interested in participating'),
     ('busy_during_the_suggested_times ', 'Busy during the suggested times'),
     ('out_of_town_during_the_suggested_times', 'Out of town during the suggested times'),
-    ('not_available_during_the_suggested_times', 'Not available during the suggested times'),
+    ('not_available_during_the_suggested_times',
+     'Not available during the suggested times'),
     ('prefers_not_to_say_why_unwilling', 'Prefers not to say why unwilling'),
-    ('caregiver_is_busy_and_does_not_want_to_participate ', 'Caregiver is busy and does not want to participate '),
+    ('caregiver_is_busy_and_does_not_want_to_participate ',
+     'Caregiver is busy and does not want to participate '),
     ('caregiver_does_not_live_in_study_area', 'Caregiver does not live in study area'),
     ('caregiver_is_not_willing_to_disclose_status_to_their_child',
      'Caregiver is not willing to disclose status to their child'),
-    ('caregiver_does_not_want_to_join_another_study', 'Caregiver does not want to join another study  '),
+    ('caregiver_does_not_want_to_join_another_study',
+     'Caregiver does not want to join another study  '),
     ('caregiver_has_work_constraints  ', 'Caregiver has work constraints  '),
     ('caregiver_has_fears_of_joining_study_or_traveling_during_covid ',
      'Caregiver has fears of joining study/traveling during COVID '),
     ('caregivers_partner_does_not_want_or_allow_them_to_participate',
      'Caregiver’s partner does not want/allow them to participate'),
-    ('caregiver_has_many_other_doctor_appointments', 'Caregiver has many other doctor appointments'),
+    ('caregiver_has_many_other_doctor_appointments',
+     'Caregiver has many other doctor appointments'),
     ('caregiver_fears_stigmatization', 'Caregiver fears stigmatization'),
-    ('child_is_busy_and_does_not_want_to_participate', 'Child is busy and does not want to participate'),
-    ('child_is_not_interested_in_joining_study', 'Child is not interested in joining study'),
+    ('child_is_busy_and_does_not_want_to_participate',
+     'Child is busy and does not want to participate'),
+    ('child_is_not_interested_in_joining_study',
+     'Child is not interested in joining study'),
     ('child_does_not_live_in_study_area', 'Child does not live in study area'),
     ('child_has_fears_of_joining_study_or_traveling_during_covid',
      'Child has fears of joining study/traveling during COVID'),
-    ('child_has_many_other_doctor_appointments', 'Child has many other doctor appointments'),
+    ('child_has_many_other_doctor_appointments',
+     'Child has many other doctor appointments'),
     ('caregiver_fears_stigmatization', 'Caregiver fears stigmatization'),
     ('child_is_late_has_passed_away', 'Child is late (has passed away)'),
     ('biological_mother_is_late_has_passed_away, and caregiver is unwilling',
      'Biological mother is late (has passed away), and caregiver is unwilling'),
-    ('child_is_unwilling_and_prefers_not_to_say_why', 'Child is unwilling and prefers not to say why'),
+    ('child_is_unwilling_and_prefers_not_to_say_why',
+     'Child is unwilling and prefers not to say why'),
+    (OTHER, 'Other'),
     (NOT_APPLICABLE, 'Not Applicable')
 )
