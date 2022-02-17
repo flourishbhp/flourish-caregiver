@@ -2,6 +2,7 @@ import imp
 from edc_constants.constants import NO, UNKNOWN, POS
 from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
 
+
 class AntenatalEnrollmentEligibility:
 
     def __init__(self, will_breastfeed=None, ga_lmp_enrollment_wks=None,
@@ -23,12 +24,12 @@ class AntenatalEnrollmentEligibility:
                 self.error_message.append(
                     f'Gestation not {MIN_GA_LMP_ENROL_WEEKS} to {MAX_GA_LMP_ENROL_WEEKS} weeks.')
                 self.is_eligible = False
-                
             if will_breastfeed == NO:
                 self.error_message.append('Will not breastfeed.')
                 self.is_eligible = False
             if enrollment_hiv_status == POS and will_get_arvs == NO:
-                self.error_message.append('Will not get ARVs on this pregnancy.')
+                self.error_message.append(
+                    'Will not get ARVs on this pregnancy.')
                 self.is_eligible = False
             if rapid_test_done == NO:
                 self.error_message.append('Rapid test not done.')
