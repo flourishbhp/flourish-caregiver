@@ -107,7 +107,8 @@ CONSENT_VERSION = (
 CONTACT_FAIL_REASON = (
     ('no_response', 'Phone rang, no response but voicemail left'),
     (
-    'no_response_vm_not_left', 'Phone rang no response and no option to leave voicemail'),
+        'no_response_vm_not_left',
+        'Phone rang no response and no option to leave voicemail'),
     ('disconnected', 'Phone did not ring/number disconnected'),
     ('number_changed', 'No longer the phone number of BHP participant'),
     (NOT_APPLICABLE, 'Not Applicable'),
@@ -558,6 +559,14 @@ YES_NO_UNK_NA = (
     (NOT_APPLICABLE, 'Not Applicable'),
 )
 
+COUGH_DURATION = (
+    ('=< 1 week', '=< 1 week'),
+    ('=1-2 week', '=1-2 week'),
+    ('=>2 week', '0=< 1 week'),
+    (DWTA, 'Prefer not to answer'),
+
+)
+
 VISIT_INFO_SOURCE = [
     (PARTICIPANT, 'Clinic visit with participant'),
     ('other_contact',
@@ -593,6 +602,19 @@ YES_NO_COVID_FORM = (
     ('tried_but_could_not_get_tested', 'Tried, but could not get tested '),
     (UNKNOWN, 'Unknown'),
 
+)
+
+MONTH_YEAR = (
+    ('month', 'Month'),
+    ('year', 'Year')
+)
+
+COVID_RESULTS = (
+    ('negative', 'Negative'),
+    ('positive', 'Positive'),
+    (UNKNOWN, 'Unknown'),
+    (DWTA, 'Prefer not to answer'),
+    ('indeterminate', 'Indeterminate'),
 )
 
 TESTING_REASONS = (
