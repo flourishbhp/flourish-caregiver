@@ -1,10 +1,11 @@
 from django.db import models
+from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
-from edc_constants.choices import YES_NO, YES_NO_NA
+from edc_constants.choices import YES_NO
 from edc_constants.constants import NOT_APPLICABLE
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
@@ -22,10 +23,8 @@ class ScreeningPriorBhpParticipantsManager(SearchSlugManager, models.Manager):
         return self.get(screening_identifier=eligibility_identifier)
 
 
-class ScreeningPriorBhpParticipants(
-        NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
-        SearchSlugModelMixin, BaseUuidModel):
-
+class ScreeningPriorBhpParticipants(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
+                                    SearchSlugModelMixin, BaseUuidModel):
     identifier_cls = ScreeningIdentifier
 
     screening_identifier = models.CharField(
@@ -68,11 +67,15 @@ class ScreeningPriorBhpParticipants(
         default=NOT_APPLICABLE)
 
     reason_not_to_participate = models.CharField(
-        verbose_name='What is the reason the participant is unwilling to participate in the study:',
+        verbose_name='What is the reason the participant is unwilling to participate in '
+                     'the study:',
         max_length=80,
         choices=REASONS_NOT_PARTICIPATE,
         default=NOT_APPLICABLE
     )
+
+    reason_not_to_participate_other = OtherCharField(
+        verbose_name='If other, specify')
 
     ineligibility = models.TextField(
         verbose_name="Reason not eligible",
@@ -98,7 +101,8 @@ class ScreeningPriorBhpParticipants(
 
     def save(self, *args, **kwargs):
         eligibility_criteria = BHPPriorEligibilty(
-            self.child_alive, self.mother_alive, self.flourish_participation)
+            self.child_alive, self.mother_alive, self.flourish_participation,
+            )
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         if not self.screening_identifier:

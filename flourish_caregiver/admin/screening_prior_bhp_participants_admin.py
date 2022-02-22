@@ -23,7 +23,8 @@ class ScreeningPriorBhpParticipantsAdmin(ModelAdminMixin, admin.ModelAdmin):
                        'child_alive',
                        'mother_alive',
                        'flourish_participation',
-                       'reason_not_to_participate')},
+                       'reason_not_to_participate',
+                       'reason_not_to_participate_other')},
          ),
         audit_fieldset_tuple
     )

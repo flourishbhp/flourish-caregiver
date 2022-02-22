@@ -1,4 +1,3 @@
-import imp
 from edc_constants.constants import NO, UNKNOWN, POS
 from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
 
@@ -20,6 +19,7 @@ class AntenatalEnrollmentEligibility:
             self.is_eligible = False
         else:
             lmp_to_use = ga_lmp_enrollment_wks
+
             if lmp_to_use and (lmp_to_use < MIN_GA_LMP_ENROL_WEEKS
                                or lmp_to_use > MAX_GA_LMP_ENROL_WEEKS):
                 self.error_message.append(f'Gestation not {MIN_GA_LMP_ENROL_WEEKS} '
