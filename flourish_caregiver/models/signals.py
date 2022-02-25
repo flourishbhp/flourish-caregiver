@@ -13,6 +13,7 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 from ..helper_classes.cohort import Cohort
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
@@ -26,7 +27,6 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 
 
 class PreFlourishError(Exception):
@@ -203,8 +203,10 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     """
     if not raw:
         if created and instance.live_infants_to_register == 1:
-            put_on_schedule('cohort_a_birth', instance=instance,
-                            subject_identifier=instance.subject_identifier)
+            put_on_schedule(
+                'cohort_a_birth', instance=instance,
+                subject_identifier=instance.subject_identifier,
+                base_appt_datetime=instance.delivery_datetime.replace(microsecond=0))
             create_registered_infant(instance)
 
 
@@ -446,8 +448,8 @@ def get_schedule_sequence(subject_identifier, instance,
                           onschedule_cls, caregiver_visit_count=None):
     children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
-                subject_identifier=subject_identifier).exclude(
-                child_subject_identifier=instance.subject_identifier).count())
+                          subject_identifier=subject_identifier).exclude(
+                              child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
