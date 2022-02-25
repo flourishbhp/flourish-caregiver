@@ -25,7 +25,7 @@ class CaregiverContactAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'call_reason_other',
                 'contact_success',
                 'contact_comment',
-                'rescheduled',
+                'call_rescheduled',
                 'reason_rescheduled',
             )}
          ), audit_fieldset_tuple)
@@ -40,6 +40,6 @@ class CaregiverContactAdmin(ModelAdminMixin, admin.ModelAdmin):
         'contact_type': admin.VERTICAL,
         'call_reason': admin.VERTICAL,
         'contact_success': admin.VERTICAL,
-        'rescheduled': admin.VERTICAL,
+        'call_rescheduled': admin.VERTICAL,
         'reason_rescheduled': admin.VERTICAL,
     }
