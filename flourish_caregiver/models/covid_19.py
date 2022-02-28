@@ -127,6 +127,7 @@ class Covid19(CrfModelMixin):
 
     first_dose = models.DateField(
         verbose_name='Date of first vaccine dose',
+        max_length=10,
         null=True,
         blank=True
     )
@@ -141,12 +142,14 @@ class Covid19(CrfModelMixin):
         verbose_name='Have you received your COVID-19 booster vaccine?',
         choices=YES_NO,
         null=True,
+        max_length=10,
         blank=True
     )
 
     booster_vac_type = models.CharField(
         verbose_name='Which vaccine did you receive for your booster',
         choices=VACCINATION_TYPE,
+        max_length=50,
         null=True,
         blank=True
     )
