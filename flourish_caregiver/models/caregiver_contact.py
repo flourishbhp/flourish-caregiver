@@ -67,7 +67,7 @@ class CaregiverContact(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
         blank=True
     )
 
-    rescheduled = models.CharField(
+    call_rescheduled = models.CharField(
         verbose_name='Was the call rescheduled',
         max_length=10,
         choices=YES_NO,
