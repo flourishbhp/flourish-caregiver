@@ -162,7 +162,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         """Returns an instance of the current maternal consent or
         raises an exception if not found."""
 
-        latest_consent = self.validate_against_consent()
+        latest_consent = self.latest_consent_obj
         last_alive_date = self.cleaned_data.get('last_alive_date')
         if (last_alive_date
                 and last_alive_date < latest_consent.consent_datetime.date()):
