@@ -1,12 +1,14 @@
 import datetime
 import uuid
-import xlwt
 
 from django.apps import apps as django_apps
 from django.db.models import ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+import xlwt
+
+from ..helper_classes import MaternalStatusHelper
 
 
 class ExportActionMixin:
@@ -31,13 +33,14 @@ class ExportActionMixin:
 
         if queryset and self.is_consent(queryset[0]):
             field_names.insert(0, 'previous_study')
+            field_names.insert(1, 'hiv_status')
 
         if queryset and getattr(queryset[0], 'maternal_visit', None):
             field_names.insert(0, 'subject_identifier')
             field_names.insert(1, 'study_maternal_identifier')
             field_names.insert(2, 'previous_study')
-            field_names.insert(3, 'visit_code')
-
+            field_names.insert(3, 'hiv_status')
+            field_names.insert(4, 'visit_code')
 
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
@@ -47,19 +50,36 @@ class ExportActionMixin:
 
             # Add subject identifier and visit code
             if getattr(obj, 'maternal_visit', None):
+
                 subject_identifier = obj.maternal_visit.subject_identifier
-                screening_identifier = self.screening_identifier(subject_identifier=subject_identifier)
-                previous_study = self.previous_bhp_study(screening_identifier=screening_identifier)
-                study_maternal_identifier = self.study_maternal_identifier(screening_identifier=screening_identifier)
+                screening_identifier = self.screening_identifier(
+                    subject_identifier=subject_identifier)
+                previous_study = self.previous_bhp_study(
+                    screening_identifier=screening_identifier)
+                study_maternal_identifier = self.study_maternal_identifier(
+                    screening_identifier=screening_identifier)
+                caregiver_hiv_status = self.caregiver_hiv_status(
+                    subject_identifier=subject_identifier)
+
                 data.append(subject_identifier)
                 data.append(study_maternal_identifier)
                 data.append(previous_study)
-                data.append(obj.maternal_visit.visit_code)
-            elif self.is_consent(obj):
-                subject_identifier = getattr(obj, 'subject_identifier')
-                screening_identifier = self.screening_identifier(subject_identifier=subject_identifier)
-                previous_study = self.previous_bhp_study(screening_identifier=screening_identifier)
                 data.append(previous_study)
+                data.append(caregiver_hiv_status)
+                data.append(obj.maternal_visit.visit_code)
+
+            elif self.is_consent(obj):
+
+                subject_identifier = getattr(obj, 'subject_identifier')
+                screening_identifier = self.screening_identifier(
+                    subject_identifier=subject_identifier)
+                previous_study = self.previous_bhp_study(
+                    screening_identifier=screening_identifier)
+                caregiver_hiv_status = self.caregiver_hiv_status(
+                    subject_identifier=subject_identifier)
+
+                data.append(previous_study)
+                data.append(caregiver_hiv_status)
 
             inline_objs = []
             for field in self.get_model_fields:
@@ -68,7 +88,7 @@ class ExportActionMixin:
                     field_value = ', '.join([obj.name for obj in key_manager.all()])
                     data.append(field_value)
                     continue
-                if isinstance(field, (ForeignKey, OneToOneField, )):
+                if isinstance(field, (ForeignKey, OneToOneField,)):
                     field_value = getattr(obj, field.name)
                     data.append(field_value.id)
                     continue
@@ -116,9 +136,11 @@ class ExportActionMixin:
                 dt = data[col_num]
                 if dt.tzinfo is not None and dt.tzinfo.utcoffset(dt) is not None:
                     dt = timezone.make_naive(dt)
-                ws.write(row_num, col_num, dt, xlwt.easyxf(num_format_str='YYYY/MM/DD h:mm:ss'))
+                ws.write(row_num, col_num, dt, xlwt.easyxf(
+                    num_format_str='YYYY/MM/DD h:mm:ss'))
             elif isinstance(data[col_num], datetime.date):
-                ws.write(row_num, col_num, data[col_num], xlwt.easyxf(num_format_str='YYYY/MM/DD'))
+                ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
+                    num_format_str='YYYY/MM/DD'))
             else:
                 ws.write(row_num, col_num, data[col_num])
 
@@ -156,6 +178,12 @@ class ExportActionMixin:
             else:
                 return dataset_obj.study_maternal_identifier
 
+    def caregiver_hiv_status(self, subject_identifier=None):
+
+        status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
+
+        return status_helper.hiv_status
+
     def screening_identifier(self, subject_identifier=None):
         """Returns a screening identifier.
         """
@@ -171,7 +199,8 @@ class ExportActionMixin:
 
     def on_study(self, subject_identifier):
         caregiver_offstudy_cls = django_apps.get_model('flourish_prn.caregiveroffstudy')
-        is_offstudy = caregiver_offstudy_cls.objects.filter(subject_identifier=subject_identifier).exists()
+        is_offstudy = caregiver_offstudy_cls.objects.filter(
+            subject_identifier=subject_identifier).exists()
 
         return 'No' if is_offstudy else 'Yes'
 
