@@ -77,7 +77,7 @@ class CaregiverContact(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
 
     reason_rescheduled = models.CharField(
         verbose_name='Please indicate reason for re-scheduling',
-        max_length=10,
+        max_length=50,
         choices=REASONS_FOR_RESCHEDULING,
         null=True,
         blank=True

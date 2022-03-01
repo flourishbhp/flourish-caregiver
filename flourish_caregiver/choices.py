@@ -650,6 +650,7 @@ VACCINATION_TYPE = (
     ('sinovac', 'Sinovac'),
     ('pfizer', 'Pfizer'),
     ('johnson_and_johnson', 'Johnson & Johnson '),
+    ('moderna', 'Moderna'),
     (OTHER, 'Other')
 )
 
