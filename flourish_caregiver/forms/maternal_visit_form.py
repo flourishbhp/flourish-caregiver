@@ -2,17 +2,16 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from edc_action_item.site_action_items import site_action_items
-from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
-from edc_constants.constants import OFF_STUDY, DEAD, YES, ON_STUDY, NEW, OTHER
 from edc_base.sites import SiteModelFormMixin
+from edc_constants.constants import OFF_STUDY, DEAD, YES, ON_STUDY, NEW, OTHER
+from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
 from edc_form_validators import FormValidatorMixin
+
 from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, MISSED_VISIT
 from edc_visit_tracking.form_validators import VisitFormValidator
-
+from flourish_form_validations.form_validators import FormValidatorMixin as FlourishFormValidatorMixin
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
-from flourish_form_validations.form_validators.form_validator_mixin import (
-    FlourishFormValidatorMixin)
 
 from ..models import MaternalVisit
 
@@ -163,7 +162,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         """Returns an instance of the current maternal consent or
         raises an exception if not found."""
 
-        latest_consent = self.validate_against_consent()
+        latest_consent = self.latest_consent_obj
         last_alive_date = self.cleaned_data.get('last_alive_date')
         if (last_alive_date
                 and last_alive_date < latest_consent.consent_datetime.date()):
