@@ -509,6 +509,6 @@ REASONS_FOR_RESCHEDULING = (
      'Participant changed mind and asked for a re-appointments or want to withdraw / be-withdraw from participating on study '),
     ('caregiver_not_well', 'Child, mother, caregiver not well'),
     ('undisclosed_personal_reasons', 'Participant has undisclosed personal reasons'),
-    ('undisclosed_personal_reasons', 'Participant has undisclosed personal reasons'),
+    ('another_appointment', 'Participant has another appointment at local clinic/hospital scheduled on the same day'),
 
 )
