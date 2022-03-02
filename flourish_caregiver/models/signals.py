@@ -218,7 +218,6 @@ def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created,
     - Put subject with participation on schedule after consenting.
     """
     if not raw:
-        import pdb; pdb.set_trace()
         child_assent_cls = django_apps.get_model('flourish_child.childassent')
 
         child_assents = child_assent_cls.objects.filter(
