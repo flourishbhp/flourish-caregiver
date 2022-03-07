@@ -23,7 +23,7 @@ class AntenatalEnrollmentEligibility:
             if lmp_to_use and (lmp_to_use < MIN_GA_LMP_ENROL_WEEKS
                                or lmp_to_use > MAX_GA_LMP_ENROL_WEEKS):
                 self.error_message.append(f'Gestation not {MIN_GA_LMP_ENROL_WEEKS} '
-                                          'to {MAX_GA_LMP_ENROL_WEEKS} weeks.')
+                                          f'to {MAX_GA_LMP_ENROL_WEEKS} weeks.')
                 self.is_eligible = False
             if will_breastfeed == NO:
                 self.error_message.append('Will not breastfeed.')

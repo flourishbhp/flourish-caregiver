@@ -1,9 +1,9 @@
-from edc_constants.choices import YES_NO, POS_NEG_IND_UNKNOWN, YES_NO_UNKNOWN
-
-from .model_mixins import CrfModelMixin
 from django.db import models
-from ..choices import *
+from edc_constants.choices import YES_NO, YES_NO_UNKNOWN
+
 from .list_models import CovidSymptoms, CovidSymptomsAfter14Days
+from .model_mixins import CrfModelMixin
+from ..choices import *
 
 
 class Covid19(CrfModelMixin):
@@ -127,12 +127,42 @@ class Covid19(CrfModelMixin):
 
     first_dose = models.DateField(
         verbose_name='Date of first vaccine dose',
+        max_length=10,
         null=True,
         blank=True
     )
 
     second_dose = models.DateField(
         verbose_name='Date of second vaccine dose',
+        null=True,
+        blank=True
+    )
+
+    received_booster = models.CharField(
+        verbose_name='Have you received your COVID-19 booster vaccine?',
+        choices=YES_NO,
+        null=True,
+        max_length=10,
+        blank=True
+    )
+
+    booster_vac_type = models.CharField(
+        verbose_name='Which vaccine did you receive for your booster',
+        choices=VACCINATION_TYPE,
+        max_length=50,
+        null=True,
+        blank=True
+    )
+
+    other_booster_vac_type = models.CharField(
+        verbose_name='If other specify which vaccine you received?',
+        max_length=20,
+        null=True,
+        blank=True
+    )
+
+    booster_vac_date = models.DateField(
+        verbose_name='Date of booster vaccine',
         null=True,
         blank=True
     )
