@@ -477,7 +477,7 @@ CALL_REASON = (
     ('scheduled_appointment', 'Confirm scheduled appointment'),
     ('follow_up_delivery', 'Follow up on delivery status'),
     ('follow_up_labs', 'Follow up on abnormal labs'),
-    ('re_appointment', 'Re-appointment'),
+    ('re_appointment', 'Re-appointment or reschedule'),
     (OTHER, 'Other, specify')
 )
 
