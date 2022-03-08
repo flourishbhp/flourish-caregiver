@@ -134,6 +134,9 @@ list_data = {
         ('Nausea_or_vomiting  ', 'Nausea/vomiting'),
         ('shortness_of_breath', 'Shortness of breath'),
         ('sore_throat', 'Sore throat'),
+        ('headache', 'Headache'),
+        ('loss_smell', 'Loss of Smell'),
+        ('loss_taste', 'Loss of Taste'),
         ('no_symptoms', 'No Symptoms'),
     ],
 
@@ -148,6 +151,9 @@ list_data = {
         ('Nausea_or_vomiting  ', 'Nausea/vomiting'),
         ('shortness_of_breath', 'Shortness of breath'),
         ('sore_throat', 'Sore throat'),
+        ('headache', 'Headache'),
+        ('loss_smell', 'Loss of Smell'),
+        ('loss_taste', 'Loss of Taste'),
         ('no_symptoms', 'No Symptoms'),
     ],
 
