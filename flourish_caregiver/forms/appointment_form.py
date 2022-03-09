@@ -1,15 +1,13 @@
+import pytz
 from django import forms
 from django.core.exceptions import ValidationError
+from edc_appointment.models import Appointment
 from edc_base.sites.forms import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
-import pytz
 
-from edc_appointment.form_validators import AppointmentFormValidator
-from edc_appointment.models import Appointment
 from flourish_caregiver.models.caregiver_child_consent import CaregiverChildConsent
 from flourish_child.models import ChildAssent
-
-from ..models.subject_consent import SubjectConsent
+from flourish_form_validations.form_validators import CaregiverAppointmentFormValidator
 
 
 class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
@@ -17,15 +15,14 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
     through this form.
     """
 
-    form_validator_cls = AppointmentFormValidator
+    form_validator_cls = CaregiverAppointmentFormValidator
 
     def clean(self):
         cleaned_data = self.cleaned_data
 
         self._check_child_assent(self.instance.subject_identifier)
 
-        if (self.instance.visit_code not in ['1000M', '2000M']
-                and cleaned_data.get('appt_datetime')):
+        if cleaned_data.get('appt_datetime'):
 
             visit_definition = self.instance.visits.get(self.instance.visit_code)
 
@@ -36,8 +33,11 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
                                 visit_definition.rupper).astimezone(
                 pytz.timezone('Africa/Gaborone'))
 
-            if (cleaned_data.get('appt_datetime') < earliest_appt_date.replace(microsecond=0)
-                    or cleaned_data.get('appt_datetime') > latest_appt_date.replace(microsecond=0)):
+            if (cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
+                    microsecond=0)
+                    or (self.instance.visit_code not in ['1000M', '2000M']
+                        and cleaned_data.get('appt_datetime') > latest_appt_date.replace(
+                                microsecond=0))):
                 raise forms.ValidationError(
                     'The appointment datetime cannot be outside the window period, '
                     'please correct. See earliest, ideal and latest datetimes below.')

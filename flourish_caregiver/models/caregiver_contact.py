@@ -7,7 +7,7 @@ from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
-from ..maternal_choices import CALL_REASON, CONTACT_TYPE
+from ..maternal_choices import CALL_REASON, CONTACT_TYPE, REASONS_FOR_RESCHEDULING
 from .subject_consent import SubjectConsent
 
 
@@ -19,7 +19,6 @@ class CaregiverContactManager(models.Manager):
 
 
 class CaregiverContact(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
-
     consent_model = SubjectConsent
 
     report_datetime = models.DateTimeField(
@@ -64,6 +63,22 @@ class CaregiverContact(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
     contact_comment = models.TextField(
         verbose_name='Outcome of call',
         max_length=500,
+        null=True,
+        blank=True
+    )
+
+    call_rescheduled = models.CharField(
+        verbose_name='Was the visit rescheduled',
+        max_length=10,
+        choices=YES_NO,
+        null=True,
+        blank=True
+    )
+
+    reason_rescheduled = models.CharField(
+        verbose_name='Please indicate reason for re-scheduling',
+        max_length=50,
+        choices=REASONS_FOR_RESCHEDULING,
         null=True,
         blank=True
     )
