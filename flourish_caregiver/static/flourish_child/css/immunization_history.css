@@ -1,0 +1,18 @@
+.col-md-6 {
+	width: 50%;
+	float: left
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+  padding: 2%;
+}
+
+.header-text {
+	font-weight: 300 !important;
+	line-height: 1.2;
+	border-bottom: 1px solid #cdd4cd;
+	width: 98%;
+}
