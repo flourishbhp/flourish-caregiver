@@ -49,7 +49,7 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             previous_appointment=True)
         ]
 
-    quartely_schedules = ['a_quarterly1_schedule1', 'a_quarterly2_schedule1',
+    schedule_names = ['a_quarterly1_schedule1', 'a_quarterly2_schedule1',
                           'a_quarterly3_schedule1', 'a_sec_quart1_schedule1',
                           'a_sec_quart2_schedule1', 'a_sec_quart3_schedule1',
                           'b_quarterly1_schedule1', 'b_quarterly2_schedule1',
@@ -58,12 +58,16 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                           'b_sec_quart1_schedule1', 'b_sec_quart2_schedule1',
                           'b_sec_quart3_schedule1', 'c_sec_quart1_schedule1',
                           'c_sec_quart2_schedule1', 'c_sec_quart3_schedule1',
-                          'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1']
+                          'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1',
+                          'a_birth1_schedule1']
 
     conditional_fieldlists = {}
-    for schedule in quartely_schedules:
+    for schedule in schedule_names:
         conditional_fieldlists.update(
             {schedule: Insert('med_history_changed', after='report_datetime')})
+
+    def get_key(self, request, obj=None):
+        return super().get_key(request, obj)
 
     def get_form(self, request, obj=None, *args, **kwargs):
         form = super().get_form(request, *args, **kwargs)
