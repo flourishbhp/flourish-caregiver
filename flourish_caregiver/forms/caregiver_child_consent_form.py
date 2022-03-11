@@ -12,7 +12,6 @@ from edc_constants.constants import MALE, FEMALE
 
 
 class CaregiverChildConsentForm(SubjectModelFormMixin):
-
     form_validator_cls = CaregiverChildConsentFormValidator
 
     child_dataset_model = 'flourish_child.childdataset'
@@ -20,7 +19,6 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
     @property
     def child_dataset_cls(self):
         return django_apps.get_model(self.child_dataset_model)
-
 
     subject_identifier = forms.CharField(
         label='Subject Identifier',
@@ -34,6 +32,21 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         if subject_identifier and not self.screening_preg_exists(instance=instance):
             for key in self.fields.keys():
                 self.fields[key].disabled = True
+        self.errors
+
+        # fields alread initialized in the super
+        study_child_identifier = self.initial.get('study_child_identifier', None)
+        gender = self.initial.get('gender', None)
+        child_dob = self.initial.get('child_dob', None)
+
+        # if and only if the above fields exist, make the field readonly
+        # or else make the fields editable
+        if study_child_identifier:
+            self.fields['study_child_identifier'].widget.attrs['readonly'] = True
+        if gender:
+            self.fields['gender'].widget.attrs['readonly'] = True
+        if child_dob:
+            self.fields['child_dob'].widget.attrs['readonly'] = True
 
     def has_changed(self):
         return True
@@ -88,8 +101,6 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         cc_ids = obj.caregiverchildconsent_set.values_list(
             'study_child_identifier', flat=True)
         return [x for x in model_objs if x.study_child_identifier not in cc_ids]
-
-    
 
     class Meta:
         model = CaregiverChildConsent
