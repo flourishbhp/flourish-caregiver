@@ -34,12 +34,18 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
                 self.fields[key].disabled = True
         self.errors
 
-        # Will be used to check if the child exist in the metadataset
+        # fields alread initialized in the super
         study_child_identifier = self.initial.get('study_child_identifier', None)
+        gender = self.initial.get('gender', None)
+        child_dob = self.initial.get('child_dob', None)
 
+        # if and only if the above fields exist, make the field readonly
+        # or else make the fields editable
         if study_child_identifier:
             self.fields['study_child_identifier'].widget.attrs['readonly'] = True
+        if gender:
             self.fields['gender'].widget.attrs['readonly'] = True
+        if child_dob:
             self.fields['child_dob'].widget.attrs['readonly'] = True
 
     def has_changed(self):
