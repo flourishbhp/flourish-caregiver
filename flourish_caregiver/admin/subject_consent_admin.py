@@ -1,4 +1,3 @@
-from _collections import OrderedDict
 import datetime
 from functools import partialmethod
 import uuid
@@ -15,24 +14,31 @@ from edc_consent.actions import (
 from edc_constants.constants import MALE, FEMALE
 from edc_model_admin import ModelAdminBasicMixin
 from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, audit_fields
-from edc_model_admin import StackedInlineMixin
+from edc_model_admin import StackedInlineMixin, ModelAdminAuditFieldsMixin
 from simple_history.admin import SimpleHistoryAdmin
+from collections import OrderedDict
 import xlwt
+from flourish_child.models import ChildDataset
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..models import CaregiverChildConsent, SubjectConsent
 from ..models import ScreeningPregWomen
 from .modeladmin_mixins import ModelAdminMixin
+from flourish_form_validations.form_validators import CaregiverChildConsentFormValidator
+
+from functools import partialmethod
 
 
-class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
-                                  admin.StackedInline):
+class CaregiverChildConsentInline(admin.StackedInline):
     model = CaregiverChildConsent
     form = CaregiverChildConsentForm
+    # formset = CaregiverChildConsentFormValidator
 
-    extra = 0
+    flourish_consent_version_model = 'flourish_caregiver.flourishconsentversion'
+
     max_num = 3
+    extra = 0
 
     fieldsets = (
         (None, {
@@ -65,76 +71,40 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                     'specimen_consent': admin.VERTICAL,
                     'future_studies_contact': admin.VERTICAL}
 
-    child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
-    preg_women_cls = django_apps.get_model('flourish_caregiver.screeningpregwomen')
-    consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
-
     def get_formset(self, request, obj=None, **kwargs):
+        """
+        Pre-populating formset using GET params
+        """
         initial = []
-        study_maternal_id = request.GET.get('study_maternal_identifier')
-        if study_maternal_id:
-            child_datasets = self.child_dataset_cls.objects.filter(
-                study_maternal_identifier=study_maternal_id)
-            genders = {'Male': MALE, 'Female': FEMALE}
-            if obj:
-                child_datasets = self.get_difference(child_datasets, obj)
 
-            for child in child_datasets:
-                initial.append({
-                    'study_child_identifier': child.study_child_identifier,
-                    'gender': genders.get(child.infant_sex),
-                    'child_dob': child.dob
-                })
+        study_maternal_identifier = request.GET.get('study_maternal_identifier', None)
 
-        subject_identifier = request.GET.get('subject_identifier')
-        screening_identifier = request.GET.get('screening_identifier')
+        if request.method == "GET":
+            #
+            # Populate initial based on request
+            #
 
-        if subject_identifier and screening_identifier:
-            preg_women_obj = self.preg_women_cls.objects.filter(
-                    screening_identifier=screening_identifier)
-            caregiver_child_consents = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier, version='1')
-            if preg_women_obj and caregiver_child_consents:
-                for caregiver_child_consent in caregiver_child_consents:
+            if study_maternal_identifier:
 
-                    caregiver_child_consents_dict = caregiver_child_consent.__dict__
-                    exclude_options = ['consent_datetime', 'id', '_state',
-                                       'created', 'modified', 'user_created',
-                                       'user_modified']
-                    for option in exclude_options:
-                        del caregiver_child_consents_dict[option]
-                    initial.append(caregiver_child_consents_dict)
+                children = ChildDataset.objects.filter(
+                    study_maternal_identifier=study_maternal_identifier)
 
-        formset = super().get_formset(request, obj=obj, **kwargs)
-        formset.form = self.auto_number(formset.form)
+                gender = {
+                    'Male': MALE,
+                    'Female': FEMALE
+                }
+
+                for child in children:
+                    initial.append({
+                        'gender': gender.get(child.infant_sex),
+                        'child_dob': child.dob,
+                        'study_child_identifier': child.study_child_identifier})
+
+                self.extra = len(initial)
+
+        formset = super(CaregiverChildConsentInline, self).get_formset(request, obj, **kwargs)
         formset.__init__ = partialmethod(formset.__init__, initial=initial)
         return formset
-
-    def get_extra(self, request, obj=None, **kwargs):
-        extra = super().get_extra(request, obj, **kwargs)
-        study_maternal_id = request.GET.get('study_maternal_identifier')
-        subject_identifier = request.GET.get('subject_identifier')
-
-        if subject_identifier:
-            caregiver_child_consents = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier, version='1')
-            if not obj:
-                extra = caregiver_child_consents.count()
-
-        if study_maternal_id:
-            child_datasets = self.child_dataset_cls.objects.filter(
-                study_maternal_identifier=study_maternal_id)
-            if not obj:
-                child_count = child_datasets.count()
-                extra = child_count
-            else:
-                extra = len(self.get_difference(child_datasets, obj))
-        return extra
-
-    def get_difference(self, model_objs, obj=None):
-        cc_ids = obj.caregiverchildconsent_set.values_list(
-            'study_child_identifier', flat=True)
-        return [x for x in model_objs if x.study_child_identifier not in cc_ids]
 
 
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)
@@ -272,6 +242,9 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         if caregiver_locator:
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'maternal_screening_listboard_url'))
+
+    def save_model(self, request, obj, form, change):
+        super(SubjectConsentAdmin, self).save_model(request, obj, form, change)
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)

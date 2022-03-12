@@ -12,7 +12,7 @@ from edc_constants.constants import MALE, FEMALE
 
 
 class CaregiverChildConsentForm(SubjectModelFormMixin):
-    form_validator_cls = CaregiverChildConsentFormValidator
+    # form_validator_cls = CaregiverChildConsentFormValidator
 
     child_dataset_model = 'flourish_child.childdataset'
 
@@ -27,6 +27,10 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        screening_identifier = kwargs.get('screening_identifier', None)
+        setattr(CaregiverChildConsentFormValidator, 'screening', screening_identifier)
+
         instance = getattr(self, 'instance', None)
         subject_identifier = instance.subject_identifier if instance else None
         if subject_identifier and not self.screening_preg_exists(instance=instance):
@@ -34,19 +38,19 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
                 self.fields[key].disabled = True
         self.errors
 
-        # fields alread initialized in the super
-        study_child_identifier = self.initial.get('study_child_identifier', None)
-        gender = self.initial.get('gender', None)
-        child_dob = self.initial.get('child_dob', None)
+        # # fields alread initialized in the super
+        # study_child_identifier = self.initial.get('study_child_identifier', None)
+        # gender = self.initial.get('gender', None)
+        # child_dob = self.initial.get('child_dob', None)
 
-        # if and only if the above fields exist, make the field readonly
-        # or else make the fields editable
-        if study_child_identifier:
-            self.fields['study_child_identifier'].widget.attrs['readonly'] = True
-        if gender:
-            self.fields['gender'].widget.attrs['readonly'] = True
-        if child_dob:
-            self.fields['child_dob'].widget.attrs['readonly'] = True
+        # # if and only if the above fields exist, make the field readonly
+        # # or else make the fields editable
+        # if study_child_identifier:
+        #     self.fields['study_child_identifier'].widget.attrs['readonly'] = True
+        # if gender:
+        #     self.fields['gender'].widget.attrs['readonly'] = True
+        # if child_dob:
+        #     self.fields['child_dob'].widget.attrs['readonly'] = True
 
     def has_changed(self):
         return True
@@ -63,44 +67,44 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         else:
             return True
 
-    def get_formset(self, request, obj=None, **kwargs):
-        initial = []
-        study_maternal_id = request.GET.get('study_maternal_identifier')
-        if study_maternal_id:
-            child_datasets = self.child_dataset_cls.objects.filter(
-                study_maternal_identifier=study_maternal_id)
-            genders = {'Male': MALE, 'Female': FEMALE}
-            if obj:
-                child_datasets = self.get_difference(child_datasets, obj)
+    # def get_formset(self, request, obj=None, **kwargs):
+    #     initial = []
+    #     study_maternal_id = request.GET.get('study_maternal_identifier')
+    #     if study_maternal_id:
+    #         child_datasets = self.child_dataset_cls.objects.filter(
+    #             study_maternal_identifier=study_maternal_id)
+    #         genders = {'Male': MALE, 'Female': FEMALE}
+    #         if obj:
+    #             child_datasets = self.get_difference(child_datasets, obj)
 
-            for child in child_datasets:
-                initial.append({
-                    'study_child_identifier': child.study_child_identifier,
-                    'gender': genders.get(child.infant_sex),
-                    'child_dob': child.dob
-                })
+    #         for child in child_datasets:
+    #             initial.append({
+    #                 'study_child_identifier': child.study_child_identifier,
+    #                 'gender': genders.get(child.infant_sex),
+    #                 'child_dob': child.dob
+    #             })
 
-        formset = super().get_formset(request, obj=obj, **kwargs)
-        formset.__init__ = partialmethod(formset.__init__, initial=initial)
-        return formset
+    #     formset = super().get_formset(request, obj=obj, **kwargs)
+    #     formset.__init__ = partialmethod(formset.__init__, initial=initial)
+    #     return formset
 
-    def get_extra(self, request, obj=None, **kwargs):
-        extra = super().get_extra(request, obj, **kwargs)
-        study_maternal_id = request.GET.get('study_maternal_identifier')
-        if study_maternal_id:
-            child_datasets = self.child_dataset_cls.objects.filter(
-                study_maternal_identifier=study_maternal_id)
-            if not obj:
-                child_count = child_datasets.count()
-                extra = child_count
-            else:
-                extra = len(self.get_difference(child_datasets, obj))
-        return extra
+    # def get_extra(self, request, obj=None, **kwargs):
+    #     extra = super().get_extra(request, obj, **kwargs)
+    #     study_maternal_id = request.GET.get('study_maternal_identifier')
+    #     if study_maternal_id:
+    #         child_datasets = self.child_dataset_cls.objects.filter(
+    #             study_maternal_identifier=study_maternal_id)
+    #         if not obj:
+    #             child_count = child_datasets.count()
+    #             extra = child_count
+    #         else:
+    #             extra = len(self.get_difference(child_datasets, obj))
+    #     return extra
 
-    def get_difference(self, model_objs, obj=None):
-        cc_ids = obj.caregiverchildconsent_set.values_list(
-            'study_child_identifier', flat=True)
-        return [x for x in model_objs if x.study_child_identifier not in cc_ids]
+    # def get_difference(self, model_objs, obj=None):
+    #     cc_ids = obj.caregiverchildconsent_set.values_list(
+    #         'study_child_identifier', flat=True)
+    #     return [x for x in model_objs if x.study_child_identifier not in cc_ids]
 
     class Meta:
         model = CaregiverChildConsent
