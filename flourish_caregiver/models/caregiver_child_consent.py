@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils import timezone
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from django_crypto_fields.fields import IdentityField
 from edc_base.model_mixins import BaseUuidModel
@@ -76,6 +77,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     child_dob = models.DateField(
         verbose_name="Date of birth",
         validators=[date_not_future, ],
+        default=timezone.now(),
         null=True,
         blank=True)
 

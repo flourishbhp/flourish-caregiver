@@ -1,10 +1,12 @@
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
+from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.field_mixins import (
     CitizenFieldsMixin, VulnerabilityFieldsMixin)
@@ -23,6 +25,7 @@ from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
 from ..subject_identifier import SubjectIdentifier
 from .eligibility import ConsentEligibility
 from .model_mixins import ReviewFieldsMixin, SearchSlugModelMixin
+
 
 
 class SubjectConsentManager(SearchSlugManager, models.Manager):
@@ -137,6 +140,15 @@ class SubjectConsent(
     multiple_birth = models.BooleanField(
         default=False,
         editable=False)
+
+    # overided just to auto populate
+    consent_datetime = models.DateTimeField(
+        verbose_name='Consent date and time',
+        default=timezone.now(),
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future])
+
 
     objects = SubjectConsentManager()
 
