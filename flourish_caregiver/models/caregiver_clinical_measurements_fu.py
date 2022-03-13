@@ -1,5 +1,5 @@
-from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
 
 from .model_mixins import CrfModelMixin
 
@@ -12,7 +12,7 @@ class CaregiverClinicalMeasurementsFu(CrfModelMixin):
         max_digits=5,
         decimal_places=2,
         verbose_name='Caregiver\'s weight? ',
-        validators=[MinValueValidator(30), MaxValueValidator(160), ],
+        validators=[MinValueValidator(30), MaxValueValidator(200), ],
         help_text='Measured in Kilograms (kg)')
 
     systolic_bp = models.IntegerField(
