@@ -70,44 +70,6 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         else:
             return True
 
-    # def get_formset(self, request, obj=None, **kwargs):
-    #     initial = []
-    #     study_maternal_id = request.GET.get('study_maternal_identifier')
-    #     if study_maternal_id:
-    #         child_datasets = self.child_dataset_cls.objects.filter(
-    #             study_maternal_identifier=study_maternal_id)
-    #         genders = {'Male': MALE, 'Female': FEMALE}
-    #         if obj:
-    #             child_datasets = self.get_difference(child_datasets, obj)
-
-    #         for child in child_datasets:
-    #             initial.append({
-    #                 'study_child_identifier': child.study_child_identifier,
-    #                 'gender': genders.get(child.infant_sex),
-    #                 'child_dob': child.dob
-    #             })
-
-    #     formset = super().get_formset(request, obj=obj, **kwargs)
-    #     formset.__init__ = partialmethod(formset.__init__, initial=initial)
-    #     return formset
-
-    # def get_extra(self, request, obj=None, **kwargs):
-    #     extra = super().get_extra(request, obj, **kwargs)
-    #     study_maternal_id = request.GET.get('study_maternal_identifier')
-    #     if study_maternal_id:
-    #         child_datasets = self.child_dataset_cls.objects.filter(
-    #             study_maternal_identifier=study_maternal_id)
-    #         if not obj:
-    #             child_count = child_datasets.count()
-    #             extra = child_count
-    #         else:
-    #             extra = len(self.get_difference(child_datasets, obj))
-    #     return extra
-
-    # def get_difference(self, model_objs, obj=None):
-    #     cc_ids = obj.caregiverchildconsent_set.values_list(
-    #         'study_child_identifier', flat=True)
-    #     return [x for x in model_objs if x.study_child_identifier not in cc_ids]
 
     class Meta:
         model = CaregiverChildConsent
