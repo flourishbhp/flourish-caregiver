@@ -15,6 +15,7 @@ from edc_constants.constants import MALE, FEMALE
 from edc_model_admin import ModelAdminBasicMixin
 from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, audit_fields
 from edc_model_admin import StackedInlineMixin, ModelAdminAuditFieldsMixin
+from edc_constants.choices import GENDER
 from simple_history.admin import SimpleHistoryAdmin
 from collections import OrderedDict
 import xlwt
@@ -26,13 +27,43 @@ from ..models import CaregiverChildConsent, SubjectConsent
 from ..models import ScreeningPregWomen
 from .modeladmin_mixins import ModelAdminMixin
 from flourish_form_validations.form_validators import CaregiverChildConsentFormValidator
-
+from django.forms import BaseInlineFormSet
 from functools import partialmethod
 
 
-class CaregiverChildConsentInline(admin.StackedInline):
+
+class CaregiverChildConsentInlineFormset(BaseInlineFormSet):
+    model = CaregiverChildConsent
+
+    def __init__(self, *args, **kwargs):
+        super(CaregiverChildConsentInlineFormset, self).__init__(*args, **kwargs)
+        study_maternal_identifier = self.request.GET.get('study_maternal_identifier', None)
+        if study_maternal_identifier:
+            self.initial = []
+            children = ChildDataset.objects.filter(study_maternal_identifier=study_maternal_identifier)
+
+            gender = {
+                'Female': FEMALE,
+                'Male': MALE,
+            }
+
+            for child in children:
+                self.initial.append(
+                    {
+                        'study_child_identifier': child.study_child_identifier,
+                        'child_dob': child.dob,
+                        'gender': gender.get(child.infant_sex)
+
+                    }
+                )
+
+
+class CaregiverChildConsentInline(ModelAdminBasicMixin,
+                                  ModelAdminFormAutoNumberMixin,
+                                  admin.StackedInline):
     model = CaregiverChildConsent
     form = CaregiverChildConsentForm
+    formset = CaregiverChildConsentInlineFormset
     # formset = CaregiverChildConsentFormValidator
 
     flourish_consent_version_model = 'flourish_caregiver.flourishconsentversion'
@@ -60,7 +91,7 @@ class CaregiverChildConsentInline(admin.StackedInline):
                 'specimen_consent',
                 'consent_datetime'
             ]}
-         ),)
+         ), audit_fieldset_tuple)
 
     radio_fields = {'gender': admin.VERTICAL,
                     'child_test': admin.VERTICAL,
@@ -71,40 +102,21 @@ class CaregiverChildConsentInline(admin.StackedInline):
                     'specimen_consent': admin.VERTICAL,
                     'future_studies_contact': admin.VERTICAL}
 
+
     def get_formset(self, request, obj=None, **kwargs):
         """
         Pre-populating formset using GET params
         """
-        initial = []
-
-        study_maternal_identifier = request.GET.get('study_maternal_identifier', None)
-
-        if request.method == "GET":
-            #
-            # Populate initial based on request
-            #
-
-            if study_maternal_identifier:
-
-                children = ChildDataset.objects.filter(
-                    study_maternal_identifier=study_maternal_identifier)
-
-                gender = {
-                    'Male': MALE,
-                    'Female': FEMALE
-                }
-
-                for child in children:
-                    initial.append({
-                        'gender': gender.get(child.infant_sex),
-                        'child_dob': child.dob,
-                        'study_child_identifier': child.study_child_identifier})
-
-                self.extra = len(initial)
-
         formset = super(CaregiverChildConsentInline, self).get_formset(request, obj, **kwargs)
-        formset.__init__ = partialmethod(formset.__init__, initial=initial)
+        formset.request = request
         return formset
+
+    def get_extra(self, request, obj=None, **kwargs):
+        extra = super(CaregiverChildConsentInline, self).get_extra(request, obj, **kwargs)
+        study_maternal_identifier = request.GET.get('study_maternal_identifier', None)
+        if study_maternal_identifier:
+            extra = ChildDataset.objects.filter(study_maternal_identifier=study_maternal_identifier).count()
+        return extra
 
 
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)

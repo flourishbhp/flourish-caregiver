@@ -77,7 +77,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     child_dob = models.DateField(
         verbose_name="Date of birth",
         validators=[date_not_future, ],
-        default=timezone.now(),
         null=True,
         blank=True)
 
@@ -128,6 +127,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     consent_datetime = models.DateTimeField(
         verbose_name='Consent date and time',
+        default=timezone.now,
         validators=[
             datetime_not_before_study_start,
             datetime_not_future])

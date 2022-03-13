@@ -26,7 +26,22 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         required=False)
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__( *args, **kwargs)
+
+        # # fields alread initialized in the super
+        study_child_identifier = self.initial.get('study_child_identifier', None)
+        gender = self.initial.get('gender', None)
+        child_dob = self.initial.get('child_dob', None)
+
+        # # if and only if the above fields exist, make the field readonly
+        # # or else make the fields editable
+        if study_child_identifier:
+            self.fields['study_child_identifier'].disabled = True
+        if gender:
+            self.fields['gender'].disabled = True
+        if child_dob:
+            self.fields['child_dob'] = forms.CharField(initial=self.initial['child_dob'], )
+            self.fields['child_dob'].disabled = True
 
         screening_identifier = kwargs.get('screening_identifier', None)
         setattr(CaregiverChildConsentFormValidator, 'screening', screening_identifier)
@@ -38,19 +53,7 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
                 self.fields[key].disabled = True
         self.errors
 
-        # # fields alread initialized in the super
-        # study_child_identifier = self.initial.get('study_child_identifier', None)
-        # gender = self.initial.get('gender', None)
-        # child_dob = self.initial.get('child_dob', None)
 
-        # # if and only if the above fields exist, make the field readonly
-        # # or else make the fields editable
-        # if study_child_identifier:
-        #     self.fields['study_child_identifier'].widget.attrs['readonly'] = True
-        # if gender:
-        #     self.fields['gender'].widget.attrs['readonly'] = True
-        # if child_dob:
-        #     self.fields['child_dob'].widget.attrs['readonly'] = True
 
     def has_changed(self):
         return True
