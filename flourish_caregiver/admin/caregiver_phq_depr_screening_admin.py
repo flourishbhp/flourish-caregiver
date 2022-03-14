@@ -9,7 +9,6 @@ from ..models import CaregiverPhqDeprScreening
 
 @admin.register(CaregiverPhqDeprScreening, site=flourish_caregiver_admin)
 class CaregiverPhqDeprScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
-
     form = CaregiverPhqDeprScreeningForm
 
     fieldsets = (
@@ -30,6 +29,11 @@ class CaregiverPhqDeprScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             ]}
          ), audit_fieldset_tuple)
 
+    additional_instructions = (
+        'Over the last 2 weeks, how often have you been bothered by any '
+        'of the following problems?'
+    )
+
     radio_fields = {'activity_interest': admin.VERTICAL,
                     'depressed': admin.VERTICAL,
                     'sleep_disorders': admin.VERTICAL,
@@ -42,4 +46,4 @@ class CaregiverPhqDeprScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         fields = super().get_readonly_fields(request, obj)
-        return ('depression_score', ) + fields
+        return ('depression_score',) + fields

@@ -69,6 +69,9 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
     preg_women_cls = django_apps.get_model('flourish_caregiver.screeningpregwomen')
     consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
 
+    def save_model(self, request, obj, form, change):
+        super(CaregiverChildConsentInline, self).save_model(request, obj, form, change)
+
     def get_formset(self, request, obj=None, **kwargs):
         initial = []
         study_maternal_id = request.GET.get('study_maternal_identifier')
@@ -91,7 +94,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
         if subject_identifier and screening_identifier:
             preg_women_obj = self.preg_women_cls.objects.filter(
-                    screening_identifier=screening_identifier)
+                screening_identifier=screening_identifier)
             caregiver_child_consents = self.consent_cls.objects.filter(
                 subject_consent__subject_identifier=subject_identifier, version='1')
             if preg_women_obj and caregiver_child_consents:

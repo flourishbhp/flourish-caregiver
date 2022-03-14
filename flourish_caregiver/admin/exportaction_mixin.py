@@ -72,7 +72,6 @@ class ExportActionMixin:
                 data.append(subject_identifier)
                 data.append(study_maternal_identifier)
                 data.append(previous_study)
-                data.append(previous_study)
                 data.append(caregiver_hiv_status)
                 data.append(obj.maternal_visit.visit_code)
 
