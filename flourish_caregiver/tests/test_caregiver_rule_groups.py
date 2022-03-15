@@ -72,7 +72,7 @@ class TestRuleGroups(TestCase):
                 model='flourish_caregiver.hivrapidtestcounseling',
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
-                visit_code_sequence='0').entry_status, REQUIRED)
+                visit_code_sequence='0').entry_status, NOT_REQUIRED)
 
     def test_arvsprepregnancy_required_cohort_a(self):
         self.assertEqual(

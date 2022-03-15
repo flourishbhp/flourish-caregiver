@@ -131,13 +131,16 @@ class EnrollmentMixin(models.Model):
         super(EnrollmentMixin, self).save(*args, **kwargs)
 
     def get_registration_date(self):
-        consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
-        subject_consents = consent_cls.objects.filter(
-            subject_identifier=self.subject_identifier).order_by(
-            'consent_datetime')
-        if subject_consents:
-            subject_consent = subject_consents[0]
-            return subject_consent.consent_datetime.date()
+        child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+
+        child_consents = child_consent_cls.objects.filter(
+            subject_identifier__startswith=self.subject_identifier,
+            preg_enroll=True).order_by('consent_datetime')
+
+        if (child_consents and child_consents.values_list(
+                'subject_identifier', flat=True).distinct().count() == 1):
+            child_consent = child_consents[0]
+            return child_consent.consent_datetime.date()
 
     @property
     def ultrasound(self):
