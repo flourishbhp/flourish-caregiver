@@ -5,11 +5,11 @@ from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverClinicalMeasurementsForm
 from ..models import CaregiverClinicalMeasurements
 from .modeladmin_mixins import CrfModelAdminMixin
+from edc_fieldsets.fieldlist import Remove
 
 
 @admin.register(CaregiverClinicalMeasurements, site=flourish_caregiver_admin)
 class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
-
     form = CaregiverClinicalMeasurementsForm
 
     list_display = ('maternal_visit', 'weight_kg', 'height',
@@ -32,3 +32,12 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     radio_fields = {
         'is_preg': admin.VERTICAL, }
+
+    conditional_fieldlists = {
+        'a_birth1_schedule1': Remove('height'),
+    }
+
+    def get_key(self, request, obj=None):
+        return super().get_key(request, obj)
+
+
