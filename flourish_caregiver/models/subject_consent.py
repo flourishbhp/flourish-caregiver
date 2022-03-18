@@ -27,7 +27,6 @@ from .eligibility import ConsentEligibility
 from .model_mixins import ReviewFieldsMixin, SearchSlugModelMixin
 
 
-
 class SubjectConsentManager(SearchSlugManager, models.Manager):
 
     def get_by_natural_key(self, subject_identifier, version):
@@ -140,8 +139,6 @@ class SubjectConsent(
     multiple_birth = models.BooleanField(
         default=False,
         editable=False)
-
-
 
     objects = SubjectConsentManager()
 

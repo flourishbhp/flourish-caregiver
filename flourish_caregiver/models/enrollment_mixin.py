@@ -1,5 +1,5 @@
+from django import forms
 from django.apps import apps as django_apps
-from django.core.exceptions import ValidationError
 from django.db import models
 from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_base.utils import get_utcnow
@@ -14,7 +14,7 @@ from .eligibility import AntenatalEnrollmentEligibility
 
 
 class EnrollmentMixin(models.Model):
-    """Base Model for antenal enrollment"""
+    """Base Model for antenatal enrollment"""
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
@@ -141,6 +141,9 @@ class EnrollmentMixin(models.Model):
                 'subject_identifier', flat=True).distinct().count() == 1):
             child_consent = child_consents[0]
             return child_consent.consent_datetime.date()
+        else:
+            raise forms.ValidationError(
+                'Missing matching Child Subject Consent form, cannot proceed.')
 
     @property
     def ultrasound(self):
