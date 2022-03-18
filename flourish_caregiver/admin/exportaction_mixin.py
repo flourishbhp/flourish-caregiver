@@ -102,13 +102,15 @@ class ExportActionMixin:
                     field_value = getattr(obj, field.name)
                     data.append(field_value.id)
                     continue
+                if isinstance(field, OneToOneRel):
+                    continue
                 if isinstance(field, ManyToOneRel):
                     key_manager = getattr(obj, f'{field.name}_set')
                     inline_values = key_manager.all()
                     fields = field.related_model._meta.get_fields()
                     inline_field_names.extend(
                             [field.name for field in fields if not isinstance(
-                                field, (ForeignKey, OneToOneField, ))])
+                                field, (ForeignKey, OneToOneField,))])
                     if inline_values:
                         inline_objs.append(inline_values)
                 field_value = getattr(obj, field.name, '')
