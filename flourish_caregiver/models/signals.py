@@ -1,3 +1,4 @@
+from django import forms
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -539,29 +540,40 @@ def get_onschedule_model_obj(schedule, subject_identifier):
 def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
     caregiver_offstudy_cls = django_apps.get_model(
         'flourish_prn.caregiveroffstudy')
-    if not raw:
-        consent_datetime = None
-        try:
-            consent = SubjectConsent.objects.get(
-                subject_identifier=instance.subject_identifier)
-        except SubjectConsent.DoesNotExist:
-            raise SubjectConsentError('This participant is missing a consent.')
+
+    registration_datetime = get_registration_date(instance.subject_identifier)
+    if registration_datetime:
+        weeks_diff = (instance.report_datetime - registration_datetime).days / 7
+
+        ga_confirmed_after = instance.ga_confirmed - weeks_diff
+
+        if (ga_confirmed_after < MIN_GA_LMP_ENROL_WEEKS
+                or ga_confirmed_after > MAX_GA_LMP_ENROL_WEEKS):
+
+            trigger_action_item(caregiver_offstudy_cls,
+                                CAREGIVEROFF_STUDY_ACTION,
+                                instance.subject_identifier)
         else:
-            consent_datetime = consent.consent_datetime
-            weeks_diff = (instance.report_datetime - consent_datetime).days / 7
+            trigger_action_item(caregiver_offstudy_cls,
+                                CAREGIVEROFF_STUDY_ACTION,
+                                instance.subject_identifier,
+                                opt_trigger=False)
 
-            ga_confirmed_after = instance.ga_confirmed - weeks_diff
 
-            if ga_confirmed_after < MIN_GA_LMP_ENROL_WEEKS or ga_confirmed_after > MAX_GA_LMP_ENROL_WEEKS:
+def get_registration_date(subject_identifier):
+    child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
 
-                trigger_action_item(caregiver_offstudy_cls,
-                                    CAREGIVEROFF_STUDY_ACTION,
-                                    instance.subject_identifier)
-            else:
-                trigger_action_item(caregiver_offstudy_cls,
-                                    CAREGIVEROFF_STUDY_ACTION,
-                                    instance.subject_identifier,
-                                    opt_trigger=False)
+    child_consents = child_consent_cls.objects.filter(
+        subject_identifier__startswith=subject_identifier,
+        preg_enroll=True).order_by('consent_datetime')
+
+    if (child_consents and child_consents.values_list(
+            'subject_identifier', flat=True).distinct().count() == 1):
+        child_consent = child_consents[0]
+        return child_consent.consent_datetime
+    else:
+        raise forms.ValidationError(
+            'Missing matching Child Subject Consent form, cannot proceed.')
 
 
 def create_registered_infant(instance):
