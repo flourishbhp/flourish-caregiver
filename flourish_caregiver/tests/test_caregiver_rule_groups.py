@@ -36,6 +36,13 @@ class TestRuleGroups(TestCase):
             **self.options)
 
         mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=self.subject_consent,
+            child_dob=None,
+            first_name=None,
+            last_name=None,)
+
+        mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=self.subject_consent.subject_identifier)
 
