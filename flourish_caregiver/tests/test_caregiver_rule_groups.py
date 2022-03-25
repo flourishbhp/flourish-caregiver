@@ -36,6 +36,13 @@ class TestRuleGroups(TestCase):
             **self.options)
 
         mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=self.subject_consent,
+            child_dob=None,
+            first_name=None,
+            last_name=None,)
+
+        mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=self.subject_consent.subject_identifier)
 
@@ -72,7 +79,7 @@ class TestRuleGroups(TestCase):
                 model='flourish_caregiver.hivrapidtestcounseling',
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
-                visit_code_sequence='0').entry_status, REQUIRED)
+                visit_code_sequence='0').entry_status, NOT_REQUIRED)
 
     def test_arvsprepregnancy_required_cohort_a(self):
         self.assertEqual(
@@ -88,6 +95,25 @@ class TestRuleGroups(TestCase):
                 model='flourish_caregiver.maternalarvduringpreg',
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
+                visit_code_sequence='0').entry_status, REQUIRED)
+
+    def test_tbroutinehealth_required_cohort_a(self):
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.subject_consent.subject_identifier)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.maternalarvduringpreg',
+                subject_identifier=self.subject_identifier,
+                visit_code='2000D',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
     def test_caregiverphqdeprscreening_required_cohort_a(self):

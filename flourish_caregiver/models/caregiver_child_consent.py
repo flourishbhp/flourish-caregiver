@@ -127,7 +127,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     consent_datetime = models.DateTimeField(
         verbose_name='Consent date and time',
-        default=timezone.now,
         validators=[
             datetime_not_before_study_start,
             datetime_not_future])
@@ -153,6 +152,10 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         default=False,
         editable=False)
 
+    preg_enroll = models.BooleanField(
+        default=False,
+        editable=False)
+
     ineligibility = models.TextField(
         verbose_name="Reason not eligible",
         max_length=150,
@@ -160,12 +163,17 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         editable=False)
 
     def save(self, *args, **kwargs):
+
+        if not self.subject_identifier:
+            self.preg_enroll = self.is_preg
+
         eligibility_criteria = CaregiverChildConsentEligibility(
             self.child_test, self.child_remain_in_study, self.child_preg_test,
             self.child_knows_status)
         self.version = self.subject_consent.consent_version
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
+
         self.child_age_at_enrollment = (
             self.get_child_age_at_enrollment() if self.child_dob else 0)
         if self.is_eligible and not self.subject_identifier:
@@ -179,6 +187,12 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                 supplied_infant_suffix=self.subject_identifier_sufix).identifier
 
         super().save(*args, **kwargs)
+
+    @property
+    def is_preg(self):
+
+        return not (self.first_name or self.last_name
+                    or self.dob or self.study_child_identifier)
 
     @property
     def live_infants(self):

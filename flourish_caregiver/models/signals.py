@@ -307,7 +307,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
                         put_cohort_onschedule(
                             instance.cohort,
                             instance,
-                            base_appt_datetime=prev_enrolled_obj.created.replace(
+                            base_appt_datetime=prev_enrolled_obj.report_datetime.replace(
                                 microsecond=0))
 
                     try:

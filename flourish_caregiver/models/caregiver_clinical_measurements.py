@@ -9,11 +9,14 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
     """ A model completed by the user on Height, Weight details
     for all cregivers. """
 
+    # field changed to be saved as null because the field
+    # is not required at birth visit
     height = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         verbose_name='Caregiver\'s height? ',
         validators=[MinValueValidator(114), MaxValueValidator(195), ],
+        null=True,
         help_text='Measured in Centimeters (cm)')
 
     weight_kg = models.DecimalField(
