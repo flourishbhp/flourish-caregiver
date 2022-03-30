@@ -1,12 +1,9 @@
-import pdb
-
-from django.core.exceptions import ValidationError
-
-from .form_mixins import SubjectModelFormMixin
 from django import forms
-from ..models import Covid19
 from flourish_form_validations.form_validators import Covid19FormValidator
-from edc_constants.constants import *
+
+from ..models import Covid19
+from .form_mixins import SubjectModelFormMixin
+
 
 class Covid19Form(SubjectModelFormMixin, forms.ModelForm):
     form_validator_cls = Covid19FormValidator
@@ -19,10 +16,9 @@ class Covid19Form(SubjectModelFormMixin, forms.ModelForm):
         if not subject_identifier:
             return
 
-        prev_instance = Covid19.objects \
-                .filter(maternal_visit__appointment__subject_identifier=subject_identifier) \
-                .order_by('-report_datetime') \
-                .first()
+        prev_instance = Covid19.objects.filter(
+            maternal_visit__appointment__subject_identifier=subject_identifier).order_by(
+                '-report_datetime').first()
 
         if prev_instance:
             self.initial['fully_vaccinated'] = prev_instance.fully_vaccinated

@@ -18,6 +18,8 @@ from ..models import MaternalVisit
 
 class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin):
 
+    consent_version_model = 'flourish_caregiver.flourishconsentversion'
+
     def clean(self):
         super().clean()
 
@@ -30,6 +32,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
                 self.validate_offstudy_model()
 
         self.validate_against_consent_datetime(self.cleaned_data.get('report_datetime'))
+
+        self.validate_consent_version_obj()
 
         self.validate_against_onschedule_datetime()
 
@@ -221,6 +225,26 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             OTHER,
             field='info_source',
             field_required='info_source_other')
+
+    def validate_consent_version_obj(self):
+
+        if self.latest_consent_obj:
+            try:
+                self.consent_version_cls.objects.get(
+                    screening_identifier=self.latest_consent_obj.screening_identifier)
+            except self.consent_version_cls.DoesNotExist:
+                raise forms.ValidationError(
+                    'Consent version form has not been completed, kindly complete it before'
+                    ' continuing.')
+
+    @property
+    def latest_consent_obj(self):
+
+        subject_consents = self.subject_consent_cls.objects.filter(
+            subject_identifier=self.subject_identifier)
+
+        if subject_consents:
+            return subject_consents.latest('consent_datetime')
 
 
 class MaternalVisitForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):

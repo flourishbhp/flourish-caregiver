@@ -62,6 +62,7 @@ class TestVisitScheduleSetupB(TestCase):
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
         self.maternal_dataset_options['delivdt'] = self.year_3_age(5, 1)
+
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             subject_identifier=self.subject_identifier,

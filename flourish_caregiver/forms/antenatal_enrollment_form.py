@@ -1,4 +1,5 @@
 from django import forms
+from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from edc_base.sites import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
@@ -29,7 +30,19 @@ class AntenatalEnrollmentForm(
             if rapid_test_date != self.instance.rapid_test_date:
                 raise ValidationError(
                     'The rapid test result date cannot be changed')
+        self.validate_child_consent_exists()
         super().clean()
+
+    def validate_child_consent_exists(self):
+        child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+
+        child_consents = child_consent_cls.objects.filter(
+            subject_identifier__startswith=self.cleaned_data.get('subject_identifier'),
+            preg_enroll=True).order_by('consent_datetime')
+
+        if not child_consents:
+            raise forms.ValidationError(
+                'Missing matching Child Subject Consent form, cannot proceed...')
 
     class Meta:
         model = AntenatalEnrollment
