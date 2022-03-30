@@ -20,6 +20,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
 
     consent_version_model = 'flourish_caregiver.flourishconsentversion'
 
+
+
     def clean(self):
         super().clean()
 
@@ -48,11 +50,14 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         self.validate_last_alive_date(id=id)
 
     def validate_against_onschedule_datetime(self):
-        onschedule_model_cls = self.cleaned_data.get(
-            'appointment').schedule.onschedule_model_cls
+
+        appointment = self.cleaned_data.get('appointment')
+        onschedule_model_cls = appointment.schedule.onschedule_model_cls
+        schedule_name = appointment.schedule_name
+
         try:
             onschedule_obj = onschedule_model_cls.objects.get(
-                subject_identifier=self.subject_identifier)
+                subject_identifier=self.subject_identifier, schedule_name=schedule_name)
         except onschedule_model_cls.DoesNotExist:
             msg = {'__all__': 'OnSchedule object for this visit does not exist.'}
             self._errors.update(msg)
