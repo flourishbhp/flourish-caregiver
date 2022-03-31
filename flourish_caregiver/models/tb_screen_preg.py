@@ -51,7 +51,7 @@ class TbScreenPreg(CrfModelMixin):
         verbose_name='Were you screened for TB at a routine healthcare '
                      'encounter with the four screening questions (cough '
                      'for 2 weeks, fever, weight loss, night sweats) '
-                     'since conception?',
+                     'between enrollment and delivery',
         choices=YES_NO_UNK_DWTA,
         max_length=30)
 
