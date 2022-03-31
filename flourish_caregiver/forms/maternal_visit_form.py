@@ -139,12 +139,6 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             self._errors.update(msg)
             raise ValidationError(msg)
 
-        if reason == SCHEDULED and self.cleaned_data.get('study_status') == OFF_STUDY:
-            msg = {'study_status': 'Participant\'s study status is offstudy, '
-                   'reason for visit can not be scheduled.'}
-            self._errors.update(msg)
-            raise ValidationError(msg)
-
         if self.cleaned_data.get('is_present') == YES:
             if self.cleaned_data.get('info_source') != PARTICIPANT:
                 raise forms.ValidationError(
