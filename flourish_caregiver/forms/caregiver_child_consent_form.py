@@ -25,14 +25,45 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
 
+    first_name = forms.CharField(
+        label="First name",
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False
+    )
+
+    last_name = forms.CharField(
+        label="Last name",
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False
+    )
+
+    child_dob = forms.DateTimeField(
+        label="Date of birth",
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False
+    )
+
+    study_child_identifier = forms.CharField(
+        label="Previous Subject Identifier",
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False
+    )
+
+    gender = forms.CharField(
+        label="Gender",
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False
+    )
+
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # # fields alread initialized in the super
         study_child_identifier = self.initial.get('study_child_identifier', None)
         gender = self.initial.get('gender', None)
         child_dob = self.initial.get('child_dob', None)
 
+        self.fields['child_dob'].disabled = True
         # # if and only if the above fields exist, make the field readonly
         # # or else make the fields editable
         if study_child_identifier:
@@ -53,8 +84,6 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
                 self.fields[key].disabled = True
         self.errors
 
-
-
     def has_changed(self):
         return True
 
@@ -69,7 +98,6 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
             return False
         else:
             return True
-
 
     class Meta:
         model = CaregiverChildConsent
