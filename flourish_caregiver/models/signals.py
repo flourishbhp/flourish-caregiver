@@ -221,7 +221,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
             else:
                 put_on_schedule('cohort_a_tb_postpartum', instance=instance,
                                 subject_identifier=instance.subject_identifier,
-                                base_appt_datetime=instance.created.replace(
+                                base_appt_datetime=instance.delivery_datetime.replace(
                                     microsecond=0))
 
 
