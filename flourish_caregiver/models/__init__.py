@@ -43,6 +43,7 @@ from .onschedule import OnScheduleCohortABirth, OnScheduleCohortBFU, OnScheduleC
 from .onschedule import OnScheduleCohortAEnrollment, OnScheduleCohortAFU
 from .onschedule import OnScheduleCohortAQuarterly, OnScheduleCohortBEnrollment
 from .onschedule import OnScheduleCohortASecQuart, OnScheduleCohortBSecQuart
+from .onschedule import OnScheduleCohortATbStart, OnScheduleCohortATbPostpartum
 from .onschedule import OnScheduleCohortBQuarterly, OnScheduleCohortCEnrollment
 from .onschedule import OnScheduleCohortBSec, OnScheduleCohortCSec, \
     OnScheduleCohortAAntenatal
@@ -60,8 +61,9 @@ from .subject_consent import SubjectConsent
 from .substance_use_during_preg import SubstanceUseDuringPregnancy
 from .substance_use_prior_preg import SubstanceUsePriorPregnancy
 from .tb_history_preg import TbHistoryPreg
+from .tb_informed_consent import TbInformedConsent
 from .tb_presence_household_members import TbPresenceHouseholdMembers
 from .tb_routine_health_screen import TbRoutineHealthScreen
 from .tb_screen_preg import TbScreenPreg
-from .ultrasound import UltraSound
 from .tb_visit_screening_women import TbVisitScreeningWomen
+from .ultrasound import UltraSound

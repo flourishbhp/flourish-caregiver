@@ -30,10 +30,22 @@ class TestDeliverySchedule(TestCase):
             **self.options)
 
         mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            gender=None,
+            first_name=None,
+            last_name=None,
+            identity=None,
+            confirm_identity=None,
+            study_child_identifier=None,
+            child_dob=None,
+            version='2')
+
+        mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=subject_consent.subject_identifier,)
 
-        screening_preg = mommy.make_recipe(
+        mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
             subject_identifier=subject_consent.subject_identifier)
 
