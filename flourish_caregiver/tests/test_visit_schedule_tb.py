@@ -6,8 +6,7 @@ from edc_constants.constants import YES
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 
-from ..models.onschedule import OnScheduleCohortATbStart, \
-    OnScheduleCohortATbPostpartum, OnScheduleCohortABirth
+from ..models.onschedule import OnScheduleCohortATb2Months
 
 
 @tag('tb')
@@ -47,18 +46,6 @@ class TestVisitScheduleTb(TestCase):
             subject_identifier=consent.subject_identifier,
             )
 
-        self.assertEqual(OnScheduleCohortATbStart.objects.filter(
+        self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=consent.subject_identifier,
-            schedule_name='tb_enrollment_schedule').count(), 1)
-
-        Appointment.objects.get(
-            subject_identifier=consent.subject_identifier,
-            visit_code='2100')
-
-        mommy.make_recipe(
-            'flourish_caregiver.maternaldelivery',
-            subject_identifier=consent.subject_identifier, )
-
-        self.assertEqual(OnScheduleCohortATbPostpartum.objects.filter(
-            subject_identifier=consent.subject_identifier,
-            schedule_name='tb_postpartum_schedule').count(), 1)
+            schedule_name='tb_2_months_schedule').count(), 1)

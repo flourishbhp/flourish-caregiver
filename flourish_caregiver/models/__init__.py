@@ -43,7 +43,7 @@ from .onschedule import OnScheduleCohortABirth, OnScheduleCohortBFU, OnScheduleC
 from .onschedule import OnScheduleCohortAEnrollment, OnScheduleCohortAFU
 from .onschedule import OnScheduleCohortAQuarterly, OnScheduleCohortBEnrollment
 from .onschedule import OnScheduleCohortASecQuart, OnScheduleCohortBSecQuart
-from .onschedule import OnScheduleCohortATbStart, OnScheduleCohortATbPostpartum
+from .onschedule import OnScheduleCohortATb2Months
 from .onschedule import OnScheduleCohortBQuarterly, OnScheduleCohortCEnrollment
 from .onschedule import OnScheduleCohortBSec, OnScheduleCohortCSec, \
     OnScheduleCohortAAntenatal
