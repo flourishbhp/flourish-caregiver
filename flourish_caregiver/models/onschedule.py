@@ -128,9 +128,5 @@ class OnScheduleCohortCSecQuart(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortATbStart(OnScheduleModelMixin):
-    pass
-
-
-class OnScheduleCohortATbPostpartum(OnScheduleModelMixin):
+class OnScheduleCohortATb2Months(OnScheduleModelMixin):
     pass

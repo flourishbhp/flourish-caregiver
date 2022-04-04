@@ -6,6 +6,7 @@ from edc_base.model_validators import date_not_future
 from edc_base.sites import CurrentSiteManager as BaseCurrentSiteManager
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.model_mixins import RequiresConsentFieldsModelMixin
+from edc_constants.choices import YES_NO
 from edc_constants.constants import ALIVE, PARTICIPANT
 from edc_metadata.model_mixins.creates import CreatesMetadataModelMixin
 from edc_protocol.validators import date_not_before_study_start
@@ -71,6 +72,13 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
         blank=True,
         null=True,
         validators=[date_not_before_study_start, date_not_future])
+
+    tb_participation = models.CharField(
+        verbose_name='Participant willing to do an Informed consent for the Tb Study',
+        choices=YES_NO,
+        max_length=10,
+        default=''
+        )
 
     on_site = CurrentSiteManager()
 

@@ -213,17 +213,6 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
                 base_appt_datetime=instance.delivery_datetime.replace(microsecond=0))
             create_registered_infant(instance)
 
-            try:
-                tb_informed_consent_cls.objects.get(
-                    subject_identifier=instance.subject_identifier)
-            except tb_informed_consent_cls.DoesNotExist:
-                pass
-            else:
-                put_on_schedule('cohort_a_tb_postpartum', instance=instance,
-                                subject_identifier=instance.subject_identifier,
-                                base_appt_datetime=instance.delivery_datetime.replace(
-                                    microsecond=0))
-
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
           dispatch_uid='caregiver_previously_enrolled_on_post_save')
@@ -497,13 +486,9 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
 
         schedule_name = cohort + '_schedule1'
 
-        if 'tb_start' in cohort:
+        if 'tb_2_months' in cohort:
             onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
-            schedule_name = 'tb_enrollment_schedule'
-
-        if 'tb_postpartum' in cohort:
-            onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
-            schedule_name = 'tb_postpartum_schedule'
+            schedule_name = 'tb_2_months_schedule'
 
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model, name=schedule_name)
@@ -734,7 +719,7 @@ def tb_informed_consent_post_save(sender, instance, raw, created, **kwargs):
     if not raw:
         if instance:
             put_on_schedule(
-                'cohort_a_tb_start', instance=instance,
+                'cohort_a_tb_2_months', instance=instance,
                 subject_identifier=instance.subject_identifier,
                 base_appt_datetime=instance.created.replace(
                     microsecond=0))
