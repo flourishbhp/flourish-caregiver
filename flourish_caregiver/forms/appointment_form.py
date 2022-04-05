@@ -1,21 +1,20 @@
 import pytz
 from django import forms
 from django.core.exceptions import ValidationError
+from edc_appointment.form_validators import AppointmentFormValidator
 from edc_appointment.models import Appointment
 from edc_base.sites.forms import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
 
 from flourish_caregiver.models.caregiver_child_consent import CaregiverChildConsent
 from flourish_child.models import ChildAssent
-from flourish_form_validations.form_validators import CaregiverAppointmentFormValidator
 
 
-class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
+class AppointmentForm(AppointmentFormValidator, SiteModelFormMixin, FormValidatorMixin,
+                      forms.ModelForm):
     """Note, the appointment is only changed, never added,
     through this form.
     """
-
-    form_validator_cls = CaregiverAppointmentFormValidator
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -41,6 +40,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
                 raise forms.ValidationError(
                     'The appointment datetime cannot be outside the window period, '
                     'please correct. See earliest, ideal and latest datetimes below.')
+        self.validate_appt_new_or_complete()
 
         super().clean()
 
@@ -64,6 +64,14 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
 
             if not child_assents_exists:
                 raise ValidationError('Please fill the child assent(s) form(s) first')
+
+    def validate_appt_new_or_complete(self):
+        """
+        Validates the caregiver appointment model by overriding existing appointment
+        validation functions.
+        """
+        pass
+
 
     class Meta:
         model = Appointment
