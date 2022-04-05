@@ -86,23 +86,23 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         'info_source': admin.VERTICAL,
         'is_present': admin.VERTICAL,
         'survival_status': admin.VERTICAL,
-        'tb_participation': admin.VERTICAL,
+        # 'tb_participation': admin.VERTICAL,
         }
 
-    def get_key(self, request, obj=None):
-        consent_model = 'subjectconsent'
-        subject_identifier = request.GET.get('subject_identifier')
-        maternal_status_helper = MaternalStatusHelper(
-            subject_identifier=subject_identifier)
-        consent_model_cls = django_apps.get_model(f'flourish_caregiver.{consent_model}')
-        consent_obj = consent_model_cls.objects.filter(
-            subject_identifier=subject_identifier
-            )
-        if (consent_obj and get_difference(consent_obj[0].dob)
-                >= 18 and maternal_status_helper.hiv_status == POS and
-                consent_obj[0].citizen == YES):
-            return 'tb_2_months'
-
-    conditional_fieldlists = {
-        'tb_2_months': Insert('tb_participation', after='last_alive_date'),
-        }
+    # def get_key(self, request, obj=None):
+        # consent_model = 'subjectconsent'
+        # subject_identifier = request.GET.get('subject_identifier')
+        # maternal_status_helper = MaternalStatusHelper(
+            # subject_identifier=subject_identifier)
+        # consent_model_cls = django_apps.get_model(f'flourish_caregiver.{consent_model}')
+        # consent_obj = consent_model_cls.objects.filter(
+            # subject_identifier=subject_identifier
+            # )
+        # if (consent_obj and get_difference(consent_obj[0].dob)
+                # >= 18 and maternal_status_helper.hiv_status == POS and
+                # consent_obj[0].citizen == YES):
+            # return 'tb_2_months'
+            #
+    # conditional_fieldlists = {
+        # 'tb_2_months': Insert('tb_participation', after='last_alive_date'),
+        # }
