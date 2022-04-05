@@ -9,15 +9,10 @@ from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
-
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
+
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
-
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_locator import CaregiverLocator
@@ -27,7 +22,12 @@ from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
+from .tb_informed_consent import TbInformedConsent
 from .ultrasound import UltraSound
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
 
 
 class PreFlourishError(Exception):
@@ -202,6 +202,9 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put new born child on schedule
     """
+    tb_informed_consent_cls = django_apps.get_model(
+        'flourish_caregiver.tbinformedconsent')
+
     if not raw:
         if created and instance.live_infants_to_register == 1:
             put_on_schedule(
@@ -214,7 +217,8 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
           dispatch_uid='caregiver_previously_enrolled_on_post_save')
 def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created,
-                                               **kwargs):
+        **kwargs
+        ):
     """
     - Put subject with participation on schedule after consenting.
     """
@@ -242,7 +246,8 @@ def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created,
 @receiver(post_save, weak=False, sender=CaregiverChildConsent,
           dispatch_uid='caregiver_child_consent_on_post_save')
 def caregiver_child_consent_on_post_save(sender, instance, raw, created,
-                                         **kwargs):
+        **kwargs
+        ):
     """
     - Put subject on cohort a schedule after consenting on behalf of child.
     """
@@ -258,7 +263,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob,).count()
+                ).exclude(dob=instance.child_dob, ).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow()).years
@@ -277,7 +282,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-                        version=instance.subject_consent.version,)
+                        version=instance.subject_consent.version, )
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -445,17 +450,19 @@ def get_assent_onschedule_datetime(subject_identifier):
 
 
 def get_schedule_sequence(subject_identifier, instance,
-                          onschedule_cls, caregiver_visit_count=None):
+        onschedule_cls, caregiver_visit_count=None
+        ):
     children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
-                          subject_identifier=subject_identifier).exclude(
-                              child_subject_identifier=instance.subject_identifier).count())
+                subject_identifier=subject_identifier).exclude(
+                child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
-                    child_subject_identifier=None, base_appt_datetime=None,
-                    caregiver_visit_count=None):
+        child_subject_identifier=None, base_appt_datetime=None,
+        caregiver_visit_count=None
+        ):
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
 
@@ -478,6 +485,10 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
             cohort = cohort.replace('cohort_', '')
 
         schedule_name = cohort + '_schedule1'
+
+        if 'tb_2_months' in cohort:
+            onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
+            schedule_name = 'tb_2_months_schedule'
 
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model, name=schedule_name)
@@ -582,11 +593,11 @@ def create_registered_infant(instance):
         if instance.live_infants_to_register == 1:
             maternal_consent = SubjectConsent.objects.filter(
                 subject_identifier=instance.subject_identifier
-            ).order_by('version').last()
+                ).order_by('version').last()
             try:
                 UltraSound.objects.filter(
                     maternal_visit__subject_identifier=instance.subject_identifier
-                ).order_by('report_datetime').last()
+                    ).order_by('report_datetime').last()
             except UltraSound.DoesNotExist:
                 raise ValidationError(
                     'Maternal Ultrasound must exist for {instance.subject_identifier}')
@@ -624,7 +635,8 @@ def create_registered_infant(instance):
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
-                        repeat=False, opt_trigger=True):
+        repeat=False, opt_trigger=True
+        ):
     action_cls = site_action_items.get(
         model_cls.action_name)
     action_item_model_cls = action_cls.action_item_model_cls()
@@ -664,7 +676,7 @@ def trigger_action_item(model_cls, action_name, subject_identifier,
 def screening_preg_women(sender, instance, raw, created, **kwargs):
     if not raw:
         subject_consents = SubjectConsent.objects.filter(
-                screening_identifier=instance.screening_identifier)
+            screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
             create_consent_version(instance, version=2)
@@ -673,11 +685,10 @@ def screening_preg_women(sender, instance, raw, created, **kwargs):
 @receiver(post_save, weak=False, sender=ScreeningPriorBhpParticipants,
           dispatch_uid='screening_prior_bhp_participants_on_post_save')
 def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
-
     if not raw:
 
         subject_consents = SubjectConsent.objects.filter(
-                screening_identifier=instance.screening_identifier)
+            screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
             create_consent_version(instance, version=2)
@@ -697,3 +708,18 @@ def create_consent_version(instance, version):
             user_created=instance.user_modified or instance.user_created,
             created=get_utcnow())
         consent_version.save()
+
+
+@receiver(post_save, weak=False, sender=TbInformedConsent,
+          dispatch_uid='tb_informed_consent_on_post_save')
+def tb_informed_consent_post_save(sender, instance, raw, created, **kwargs):
+    """
+    Put subject on tb enrolment schedule after tv informed consent
+    """
+    if not raw:
+        if instance:
+            put_on_schedule(
+                'cohort_a_tb_2_months', instance=instance,
+                subject_identifier=instance.subject_identifier,
+                base_appt_datetime=instance.created.replace(
+                    microsecond=0))

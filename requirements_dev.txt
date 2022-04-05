@@ -38,14 +38,14 @@ django-multiselectfield
 notebook
 pandas
 django-multiselectfield
--e /Users/ckgathi/source/flourish-caregiver
--e /Users/ckgathi/source/flourish-dashboard
--e /Users/ckgathi/source/flourish-child
--e /Users/ckgathi/source/flourish-follow
--e /Users/ckgathi/source/flourish-visit-schedule
--e /Users/ckgathi/source/flourish-reference
--e /Users/ckgathi/source/flourish-prn
--e /Users/ckgathi/source/flourish-metadata-rules
--e /Users/ckgathi/source/flourish-child-validations
--e /Users/ckgathi/source/flourish-form-validations
--e /Users/ckgathi/source/pre-flourish
+-e /Users/mcturner/source/flourish-project-files/flourish-caregiver
+-e /Users/mcturner/source/flourish-project-files/flourish-dashboard
+-e /Users/mcturner/source/flourish-project-files/flourish-child
+-e /Users/mcturner/source/flourish-project-files/flourish-follow
+-e /Users/mcturner/source/flourish-project-files/flourish-visit-schedule
+-e /Users/mcturner/source/flourish-project-files/flourish-reference
+-e /Users/mcturner/source/flourish-project-files/flourish-prn
+-e /Users/mcturner/source/flourish-project-files/flourish-metadata-rules
+-e /Users/mcturner/source/flourish-project-files/flourish-child-validations
+-e /Users/mcturner/source/flourish-project-files/flourish-form-validations
+-e /Users/mcturner/source/flourish-project-files/pre-flourish

@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
+from django.utils.safestring import mark_safe
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 from edc_base.sites.admin import ModelAdminSiteMixin
 from edc_fieldsets import FieldsetsModelAdminMixin
@@ -13,7 +14,6 @@ from edc_model_admin import (
     ModelAdminFormAutoNumberMixin, ModelAdminAuditFieldsMixin,
     ModelAdminReadOnlyMixin, ModelAdminInstitutionMixin,
     FormAsJSONModelAdminMixin, ModelAdminRedirectOnDeleteMixin)
-
 from edc_visit_tracking.modeladmin_mixins import (
     CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin)
 
@@ -28,7 +28,6 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
                       ModelAdminRedirectOnDeleteMixin,
                       ModelAdminSiteMixin,
                       ExportActionMixin):
-
     list_per_page = 10
     date_hierarchy = 'modified'
     empty_value_display = '-'
@@ -40,7 +39,6 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
                          FieldsetsModelAdminMixin,
                          FormAsJSONModelAdminMixin,
                          admin.ModelAdmin):
-
     show_save_next = True
     show_cancel = True
 
@@ -83,7 +81,8 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
             while appointment:
                 options = {
                     '{}__appointment'.format(self.model.visit_model_attr()):
-                    self.get_previous_appt_instance(appointment)}
+                        self.get_previous_appt_instance(appointment)
+                    }
                 try:
                     obj = self.model.objects.get(**options)
                 except ObjectDoesNotExist:
@@ -120,3 +119,30 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
             else:
                 schedule_name = model_obj.schedule_name
         return schedule_name
+
+
+class VersionControlMixin:
+
+    def get_form_version(self, request):
+
+        form_versions = django_apps.get_app_config('flourish_caregiver').form_versions
+
+        queryset = self.get_queryset(request)
+        model_name = queryset.model._meta.label_lower
+        form_version = form_versions.get(model_name)
+
+        return mark_safe(
+            f' Version: {form_version} ')
+
+    def get_timepoint(self, request):
+
+        appt_model = django_apps.get_model('edc_appointment.appointment')
+
+        try:
+            app_obj = appt_model.objects.get(id=request.GET.get('appointment'))
+        except appt_model.DoesNotExist:
+            pass
+        else:
+            return mark_safe(
+                f'Timepoint: <i>{app_obj.visits.get(app_obj.visit_code).title} '
+                '</i> &emsp; ')
