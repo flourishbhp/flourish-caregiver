@@ -10,13 +10,15 @@ from flourish_caregiver.models.caregiver_child_consent import CaregiverChildCons
 from flourish_child.models import ChildAssent
 
 
-class AppointmentForm(AppointmentFormValidator, SiteModelFormMixin, FormValidatorMixin,
+class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormValidator,
                       forms.ModelForm):
     """Note, the appointment is only changed, never added,
     through this form.
     """
 
     def clean(self):
+        super().clean()
+
         cleaned_data = self.cleaned_data
 
         self._check_child_assent(self.instance.subject_identifier)
@@ -40,9 +42,6 @@ class AppointmentForm(AppointmentFormValidator, SiteModelFormMixin, FormValidato
                 raise forms.ValidationError(
                     'The appointment datetime cannot be outside the window period, '
                     'please correct. See earliest, ideal and latest datetimes below.')
-        self.validate_appt_new_or_complete()
-
-        super().clean()
 
     def _check_child_assent(self, subject_identifier):
 
