@@ -18,6 +18,7 @@ from edc_visit_schedule.model_mixins import SubjectScheduleCrfModelMixin
 from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModelManager
 from edc_visit_tracking.model_mixins import CrfModelMixin as VisitTrackingCrfModelMixin
 from edc_visit_tracking.model_mixins import PreviousVisitModelMixin
+from edc_senaite_interface.model_mixins import SenaiteRequisitionModelMixin
 
 from ..choices import STUDY_SITES, REASON_NOT_DRAWN
 from .maternal_visit import MaternalVisit
@@ -34,7 +35,7 @@ class CaregiverRequisition(
         VisitTrackingCrfModelMixin, SubjectScheduleCrfModelMixin,
         RequiresConsentFieldsModelMixin, PreviousVisitModelMixin,
         RequisitionReferenceModelMixin, UpdatesRequisitionMetadataModelMixin,
-        SearchSlugModelMixin, BaseUuidModel):
+        SearchSlugModelMixin, SenaiteRequisitionModelMixin, BaseUuidModel):
 
     lab_profile_name = 'td_maternal'
 
@@ -95,6 +96,7 @@ class CaregiverRequisition(
             self.protocol_number = edc_protocol_app_config.protocol_number
         self.report_datetime = self.requisition_datetime
         self.subject_identifier = self.maternal_visit.subject_identifier
+        self.consent_model = 'flourish_caregiver.subjectconsent'
         super().save(*args, **kwargs)
 
     def get_search_slug_fields(self):
