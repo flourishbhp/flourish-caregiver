@@ -22,33 +22,33 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         required=False)
 
     # first_name = forms.CharField(
-        # label="First name",
-        # widget=forms.TextInput(attrs={'readonly': 'readonly'}),
-        # required=False
+    #     label="First name",
+    #     widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+    #     required=False
     # )
-    #
+
     # last_name = forms.CharField(
-        # label="Last name",
-        # widget=forms.TextInput(attrs={'readonly': 'readonly'}),
-        # required=False
+    #     label="Last name",
+    #     widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+    #     required=False
     # )
-    #
+
     # child_dob = forms.DateTimeField(
-        # label="Date of birth",
-        # widget=forms.TextInput(attrs={'readonly': 'readonly'}),
-        # required=False
+    #     label="Date of birth",
+    #     widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+    #     required=False
     # )
-    #
+
     # study_child_identifier = forms.CharField(
-        # label="Previous Subject Identifier",
-        # widget=forms.TextInput(attrs={'readonly': 'readonly'}),
-        # required=False
+    #     label="Previous Subject Identifier",
+    #     widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+    #     required=False
     # )
-    #
+
     # gender = forms.CharField(
-        # label="Gender",
-        # widget=forms.TextInput(attrs={'readonly': 'readonly'}),
-        # required=False
+    #     label="Gender",
+    #     widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+    #     required=False
     # )
 
     def __init__(self, *args, **kwargs):
