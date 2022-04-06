@@ -1,14 +1,9 @@
-from functools import partialmethod
-from charset_normalizer import from_path
-
 from django import forms
 from django.apps import apps as django_apps
 
-from ..models import CaregiverChildConsent
-from .form_mixins import SubjectModelFormMixin
-
 from flourish_form_validations.form_validators import CaregiverChildConsentFormValidator
-from edc_constants.constants import MALE, FEMALE
+from .form_mixins import SubjectModelFormMixin
+from ..models import CaregiverChildConsent
 
 
 class CaregiverChildConsentForm(SubjectModelFormMixin):
@@ -71,7 +66,8 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         if gender:
             self.fields['gender'].disabled = True
         if child_dob:
-            self.fields['child_dob'] = forms.CharField(initial=self.initial['child_dob'], )
+            self.fields['child_dob'] = forms.CharField(
+                initial=self.initial['child_dob'], )
             self.fields['child_dob'].disabled = True
 
         screening_identifier = kwargs.get('screening_identifier', None)

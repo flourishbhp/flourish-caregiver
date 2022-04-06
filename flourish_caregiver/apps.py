@@ -14,6 +14,10 @@ class AppConfig(DjangoAppConfig):
     end_date_year_5 = datetime(
             2024, 6, 30, 0, 0, 0, tzinfo=gettz('UTC')).date()
 
+    form_versions = {
+        'flourish_caregiver.tbinformedconsent': 1.0,
+        }
+
     def ready(self):
         from .models import antenatal_enrollment_on_post_save
         from .models import caregiver_child_consent_on_post_save
