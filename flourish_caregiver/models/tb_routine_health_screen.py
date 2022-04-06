@@ -3,7 +3,6 @@ from edc_base.model_fields.custom_fields import OtherCharField
 
 from ..choices import TB_SCREENING_LOCATION, YES_NO_UNK_DWTA
 from .model_mixins import CrfModelMixin
-from ..choices import TB_SCREENING_LOCATION, YES_NO_UNK_DWTA
 
 
 class TbRoutineHealthScreen(CrfModelMixin):
