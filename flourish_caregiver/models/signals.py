@@ -82,10 +82,9 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
                         screening_identifier=instance.screening_identifier)
                 except ScreeningPriorBhpParticipants.DoesNotExist:
                     pass
-
-            if screening_obj:
+            if screening_obj and instance.subject_identifier:
                 screening_obj.subject_identifier = instance.subject_identifier
-                screening_obj.save()
+                screening_obj.save_base(raw=True)
 
 
 @receiver(post_save, weak=False, sender=LocatorLogEntry,
@@ -245,13 +244,10 @@ def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created,
 
 @receiver(post_save, weak=False, sender=CaregiverChildConsent,
           dispatch_uid='caregiver_child_consent_on_post_save')
-def caregiver_child_consent_on_post_save(sender, instance, raw, created,
-        **kwargs
-        ):
+def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on cohort a schedule after consenting on behalf of child.
     """
-
     if not raw and instance.is_eligible:
 
         child_dummy_consent_cls = django_apps.get_model(
@@ -266,7 +262,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
                 ).exclude(dob=instance.child_dob, ).count()
 
         if instance.child_dob:
-            child_age = age(instance.child_dob, get_utcnow()).years
+            child_age = age(instance.child_dob, get_utcnow())
 
         if not instance.cohort:
 
@@ -277,7 +273,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
             if not cohort and screening_preg_exists(instance):
                 cohort = 'cohort_a'
 
-            if child_age is not None and child_age < 7:
+            if child_age is not None and child_age.years < 7:
                 try:
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
