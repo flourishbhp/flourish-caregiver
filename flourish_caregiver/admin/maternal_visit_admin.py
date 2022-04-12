@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
-from edc_base.utils import get_utcnow
+from edc_base import get_utcnow
 from edc_constants.constants import NO, POS, YES
 from edc_fieldsets import FieldsetsModelAdminMixin, Insert
 from edc_model_admin import (
@@ -12,15 +12,14 @@ from edc_model_admin import (
     ModelAdminNextUrlRedirectMixin,
     ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
 from edc_model_admin import audit_fieldset_tuple
-
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
 
+from .exportaction_mixin import ExportActionMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalVisitForm
 from ..helper_classes import MaternalStatusHelper
 from ..models import MaternalVisit
-from .exportaction_mixin import ExportActionMixin
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,

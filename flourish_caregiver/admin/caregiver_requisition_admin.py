@@ -2,6 +2,7 @@ import datetime
 import uuid
 
 from django.contrib import admin
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.utils import timezone
 from edc_lab.admin import RequisitionAdminMixin
@@ -127,3 +128,20 @@ class CaregiverRequisitionAdmin(ExportRequisitionCsvMixin, CrfModelAdminMixin,
         return (super().get_readonly_fields(request, obj)
                 +requisition_identifier_fields
                 +requisition_verify_fields)
+
+    def get_previous_instance(self, request, instance=None, **kwargs):
+        """Returns a model instance that is the first occurrence of a previous
+        instance relative to this object's appointment.
+        """
+        obj = None
+        appointment = instance or self.get_instance(request)
+
+        if appointment:
+            while appointment:
+                options = {
+                    '{}__appointment'.format(self.model.visit_model_attr()):
+                        self.get_previous_appt_instance(appointment)
+                    }
+                obj = self.model.objects.filter(**options).first()
+                appointment = self.get_previous_appt_instance(appointment)
+        return obj
