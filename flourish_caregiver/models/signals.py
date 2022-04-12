@@ -9,10 +9,15 @@ from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
-from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
+
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_locator import CaregiverLocator
@@ -24,10 +29,6 @@ from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .tb_informed_consent import TbInformedConsent
 from .ultrasound import UltraSound
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
 
 
 class PreFlourishError(Exception):
@@ -191,9 +192,29 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on cohort a schedule.
     """
-    if not raw and instance.is_eligible:
-        put_on_schedule('cohort_a_antenatal', instance=instance,
-                        subject_identifier=instance.subject_identifier)
+    child_consent = CaregiverChildConsent.objects.filter(
+        preg_enroll=True, subject_identifier__startswith=instance.subject_identifier)
+
+    child_subject_identifier = None
+
+    if child_consent:
+        child_subject_identifier = child_consent[0].subject_identifier
+
+        child_dummy_consent_cls = django_apps.get_model(
+            'flourish_child.childdummysubjectconsent')
+
+        children_count = 1 + child_dummy_consent_cls.objects.filter(
+            subject_identifier__startswith=instance.subject_identifier
+            ).exclude(subject_identifier__in=[child_consent[0].subject_identifier,
+                                              instance.subject_identifier + '-35',
+                                              instance.subject_identifier + '-46',
+                                              instance.subject_identifier + '-56']).count()
+
+        if not raw and instance.is_eligible:
+            put_on_schedule('cohort_a_antenatal', instance=instance,
+                            subject_identifier=instance.subject_identifier,
+                            child_subject_identifier=child_subject_identifier,
+                            caregiver_visit_count=children_count)
 
 
 @receiver(post_save, weak=False, sender=MaternalDelivery,
@@ -216,9 +237,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
           dispatch_uid='caregiver_previously_enrolled_on_post_save')
-def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created,
-        **kwargs
-        ):
+def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject with participation on schedule after consenting.
     """
@@ -245,9 +264,7 @@ def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created,
 
 @receiver(post_save, weak=False, sender=CaregiverChildConsent,
           dispatch_uid='caregiver_child_consent_on_post_save')
-def caregiver_child_consent_on_post_save(sender, instance, raw, created,
-        **kwargs
-        ):
+def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on cohort a schedule after consenting on behalf of child.
     """
@@ -263,7 +280,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-                ).exclude(dob=instance.child_dob, ).count()
+                ).exclude(dob=instance.child_dob,).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow()).years
@@ -282,7 +299,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created,
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-                        version=instance.subject_consent.version, )
+                        version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -450,19 +467,19 @@ def get_assent_onschedule_datetime(subject_identifier):
 
 
 def get_schedule_sequence(subject_identifier, instance,
-        onschedule_cls, caregiver_visit_count=None
-        ):
+                          onschedule_cls, caregiver_visit_count=None):
+
     children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
-                subject_identifier=subject_identifier).exclude(
-                child_subject_identifier=instance.subject_identifier).count())
+                          subject_identifier=subject_identifier).exclude(
+                              child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
-        child_subject_identifier=None, base_appt_datetime=None,
-        caregiver_visit_count=None
-        ):
+                    child_subject_identifier=None, base_appt_datetime=None,
+                    caregiver_visit_count=None):
+
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
 
@@ -519,7 +536,8 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
             except schedule.onschedule_model_cls.DoesNotExist:
                 pass
             else:
-                onschedule_obj.child_subject_identifier = instance.subject_identifier
+                onschedule_obj.child_subject_identifier = (child_subject_identifier
+                                                           or instance.subject_identifier)
                 onschedule_obj.save()
 
 
