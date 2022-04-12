@@ -6,6 +6,7 @@ from .model_mixins import CrfModelMixin
 
 
 class TbRoutineHealthScreen(CrfModelMixin):
+
     tb_screened = models.CharField(
         verbose_name=(
             'Were you screened for TB at a routine healthcare encounter '
