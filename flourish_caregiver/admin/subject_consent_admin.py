@@ -343,7 +343,8 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                                   'is_dob_estimated', 'guardian_name',
                                   'subject_type', 'consent_reviewed',
                                   'study_questions', 'assessment_score',
-                                  'consent_signature', 'consent_copy')
+                                  'consent_signature', 'consent_copy',
+                                  'first_name', 'last_name', 'identity', 'confirm_identity')
 
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
