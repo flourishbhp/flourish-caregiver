@@ -225,10 +225,12 @@ class ExportActionMixin:
 
     @property
     def get_model_fields(self):
-        return [field for field in self.model._meta.get_fields() if field.name not in self.exclude_fields]
+        return [field for field in self.model._meta.get_fields()
+                if field.name not in self.exclude_fields]
 
     def inline_exclude(self, field_names=[]):
-        return [field_name for field_name in field_names if field_name not in self.exclude_fields]
+        return [field_name for field_name in field_names
+                if field_name not in self.exclude_fields]
 
     @property
     def exclude_fields(self):
