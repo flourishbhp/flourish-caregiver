@@ -75,19 +75,6 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
     def get_formset(self, request, obj=None, **kwargs):
         initial = []
         study_maternal_id = request.GET.get('study_maternal_identifier')
-        if study_maternal_id:
-            child_datasets = self.child_dataset_cls.objects.filter(
-                study_maternal_identifier=study_maternal_id)
-            genders = {'Male': MALE, 'Female': FEMALE}
-            if obj:
-                child_datasets = self.get_difference(child_datasets, obj)
-
-            for child in child_datasets:
-                initial.append({
-                    'study_child_identifier': child.study_child_identifier,
-                    'gender': genders.get(child.infant_sex),
-                    'child_dob': child.dob
-                })
 
         subject_identifier = request.GET.get('subject_identifier')
         screening_identifier = request.GET.get('screening_identifier')
@@ -107,6 +94,19 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                     for option in exclude_options:
                         del caregiver_child_consents_dict[option]
                     initial.append(caregiver_child_consents_dict)
+        elif study_maternal_id:
+            child_datasets = self.child_dataset_cls.objects.filter(
+                study_maternal_identifier=study_maternal_id)
+            genders = {'Male': MALE, 'Female': FEMALE}
+            if obj:
+                child_datasets = self.get_difference(child_datasets, obj)
+
+            for child in child_datasets:
+                initial.append({
+                    'study_child_identifier': child.study_child_identifier,
+                    'gender': genders.get(child.infant_sex),
+                    'child_dob': child.dob
+                })
 
         formset = super().get_formset(request, obj=obj, **kwargs)
         formset.form = self.auto_number(formset.form)
