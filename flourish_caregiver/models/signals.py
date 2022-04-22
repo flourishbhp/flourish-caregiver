@@ -9,10 +9,15 @@ from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
-from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
+
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_locator import CaregiverLocator
@@ -24,10 +29,6 @@ from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .tb_informed_consent import TbInformedConsent
 from .ultrasound import UltraSound
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
 
 
 class PreFlourishError(Exception):
@@ -231,17 +232,17 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
                 subject_identifier=instance.subject_identifier,
                 base_appt_datetime=instance.delivery_datetime.replace(microsecond=0))
             create_registered_infant(instance)
-        try:
-            tb_informed_consent_cls.objects.get(
-                subject_identifier=instance.subject_identifier)
-        except tb_informed_consent_cls.DoesNotExist:
-            pass
-        else:
-            put_on_schedule(
-                'cohort_a_tb_2_months', instance=instance,
-                subject_identifier=instance.subject_identifier,
-                base_appt_datetime=instance.created.replace(
-                    microsecond=0))
+        # try:
+            # tb_informed_consent_cls.objects.get(
+                # subject_identifier=instance.subject_identifier)
+        # except tb_informed_consent_cls.DoesNotExist:
+            # pass
+        # else:
+            # put_on_schedule(
+                # 'cohort_a_tb_2_months', instance=instance,
+                # subject_identifier=instance.subject_identifier,
+                # base_appt_datetime=instance.created.replace(
+                    # microsecond=0))
 
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
@@ -288,7 +289,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob, ).count()
+            ).exclude(dob=instance.child_dob,).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
@@ -307,7 +308,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-                        version=instance.subject_consent.version, )
+                        version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -733,19 +734,18 @@ def create_consent_version(instance, version):
             created=get_utcnow())
         consent_version.save()
 
-
-@receiver(post_save, weak=False, sender=TbInformedConsent,
-          dispatch_uid='tb_informed_consent_on_post_save')
-def tb_informed_consent_post_save(sender, instance, raw, created, **kwargs):
-    """
-    Put subject on tb enrolment schedule after tv informed consent
-    """
-    maternal_delivery_cls = django_apps.get_model('flourish_caregiver.maternaldelivery')
-    if not raw:
-        try:
-            maternal_delivery_obj = maternal_delivery_cls.objects.get(
-                subject_identifier=instance.subject_identifier)
-        except maternal_delivery_cls.DoesNotExist:
-            pass
-        else:
-            maternal_delivery_obj.save_base(raw=True)
+# @receiver(post_save, weak=False, sender=TbInformedConsent,
+          # dispatch_uid='tb_informed_consent_on_post_save')
+# def tb_informed_consent_post_save(sender, instance, raw, created, **kwargs):
+    # """
+    # Put subject on tb enrolment schedule after tv informed consent
+    # """
+    # maternal_delivery_cls = django_apps.get_model('flourish_caregiver.maternaldelivery')
+    # if not raw:
+        # try:
+            # maternal_delivery_obj = maternal_delivery_cls.objects.get(
+                # subject_identifier=instance.subject_identifier)
+        # except maternal_delivery_cls.DoesNotExist:
+            # pass
+        # else:
+            # maternal_delivery_obj.save_base(raw=True)
