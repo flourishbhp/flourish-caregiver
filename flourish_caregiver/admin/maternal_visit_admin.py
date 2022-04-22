@@ -13,14 +13,15 @@ from edc_model_admin import (
     ModelAdminNextUrlRedirectMixin,
     ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
 from edc_model_admin import audit_fieldset_tuple
+
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
 
-from .exportaction_mixin import ExportActionMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalVisitForm
 from ..helper_classes import MaternalStatusHelper
 from ..models import MaternalVisit
+from .exportaction_mixin import ExportActionMixin
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
@@ -89,45 +90,45 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         'tb_participation': admin.VERTICAL,
     }
 
-    def get_key(self, request, obj=None):
-        consent_model = 'subjectconsent'
-        tb_consent_model = 'tbinformedconsent'
-        antenatal_enrollment_model = 'antenatalenrollment'
-        subject_identifier = request.GET.get('subject_identifier')
-        maternal_status_helper = MaternalStatusHelper(
-            subject_identifier=subject_identifier)
-        consent_model_cls = django_apps.get_model(f'flourish_caregiver.{consent_model}')
-        antenatal_enrollment_model_cls = django_apps.get_model(
-            f'flourish_caregiver.{antenatal_enrollment_model}')
-        tb_consent_model_cls = django_apps.get_model(
-            f'flourish_caregiver.{tb_consent_model}')
-        consent_obj = consent_model_cls.objects.filter(
-            subject_identifier=subject_identifier
-        )
-        child_subjects = list(consent_obj[0].caregiverchildconsent_set.all().values_list(
-            'subject_identifier', flat=True))
-        try:
-            tb_consent_model_cls.objects.get(subject_identifier=subject_identifier)
-        except tb_consent_model_cls.DoesNotExist:
-            if (consent_obj and get_difference(consent_obj[0].dob)
-                    >= 18 and maternal_status_helper.hiv_status == POS and
-                    consent_obj[0].citizen == YES):
-                for child_subj in child_subjects:
-                    try:
-                        antenatal_enrolment_obj = antenatal_enrollment_model_cls.objects.get(
-                            subject_identifier=subject_identifier)
-                    except antenatal_enrollment_model_cls.DoesNotExist:
-                        child_consent = consent_obj[0].caregiverchildconsent_set.get(
-                            subject_identifier=child_subj)
-                        child_age = age(child_consent.child_dob, get_utcnow())
-                        child_age_in_months = (child_age.years * 12) + child_age.months
-                        if child_age_in_months < 2:
-                            return 'tb_2_months'
-                    else:
-                        if (antenatal_enrolment_obj.ga_lmp_anc_wks and int(
-                                antenatal_enrolment_obj.ga_lmp_anc_wks) >= 22):
-                            return 'tb_2_months'
+    # def get_key(self, request, obj=None):
+        # consent_model = 'subjectconsent'
+        # tb_consent_model = 'tbinformedconsent'
+        # antenatal_enrollment_model = 'antenatalenrollment'
+        # subject_identifier = request.GET.get('subject_identifier')
+        # maternal_status_helper = MaternalStatusHelper(
+            # subject_identifier=subject_identifier)
+        # consent_model_cls = django_apps.get_model(f'flourish_caregiver.{consent_model}')
+        # antenatal_enrollment_model_cls = django_apps.get_model(
+            # f'flourish_caregiver.{antenatal_enrollment_model}')
+        # tb_consent_model_cls = django_apps.get_model(
+            # f'flourish_caregiver.{tb_consent_model}')
+        # consent_obj = consent_model_cls.objects.filter(
+            # subject_identifier=subject_identifier
+        # )
+        # child_subjects = list(consent_obj[0].caregiverchildconsent_set.all().values_list(
+            # 'subject_identifier', flat=True))
+        # try:
+            # tb_consent_model_cls.objects.get(subject_identifier=subject_identifier)
+        # except tb_consent_model_cls.DoesNotExist:
+            # if (consent_obj and get_difference(consent_obj[0].dob)
+                    # >= 18 and maternal_status_helper.hiv_status == POS and
+                    # consent_obj[0].citizen == YES):
+                # for child_subj in child_subjects:
+                    # try:
+                        # antenatal_enrolment_obj = antenatal_enrollment_model_cls.objects.get(
+                            # subject_identifier=subject_identifier)
+                    # except antenatal_enrollment_model_cls.DoesNotExist:
+                        # child_consent = consent_obj[0].caregiverchildconsent_set.get(
+                            # subject_identifier=child_subj)
+                        # child_age = age(child_consent.child_dob, get_utcnow())
+                        # child_age_in_months = (child_age.years * 12) + child_age.months
+                        # if child_age_in_months < 2:
+                            # return 'tb_2_months'
+                    # else:
+                        # if (antenatal_enrolment_obj.ga_lmp_anc_wks and int(
+                                # antenatal_enrolment_obj.ga_lmp_anc_wks) >= 22):
+                            # return 'tb_2_months'
 
-    conditional_fieldlists = {
-        'tb_2_months': Insert('tb_participation', after='last_alive_date'),
-    }
+    # conditional_fieldlists = {
+        # 'tb_2_months': Insert('tb_participation', after='last_alive_date'),
+    # }
