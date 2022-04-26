@@ -101,7 +101,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         else:
             # the object exist so check if it was captured on this visit, show the
             # question if that is true
-            if obj.visit_code == prev_obj.visit_code:
+            if obj and obj.visit_code == prev_obj.visit_code:
                 return self.tb_question(request, subject_identifier)
 
     def tb_question(self, request, subject_identifier):
