@@ -17,15 +17,15 @@ caregiver_v1 = Consent(
     age_max=110,
     gender=[MALE, FEMALE])
 
-tb_caregiver_v1 = Consent(
-    'flourish_caregiver.tbinformedconsent',
-    version='1',
-    start=edc_protocol.study_open_datetime,
-    end=edc_protocol.study_close_datetime,
-    age_min=18,
-    age_is_adult=18,
-    age_max=110,
-    gender=[FEMALE])
+# tb_caregiver_v1 = Consent(
+    # 'flourish_caregiver.tbinformedconsent',
+    # version='1',
+    # start=edc_protocol.study_open_datetime,
+    # end=edc_protocol.study_close_datetime,
+    # age_min=18,
+    # age_is_adult=18,
+    # age_max=110,
+    # gender=[FEMALE])
 
 caregiver_v2 = Consent(
     'flourish_caregiver.subjectconsent',
@@ -41,4 +41,4 @@ site_consents.validator_cls = ConsentObjectValidator
 
 site_consents.register(caregiver_v1)
 site_consents.register(caregiver_v2)
-site_consents.register(tb_caregiver_v1)
+# site_consents.register(tb_caregiver_v1)
