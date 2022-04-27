@@ -389,7 +389,7 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
         put_on_schedule(cohort, instance=instance,
                         subject_identifier=instance.subject_identifier,
                         child_subject_identifier=instance.subject_identifier,
-                        base_appt_datetime=instance.created.replace(
+                        base_appt_datetime=instance.report_datetime.replace(
                             microsecond=0),
                         caregiver_visit_count=caregiver_visit_count)
 
@@ -660,8 +660,8 @@ def create_registered_infant(instance):
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
-        repeat=False, opt_trigger=True
-):
+                        repeat=False, opt_trigger=True):
+
     action_cls = site_action_items.get(
         model_cls.action_name)
     action_item_model_cls = action_cls.action_item_model_cls()
