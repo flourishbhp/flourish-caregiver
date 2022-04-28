@@ -178,5 +178,5 @@ class TbVisitScreeningWomen(CrfModelMixin):
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = '2-Month Visit Screen for TB Screen for Women'
-        verbose_name_plural = '2-Month Visit Screen for TB Screen for Women'
+        verbose_name = 'TB Screen at 2 months Postpartum'
+        verbose_name_plural = 'TB Screen at 2 months Postpartum'

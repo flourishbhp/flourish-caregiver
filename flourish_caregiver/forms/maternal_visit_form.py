@@ -225,25 +225,20 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             field='info_source',
             field_required='info_source_other')
 
-    def validate_consent_version_obj(self):
-
-        if self.latest_consent_obj:
-            try:
-                self.consent_version_cls.objects.get(
-                    screening_identifier=self.latest_consent_obj.screening_identifier)
-            except self.consent_version_cls.DoesNotExist:
-                raise forms.ValidationError(
-                    'Consent version form has not been completed, kindly complete it before'
-                    ' continuing.')
-
-    @property
-    def latest_consent_obj(self):
-
+    def validate_against_consent_datetime(self, report_datetime):
+        """Returns an instance of the current maternal consent or
+        raises an exception if not found."""
         subject_consents = self.subject_consent_cls.objects.filter(
             subject_identifier=self.subject_identifier)
-
-        if subject_consents:
-            return subject_consents.latest('consent_datetime')
+        if subject_consents.earliest('consent_datetime'):
+            if report_datetime and report_datetime < subject_consents.earliest(
+                    'consent_datetime').consent_datetime:
+                raise forms.ValidationError(
+                    "Report datetime cannot be before consent datetime")
+        else:
+            raise forms.ValidationError(
+                'Please complete Caregiver Consent form '
+                f'before proceeding.')
 
 
 class MaternalVisitForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
