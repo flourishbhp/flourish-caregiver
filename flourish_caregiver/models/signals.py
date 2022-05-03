@@ -13,6 +13,7 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
+from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_locator import CaregiverLocator
@@ -23,6 +24,7 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .tb_informed_consent import TbInformedConsent
+from .tb_visit_screening_women import TbVisitScreeningWomen
 from .ultrasound import UltraSound
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 from ..helper_classes.cohort import Cohort
@@ -393,8 +395,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                         caregiver_visit_count=caregiver_visit_count)
 
 
-@receiver(post_save, weak=False, sender=CaregiverOffSchedule,
-          dispatch_uid='caregiver_off_schedule_on_post_save')
+@receiver(post_save, weak=False, sender=CaregiverOffStudy,
+          dispatch_uid='caregiver_off_study_on_post_save')
 def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
     for visit_schedule in site_visit_schedules.visit_schedules.values():
         for schedule in visit_schedule.schedules.values():
@@ -404,6 +406,21 @@ def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
                 _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=onschedule_model_obj.schedule_name)
+                schedule.take_off_schedule(
+                    subject_identifier=instance.subject_identifier)
+
+
+@receiver(post_save, weak=False, sender=CaregiverOffSchedule,
+          dispatch_uid='caregiver_off_schedule_on_post_save')
+def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwargs):
+    for visit_schedule in site_visit_schedules.visit_schedules.values():
+        for schedule in visit_schedule.schedules.values():
+            onschedule_model_obj = get_onschedule_model_obj(
+                schedule, instance.subject_identifier)
+            if onschedule_model_obj and onschedule_model_obj.schedule_name==instance.schedule_name:
+                _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                    onschedule_model=onschedule_model_obj._meta.label_lower,
+                    name=instance.schedule_name)
                 schedule.take_off_schedule(
                     subject_identifier=instance.subject_identifier)
 
