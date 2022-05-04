@@ -97,14 +97,14 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
                                                  tb_participation=YES)
         except MaternalVisit.DoesNotExist:
             # the object does not exist, show the question
-            return self.tb_question(request, subject_identifier)
+            return self.tb_question(subject_identifier)
         else:
             # the object exist so check if it was captured on this visit, show the
             # question if that is true
             if obj and obj.visit_code == prev_obj.visit_code:
-                return self.tb_question(request, subject_identifier)
+                return self.tb_question(subject_identifier)
 
-    def tb_question(self, request, subject_identifier):
+    def tb_question(self, subject_identifier):
         consent_model = 'subjectconsent'
         tb_consent_model = 'tbinformedconsent'
         antenatal_enrollment_model = 'antenatalenrollment'
