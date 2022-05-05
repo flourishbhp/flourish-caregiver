@@ -13,7 +13,7 @@ from edc_visit_tracking.form_validators import VisitFormValidator
 from flourish_form_validations.form_validators import \
     FormValidatorMixin as FlourishFormValidatorMixin
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
-from ..models import MaternalVisit
+from ..models import MaternalVisit, SubjectConsent
 
 
 class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin):
@@ -162,9 +162,10 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         """Returns an instance of the current maternal consent or
         raises an exception if not found."""
 
+        latest_consent = self.latest_consent_obj
         last_alive_date = self.cleaned_data.get('last_alive_date')
-        if (last_alive_date
-                and last_alive_date < self.earliest_subject_consents.consent_datetime.date()):
+        if (last_alive_date and not self.instance.pk
+                and last_alive_date < latest_consent.consent_datetime.date()):
             msg = {'last_alive_date': 'Date cannot be before consent date'}
             self._errors.update(msg)
             raise ValidationError(msg)
@@ -225,19 +226,21 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
     def validate_against_consent_datetime(self, report_datetime):
         """Returns an instance of the current maternal consent or
         raises an exception if not found."""
-        if self.earliest_subject_consents:
-            if report_datetime and report_datetime < self.earliest_subject_consents.consent_datetime:
-                raise forms.ValidationError(
-                    "Report datetime cannot be before consent datetime")
-        else:
-            raise forms.ValidationError(
-                'Please complete Caregiver Consent form '
-                f'before proceeding.')
+        subject_consents = self.subject_consent_cls.objects.filter(
+            subject_identifier=self.subject_identifier)
+        if not self.instance.pk:
+            try:
+                subject_consents.latest('consent_datetime')
 
-    @property
-    def earliest_subject_consents(self):
-        return self.subject_consent_cls.objects.filter(
-            subject_identifier=self.subject_identifier).earliest('consent_datetime')
+            except SubjectConsent.DoesNotExist:
+                raise forms.ValidationError(
+                    'Please complete Caregiver Consent form '
+                    f'before proceeding.')
+            else:
+                if report_datetime and report_datetime < subject_consents.latest(
+                        'consent_datetime').consent_datetime:
+                    raise forms.ValidationError(
+                        "Report datetime cannot be before consent datetime")
 
 
 class MaternalVisitForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
