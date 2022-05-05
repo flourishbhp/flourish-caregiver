@@ -1,5 +1,6 @@
 from django.contrib import admin
 from edc_model_admin import TabularInlineMixin, audit_fields
+from edc_model_admin import TabularInlineMixin
 from edc_odk.admin import StampImageActionMixin
 
 from ..admin_site import flourish_caregiver_admin
@@ -14,7 +15,7 @@ class ClinicianNotesImageInline(TabularInlineMixin, admin.TabularInline):
     form = ClinicianNotesImageForm
     extra = 0
 
-    fields = ('clinician_notes_image', 'user_uploaded', 'datetime_captured',
+    fields = ('clinician_notes_image', 'image', 'user_uploaded', 'datetime_captured',
               'modified', 'hostname_created',)
 
     def get_readonly_fields(self, request, obj=None):
