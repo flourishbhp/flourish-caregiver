@@ -42,7 +42,8 @@ class AntenatalEnrollmentForm(
 
         if not child_consents:
             raise forms.ValidationError(
-                'Missing matching Child Subject Consent form, cannot proceed...')
+                'Missing Child Consent associated with participant\'s '
+                ' pregnancy screening form. Please correct.')
 
     class Meta:
         model = AntenatalEnrollment

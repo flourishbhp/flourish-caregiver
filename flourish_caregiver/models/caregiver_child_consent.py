@@ -164,8 +164,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     def save(self, *args, **kwargs):
 
-        if not self.subject_identifier:
-            self.preg_enroll = self.is_preg
+        self.preg_enroll = self.is_preg
 
         eligibility_criteria = CaregiverChildConsentEligibility(
             self.child_test, self.child_remain_in_study, self.child_preg_test,
@@ -191,8 +190,9 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     @property
     def is_preg(self):
 
-        return not (self.first_name or self.last_name
-                    or self.dob or self.study_child_identifier)
+        if self.child_dob and self.child_dob > self.consent_datetime.date():
+            return True
+        return self.child_dob is None
 
     @property
     def live_infants(self):
