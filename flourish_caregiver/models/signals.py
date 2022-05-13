@@ -415,53 +415,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     For parents with tow kids, crfs collected on a visit of one kid are being 
     filled when opening such crf
     """
-    pre_fill_crfs(instance)
 
-def pre_fill_crfs(instance):
-    # tow children, the first child is the one whose visit was done first and the
-    # parent's crf were captured on that visit, the second child the forms are still blank
-    # get the visit of the first child
-    first_visit = MaternalVisit.objects.filter(
-        subject_identifier=instance.subject_identifier,
-        visit_code=instance.visit_code).earliest('report_datetime')
 
-    # getting all the required crfs in the current visit
-    visit_crfs = CrfMetadata.objects.filter(
-        subject_identifier=instance.subject_identifier,
-        visit_code=instance.visit_code,
-        schedule_name=instance.schedule_name,
-        entry_status=REQUIRED).values_list('model', flat=True)
-    import pdb;
-    pdb.set_trace()
-
-    # all the completed crfs for the first child visit
-    completed_crfs = CrfMetadata.objects.filter(
-        subject_identifier=instance.subject_identifier,
-        visit_code=instance.visit_code,
-        schedule_name=first_visit.schedule_name,
-        entry_status=KEYED)
-
-    # check clone the copleted crfs into the current visit
-    for crf in completed_crfs:
-        if crf.model in visit_crfs:
-            model_cls = django_apps.get_model(crf.model)
-            try:
-                model_obj = model_cls.objects.get(
-                maternal_visit__subject_identifier=instance.subject_identifier,
-                maternal_visit__visit_code=instance.visit_code)
-            except model_cls.DoesNotExist:
-                pass
-            else:
-                kwargs = model_to_dict(model_obj,
-                                       fields=[field.name for field in
-                                               model_obj._meta.fields],
-                                       exclude=['id', 'maternal_visit_id', 'maternal_visit'])
-                model_cls.objects.create(**kwargs,
-                                         maternal_visit_id=instance.id,
-                                         maternal_visit=instance)
-                import pdb;
-                pdb.set_trace()
-                model_obj.save()
 
 def screening_preg_exists(caregiver_child_consent_obj):
     preg_women_screening_cls = django_apps.get_model(
