@@ -12,6 +12,7 @@ from edc_protocol.validators import date_not_before_study_start
 from .enrollment_mixin import EnrollmentMixin
 from .maternal_delivery import MaternalDelivery
 from ..helper_classes import EnrollmentHelper
+from edc_base.utils import get_utcnow
 class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
                           EnrollmentMixin, BaseUuidModel):
 
@@ -65,7 +66,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
                 subject_identifier=self.subject_identifier)
         except MaternalDelivery.DoesNotExist:
             # if means the mother haven't given birth just yet
-            today = datetime.date.today()# to allow date to increment
+            today = get_utcnow().date() # to allow date to increment
             ga_weeks = enrollment_helper.evaluate_ga_lmp(today) # get ga using the enrollment helper
         else:
             # if MaternalDelivery object exist, it means the mother delivered
