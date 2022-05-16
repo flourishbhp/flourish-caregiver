@@ -1,5 +1,3 @@
-import datetime
-
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_base.model_managers import HistoricalRecords
@@ -8,11 +6,12 @@ from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import date_not_before_study_start
+from edc_base.utils import get_utcnow
 
 from .enrollment_mixin import EnrollmentMixin
 from .maternal_delivery import MaternalDelivery
 from ..helper_classes import EnrollmentHelper
-from edc_base.utils import get_utcnow
+
 class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
                           EnrollmentMixin, BaseUuidModel):
 
