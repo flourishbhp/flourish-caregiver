@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +32,8 @@ APP_NAME = 'flourish_caregiver'
 SITE_ID = 40
 DEFAULT_STUDY_SITE = 40
 REVIEWER_SITE_ID = 1
+DEVICE_ID = 2
+DEVICE_ROLE = ''
 
 ALLOWED_HOSTS = []
 
@@ -66,6 +68,7 @@ INSTALLED_APPS = [
     'pre_flourish.apps.AppConfig',
     'flourish_follow.apps.AppConfig',
     'flourish_labs.apps.AppConfig',
+    'edc_senaite_interface.apps.AppConfig',
     'flourish_caregiver.apps.EdcAppointmentAppConfig',
     'flourish_caregiver.apps.EdcFacilityAppConfig',
     'flourish_caregiver.apps.EdcMetadataAppConfig',
@@ -164,7 +167,6 @@ STATIC_URL = '/static/'
 DASHBOARD_URL_NAMES = {}
 
 if 'test' in sys.argv:
-
     class DisableMigrations:
 
         def __contains__(self, item):
@@ -172,6 +174,7 @@ if 'test' in sys.argv:
 
         def __getitem__(self, item):
             return None
+
 
     MIGRATION_MODULES = DisableMigrations()
     PASSWORD_HASHERS = ('django.contrib.auth.hashers.MD5PasswordHasher',)
