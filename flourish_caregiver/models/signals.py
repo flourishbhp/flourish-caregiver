@@ -371,7 +371,6 @@ def clinician_notes_image_on_post_save(sender, instance, raw, created, **kwargs)
     """
     if not raw and created:
         stamp_image(instance)
-        subject_identifier = instance.clinician_notes.subject_identifier
 
 
 @receiver(post_save, weak=False, sender=MaternalVisit,
