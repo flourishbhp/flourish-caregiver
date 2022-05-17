@@ -21,6 +21,7 @@ import xlwt
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
+from ..helper_classes import MaternalStatusHelper
 from ..models import CaregiverChildConsent, SubjectConsent
 from ..models import ScreeningPregWomen
 from .modeladmin_mixins import ModelAdminMixin
@@ -338,6 +339,12 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         return super(CaregiverChildConsentAdmin, self).render_change_form(
             request, context, *args, **kwargs)
 
+    def caregiver_hiv_status(self, subject_identifier=None):
+
+        status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
+
+        return status_helper.hiv_status
+
     def export_as_csv(self, request, queryset):
         queryset = queryset.defer('site_id', 'initials', 'dob',
                                   'is_dob_estimated', 'guardian_name',
@@ -363,6 +370,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         field_names = [a for a in field_names.keys()]
         field_names.remove('_state')
 
+        field_names.append('hiv_exposure')
         field_names.append('protocol')
         field_names.append('study_maternal_identifier')
 
@@ -376,7 +384,13 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             extra_data = {}
             if maternal_dataset_qs:
                 extra_data = maternal_dataset_qs.__dict__
-            data = [obj_data[field] if field not in ['protocol', 'study_maternal_identifier']
+
+            subject_identifier = getattr(obj, 'subject_identifier')
+            extra_data.update({'hiv_exposure': self.caregiver_hiv_status(
+                subject_identifier=subject_identifier[:-3])})
+
+            data = [obj_data[field] if field not in ['protocol', 'study_maternal_identifier',
+                                                     'hiv_exposure']
                     else extra_data.get(field, '') for field in field_names]
 
             row_num += 1
