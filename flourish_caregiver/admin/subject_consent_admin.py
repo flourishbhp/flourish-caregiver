@@ -115,7 +115,6 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
     def get_extra(self, request, obj=None, **kwargs):
         extra = super().get_extra(request, obj, **kwargs)
-        breakpoint()
         study_maternal_id = request.GET.get('study_maternal_identifier')
         subject_identifier = request.GET.get('subject_identifier')
 
