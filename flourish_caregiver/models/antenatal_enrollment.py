@@ -70,7 +70,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         else:
             # if MaternalDelivery object exist, it means the mother delivered
             # hence no need for changine ga
-            ga_weeks = enrollment_helper.evaluate_ga_lmp(delivery.report_datetime.date())
+            ga_weeks = enrollment_helper.evaluate_ga_lmp(delivery.delivery_datetime.date())
 
         return ga_weeks
 
