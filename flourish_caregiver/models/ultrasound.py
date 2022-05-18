@@ -56,7 +56,7 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         help_text='EDD Confirmed. Derived variable, see AntenatalEnrollment.')
 
     ga_confirmed = models.IntegerField(
-        verbose_name="GA confirmed.",
+        verbose_name="GA by Scan.",
         help_text='Derived variable.')
 
     ga_confrimation_method = models.CharField(

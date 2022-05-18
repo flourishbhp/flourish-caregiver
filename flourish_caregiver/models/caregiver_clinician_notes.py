@@ -2,10 +2,13 @@ from django.db import models
 from django.utils.html import mark_safe
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.utils import get_utcnow
+
 from .model_mixins import CrfModelMixin
 
 
 class ClinicianNotes(CrfModelMixin):
+    crf_date_validator_cls = None
+
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
@@ -14,18 +17,17 @@ class ClinicianNotes(CrfModelMixin):
 
 
 class ClinicianNotesImage(BaseUuidModel):
-
     clinician_notes = models.ForeignKey(
         ClinicianNotes,
         on_delete=models.PROTECT,
-        related_name='caregiver_clinician_notes',)
+        related_name='caregiver_clinician_notes', )
 
     image = models.ImageField(upload_to='caregiver_notes/')
 
     user_uploaded = models.CharField(
         max_length=50,
         blank=True,
-        verbose_name='user uploaded',)
+        verbose_name='user uploaded', )
 
     datetime_captured = models.DateTimeField(
         default=get_utcnow)
@@ -38,6 +40,7 @@ class ClinicianNotesImage(BaseUuidModel):
 
     clinician_notes_image.short_description = 'Clinician Notes Image'
     clinician_notes_image.allow_tags = True
+
 
     class Meta:
         app_label = 'flourish_caregiver'

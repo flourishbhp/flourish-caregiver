@@ -6,9 +6,11 @@ from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import date_not_before_study_start
+from edc_base.utils import get_utcnow
 
 from .enrollment_mixin import EnrollmentMixin
-
+from .maternal_delivery import MaternalDelivery
+from ..helper_classes import EnrollmentHelper
 
 class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
                           EnrollmentMixin, BaseUuidModel):
@@ -29,7 +31,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         help_text='LMP')
 
     ga_lmp_enrollment_wks = models.IntegerField(
-        verbose_name="GA by LMP at enrollment.",
+        verbose_name="GA at enrollment.",
         help_text=" (weeks of gestation at enrollment, LMP). Eligible if"
         " >16 and <30 weeks GA",
         null=True,
@@ -49,6 +51,28 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
             date_not_before_study_start],
         null=True,
         blank=True)
+
+    @property
+    def real_time_ga(self):
+        """
+        Updates the GA in realtime,
+        GA stops being updated when the mother delivers
+        """
+        ga_weeks = 0
+        enrollment_helper = EnrollmentHelper(instance_antenatal=self)
+        try:
+            delivery = MaternalDelivery.objects.get(
+                subject_identifier=self.subject_identifier)
+        except MaternalDelivery.DoesNotExist:
+            # if means the mother haven't given birth just yet
+            today = get_utcnow().date() # to allow date to increment
+            ga_weeks = enrollment_helper.evaluate_ga_lmp(today) # get ga using the enrollment helper
+        else:
+            # if MaternalDelivery object exist, it means the mother delivered
+            # hence no need for changine ga
+            ga_weeks = enrollment_helper.evaluate_ga_lmp(delivery.delivery_datetime.date())
+
+        return ga_weeks
 
     history = HistoricalRecords()
 
