@@ -64,7 +64,9 @@ from .tb_history_preg import TbHistoryPreg
 from .tb_informed_consent import TbInformedConsent
 from .tb_off_study import TbOffStudy
 from .tb_presence_household_members import TbPresenceHouseholdMembers
+from .tb_referral import TbReferral
 from .tb_routine_health_screen import TbRoutineHealthScreen
 from .tb_screen_preg import TbScreenPreg
+from .tb_study_screening import TbStudyScreening
 from .tb_visit_screening_women import TbVisitScreeningWomen
 from .ultrasound import UltraSound

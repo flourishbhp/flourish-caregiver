@@ -563,7 +563,7 @@ YES_NO_UNK_NA = (
 COUGH_DURATION = (
     ('=< 1 week', '=< 1 week'),
     ('=1-2 week', '=1-2 week'),
-    ('=>2 week', '0=< 1 week'),
+    ('=>2 week', '=>2 week'),
     (DWTA, 'Prefer not to answer'),
 
     )
