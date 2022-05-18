@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO,YES_NO_NA,NOT_APPLICABLE
 
 from .model_mixins import CrfModelMixin
 
@@ -28,15 +28,21 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
 
     systolic_bp = models.IntegerField(
         verbose_name='Caregiver\'s systolic blood pressure?',
-        validators=[MinValueValidator(75), MaxValueValidator(220), ],
-        help_text='in mm e.g. 120, should be between 75 and 220.'
+        help_text='in mm e.g. 120, normal values are between 100 and 130.'
     )
 
     diastolic_bp = models.IntegerField(
         verbose_name='Caregiver\'s diastolic blood pressure?',
-        validators=[MinValueValidator(35), MaxValueValidator(150), ],
-        help_text='in hg e.g. 80, should be between 35 and 150.')
-
+        help_text='in hg e.g. 80, normal values are between 60 and 80.'
+    )
+    
+    confirm_values = models.CharField(
+        verbose_name='Are you sure about given values',
+        max_length=3,
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE
+    )
+    
     is_preg = models.CharField(
         verbose_name='Is the caregiver pregnant? ',
         max_length=3,
