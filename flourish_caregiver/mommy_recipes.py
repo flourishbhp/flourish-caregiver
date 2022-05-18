@@ -7,7 +7,7 @@ from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery, \
-    TbInformedConsent
+    TbInformedConsent, TbStudyScreening, TbOffStudy, TbVisitScreeningWomen
 from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
                      CaregiverEdinburghDeprScreening)
 from .models import CaregiverPreviouslyEnrolled
@@ -188,3 +188,14 @@ caregiveredinburghdeprscreening = Recipe(
 
 hivrapidtest = Recipe(
     HIVRapidTestCounseling, )
+
+tbstudyscreening = Recipe(
+    TbStudyScreening, )
+
+tboffstudy = Recipe(
+    TbOffStudy,
+)
+
+tbvisitscreeningwomen = Recipe(
+    TbVisitScreeningWomen,
+)
