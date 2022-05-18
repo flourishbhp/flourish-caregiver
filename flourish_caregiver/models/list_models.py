@@ -39,3 +39,5 @@ class CovidSymptomsAfter14Days(ListModelMixin, BaseUuidModel):
 class MaternalDiagnosesList(ListModelMixin, BaseUuidModel):
     pass
 
+class CaregiverReferralReasons(ListModelMixin, BaseUuidModel):
+    pass

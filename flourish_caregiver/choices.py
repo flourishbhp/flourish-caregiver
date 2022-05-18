@@ -1,12 +1,19 @@
 from django.utils.translation import ugettext_lazy as _
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN, \
     FAILED_ELIGIBILITY, PARTICIPANT, DWTA, POS, NEG, ON_STUDY, OFF_STUDY, MALE, FEMALE
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES, NO, IND
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
 from flourish_caregiver.constants import NONE
 from .constants import BREASTFEED_ONLY
+
+
+POS_NEG_IND = (
+    (POS, 'Positive'),
+    (NEG, 'Negative'),
+    (IND, 'Indeterminate')
+)
 
 ABLE_TO_LAUGH = (
     ('0', 'As much as I always could'),

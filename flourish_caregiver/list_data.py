@@ -190,6 +190,17 @@ list_data = {
         ('gestational_hypertension', 'Gestational Hypertension'),
         (NOT_APPLICABLE, 'Not Applicable'),
         (OTHER, 'Other, specify')
+    ],
+    'flourish_caregiver.caregiverreferralreasons': [
+        ('arguments','Arguments with partner/spouse'),
+        ('violence','Violence with partner/spouse'),
+        ('distrust','Distrust with partner/spouse'),
+        ('financial_challenges','Financial challenges'),
+        ('difficultly_dealing_with_diagnoses',
+         'Difficultly dealing with diagnoses\nof chronic illness or infectious disease'),
+        ('grief_counseling','Grief counseling (for loss of loved one)'),
+        ('adherence_counseling','Adherence counseling '),
+        (OTHER, 'Other, specify'),
     ]
 
 }

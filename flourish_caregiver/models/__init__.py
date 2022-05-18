@@ -67,3 +67,4 @@ from .tb_routine_health_screen import TbRoutineHealthScreen
 from .tb_screen_preg import TbScreenPreg
 from .tb_visit_screening_women import TbVisitScreeningWomen
 from .ultrasound import UltraSound
+from .caregiver_referral import CaregiverReferral

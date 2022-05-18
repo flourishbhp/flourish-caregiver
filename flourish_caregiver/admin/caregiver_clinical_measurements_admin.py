@@ -24,6 +24,7 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'weight_kg',
                 'systolic_bp',
                 'diastolic_bp',
+                'confirm_values',
                 'is_preg',
                 'waist_circ',
                 'hip_circ'
@@ -31,7 +32,8 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
          ), audit_fieldset_tuple)
 
     radio_fields = {
-        'is_preg': admin.VERTICAL, }
+        'is_preg': admin.VERTICAL, 
+        'confirm_values': admin.VERTICAL, }
 
     conditional_fieldlists = {
         'a_birth1_schedule1': Remove('height'),
