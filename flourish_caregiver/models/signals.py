@@ -389,6 +389,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             instance.subject_identifier)
 
     if not raw and created and instance.visit_code in ['2000M', '2000D']:
+        
+            cohort = None
 
             if 'sec' in instance.schedule_name:
 
@@ -402,13 +404,16 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                 cohort_list = instance.schedule_name.split('_')
 
                 caregiver_visit_count = cohort_list[1][-1:]
+                
+                cohort = '_'.join(['cohort', cohort_list[0], 'quarterly'])
+                
 
             put_on_schedule(cohort, instance=instance,
-                            subject_identifier=instance.subject_identifier,
-                            child_subject_identifier=instance.subject_identifier,
-                            base_appt_datetime=instance.report_datetime.replace(
-                                microsecond=0),
-                            caregiver_visit_count=caregiver_visit_count)
+                                subject_identifier=instance.subject_identifier,
+                                child_subject_identifier=instance.subject_identifier,
+                                base_appt_datetime=instance.report_datetime.replace(
+                                    microsecond=0),
+                                caregiver_visit_count=caregiver_visit_count)
     """
     For parents with tow kids, crfs collected on a visit of one kid are being 
     filled when opening such crf
