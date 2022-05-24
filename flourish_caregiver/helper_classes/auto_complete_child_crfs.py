@@ -1,6 +1,8 @@
 from copy import deepcopy
 
 from django.apps import apps as django_apps
+from django.db import models
+from django.forms import model_to_dict
 from edc_metadata import REQUIRED, KEYED
 from edc_metadata.models import CrfMetadata
 
@@ -28,16 +30,16 @@ class AutoCompleteChildCrfs:
                 except model_cls.DoesNotExist:
                     pass
                 else:
-                    self.save_model(model_obj=model_obj)
+                    self.save_model(model_obj=model_obj, model_cls=model_cls)
 
     @property
-    def inlines(self):
+    def maternal_inlines_crfs(self):
         """
         Returns a list of possible inline forms found in child crfs
         """
         return {
-            'cliniciannotesimage': 'clinician_notes',
-            'maternalarv': 'maternal_arv_during_preg'}
+            'cliniciannotesimage': ['cliniciannotesimage', 'clinician_notes'],
+            'maternalarvduringpreg': ['maternalarv', 'maternal_arv_durg_preg']}
 
     @property
     def completed_crfs(self):
@@ -51,31 +53,21 @@ class AutoCompleteChildCrfs:
     @property
     def visit_crfs(self):
         """getting all the required crfs in the current visit"""
-        try:
-            visit_crfs = CrfMetadata.objects.filter(
-                subject_identifier=self.subject_identifier,
-                visit_code=self.visit_code,
-                schedule_name=self.schedule_name,
-                entry_status=REQUIRED).values_list('model', flat=True)
-        except CrfMetadata.DoesNotExist:
-            return []
-        else:
-            return visit_crfs
+        return CrfMetadata.objects.filter(
+            subject_identifier=self.subject_identifier,
+            visit_code=self.visit_code,
+            schedule_name=self.schedule_name,
+            entry_status=REQUIRED).values_list('model', flat=True)
 
     @property
     def first_visit(self):
         """
-        tow children, the first child is the one whose visit was done first and the
+        two children, the first child is the one whose visit was done first and the
         parent's crf were captured on that visit, the second child the forms are still
         blank get the visit of the first child"""
-        try:
-            first_visit = MaternalVisit.objects.filter(
-                subject_identifier=self.subject_identifier,
-                visit_code=self.visit_code).earliest('report_datetime')
-        except MaternalVisit.DoesNotExist:
-            return []
-        else:
-            return first_visit
+        return MaternalVisit.objects.filter(
+            subject_identifier=self.subject_identifier,
+            visit_code=self.visit_code).earliest('report_datetime')
 
     def inline_cls(self, inline):
         return django_apps.get_model(f'flourish_caregiver.{inline}')
@@ -86,26 +78,45 @@ class AutoCompleteChildCrfs:
 
     def save_inlines(self, new_obj, model_obj):
         """
-        takes tow params, new obj and model_obj then saves the inline models of the new
+        takes two params, new obj and model_obj then saves the inline models of the new
         obj based on the values of the old model
         """
-        for key in self.inlines:
-            if new_obj.__class__.__name__.lower()[:7] in self.inlines.get(key):
-                for child_inline in self.inline_objs(
-                        model_obj, self.inlines.get(key), key):
-                    copy_child_inline = deepcopy(child_inline)
-                    setattr(copy_child_inline, self.inlines.get(key), new_obj)
-                    copy_child_inline.id = None
-                    copy_child_inline.save()
+        for key in self.maternal_inlines_crfs:
+            if (new_obj._meta.label_lower.split('.')[1] in
+                    self.maternal_inlines_crfs.get(key)[0]):
+                for maternal_inline in self.inline_objs(
+                        model_obj, self.maternal_inlines_crfs.get(key)[1],
+                        self.maternal_inlines_crfs.get(key)[0]):
+                    copy_maternal_inline = deepcopy(maternal_inline)
+                    setattr(copy_maternal_inline,
+                            self.maternal_inlines_crfs.get(key)[1],
+                            new_obj)
+                    copy_maternal_inline.id = None
+                    copy_maternal_inline.save()
 
-    def save_model(self, model_obj):
+    def get_many_to_many_fields(self, model_obj):
+        """
+        Return a dictionary of many-to-many fields in a model
+        """
+        return model_to_dict(model_obj,
+                             fields=[field.name for field in
+                                     model_obj._meta.get_fields() if
+                                     isinstance(field, models.ManyToManyField)])
+
+    def save_model(self, model_obj, model_cls):
         """
         Get an existing model object as params and copy and save the model copy to create
         copy of the existing object
         """
-        new_obj = deepcopy(model_obj)
-        new_obj.maternal_visit_id = self.id
-        new_obj.maternal_visit = self.instance
-        new_obj.id = None
+        kwargs = model_to_dict(model_obj,
+                               fields=[field.name for field in
+                                       model_obj._meta.fields],
+                               exclude=['id', 'maternal_visit_id',
+                                        'maternal_visit'])
+        new_obj = model_cls.objects.create(**kwargs,
+                                           maternal_visit_id=self.id,
+                                           maternal_visit=self.instance)
+        for key in self.get_many_to_many_fields(model_obj):
+            getattr(new_obj, key).set(self.get_many_to_many_fields(model_obj).get(key))
         new_obj.save()
         self.save_inlines(new_obj, model_obj)
