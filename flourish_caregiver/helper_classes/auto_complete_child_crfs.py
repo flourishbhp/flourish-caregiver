@@ -44,11 +44,14 @@ class AutoCompleteChildCrfs:
     @property
     def completed_crfs(self):
         """all the completed crfs for the first child visit"""
-        return CrfMetadata.objects.filter(
-            subject_identifier=self.subject_identifier,
-            visit_code=self.visit_code,
-            schedule_name=self.first_visit.schedule_name,
-            entry_status=KEYED)
+        if self.first_visit:
+            return CrfMetadata.objects.filter(
+                subject_identifier=self.subject_identifier,
+                visit_code=self.visit_code,
+                schedule_name=self.first_visit.schedule_name,
+                entry_status=KEYED)
+        else:
+            return []
 
     @property
     def visit_crfs(self):
