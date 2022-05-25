@@ -39,11 +39,17 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
         cleaned_data = super().clean()
         maternal_arv = self.data.get(
             'maternalarv_set-0-arv_code')
-        if (cleaned_data.get('took_arv') and
-                cleaned_data.get('took_arv') == YES):
-            if not maternal_arv:
+        
+        took_arv = cleaned_data.get('took_arv')
+        is_interrupt = cleaned_data.get('is_interrupt')
+        
+        if (took_arv and took_arv == YES):
+            if ((is_interrupt and is_interrupt == YES) and not maternal_arv):
                 raise forms.ValidationError(
                     {'took_arv': 'Please complete the maternal arv table.'})
+            elif ((is_interrupt and is_interrupt == NO) and maternal_arv):
+                raise forms.ValidationError(
+                    {'is_interrupt': 'The maternal arv table is not required'})    
 
         if(cleaned_data.get('took_arv') == YES
                 and cleaned_data.get('is_interrupt' == NO)):
