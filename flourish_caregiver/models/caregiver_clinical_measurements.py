@@ -39,8 +39,7 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
     confirm_values = models.CharField(
         verbose_name='Are you sure about given values',
         max_length=3,
-        choices=YES_NO_NA,
-        default=NOT_APPLICABLE
+        choices=YES_NO
     )
     
     is_preg = models.CharField(

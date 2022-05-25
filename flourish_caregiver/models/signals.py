@@ -39,6 +39,12 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
+from .caregiver_clinician_notes import ClinicianNotesImage
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 
 
 class PreFlourishError(Exception):
@@ -418,6 +424,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     For parents with tow kids, crfs collected on a visit of one kid are being 
     filled when opening such crf
     """
+    complete_child_crfs = AutoCompleteChildCrfs(instance=instance)
+    complete_child_crfs.pre_fill_crfs()
 
 
 def screening_preg_exists(caregiver_child_consent_obj):
