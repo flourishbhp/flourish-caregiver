@@ -1,9 +1,8 @@
-import os
 from datetime import datetime
+import os
 
-import PIL
-import pyminizip
 from PIL import Image
+import PIL
 from django import forms
 from django.apps import apps as django_apps
 from django.conf import settings
@@ -19,12 +18,19 @@ from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
 from edc_metadata import REQUIRED, KEYED
 from edc_metadata.models import CrfMetadata
-from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
+import pyminizip
+
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
+from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .locator_logs import LocatorLog, LocatorLogEntry
@@ -33,12 +39,6 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from .caregiver_clinician_notes import ClinicianNotesImage
-
 
 
 class PreFlourishError(Exception):
@@ -299,7 +299,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob, ).count()
+            ).exclude(dob=instance.child_dob,).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
@@ -318,7 +318,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-                        version=instance.subject_consent.version, )
+                        version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -363,6 +363,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                             child_dummy_consent.cohort = instance.cohort
                         child_dummy_consent.save()
 
+
 @receiver(post_save, weak=False, sender=ClinicianNotesImage,
           dispatch_uid='clinician_notes_image_on_post_save')
 def clinician_notes_image_on_post_save(sender, instance, raw, created, **kwargs):
@@ -389,7 +390,7 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             instance.subject_identifier)
 
     if not raw and created and instance.visit_code in ['2000M', '2000D']:
-        
+
             cohort = None
 
             if 'sec' in instance.schedule_name:
@@ -404,9 +405,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                 cohort_list = instance.schedule_name.split('_')
 
                 caregiver_visit_count = cohort_list[1][-1:]
-                
+
                 cohort = '_'.join(['cohort', cohort_list[0], 'quarterly'])
-                
 
             put_on_schedule(cohort, instance=instance,
                                 subject_identifier=instance.subject_identifier,
@@ -418,7 +418,6 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     For parents with tow kids, crfs collected on a visit of one kid are being 
     filled when opening such crf
     """
-
 
 
 def screening_preg_exists(caregiver_child_consent_obj):
@@ -731,7 +730,7 @@ def screening_preg_women(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=2)
+            create_consent_version(instance, version=2.1)
 
 
 @receiver(post_save, weak=False, sender=ScreeningPriorBhpParticipants,
@@ -743,7 +742,7 @@ def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=2)
+            create_consent_version(instance, version=2.1)
 
 
 def create_consent_version(instance, version):
@@ -760,6 +759,7 @@ def create_consent_version(instance, version):
             user_created=instance.user_modified or instance.user_created,
             created=get_utcnow())
         consent_version.save()
+
 
 def stamp_image(instance):
     filefield = instance.image
