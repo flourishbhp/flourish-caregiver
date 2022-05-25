@@ -702,3 +702,7 @@ GENDER_OTHER = (
     (FEMALE, _('Female')),
     (OTHER, _('Other')),
     )
+
+HIV_STATUS = (
+    (POS, 'Positive'),
+    (NEG, 'Negative'),)
