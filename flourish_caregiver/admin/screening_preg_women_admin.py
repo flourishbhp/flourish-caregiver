@@ -47,18 +47,33 @@ class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
             consents = consent_model.objects.filter(
                 subject_identifier=request.GET.get('subject_identifier'))
 
-        if consents and request.GET.dict().get('next'):
-            url_name = request.GET.dict().get('next').split(',')[0]
-            attrs = request.GET.dict().get('next').split(',')[1:]
-            options = {k: request.GET.dict().get(k)
-                       for k in attrs if request.GET.dict().get(k)}
+        if consents:
+            latest_consent = consents.latest('consent_datetime')
+            if (self.get_consent_version(latest_consent) == latest_consent.version
+                    and request.GET.dict().get('next')):
 
-            url_name = settings.DASHBOARD_URL_NAMES.get('subject_dashboard_url')
-            options['subject_identifier'] = request.GET.get('subject_identifier')
-            del options['screening_identifier']
-            try:
-                redirect_url = reverse(url_name, kwargs=options)
-            except NoReverseMatch as e:
-                raise ModelAdminNextUrlRedirectError(
-                    f'{e}. Got url_name={url_name}, kwargs={options}.')
+                url_name = request.GET.dict().get('next').split(',')[0]
+                attrs = request.GET.dict().get('next').split(',')[1:]
+                options = {k: request.GET.dict().get(k)
+                           for k in attrs if request.GET.dict().get(k)}
+
+                url_name = settings.DASHBOARD_URL_NAMES.get('subject_dashboard_url')
+                options['subject_identifier'] = request.GET.get('subject_identifier')
+                del options['screening_identifier']
+                try:
+                    redirect_url = reverse(url_name, kwargs=options)
+                except NoReverseMatch as e:
+                    raise ModelAdminNextUrlRedirectError(
+                        f'{e}. Got url_name={url_name}, kwargs={options}.')
         return redirect_url
+
+    def get_consent_version(self, screening_identifier):
+
+        consent_version_cls = django_apps.get_model('flourish_caregiver.flourishconsentversion')
+
+        try:
+            consent_version_obj = consent_version_cls.objects.get(screening_identifier=screening_identifier)
+        except consent_version_cls.DoesNotExist:
+            return None
+        else:
+            consent_version_obj.version

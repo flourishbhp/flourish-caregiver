@@ -53,6 +53,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 'confirm_identity',
                 'future_studies_contact',
                 'specimen_consent',
+                'version',
                 'consent_datetime'
             ]}
          ),)
@@ -306,6 +307,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'identity',
                 'identity_type',
                 'confirm_identity',
+                'version',
                 'consent_datetime']}
 
          ),
