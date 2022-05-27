@@ -50,3 +50,4 @@ from .tb_routine_health_screen_admin import TbRoutineHealthScreenAdmin
 from .tb_screen_preg_admin import TbScreenPregAdmin
 from .tb_visit_screening_women_admin import TbVisitScreeningWomenAdmin
 from .ultrasound_admin import UltraSoundAdmin
+from .caregiver_social_work_referral_admin import CaregiverSocialWorkReferralAdmin
