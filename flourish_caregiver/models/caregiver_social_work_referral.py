@@ -6,9 +6,9 @@ from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
 from ..choices import HIV_STATUS
 from edc_base.model_fields import OtherCharField
-from .list_models import MaternalSocialWorkReferralList
+from .list_models import CaregiverSocialWorkReferralList
 
-class MaternalSocialWorkReferral(CrfModelMixin):
+class CaregiverSocialWorkReferral(CrfModelMixin):
     
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
@@ -21,14 +21,14 @@ class MaternalSocialWorkReferral(CrfModelMixin):
         choices=YES_NO)
     
     current_hiv_status = models.CharField(
-        verbose_name='What is your current HIV status?',
+        verbose_name='Current HIV status?',
         choices=HIV_STATUS,
         max_length=14,
         null=True,
         blank=True,)
     
     referral_reason = models.ManyToManyField(
-        MaternalSocialWorkReferralList,
+        CaregiverSocialWorkReferralList,
         verbose_name='Please indicate reasons for the need for a social work '
         'referral for the Mother/Caregiver (select all that apply)',
         blank=True,
@@ -49,7 +49,7 @@ class MaternalSocialWorkReferral(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Maternal Social Work ReferralList'
-        verbose_name_plural = 'Maternal Social Work ReferralList'
+        verbose_name = 'Caregiver Social Work Referral'
+        verbose_name_plural = 'Caregiver Social Work Referral'
 
 

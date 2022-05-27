@@ -3,14 +3,15 @@ from edc_model_admin import audit_fieldset_tuple
 
 from ..admin_site import flourish_caregiver_admin
 from .modeladmin_mixins import CrfModelAdminMixin
-from ..models import MaternalSocialWorkReferral
-from ..forms import MaternalSocialWorkReferralForm
+from ..models import CaregiverSocialWorkReferral
+from ..forms import CaregiverSocialWorkReferralForm
 
 
-@admin.register(MaternalSocialWorkReferral, site=flourish_caregiver_admin)
-class MaternalSocialWorkReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+@admin.register(CaregiverSocialWorkReferral, site=flourish_caregiver_admin)
+class CaregiverSocialWorkReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     
-    form = MaternalSocialWorkReferralForm
+    form = CaregiverSocialWorkReferralForm
+    
     fieldsets = (
         (None, {
             "fields": (
@@ -30,5 +31,7 @@ class MaternalSocialWorkReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'is_preg': admin.VERTICAL, 
         'current_hiv_status': admin.VERTICAL, }
 
+
+    filter_horizontal = ('referral_reason',)
 
 
