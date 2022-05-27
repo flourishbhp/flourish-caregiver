@@ -730,7 +730,7 @@ def screening_preg_women(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=2.1)
+            create_consent_version(instance, version=2)
 
 
 @receiver(post_save, weak=False, sender=ScreeningPriorBhpParticipants,
@@ -742,7 +742,7 @@ def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=2.1)
+            create_consent_version(instance, version=2)
 
 
 def create_consent_version(instance, version):
@@ -756,6 +756,7 @@ def create_consent_version(instance, version):
         consent_version = consent_version_cls(
             screening_identifier=instance.screening_identifier,
             version=version,
+            child_version=2.1,
             user_created=instance.user_modified or instance.user_created,
             created=get_utcnow())
         consent_version.save()
