@@ -41,3 +41,12 @@ class MaternalDiagnosesList(ListModelMixin, BaseUuidModel):
 
 class CaregiverSocialWorkReferralList(ListModelMixin, BaseUuidModel):
     pass
+
+class PregnancyInfluencersList(ListModelMixin, BaseUuidModel):
+    pass
+
+class ReceivedTrainingOnFeedingList(ListModelMixin, BaseUuidModel):
+    pass
+
+class ReasonsForInfantFeedingList(ListModelMixin, BaseUuidModel):
+    pass

@@ -201,7 +201,38 @@ list_data = {
         ('grief_counseling','Grief counseling (for loss of loved one)'),
         ('adherence_counseling','Adherence counseling'),
         (OTHER, 'Other, specify')
-    ]
+    ],
+    
+    'flourish_caregiver.pregnancyinfluencerslist': [
+        ('the_father', 'The father of the child'),
+        ('maternal_family_members', 'Members of my family '),
+        ('paternal_family_members', 'Family members of the father of my child'),
+        ('anc_staff', 'The ANC staff'),
+        ('no_one', 'No other individual influenced my feeding choice decision'),
+        (OTHER, 'Other, specify'),
+    ],
+    
+    'flourish_caregiver.receivedtrainingonfeedinglist': [
+        ('antenatal_clinic', 'ANC'),
+        ('labour_delivery_ward', 'Labour and Delivery Ward'),
+        ('maternatiy_ward', 'Maternity Ward after delivery'),
+        ('flourish_team', 'The FLOURISH study team'),
+        (NONE, 'None'),
+    ],
+    
+    'flourish_caregiver.reasonsforinfantfeedinglist': [
+        ('no_time_for_breastfeeding','I did not have time to breastfeed'),
+        ('returned_work_school','I had to return to school/work'),
+        ('unable_to_produce_enough_milk','I was not able to produce enough breastmilk to keep my infant satisfied'),
+        ('infant_refused_breastmilk','My infant refused breastmilk'),
+        ('painfull_breastfeeding','Breastfeeding was too painful'),
+        ('cracked_bleeding_nipples','My nipples were cracked and/or bleeding'),
+        ('did_not_like_breast_shape','I did not like the way breastfeeding changed my breast shape'),
+        ('wanted_to_give_infant_traditional_medicine','I wanted to give traditional medicines to my infant'),
+        (OTHER, 'Other, specify'),
+
+    ],
+    
 
 }
 
