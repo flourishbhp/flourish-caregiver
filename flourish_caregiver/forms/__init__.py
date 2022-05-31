@@ -52,3 +52,4 @@ from .tb_screen_preg_form import TbScreenPregForm
 from .tb_visit_screening_women_form import TbVisitScreeningWomenForm
 from .ultrasound_form import UltraSoundForm
 from .caregiver_social_work_referral_form import CaregiverSocialWorkReferralForm
+from .breastfeeding_questionnaire_form import BreastFeedingQuestionnaireForm

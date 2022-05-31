@@ -716,7 +716,7 @@ HIV_STATUS = (
 FEEDING_HIV_STATUS = (
     (YES, 'Yes'),
     (NO, 'No'),
-    (DWTA, 'Rather not answer'))
+    ('rather_not_answer', 'Rather not answer'))
 
 HIV_STATUS_AWARE = (
     ('during_preg', 'Later during pregnancy'),
@@ -758,10 +758,10 @@ BREASTFEEDING_DURATION = (
     ('greater_than_twelve_months', '>12 months'),
     ('do_not_know', "I don’t know"),)
 
-FEEDING_ADVICE = FEEDING_CHOICES = (
+FEEDING_ADVICE = (
     ('Formula_feeding', 'Formula feeding'),
     (BREASTFEED_ONLY, 'Breast feed'),
-    ('mixed_feeding', 'Both breastfeeding and formula feeding'),
+    ('mixed_feeding', 'Mixed formula and breast feed'),
     (NOT_APPLICABLE, 'Not applicable'),)
 
 AFTER_BIRTH_OPINION = (
@@ -772,9 +772,9 @@ AFTER_BIRTH_OPINION = (
     ('did_not_want_to_breastfeed_before','Did not want to breastfeed even before this baby was born '),
     (NONE,'None of the above'),)
 
-FEEDING_INFLUECE =(
-    (YES, YES),
-    (NO, NO),)
+FEEDING_INFLUENCE =(
+    (YES, 'Yes'),
+    (NO, 'No'),)
 
 RETURNED_TO_WORK = (
     ('less_than_one_month_after_delivery', '<1 month after delivery'),

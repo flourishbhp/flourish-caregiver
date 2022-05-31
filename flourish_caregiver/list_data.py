@@ -212,6 +212,15 @@ list_data = {
         (OTHER, 'Other, specify'),
     ],
     
+    'flourish_caregiver.afterpregnancyinfluencerslist': [
+        ('the_father', 'The father of the child'),
+        ('maternal_family_members', 'Members of my family '),
+        ('paternal_family_members', 'Family members of the father of my child'),
+        ('anc_staff', 'The ANC staff'),
+        ('no_one', 'No other individual influenced my feeding choice decision'),
+        (OTHER, 'Other, specify'),
+    ],
+    
     'flourish_caregiver.receivedtrainingonfeedinglist': [
         ('antenatal_clinic', 'ANC'),
         ('labour_delivery_ward', 'Labour and Delivery Ward'),

@@ -44,6 +44,8 @@ class CaregiverSocialWorkReferralList(ListModelMixin, BaseUuidModel):
 
 class PregnancyInfluencersList(ListModelMixin, BaseUuidModel):
     pass
+class AfterPregnancyInfluencersList(ListModelMixin, BaseUuidModel):
+    pass
 
 class ReceivedTrainingOnFeedingList(ListModelMixin, BaseUuidModel):
     pass
