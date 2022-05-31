@@ -4,11 +4,11 @@ from edc_model_admin import audit_fieldset_tuple
 from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import TbStudyScreeningForm
-from ..models import ScreenToTbStudy
+from ..models import TbStudyScreening
 
 
-@admin.register(ScreenToTbStudy, site=flourish_caregiver_admin)
-class ScreenToTbStudyAdmin(CrfModelAdminMixin):
+@admin.register(TbStudyScreening, site=flourish_caregiver_admin)
+class TbStudyScreeningAdmin(CrfModelAdminMixin):
     form = TbStudyScreeningForm
 
     fieldsets = (

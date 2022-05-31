@@ -1,10 +1,10 @@
 from django import forms
 
 from .form_mixins import SubjectModelFormMixin
-from ..models import ScreenToTbStudy
+from ..models import TbStudyScreening
 
 
 class TbStudyScreeningForm(SubjectModelFormMixin, forms.ModelForm):
     class Meta:
-        model = ScreenToTbStudy
+        model = TbStudyScreening
         fields = '__all__'
