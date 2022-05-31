@@ -8,7 +8,7 @@ from ..models import TbStudyScreening
 
 
 @admin.register(TbStudyScreening, site=flourish_caregiver_admin)
-class TbStudyScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+class TbStudyScreeningAdmin(CrfModelAdminMixin):
     form = TbStudyScreeningForm
 
     fieldsets = (
