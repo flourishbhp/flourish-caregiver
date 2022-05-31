@@ -67,6 +67,6 @@ from .tb_presence_household_members import TbPresenceHouseholdMembers
 from .tb_referral import TbReferral
 from .tb_routine_health_screen import TbRoutineHealthScreen
 from .tb_screen_preg import TbScreenPreg
-from .tb_study_screening import TbStudyScreening
+from .tb_study_screening import TbStudyEligibility
 from .tb_visit_screening_women import TbVisitScreeningWomen
 from .ultrasound import UltraSound

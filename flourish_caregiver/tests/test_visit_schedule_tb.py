@@ -74,6 +74,14 @@ class TestVisitScheduleTb(TestCase):
         self.status_helper = MaternalStatusHelper(
             subject_identifier=self.consent.subject_identifier)
 
+        self.enrol_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='1000M',
+                subject_identifier=self.consent.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
     def test_put_on_tb_schedule(self):
         """
         Test if a subject is put the tb schedule successfully
@@ -81,6 +89,7 @@ class TestVisitScheduleTb(TestCase):
         mommy.make_recipe(
             'flourish_caregiver.tbinformedconsent',
             subject_identifier=self.consent.subject_identifier,
+            consent_datetime=get_utcnow()
         )
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
@@ -94,64 +103,6 @@ class TestVisitScheduleTb(TestCase):
             subject_identifier=self.consent.subject_identifier,
             schedule_name='tb_2_months_schedule').count(), 1)
 
-    @tag('tb_enrol')
-    def test_tb_errolment_question(self):
-        """
-        Test if the tb enrolment crf is required at the right times as defined in by the
-        meta-data rules
-        """
-        self.assertEqual(self.status_helper.hiv_status, POS)
-
-        self.assertEqual(OnScheduleCohortAAntenatal.objects.filter(
-            subject_identifier=self.consent.subject_identifier,
-            schedule_name='a_antenatal1_schedule1').count(), 1)
-
-        self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
-            subject_identifier=self.consent.subject_identifier,
-            schedule_name='a_quarterly1_schedule1').count(), 0)
-
-        enrol_visit = mommy.make_recipe(
-            'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(
-                visit_code='1000M',
-                subject_identifier=self.consent.subject_identifier),
-            report_datetime=get_utcnow(),
-            reason=SCHEDULED)
-
-        self.assertEqual(CrfMetadata.objects.get(
-            model='flourish_caregiver.tbstudyscreening',
-            subject_identifier=self.consent.subject_identifier,
-            visit_code='1000M').entry_status, REQUIRED)
-
-        mommy.make_recipe('flourish_caregiver.tbstudyscreening',
-                          maternal_visit=enrol_visit)
-
-        mommy.make_recipe(
-            'flourish_caregiver.maternaldelivery',
-            subject_identifier=self.consent.subject_identifier,
-            delivery_datetime=get_utcnow(),
-            live_infants_to_register=1)
-
-        child_consent = ChildDummySubjectConsent.objects.get(
-            subject_identifier=self.child_consent.subject_identifier,
-        )
-
-        child_consent.dob = (get_utcnow() - relativedelta(days=1)).date()
-        child_consent.save_base(raw=True)
-
-        visit = mommy.make_recipe(
-            'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(
-                subject_identifier=self.consent.subject_identifier,
-                visit_code='2000D'),
-            report_datetime=get_utcnow(),
-            reason=SCHEDULED)
-
-        self.assertEqual(CrfMetadata.objects.get(
-            model='flourish_caregiver.tbstudyscreening',
-            subject_identifier=self.consent.subject_identifier,
-            visit_code='2000D').entry_status, NOT_REQUIRED)
-
     @tag('tb_off')
     def test_tb_offstudy_required(self):
         """
@@ -161,6 +112,7 @@ class TestVisitScheduleTb(TestCase):
         mommy.make_recipe(
             'flourish_caregiver.tbinformedconsent',
             subject_identifier=self.consent.subject_identifier,
+            consent_datetime=get_utcnow()
         )
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
@@ -216,3 +168,19 @@ class TestVisitScheduleTb(TestCase):
         self.assertEqual(CaregiverOffSchedule.objects.filter(
             subject_identifier=self.consent.subject_identifier,
             schedule_name='tb_2_months_schedule', ).count(), 1)
+
+    def test_tb_screening_form(self):
+
+        self.assertEqual(CrfMetadata.objects.get(
+            model='flourish_caregiver.tbstudyeligibility',
+            subject_identifier=self.consent.subject_identifier,
+            visit_code='1000M').entry_status, NOT_REQUIRED)
+
+        mommy.make_recipe('flourish_caregiver.ultrasound',
+                          maternal_visit=self.enrol_visit,
+                          ga_confirmed=22)
+
+        self.assertEqual(CrfMetadata.objects.get(
+            model='flourish_caregiver.tbstudyeligibility',
+            subject_identifier=self.consent.subject_identifier,
+            visit_code='1000M').entry_status, REQUIRED)
