@@ -74,4 +74,7 @@ class BreastFeedingQuestionnaireAdmin(CrfModelAdminMixin,admin.ModelAdmin):
        
     }
     
+    filter_horizontal = ('during_preg_influencers','after_delivery_influencers',
+                         'received_training','infant_feeding_reasons',)
+    
 
