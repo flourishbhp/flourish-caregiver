@@ -55,6 +55,19 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
 
     @property
     def real_time_ga(self):
+        """_summary_
+        399-3 pid
+        
+        ga 26
+        gatd 36.8
+        19-0ct 2021
+        3 jan
+        edd 20 01 22
+    
+        Returns:
+            _type_: _description_
+    
+        """
         try:
 
             ultrasound = UltraSound.objects.get(
@@ -66,14 +79,14 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
                 maternal_delivery = MaternalDelivery.objects.get(
                     subject_identifier=self.subject_identifier)
             except MaternalDelivery.DoesNotExist:
-                today = get_utcnow().date()
-                result = (ultrasound.edd_confirmed - today).days
+                today = get_utcnow()
+                result = ultrasound.ga_confirmed + ((today - ultrasound.report_datetime).days / 7 )
             else:
-                delivery_date = maternal_delivery.delivery_datetime.date()
+                delivery_date = maternal_delivery.delivery_datetime
 
-                result = (ultrasound.edd_confirmed - delivery_date).days
+                result = ultrasound.ga_confirmed + ((delivery_date - ultrasound.report_datetime).days / 7 )
 
-        return round(40 - (result/7), 1)
+        return round(result, 1)
 
     history = HistoricalRecords()
 
