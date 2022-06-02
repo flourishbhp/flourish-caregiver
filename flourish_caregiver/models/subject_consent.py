@@ -17,11 +17,12 @@ from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 from edc_search.model_mixins import SearchSlugManager
 
-from .eligibility import ConsentEligibility
-from .model_mixins import ReviewFieldsMixin, SearchSlugModelMixin
 from ..choices import IDENTITY_TYPE
 from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
 from ..subject_identifier import SubjectIdentifier
+from .eligibility import ConsentEligibility
+from .model_mixins import ReviewFieldsMixin, SearchSlugModelMixin
+
 
 class SubjectConsentManager(SearchSlugManager, models.Manager):
 
@@ -30,12 +31,11 @@ class SubjectConsentManager(SearchSlugManager, models.Manager):
             subject_identifier=subject_identifier, version=version)
 
 
-class SubjectConsent(
-    ConsentModelMixin, SiteModelMixin,
-    UpdatesOrCreatesRegistrationModelMixin,
-    NonUniqueSubjectIdentifierModelMixin, IdentityFieldsMixin,
-    ReviewFieldsMixin, PersonalFieldsMixin, CitizenFieldsMixin,
-    VulnerabilityFieldsMixin, SearchSlugModelMixin, BaseUuidModel):
+class SubjectConsent(ConsentModelMixin, SiteModelMixin,
+                     UpdatesOrCreatesRegistrationModelMixin,
+                     NonUniqueSubjectIdentifierModelMixin, IdentityFieldsMixin,
+                     ReviewFieldsMixin, PersonalFieldsMixin, CitizenFieldsMixin,
+                     VulnerabilityFieldsMixin, SearchSlugModelMixin, BaseUuidModel):
     """ A model completed by the user on the mother's consent. """
 
     subject_screening_model = 'flourish_caregiver.subjectscreening'
@@ -83,7 +83,7 @@ class SubjectConsent(
         max_length=100,
         verbose_name="if other recruitment, specify...",
         blank=True,
-        null=True, )
+        null=True,)
 
     remain_in_study = models.CharField(
         max_length=3,
@@ -313,7 +313,6 @@ class SubjectConsent(
             return None
         else:
             return caregiver_locator
-
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'flourish_caregiver'

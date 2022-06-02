@@ -25,11 +25,17 @@ from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 import pyminizip
 
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from ..helper_classes.cohort import Cohort
 from ..helper_classes.cohort import Cohort
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
 from ..models import ScreeningPriorBhpParticipants
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
+from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
@@ -39,12 +45,6 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from .caregiver_clinician_notes import ClinicianNotesImage
-from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 
 
 class PreFlourishError(Exception):
@@ -669,11 +669,10 @@ def create_registered_infant(instance):
                     try:
                         caregiver_child_consent_obj = caregiver_child_consent_cls.objects.get(
                             subject_identifier__startswith=instance.subject_identifier,
-                            version=maternal_consent.version)
+                            preg_enroll=True)
                     except caregiver_child_consent_cls.DoesNotExist:
                         caregiver_child_consent_cls.objects.create(
                             subject_consent=maternal_consent,
-                            version=maternal_consent.version,
                             child_dob=instance.delivery_datetime.date(),
                             consent_datetime=get_utcnow(),
                             is_eligible=True)
