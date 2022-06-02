@@ -55,18 +55,11 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
 
     @property
     def real_time_ga(self):
-        """_summary_
-        399-3 pid
-        
-        ga 26
-        gatd 36.8
-        19-0ct 2021
-        3 jan
-        edd 20 01 22
-    
+        """
+        Changing, GA in realtime
+
         Returns:
-            _type_: _description_
-    
+            str: returns a message or calculate GA
         """
         try:
 
@@ -76,12 +69,15 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
             result = "Fill The Ultrasound CRF First"
         else:
             try:
+                
                 maternal_delivery = MaternalDelivery.objects.get(
                     subject_identifier=self.subject_identifier)
             except MaternalDelivery.DoesNotExist:
+                # if child is not yet delivered
                 today = get_utcnow()
                 result = ultrasound.ga_confirmed + ((today - ultrasound.report_datetime).days / 7 )
             else:
+                # if child is already delivered stop changing GA
                 delivery_date = maternal_delivery.delivery_datetime
 
                 result = ultrasound.ga_confirmed + ((delivery_date - ultrasound.report_datetime).days / 7 )
