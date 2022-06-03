@@ -721,18 +721,21 @@ FEEDING_HIV_STATUS = (
 HIV_STATUS_AWARE = (
     ('during_preg', 'Later during pregnancy'),
     ('before_delivery', 'At/shortly after delivery'),
-    ('after_delivery', 'After Delivery'))
+    ('after_delivery', 'After Delivery'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 ON_HIV_STATUS_AWARE = (
     (YES, 'Yes'),
     (NO, 'No'),
-    ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'))
+    ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 
 HIV_STATUS_KNOWN_BY = (
     ('no_one', '0 persons in my household'),
     ('one_person', '1 persons in my household'),
-    ('two_or_more', '≥2 persons in my household'))
+    ('two_or_more', '≥2 persons in my household'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 HIV_STATUS_KNOWN_BY_FATHER = (
     (YES, 'Yes'),
@@ -748,7 +751,8 @@ AGREE_DISAGREE = (
     ('disagree', 'Disagree'),
     ('neutral', 'Neither agree or disagree'),
     ('agree', 'Agree'),
-    ('strongly_agree', 'Strongly agree'),)
+    ('strongly_agree', 'Strongly agree'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 BREASTFEEDING_DURATION = (
     ('less_than_six_months', '<6 months'),
@@ -785,4 +789,4 @@ RETURNED_TO_WORK = (
 FEEDING_AFTER_SIX_MONTHS = (
     (YES, 'Yes'),
     (NO, 'No'),
-    ('do_not_remember', 'Unsure /Do not remember'),)
+    ('do_not_remember', 'Unsure/Do not remember'),)
