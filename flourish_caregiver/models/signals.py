@@ -666,17 +666,19 @@ def create_registered_infant(instance):
                         'flourish_caregiver.caregiverchildconsent')
 
                     # Create caregiver child consent
-                    try:
-                        caregiver_child_consent_obj = caregiver_child_consent_cls.objects.get(
-                            subject_identifier__startswith=instance.subject_identifier,
-                            preg_enroll=True)
-                    except caregiver_child_consent_cls.DoesNotExist:
+                    caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
+                        subject_identifier__startswith=instance.subject_identifier,
+                        preg_enroll=True)
+
+                    if not caregiver_child_consent_objs:
                         caregiver_child_consent_cls.objects.create(
                             subject_consent=maternal_consent,
                             child_dob=instance.delivery_datetime.date(),
                             consent_datetime=get_utcnow(),
                             is_eligible=True)
                     else:
+                        caregiver_child_consent_obj = caregiver_child_consent_objs.latest(
+                            'consent_datetime')
                         child_dummy_consent_cls = django_apps.get_model(
                             'flourish_child.childdummysubjectconsent')
                         try:
