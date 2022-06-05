@@ -53,6 +53,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 'confirm_identity',
                 'future_studies_contact',
                 'specimen_consent',
+                'version',
                 'consent_datetime'
             ]}
          ),)
@@ -83,12 +84,19 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         if subject_identifier and screening_identifier:
             preg_women_obj = self.preg_women_cls.objects.filter(
                 screening_identifier=screening_identifier)
-            caregiver_child_consents = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier, version='1')
-            if preg_women_obj and caregiver_child_consents:
-                for caregiver_child_consent in caregiver_child_consents:
 
-                    caregiver_child_consents_dict = caregiver_child_consent.__dict__
+            caregiver_child_consents_pids = self.consent_cls.objects.filter(
+                subject_consent__subject_identifier=subject_identifier).values_list(
+                    'subject_identifier', flat=True).distinct()
+
+            if preg_women_obj and caregiver_child_consents_pids:
+
+                for caregiver_child_consent in caregiver_child_consents_pids:
+
+                    child_consent_obj = self.consent_cls.objects.filter(
+                        subject_identifier=caregiver_child_consent).latest('consent_datetime')
+
+                    caregiver_child_consents_dict = child_consent_obj.__dict__
                     exclude_options = ['consent_datetime', 'id', '_state',
                                        'created', 'modified', 'user_created',
                                        'user_modified']
@@ -121,7 +129,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
         if subject_identifier:
             caregiver_child_consents = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier, version='1')
+                subject_consent__subject_identifier=subject_identifier).values_list(
+                    'subject_identifier', flat=True).distinct()
             if not obj:
                 extra = caregiver_child_consents.count()
 
@@ -298,6 +307,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'identity',
                 'identity_type',
                 'confirm_identity',
+                'version',
                 'consent_datetime']}
 
          ),

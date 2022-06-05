@@ -105,6 +105,12 @@ CONSENT_VERSION = (
     ('2', 'Consent version 2')
     )
 
+CHILD_CONSENT_VERSION = (
+    ('1', 'Consent version 1'),
+    ('2', 'Consent version 2'),
+    ('2.1', 'Consent version 2.1'),
+    )
+
 CONTACT_FAIL_REASON = (
     ('no_response', 'Phone rang, no response but voicemail left'),
     (
@@ -702,3 +708,7 @@ GENDER_OTHER = (
     (FEMALE, _('Female')),
     (OTHER, _('Other')),
     )
+
+HIV_STATUS = (
+    (POS, 'Positive'),
+    (NEG, 'Negative'),)

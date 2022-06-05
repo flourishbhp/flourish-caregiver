@@ -1,7 +1,7 @@
+from django import forms
 from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.utils import timezone
 from django_crypto_fields.fields import FirstnameField, LastnameField
 from django_crypto_fields.fields import IdentityField
 from edc_base.model_mixins import BaseUuidModel
@@ -14,7 +14,7 @@ from edc_constants.choices import GENDER, YES_NO_NA, YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
-from ..choices import CHILD_IDENTITY_TYPE, COHORTS
+from ..choices import CHILD_IDENTITY_TYPE, COHORTS, CHILD_CONSENT_VERSION
 from ..helper_classes.cohort import Cohort
 from ..subject_identifier import InfantIdentifier
 from .eligibility import CaregiverChildConsentEligibility
@@ -133,9 +133,9 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     version = models.CharField(
         verbose_name='Consent version',
-        max_length=10,
-        help_text='See \'Consent Type\' for consent versions by period.',
-        editable=False)
+        max_length=4,
+        choices=CHILD_CONSENT_VERSION,
+        blank=True)
 
     cohort = models.CharField(
         max_length=12,
@@ -169,23 +169,74 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         eligibility_criteria = CaregiverChildConsentEligibility(
             self.child_test, self.child_remain_in_study, self.child_preg_test,
             self.child_knows_status)
-        self.version = self.subject_consent.consent_version
+
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
 
         self.child_age_at_enrollment = (
             self.get_child_age_at_enrollment() if self.child_dob else 0)
+
+        self.prefill_if_prev_child()
+
         if self.is_eligible and not self.subject_identifier:
-            self.subject_identifier = InfantIdentifier(
-                maternal_identifier=self.subject_consent.subject_identifier,
-                birth_order=self.birth_order,
-                live_infants=self.live_infants,
-                registration_status=self.registration_status,
-                registration_datetime=self.consent_datetime,
-                subject_type=INFANT,
-                supplied_infant_suffix=self.subject_identifier_sufix).identifier
+
+            # if self.consent_datetime >=
+            self.version = '2.1'
+
+            if self.preg_enroll:
+                self.duplicate_subject_identifier_preg()
+
+            if not self.subject_identifier:
+                self.subject_identifier = InfantIdentifier(
+                    maternal_identifier=self.subject_consent.subject_identifier,
+                    birth_order=self.birth_order,
+                    live_infants=self.live_infants,
+                    registration_status=self.registration_status,
+                    registration_datetime=self.consent_datetime,
+                    subject_type=INFANT,
+                    supplied_infant_suffix=self.subject_identifier_sufix).identifier
 
         super().save(*args, **kwargs)
+
+    def duplicate_subject_identifier_preg(self):
+        try:
+            child_consent = self._meta.model.objects.get(
+                preg_enroll=True,
+                subject_identifier__startswith=self.subject_consent.subject_identifier)
+        except self._meta.model.DoesNotExist:
+            pass
+        else:
+            self.subject_identifier = child_consent.subject_identifier
+
+    @property
+    def child_consent_version(self):
+
+        consent_version_cls = django_apps.get_model(
+            'flourish_caregiver.flourishconsentversion')
+        try:
+            consent_version_obj = consent_version_cls.objects.get(
+                screening_identifier=self.subject_consent.screening_identifier)
+        except consent_version_cls.DoesNotExist:
+            pass
+        else:
+            return consent_version_obj.child_version
+
+    def prefill_if_prev_child(self):
+        child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+        prev_id = self.study_child_identifier
+        child_dob = self.child_dob
+
+        if prev_id and not child_dob:
+            try:
+                child_dataset = child_dataset_cls.objects.get(
+                    study_child_identifier=prev_id,)
+            except child_dataset_cls.DoesNotExist:
+                message = {'study_child_identifier': 'No child dataset exists for the '
+                           'specified child identifier,'}
+                raise forms.ValidationError(message)
+            else:
+                self.child_dob = child_dataset.dob
+                self.gender = child_dataset.infant_sex[0].upper()
 
     @property
     def is_preg(self):
