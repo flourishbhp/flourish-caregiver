@@ -14,7 +14,8 @@ from edc_consent.actions import (
     flag_as_verified_against_paper, unflag_as_verified_against_paper)
 from edc_constants.constants import MALE, FEMALE
 from edc_model_admin import ModelAdminBasicMixin
-from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, audit_fields
+from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, \
+    audit_fields
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
 import xlwt
@@ -22,7 +23,7 @@ import xlwt
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..helper_classes import MaternalStatusHelper
-from ..models import CaregiverChildConsent, SubjectConsent
+from ..models import CaregiverChildConsent, SubjectConsent, AntenatalEnrollment
 from ..models import ScreeningPregWomen
 from .modeladmin_mixins import ModelAdminMixin
 
@@ -282,9 +283,16 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
     def _redirector(self, obj):
         caregiver_locator = ScreeningPregWomen.objects.filter(
             screening_identifier=obj.screening_identifier)
-        if caregiver_locator:
+        antenatal_enrol = AntenatalEnrollment.objects.filter(
+            subject_identifier=obj.subject_identifier
+        )
+        kwargs = {'subject_identifier': obj.subject_identifier}
+        if not (caregiver_locator and antenatal_enrol):
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'maternal_screening_listboard_url'))
+        else:
+            return redirect(settings.DASHBOARD_URL_NAMES.get(
+                'subject_dashboard_url'), **kwargs)
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
@@ -361,7 +369,8 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                                   'subject_type', 'consent_reviewed',
                                   'study_questions', 'assessment_score',
                                   'consent_signature', 'consent_copy',
-                                  'first_name', 'last_name', 'identity', 'confirm_identity')
+                                  'first_name', 'last_name', 'identity',
+                                  'confirm_identity')
 
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
