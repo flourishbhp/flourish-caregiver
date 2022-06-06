@@ -24,8 +24,7 @@ class TestRuleGroups(TestCase):
 
         self.options = {
             'consent_datetime': get_utcnow(),
-            'breastfeed_intent': YES,
-            'version': '1'}
+            'breastfeed_intent': YES,}
 
         self.screening_preg = mommy.make_recipe(
             'flourish_caregiver.screeningpregwomen')
@@ -34,7 +33,7 @@ class TestRuleGroups(TestCase):
             'flourish_caregiver.subjectconsent',
             screening_identifier=self.screening_preg.screening_identifier,
             **self.options)
-
+        
         mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=self.subject_consent,
@@ -47,6 +46,8 @@ class TestRuleGroups(TestCase):
             subject_identifier=self.subject_consent.subject_identifier)
 
         self.subject_identifier = self.subject_consent.subject_identifier
+        
+        
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -502,7 +503,7 @@ class TestRuleGroups(TestCase):
                 model='flourish_caregiver.hivdisclosurestatusc',
                 subject_identifier=subject_identifier,
                 visit_code='2000M').entry_status, NOT_REQUIRED)
-
+    @tag('rttx')
     def test_hiv_rapid_test_required(self):
 
         self.maternal_dataset_options = {
@@ -639,3 +640,11 @@ class TestRuleGroups(TestCase):
                 model='flourish_caregiver.hivrapidtestcounseling',
                 subject_identifier=subject_identifier,
                 visit_code='2002M').entry_status, NOT_REQUIRED)
+
+    @tag('bf')
+    def test_b_freeding_required(self):
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.breastfeedingquestionnaire',
+                subject_identifier=self.subject_identifier,
+                visit_code='2002M').entry_status, REQUIRED)
