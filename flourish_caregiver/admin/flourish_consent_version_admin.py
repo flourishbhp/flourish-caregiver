@@ -1,5 +1,6 @@
 from django.apps import apps as django_apps
 from django.contrib import admin
+from edc_base.utils import get_utcnow
 from edc_fieldsets import FieldsetsModelAdminMixin
 from edc_fieldsets.fieldlist import Insert
 from edc_model_admin import audit_fieldset_tuple
@@ -34,6 +35,20 @@ class FlourishConsentVersionAdmin(ModelAdminMixin,
                     'version',)
 
     conditional_fieldlists = {'is_preg': Insert('child_version', after='version')}
+
+    def is_delivery_window(self, subject_identifier):
+
+        maternal_delivery_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldelivery')
+
+        try:
+            maternal_delivery_obj = maternal_delivery_cls.objects.get(
+                subject_identifier=subject_identifier)
+        except maternal_delivery_cls.DoesNotExist:
+            return True
+        else:
+            return ((get_utcnow().date() - maternal_delivery_obj.delivery_datetime.date()).days
+                    <= 3)
 
     def check_if_preg_enroll(self, request, obj=None):
 
@@ -72,6 +87,8 @@ class FlourishConsentVersionAdmin(ModelAdminMixin,
                     subject_identifier=latest_subject_consent.subject_identifier)
             except maternal_delivery_cls.DoesNotExist:
                 return True
+            else:
+                return self.is_delivery_window(latest_subject_consent.subject_identifier)
 
         return False
 

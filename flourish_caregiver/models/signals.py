@@ -25,11 +25,17 @@ from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 import pyminizip
 
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from ..helper_classes.cohort import Cohort
 from ..helper_classes.cohort import Cohort
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
 from ..models import ScreeningPriorBhpParticipants
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
+from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
@@ -39,12 +45,6 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from .caregiver_clinician_notes import ClinicianNotesImage
-from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 
 
 class PreFlourishError(Exception):
@@ -666,18 +666,19 @@ def create_registered_infant(instance):
                         'flourish_caregiver.caregiverchildconsent')
 
                     # Create caregiver child consent
-                    try:
-                        caregiver_child_consent_obj = caregiver_child_consent_cls.objects.get(
-                            subject_identifier__startswith=instance.subject_identifier,
-                            version=maternal_consent.version)
-                    except caregiver_child_consent_cls.DoesNotExist:
+                    caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
+                        subject_identifier__startswith=instance.subject_identifier,
+                        preg_enroll=True)
+
+                    if not caregiver_child_consent_objs:
                         caregiver_child_consent_cls.objects.create(
                             subject_consent=maternal_consent,
-                            version=maternal_consent.version,
                             child_dob=instance.delivery_datetime.date(),
                             consent_datetime=get_utcnow(),
                             is_eligible=True)
                     else:
+                        caregiver_child_consent_obj = caregiver_child_consent_objs.latest(
+                            'consent_datetime')
                         child_dummy_consent_cls = django_apps.get_model(
                             'flourish_child.childdummysubjectconsent')
                         try:
@@ -738,7 +739,7 @@ def screening_preg_women(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=2.1)
+            create_consent_version(instance, version=2)
 
 
 @receiver(post_save, weak=False, sender=ScreeningPriorBhpParticipants,
@@ -750,7 +751,7 @@ def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=2.1)
+            create_consent_version(instance, version=2)
 
 
 def create_consent_version(instance, version):
@@ -764,6 +765,7 @@ def create_consent_version(instance, version):
         consent_version = consent_version_cls(
             screening_identifier=instance.screening_identifier,
             version=version,
+            child_version=2.1,
             user_created=instance.user_modified or instance.user_created,
             created=get_utcnow())
         consent_version.save()

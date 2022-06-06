@@ -187,7 +187,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             if self.preg_enroll:
                 self.duplicate_subject_identifier_preg()
 
-            else:
+            if not self.subject_identifier:
                 self.subject_identifier = InfantIdentifier(
                     maternal_identifier=self.subject_consent.subject_identifier,
                     birth_order=self.birth_order,
