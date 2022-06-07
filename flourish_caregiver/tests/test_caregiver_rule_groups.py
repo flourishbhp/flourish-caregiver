@@ -664,7 +664,7 @@ class TestRuleGroups(TestCase):
             appointment=Appointment.objects.get(visit_code='2002M'),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
-    
+        
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.breastfeedingquestionnaire',
