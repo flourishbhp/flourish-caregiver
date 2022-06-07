@@ -6,8 +6,9 @@ import pytz
 
 from edc_appointment.form_validators import AppointmentFormValidator
 from edc_appointment.models import Appointment
-from flourish_caregiver.models.caregiver_child_consent import CaregiverChildConsent
 from flourish_child.models import ChildAssent
+
+from ..models import CaregiverChildConsent, SubjectConsent
 
 
 class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormValidator,
@@ -48,6 +49,9 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
 
         child_assents_exists = []
 
+        maternal_consent = SubjectConsent.objects.filter(
+            subject_identifier=subject_identifier).latest('consent_datetime')
+
         child_consents = CaregiverChildConsent.objects.filter(
             subject_consent__subject_identifier=subject_identifier,
             is_eligible=True, child_age_at_enrollment__gte=7)
@@ -57,7 +61,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             for child_consent in child_consents:
                 exists = ChildAssent.objects.filter(
                     subject_identifier=child_consent.subject_identifier,
-                    version=child_consent.version).exists()
+                    version=maternal_consent.version).exists()
                 child_assents_exists.append(exists)
 
             child_assents_exists = all(child_assents_exists)

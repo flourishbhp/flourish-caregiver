@@ -711,7 +711,8 @@ GENDER_OTHER = (
 
 HIV_STATUS = (
     (POS, 'Positive'),
-    (NEG, 'Negative'),)
+    (NEG, 'Negative'),
+    (UNKNOWN, 'Unknown'),)
 
 FEEDING_HIV_STATUS = (
     (YES, 'Yes'),
@@ -790,3 +791,4 @@ FEEDING_AFTER_SIX_MONTHS = (
     (YES, 'Yes'),
     (NO, 'No'),
     ('do_not_remember', 'Unsure/Do not remember'),)
+
