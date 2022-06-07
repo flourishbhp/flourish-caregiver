@@ -3,7 +3,7 @@ from .model_mixins import CrfModelMixin
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO,UNKNOWN
 from ..choices import HIV_STATUS
 from edc_base.model_fields import OtherCharField
 from .list_models import CaregiverSocialWorkReferralList
@@ -24,14 +24,12 @@ class CaregiverSocialWorkReferral(CrfModelMixin):
         verbose_name='Current HIV status?',
         choices=HIV_STATUS,
         max_length=14,
-        null=True,
-        blank=True,)
+        default=UNKNOWN)
     
     referral_reason = models.ManyToManyField(
         CaregiverSocialWorkReferralList,
         verbose_name='Please indicate reasons for the need for a social work '
         'referral for the Mother/Caregiver (select all that apply)',
-        blank=True,
     )
 
     reason_other = OtherCharField(
