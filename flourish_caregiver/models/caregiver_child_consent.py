@@ -169,7 +169,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         eligibility_criteria = CaregiverChildConsentEligibility(
             self.child_test, self.child_remain_in_study, self.child_preg_test,
             self.child_knows_status)
-        
 
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
@@ -200,7 +199,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         super().save(*args, **kwargs)
 
     def duplicate_subject_identifier_preg(self):
-
+        # import pdb; pdb.set_trace()
         try:
             child_consent = self._meta.model.objects.get(
                 preg_enroll=True,
