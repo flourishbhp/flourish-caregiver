@@ -178,6 +178,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         self.prefill_if_prev_child()
 
+        self.set_defaults()
+
         if self.is_eligible and not self.subject_identifier:
 
             # if self.consent_datetime >=
@@ -197,6 +199,28 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                     supplied_infant_suffix=self.subject_identifier_sufix).identifier
 
         super().save(*args, **kwargs)
+
+    def set_defaults(self):
+
+        if (not self.preg_enroll and self.study_child_identifier):
+
+            child_dataset = self.get_child_dataset(self.study_child_identifier)
+
+            self.child_dob = child_dataset.dob
+            self.gender = self.get_child_dataset(
+                self.study_child_identifier).infant_sex.upper()[0]
+
+    def get_child_dataset(self, study_child_identifier):
+        child_dataset_cls = django_apps.get_model(
+            'flourish_child.childdataset')
+
+        try:
+            child_dataset_obj = child_dataset_cls.objects.get(
+                study_child_identifier=study_child_identifier)
+        except child_dataset_cls.DoesNotExist:
+            pass
+        else:
+            return child_dataset_obj
 
     def duplicate_subject_identifier_preg(self):
         # import pdb; pdb.set_trace()
@@ -242,9 +266,10 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     @property
     def is_preg(self):
 
-        if self.child_dob and self.child_dob > self.consent_datetime.date():
-            return True
-        return self.child_dob is None
+        if not self.study_child_identifier:
+            return (self.child_dob and self.child_dob > self.consent_datetime.date()
+                    or self.child_dob is None)
+        return False
 
     @property
     def live_infants(self):
