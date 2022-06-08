@@ -713,3 +713,82 @@ HIV_STATUS = (
     (POS, 'Positive'),
     (NEG, 'Negative'),
     (UNKNOWN, 'Unknown'),)
+
+FEEDING_HIV_STATUS = (
+    (YES, 'Yes'),
+    (NO, 'No'),
+    ('rather_not_answer', 'Rather not answer'))
+
+HIV_STATUS_AWARE = (
+    ('during_preg', 'Later during pregnancy'),
+    ('before_delivery', 'At/shortly after delivery'),
+    ('after_delivery', 'After Delivery'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
+
+ON_HIV_STATUS_AWARE = (
+    (YES, 'Yes'),
+    (NO, 'No'),
+    ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
+
+
+HIV_STATUS_KNOWN_BY = (
+    ('no_one', '0 persons in my household'),
+    ('one_person', '1 persons in my household'),
+    ('two_or_more', '≥2 persons in my household'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
+
+HIV_STATUS_KNOWN_BY_FATHER = (
+    (YES, 'Yes'),
+    (NO, 'No'),)
+
+ADVICED = (
+    (YES, 'Yes'),
+    (NO, 'No'),
+    ('do_not_remember', 'Do not remember'),)
+
+AGREE_DISAGREE = (
+    ('strongly_disagree', 'Strongly disagree'),
+    ('disagree', 'Disagree'),
+    ('neutral', 'Neither agree or disagree'),
+    ('agree', 'Agree'),
+    ('strongly_agree', 'Strongly agree'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
+
+BREASTFEEDING_DURATION = (
+    ('less_than_six_months', '<6 months'),
+    ('six_months', '6 months'),
+    ('six_to_twelve_months', '6-12 months'),
+    ('twelve_months', '12 months'),
+    ('greater_than_twelve_months', '>12 months'),
+    ('do_not_know', "I don’t know"),)
+
+FEEDING_ADVICE = (
+    ('Formula_feeding', 'Formula feeding'),
+    (BREASTFEED_ONLY, 'Breast feed'),
+    ('mixed_feeding', 'Mixed formula and breast feed'),
+    (NOT_APPLICABLE, 'Not applicable'),)
+
+AFTER_BIRTH_OPINION = (
+    ('continued_breastfeeding','Wanted to continue breastfeeding and was able to do so'),
+    ('unable_to_breastfeed','Wanted to continue breastfeeding but was unable to do so'),
+    ('did_not_want_to_breastfeed','No longer wanted to breastfeed'),
+    ('told_not_to_breastfeed_before','Was told not to breastfeed before/at delivery'),
+    ('did_not_want_to_breastfeed_before','Did not want to breastfeed even before this baby was born '),
+    (NONE,'None of the above'),)
+
+FEEDING_INFLUENCE =(
+    (YES, 'Yes'),
+    (NO, 'No'),)
+
+RETURNED_TO_WORK = (
+    ('less_than_one_month_after_delivery', '<1 month after delivery'),
+    ('one_to_three_months_after_delivery', '1-3 months after delivery'),
+    ('four_months_or_greater', '≥4 months after delivery'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
+
+FEEDING_AFTER_SIX_MONTHS = (
+    (YES, 'Yes'),
+    (NO, 'No'),
+    ('do_not_remember', 'Unsure/Do not remember'),)
+

@@ -639,3 +639,34 @@ class TestRuleGroups(TestCase):
                 model='flourish_caregiver.hivrapidtestcounseling',
                 subject_identifier=subject_identifier,
                 visit_code='2002M').entry_status, NOT_REQUIRED)
+    @tag('bf')
+    def test_b_freeding_required(self):
+        
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.subject_consent.subject_identifier,
+            live_infants_to_register=1)
+        
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2001M'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2002M'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.breastfeedingquestionnaire',
+                subject_identifier=self.subject_identifier,
+                visit_code='2002M').entry_status, REQUIRED)

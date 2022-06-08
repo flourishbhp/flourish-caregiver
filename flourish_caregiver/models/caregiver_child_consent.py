@@ -199,6 +199,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         super().save(*args, **kwargs)
 
     def duplicate_subject_identifier_preg(self):
+        # import pdb; pdb.set_trace()
         try:
             child_consent = self._meta.model.objects.get(
                 preg_enroll=True,
