@@ -88,8 +88,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 screening_identifier=screening_identifier)
 
             caregiver_child_consents_pids = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier).values_list(
-                    'subject_identifier', flat=True).distinct()
+                subject_consent__subject_identifier=subject_identifier).order_by(
+                    'consent_datetime').values_list('subject_identifier', flat=True).distinct()
 
             if preg_women_obj and caregiver_child_consents_pids:
 

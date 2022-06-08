@@ -85,6 +85,27 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             visit_code='1000M')
 
+    # @tag('aa')
+    # def test_antenatal_enroll_prev_valid(self):
+        # """Assert that a pregnant woman already enrolled for antenatal can enroll
+        # with a child from previous study.
+        # """
+        # screening_preg = mommy.make_recipe(
+            # 'flourish_caregiver.screeningpregwomen',)
+            #
+        # subject_consent = mommy.make_recipe(
+            # 'flourish_caregiver.subjectconsent',
+            # screening_identifier=screening_preg.screening_identifier,
+            # subject_identifier=self.subject_identifier,
+            # breastfeed_intent=YES,
+            # **self.options)
+            #
+        # mommy.make_recipe(
+            # 'flourish_caregiver.antenatalenrollment',
+            # subject_identifier=subject_consent.subject_identifier,)
+            #
+            #
+
     @tag('ax1')
     def test_cohort_a_onschedule_antenatal_and_onsec_valid(self):
         """Assert that a pregnant woman with a toddler is put on 2 seperate cohort a schedules
@@ -99,6 +120,14 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=self.subject_identifier,
             breastfeed_intent=YES,
             **self.options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            study_child_identifier=None,
+            child_dob=None,
+            first_name=None,
+            last_name=None)
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
@@ -122,8 +151,7 @@ class TestVisitScheduleSetupA(TestCase):
         ccc2 = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
-            study_child_identifier=self.child_dataset_options['study_child_identifier'],
-            child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
+            study_child_identifier=self.child_dataset_options['study_child_identifier'])
 
         mommy.make_recipe(
                 'flourish_caregiver.caregiverpreviouslyenrolled',
@@ -148,6 +176,8 @@ class TestVisitScheduleSetupA(TestCase):
         self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 1)
+
+        # import pdb; pdb.set_trace()
 
         self.assertEqual(ccc2.caregiver_visit_count, 2)
 

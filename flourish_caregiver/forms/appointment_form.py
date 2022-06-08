@@ -49,8 +49,11 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
 
         child_assents_exists = []
 
-        maternal_consent = SubjectConsent.objects.filter(
-            subject_identifier=subject_identifier).latest('consent_datetime')
+        maternal_consents = SubjectConsent.objects.filter(
+            subject_identifier=subject_identifier)
+
+        if maternal_consents:
+            maternal_consent = maternal_consents.latest('consent_datetime')
 
         child_consents = CaregiverChildConsent.objects.filter(
             subject_consent__subject_identifier=subject_identifier,
