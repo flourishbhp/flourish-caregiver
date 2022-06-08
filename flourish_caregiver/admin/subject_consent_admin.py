@@ -23,7 +23,8 @@ import xlwt
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..helper_classes import MaternalStatusHelper
-from ..models import CaregiverChildConsent, SubjectConsent, AntenatalEnrollment
+from ..models import CaregiverChildConsent, SubjectConsent, AntenatalEnrollment, \
+    CaregiverLocator
 from ..models import ScreeningPregWomen
 from .modeladmin_mixins import ModelAdminMixin
 
@@ -281,18 +282,15 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
             SubjectConsentAdmin, self).response_change(request, obj)
 
     def _redirector(self, obj):
-        caregiver_locator = ScreeningPregWomen.objects.filter(
+        caregiver_locator = CaregiverLocator.objects.filter(
             screening_identifier=obj.screening_identifier)
-        antenatal_enrol = AntenatalEnrollment.objects.filter(
-            subject_identifier=obj.subject_identifier
-        )
         kwargs = {'subject_identifier': obj.subject_identifier}
-        if not (caregiver_locator and antenatal_enrol):
-            return redirect(settings.DASHBOARD_URL_NAMES.get(
-                'maternal_screening_listboard_url'))
-        else:
+        if caregiver_locator.count() > 0:
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'subject_dashboard_url'), **kwargs)
+        else:
+            return redirect(settings.DASHBOARD_URL_NAMES.get(
+                'maternal_screening_listboard_url'))
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
