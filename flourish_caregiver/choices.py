@@ -711,4 +711,5 @@ GENDER_OTHER = (
 
 HIV_STATUS = (
     (POS, 'Positive'),
-    (NEG, 'Negative'),)
+    (NEG, 'Negative'),
+    (UNKNOWN, 'Unknown'),)
