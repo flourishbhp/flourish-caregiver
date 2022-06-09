@@ -1,11 +1,11 @@
-import pytz
 from django import forms
 from django.core.exceptions import ValidationError
-from edc_appointment.form_validators import AppointmentFormValidator
-from edc_appointment.models import Appointment
 from edc_base.sites.forms import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
+import pytz
 
+from edc_appointment.form_validators import AppointmentFormValidator
+from edc_appointment.models import Appointment
 from flourish_caregiver.models.caregiver_child_consent import CaregiverChildConsent
 from flourish_child.models import ChildAssent
 
@@ -34,7 +34,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                                 visit_definition.rupper).astimezone(
                 pytz.timezone('Africa/Gaborone'))
 
-            if (cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
+            if (cleaned_data.get('visit_code_sequence') == 0
+                    and cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
                     microsecond=0)
                     or (self.instance.visit_code not in ['1000M', '2000M']
                         and cleaned_data.get('appt_datetime') > latest_appt_date.replace(
@@ -70,7 +71,6 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
         validation functions.
         """
         pass
-
 
     class Meta:
         model = Appointment
