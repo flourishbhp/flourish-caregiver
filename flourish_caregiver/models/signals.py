@@ -59,32 +59,51 @@ class SubjectConsentError(Exception):
     pass
 
 
+def update_maternal_dataset_and_worklist(screening_identifier=None,
+                                         study_child_identifier=None):
+
+    if study_child_identifier:
+        child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+        try:
+            child_dataset_obj = child_dataset_cls.objects.get(
+                study_child_identifier=study_child_identifier)
+        except child_dataset_cls.DoesNotExist:
+            pass
+        else:
+            study_maternal_identifier = child_dataset_obj.study_maternal_identifier
+
+    if screening_identifier or study_maternal_identifier:
+        maternal_dataset_q = MaternalDataset.objects.filter(
+            Q(screening_identifier=screening_identifier) |
+            Q(study_maternal_identifier=study_maternal_identifier))
+
+        if maternal_dataset_q:
+            worklist_cls = django_apps.get_model('flourish_follow.worklist')
+            maternal_dataset = maternal_dataset_q[0]
+
+            study_maternal_identifier = maternal_dataset.study_maternal_identifier
+            try:
+                worklist = worklist_cls.objects.get(
+                    study_maternal_identifier=study_maternal_identifier)
+            except worklist_cls.DoesNotExist:
+                pass
+            else:
+                worklist.consented = True
+                worklist.assigned = None
+                worklist.date_assigned = None
+                worklist.save()
+
+
 @receiver(post_save, weak=False, sender=SubjectConsent,
           dispatch_uid='subject_consent_on_post_save')
 def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Create locator log entry
     """
-    worklist_cls = django_apps.get_model('flourish_follow.worklist')
     if not raw:
         if created:
-            try:
-                maternal_dataset = MaternalDataset.objects.get(
-                    screening_identifier=instance.screening_identifier)
-            except MaternalDataset.DoesNotExist:
-                pass
-            else:
-                study_maternal_identifier = maternal_dataset.study_maternal_identifier
-                try:
-                    worklist = worklist_cls.objects.get(
-                        study_maternal_identifier=study_maternal_identifier)
-                except worklist_cls.DoesNotExist:
-                    pass
-                else:
-                    worklist.consented = True
-                    worklist.assigned = None
-                    worklist.date_assigned = None
-                    worklist.save()
+            update_maternal_dataset_and_worklist(
+                screening_identifier=instance.screening_identifier)
 
             """
             - Update subject identifier on the screening obj when created
@@ -368,6 +387,10 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         if not child_dummy_consent.cohort:
                             child_dummy_consent.cohort = instance.cohort
                         child_dummy_consent.save()
+        if instance.study_child_identifier:
+
+            update_maternal_dataset_and_worklist(
+                study_child_identifier=instance.study_child_identifier)
 
 
 @receiver(post_save, weak=False, sender=ClinicianNotesImage,
