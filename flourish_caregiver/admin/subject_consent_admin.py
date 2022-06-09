@@ -14,7 +14,8 @@ from edc_consent.actions import (
     flag_as_verified_against_paper, unflag_as_verified_against_paper)
 from edc_constants.constants import MALE, FEMALE
 from edc_model_admin import ModelAdminBasicMixin
-from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, audit_fields
+from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, \
+    audit_fields
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
 import xlwt
@@ -22,7 +23,8 @@ import xlwt
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..helper_classes import MaternalStatusHelper
-from ..models import CaregiverChildConsent, SubjectConsent
+from ..models import CaregiverChildConsent, SubjectConsent, AntenatalEnrollment, \
+    CaregiverLocator
 from ..models import ScreeningPregWomen
 from .modeladmin_mixins import ModelAdminMixin
 
@@ -86,8 +88,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 screening_identifier=screening_identifier)
 
             caregiver_child_consents_pids = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier).values_list(
-                    'subject_identifier', flat=True).distinct()
+                subject_consent__subject_identifier=subject_identifier).order_by(
+                    'consent_datetime').values_list('subject_identifier', flat=True).distinct()
 
             if preg_women_obj and caregiver_child_consents_pids:
 
@@ -280,9 +282,13 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
             SubjectConsentAdmin, self).response_change(request, obj)
 
     def _redirector(self, obj):
-        caregiver_locator = ScreeningPregWomen.objects.filter(
+        caregiver_locator = CaregiverLocator.objects.filter(
             screening_identifier=obj.screening_identifier)
-        if caregiver_locator:
+        kwargs = {'subject_identifier': obj.subject_identifier}
+        if caregiver_locator.count() > 0:
+            return redirect(settings.DASHBOARD_URL_NAMES.get(
+                'subject_dashboard_url'), **kwargs)
+        else:
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'maternal_screening_listboard_url'))
 
@@ -361,7 +367,8 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                                   'subject_type', 'consent_reviewed',
                                   'study_questions', 'assessment_score',
                                   'consent_signature', 'consent_copy',
-                                  'first_name', 'last_name', 'identity', 'confirm_identity')
+                                  'first_name', 'last_name', 'identity',
+                                  'confirm_identity')
 
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
