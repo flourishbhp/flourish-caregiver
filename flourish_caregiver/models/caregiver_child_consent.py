@@ -206,9 +206,9 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
             child_dataset = self.get_child_dataset(self.study_child_identifier)
 
-            self.child_dob = child_dataset.dob
-            self.gender = self.get_child_dataset(
-                self.study_child_identifier).infant_sex.upper()[0]
+            if child_dataset:
+                self.child_dob = child_dataset.dob
+                self.gender = child_dataset.infant_sex.upper()[0]
 
     def get_child_dataset(self, study_child_identifier):
         child_dataset_cls = django_apps.get_model(
