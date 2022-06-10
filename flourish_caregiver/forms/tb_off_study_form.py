@@ -11,7 +11,7 @@ class TbOffStudyForm(FormValidatorMixin, forms.ModelForm):
     form_validator_cls = OffstudyFormValidator
 
     def clean(self):
-        super(TbOffStudyForm, self).clean()
+        super().clean()
         self.validate_required_forms()
 
     def validate_required_forms(self):
