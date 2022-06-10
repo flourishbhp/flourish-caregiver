@@ -104,7 +104,7 @@ class TestVisitScheduleTb(TestCase):
             schedule_name='tb_2_months_schedule').count(), 1)
 
     @tag('tb_off')
-    def test_tb_offstudy_required(self):
+    def test_tb_referral_required(self):
         """
         Test if the off study crf succesfully removes an individul from the Tb schedule
         """
@@ -150,24 +150,18 @@ class TestVisitScheduleTb(TestCase):
             reason=SCHEDULED)
 
         self.assertEqual(CrfMetadata.objects.get(
-            model='flourish_caregiver.tboffstudy',
+            model='flourish_caregiver.tbreferral',
             subject_identifier=self.consent.subject_identifier,
             visit_code='2100T').entry_status, NOT_REQUIRED)
 
         mommy.make_recipe('flourish_caregiver.tbvisitscreeningwomen',
-                          have_cough=NO,
+                          have_cough=YES,
                           maternal_visit=tb_visit)
 
         self.assertEqual(CrfMetadata.objects.get(
-            model='flourish_caregiver.tboffstudy',
+            model='flourish_caregiver.tbreferral',
             subject_identifier=self.consent.subject_identifier,
             visit_code='2100T').entry_status, REQUIRED)
-
-        mommy.make_recipe('flourish_caregiver.tboffstudy', maternal_visit=tb_visit)
-
-        self.assertEqual(CaregiverOffSchedule.objects.filter(
-            subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_2_months_schedule', ).count(), 1)
 
     def test_tb_screening_form(self):
 

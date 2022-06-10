@@ -2,17 +2,18 @@ from django.db import models
 from edc_base import get_utcnow
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
+from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future, date_not_future
+from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start, \
     date_not_before_study_start
 from edc_visit_schedule.model_mixins import OffScheduleModelMixin
 
-from flourish_caregiver.models.model_mixins import CrfModelMixin
 from flourish_prn.choices import CAREGIVER_OFF_STUDY_REASON, OFFSTUDY_POINT
 from . import CaregiverOffSchedule
 
 
-class TbOffStudy(CrfModelMixin, OffScheduleModelMixin):
+class TbOffStudy(OffScheduleModelMixin, BaseUuidModel):
     report_datetime = models.DateTimeField(
         verbose_name="Report Date",
         validators=[
@@ -53,7 +54,7 @@ class TbOffStudy(CrfModelMixin, OffScheduleModelMixin):
 
     def take_off_schedule(self):
         off_schedule_obj = CaregiverOffSchedule.objects.create(
-            subject_identifier=self.maternal_visit.subject_identifier,
+            subject_identifier=self.subject_identifier,
             offschedule_datetime=self.report_datetime,
             schedule_name='tb_2_months_schedule')
         off_schedule_obj.save()

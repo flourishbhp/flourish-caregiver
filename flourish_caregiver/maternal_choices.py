@@ -509,6 +509,23 @@ REASONS_FOR_RESCHEDULING = (
      'Participant changed mind and asked for a re-appointments or want to withdraw / be-withdraw from participating on study '),
     ('caregiver_not_well', 'Child, mother, caregiver not well'),
     ('undisclosed_personal_reasons', 'Participant has undisclosed personal reasons'),
-    ('another_appointment', 'Participant has another appointment at local clinic/hospital scheduled on the same day'),
+    ('another_appointment',
+     'Participant has another appointment at local clinic/hospital scheduled on the same day'),
 
+)
+
+GC_DHMT_CLINICS = (
+    ('bontleng', 'Bontleng'),
+    ('julia_molefe', 'Julia Molefe'),
+    ('phase_2', 'Phase 2'),
+    ('bh2', 'BH1'),
+    ('bh2', 'BH2'),
+    ('bh2', 'BH3'),
+    ('nkoyaphiri', 'Nkoyaphiri'),
+    ('mogoditshane', 'Mogoditshane'),
+    ('lesirane', 'Lesirane'),
+    ('old_naledi', 'Old Naledi'),
+    ('g_west', 'G-West'),
+    ('sebele', 'Sebele'),
+    (OTHER, 'Other, specify')
 )

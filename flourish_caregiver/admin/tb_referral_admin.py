@@ -19,7 +19,11 @@ class TbReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'referral_question',
                 'referred_to',
                 'referred_to_other',
+                'referral_clinic',
+                'referral_clinic_other',
             ]}
          ), audit_fieldset_tuple)
 
-    radio_fields = {'referral_question': admin.VERTICAL, 'referred_to': admin.VERTICAL, }
+    radio_fields = {'referral_question': admin.VERTICAL,
+                    'referred_to': admin.VERTICAL,
+                    'referral_clinic': admin.VERTICAL, }
