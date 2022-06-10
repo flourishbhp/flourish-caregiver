@@ -8,7 +8,7 @@ from ..models import TbOffStudy
 
 
 @admin.register(TbOffStudy, site=flourish_caregiver_admin)
-class TbOffStudyAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+class TbOffStudyAdmin(admin.ModelAdmin):
     form = TbOffStudyForm
 
     search_fields = ('subject_identifier',)
@@ -16,7 +16,7 @@ class TbOffStudyAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': [
-                'maternal_visit',
+                'subject_identifier',
                 'report_datetime',
                 'offstudy_date',
                 'reason',

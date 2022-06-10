@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.core.exceptions import ObjectDoesNotExist
 from edc_model_admin import audit_fieldset_tuple
 
 from ..admin_site import flourish_caregiver_admin
@@ -35,9 +36,16 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     conditional_fieldlists = {
         'a_birth1_schedule1': Remove('height'),
+        'tb_2_months_schedule': Remove('height', 'is_preg', 'waist_circ'),
+
     }
 
     def get_key(self, request, obj=None):
-        return super().get_key(request, obj)
-
-
+        super().get_key(request, obj)
+        try:
+            model_obj = self.get_instance(request)
+        except ObjectDoesNotExist:
+            schedule_name = None
+        else:
+            schedule_name = model_obj.schedule_name
+        return schedule_name
