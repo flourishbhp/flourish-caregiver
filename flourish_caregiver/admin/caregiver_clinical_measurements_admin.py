@@ -36,7 +36,7 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     conditional_fieldlists = {
         'a_birth1_schedule1': Remove('height'),
-        'tb_2_months_schedule': Remove('height', 'is_preg', 'waist_circ'),
+        'tb_2_months_schedule': Remove('height', 'is_preg', 'waist_circ', 'hip_circ'),
 
     }
 
