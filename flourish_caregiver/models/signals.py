@@ -59,8 +59,11 @@ class SubjectConsentError(Exception):
     pass
 
 
-def update_maternal_dataset_and_worklist(screening_identifier=None,
-                                         study_child_identifier=None):
+def update_maternal_dataset_and_worklist(subject_identifier,
+                                         screening_identifier=None,
+                                         study_child_identifier=None,):
+
+    study_maternal_identifier = None
 
     if study_child_identifier:
         child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
@@ -81,6 +84,10 @@ def update_maternal_dataset_and_worklist(screening_identifier=None,
             worklist_cls = django_apps.get_model('flourish_follow.worklist')
             maternal_dataset = maternal_dataset_q[0]
 
+            if not maternal_dataset.subject_identifier:
+                maternal_dataset.subject_identifier = subject_identifier
+                maternal_dataset.save()
+
             study_maternal_identifier = maternal_dataset.study_maternal_identifier
             try:
                 worklist = worklist_cls.objects.get(
@@ -93,6 +100,15 @@ def update_maternal_dataset_and_worklist(screening_identifier=None,
                 worklist.date_assigned = None
                 worklist.save()
 
+            try:
+                screening_obj = ScreeningPriorBhpParticipants.objects.get(
+                    study_maternal_identifier=study_maternal_identifier)
+            except ScreeningPriorBhpParticipants.DoesNotExist:
+                pass
+            else:
+                screening_obj.subject_identifier = subject_identifier
+                screening_obj.save_base(raw=True)
+
 
 @receiver(post_save, weak=False, sender=SubjectConsent,
           dispatch_uid='subject_consent_on_post_save')
@@ -101,26 +117,22 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
     - Create locator log entry
     """
     if not raw:
-        if created:
-            update_maternal_dataset_and_worklist(
-                screening_identifier=instance.screening_identifier)
+        update_maternal_dataset_and_worklist(
+            instance.subject_identifier,
+            screening_identifier=instance.screening_identifier)
 
-            """
-            - Update subject identifier on the screening obj when created
-            """
-            screening_obj = None
-            try:
-                screening_obj = ScreeningPregWomen.objects.get(
-                    screening_identifier=instance.screening_identifier)
-            except ScreeningPregWomen.DoesNotExist:
-                try:
-                    screening_obj = ScreeningPriorBhpParticipants.objects.get(
-                        screening_identifier=instance.screening_identifier)
-                except ScreeningPriorBhpParticipants.DoesNotExist:
-                    pass
-            if screening_obj and instance.subject_identifier:
-                screening_obj.subject_identifier = instance.subject_identifier
-                screening_obj.save_base(raw=True)
+        """
+        - Update subject identifier on the screening obj when created
+        """
+        screening_obj = None
+        try:
+            screening_obj = ScreeningPregWomen.objects.get(
+                screening_identifier=instance.screening_identifier)
+        except ScreeningPregWomen.DoesNotExist:
+            pass
+        else:
+            screening_obj.subject_identifier = instance.subject_identifier
+            screening_obj.save_base(raw=True)
 
 
 @receiver(post_save, weak=False, sender=LocatorLogEntry,
@@ -387,9 +399,11 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         if not child_dummy_consent.cohort:
                             child_dummy_consent.cohort = instance.cohort
                         child_dummy_consent.save()
+
         if instance.study_child_identifier:
 
             update_maternal_dataset_and_worklist(
+                instance.subject_consent.subject_identifier,
                 study_child_identifier=instance.study_child_identifier)
 
 
