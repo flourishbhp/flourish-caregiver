@@ -50,6 +50,10 @@ class ExportActionMixin:
             field_names.insert(3, 'hiv_status')
             field_names.insert(4, 'visit_code')
 
+        if ((queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound') and
+                queryset[0].get_current_ga):
+            field_names.append('current_ga')
+
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
 
@@ -115,6 +119,11 @@ class ExportActionMixin:
                     if inline_values:
                         inline_objs.append(inline_values)
                 field_value = getattr(obj, field.name, '')
+                data.append(field_value)
+
+            if ((queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound') and
+                    queryset[0].get_current_ga):
+                field_value = getattr(obj, 'get_current_ga', '')
                 data.append(field_value)
 
             if inline_objs:

@@ -1,11 +1,12 @@
+from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.db import models
 from edc_action_item.model_mixins import ActionModelMixin
 
+from .model_mixins import UltraSoundModelMixin, CrfModelMixin
 from ..action_items import ULTRASOUND_ACTION
 from ..choices import GESTATIONS_NUMBER, ZERO_ONE
 from ..validators import validate_ga_by_ultrasound, validate_fetal_weight
-from .model_mixins import UltraSoundModelMixin, CrfModelMixin
 
 
 class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
@@ -114,7 +115,18 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
     def evaluate_ga_confirmed(self):
         return int(
             abs(40 - (
-                (self.edd_confirmed - self.report_datetime.date()).days / 7)))
+                    (self.edd_confirmed - self.report_datetime.date()).days / 7)))
+
+    @property
+    def get_current_ga(self):
+        antenatal_enrol = django_apps.get_model(f'flourish_caregiver.antenatalenrollment')
+        try:
+            antenatal_enrol_obj = antenatal_enrol.objects.get(
+                subject_identifier=self.subject_identifier)
+        except antenatal_enrol.DoesNotExist:
+            pass
+        else:
+            return antenatal_enrol_obj.real_time_ga
 
     @property
     def action_item_reason(self):
