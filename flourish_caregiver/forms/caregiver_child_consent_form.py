@@ -27,8 +27,8 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
 
         # # fields already initialized in the super
         study_child_identifier = self.initial.get('study_child_identifier', None)
-        # gender = self.initial.get('gender', None)
-        # child_dob = self.initial.get('child_dob', None)
+        gender = self.initial.get('gender', None)
+        child_dob = self.initial.get('child_dob', None)
 
         # import pdb; pdb.set_trace()
 
@@ -38,12 +38,12 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         # # or else make the fields editable
         if study_child_identifier:
             self.fields['study_child_identifier'].disabled = True
-        # if gender:
-            # self.fields['gender'].disabled = True
-        # if child_dob:
-            # self.fields['child_dob'] = forms.CharField(
-                # initial=self.initial['child_dob'],)
-            # self.fields['child_dob'].disabled = True
+        if gender:
+            self.fields['gender'].disabled = True
+        if child_dob:
+            self.fields['child_dob'] = forms.CharField(
+                initial=self.initial['child_dob'],)
+            self.fields['child_dob'].disabled = True
 
         screening_identifier = kwargs.get('screening_identifier', None)
         setattr(CaregiverChildConsentFormValidator, 'screening', screening_identifier)

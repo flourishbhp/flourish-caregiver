@@ -23,9 +23,7 @@ import xlwt
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..helper_classes import MaternalStatusHelper
-from ..models import CaregiverChildConsent, SubjectConsent, AntenatalEnrollment, \
-    CaregiverLocator
-from ..models import ScreeningPregWomen
+from ..models import CaregiverChildConsent, SubjectConsent, CaregiverLocator
 from .modeladmin_mixins import ModelAdminMixin
 
 
@@ -88,7 +86,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 screening_identifier=screening_identifier)
 
             caregiver_child_consents_pids = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier).order_by(
+                subject_consent__subject_identifier=subject_identifier,
+                preg_enroll=True).order_by(
                     'consent_datetime').values_list('subject_identifier', flat=True).distinct()
 
             if preg_women_obj and caregiver_child_consents_pids:

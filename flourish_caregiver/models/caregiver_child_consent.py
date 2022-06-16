@@ -176,8 +176,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         self.child_age_at_enrollment = (
             self.get_child_age_at_enrollment() if self.child_dob else 0)
 
-        self.prefill_if_prev_child()
-
         self.set_defaults()
 
         if self.is_eligible and not self.subject_identifier:
@@ -223,7 +221,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             return child_dataset_obj
 
     def duplicate_subject_identifier_preg(self):
-        # import pdb; pdb.set_trace()
         try:
             child_consent = self._meta.model.objects.get(
                 preg_enroll=True,
@@ -245,23 +242,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             pass
         else:
             return consent_version_obj.child_version
-
-    def prefill_if_prev_child(self):
-        child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
-        prev_id = self.study_child_identifier
-        child_dob = self.child_dob
-
-        if prev_id and not child_dob:
-            try:
-                child_dataset = child_dataset_cls.objects.get(
-                    study_child_identifier=prev_id,)
-            except child_dataset_cls.DoesNotExist:
-                message = {'study_child_identifier': 'No child dataset exists for the '
-                           'specified child identifier,'}
-                raise forms.ValidationError(message)
-            else:
-                self.child_dob = child_dataset.dob
-                self.gender = child_dataset.infant_sex[0].upper()
 
     @property
     def is_preg(self):
