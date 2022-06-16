@@ -178,7 +178,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         self.set_defaults()
 
-        if self.is_eligible and not self.subject_identifier:
+        if self.is_eligible and (not self.subject_identifier or not self.version):
 
             # if self.consent_datetime >=
             self.version = '2.1'
