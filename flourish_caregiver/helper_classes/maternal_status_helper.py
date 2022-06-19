@@ -91,29 +91,29 @@ class MaternalStatusHelper(object):
                     subject_identifier=self.subject_identifier)
             except antenatal_enrollment_cls.DoesNotExist:
                 # To refactor to include new enrollees
-                return UNK
+                pass
             else:
                 enrollment_helper = EnrollmentHelper(
                     instance_antenatal=antenatal_enrollment,
                     exception_cls=forms.ValidationError)
                 try:
-                    enrollment_helper.enrollment_hiv_status
+                    return enrollment_helper.enrollment_hiv_status
                 except ValidationError:
                     return UNK
         else:
             if previous_enrollment.current_hiv_status is not None:
                 return previous_enrollment.current_hiv_status
-            else:
-                try:
-                    maternal_dataset_obj = maternal_dataset_cls.objects.get(
-                        subject_identifier=self.subject_identifier)
-                except maternal_dataset_cls.DoesNotExist:
-                    raise ValidationError('Maternal Dataset does not exist')
-                else:
-                    status_dict = {'HIV-infected': POS,
-                                   'HIV-uninfected': NEG}
-                    return status_dict.get(
-                        maternal_dataset_obj.mom_hivstatus)
+
+        try:
+            maternal_dataset_obj = maternal_dataset_cls.objects.get(
+                subject_identifier=self.subject_identifier)
+        except maternal_dataset_cls.DoesNotExist:
+            return UNK
+        else:
+            status_dict = {'HIV-infected': POS,
+                           'HIV-uninfected': NEG}
+            return status_dict.get(
+                maternal_dataset_obj.mom_hivstatus)
 
     @property
     def eligible_for_cd4(self):

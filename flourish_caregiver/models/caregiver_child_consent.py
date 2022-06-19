@@ -176,9 +176,9 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         self.child_age_at_enrollment = (
             self.get_child_age_at_enrollment() if self.child_dob else 0)
 
-        self.prefill_if_prev_child()
+        self.set_defaults()
 
-        if self.is_eligible and not self.subject_identifier:
+        if self.is_eligible and (not self.subject_identifier or not self.version):
 
             # if self.consent_datetime >=
             self.version = '2.1'
@@ -197,6 +197,28 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                     supplied_infant_suffix=self.subject_identifier_sufix).identifier
 
         super().save(*args, **kwargs)
+
+    def set_defaults(self):
+
+        if (not self.preg_enroll and self.study_child_identifier):
+
+            child_dataset = self.get_child_dataset(self.study_child_identifier)
+
+            if child_dataset:
+                self.child_dob = child_dataset.dob
+                self.gender = child_dataset.infant_sex.upper()[0]
+
+    def get_child_dataset(self, study_child_identifier):
+        child_dataset_cls = django_apps.get_model(
+            'flourish_child.childdataset')
+
+        try:
+            child_dataset_obj = child_dataset_cls.objects.get(
+                study_child_identifier=study_child_identifier)
+        except child_dataset_cls.DoesNotExist:
+            pass
+        else:
+            return child_dataset_obj
 
     def duplicate_subject_identifier_preg(self):
         try:
@@ -221,29 +243,13 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         else:
             return consent_version_obj.child_version
 
-    def prefill_if_prev_child(self):
-        child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
-        prev_id = self.study_child_identifier
-        child_dob = self.child_dob
-
-        if prev_id and not child_dob:
-            try:
-                child_dataset = child_dataset_cls.objects.get(
-                    study_child_identifier=prev_id,)
-            except child_dataset_cls.DoesNotExist:
-                message = {'study_child_identifier': 'No child dataset exists for the '
-                           'specified child identifier,'}
-                raise forms.ValidationError(message)
-            else:
-                self.child_dob = child_dataset.dob
-                self.gender = child_dataset.infant_sex[0].upper()
-
     @property
     def is_preg(self):
 
-        if self.child_dob and self.child_dob > self.consent_datetime.date():
-            return True
-        return self.child_dob is None
+        if not self.study_child_identifier:
+            return (self.child_dob and self.child_dob > self.consent_datetime.date()
+                    or self.child_dob is None)
+        return False
 
     @property
     def live_infants(self):

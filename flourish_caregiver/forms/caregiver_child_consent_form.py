@@ -9,7 +9,7 @@ from .form_mixins import SubjectModelFormMixin
 
 class CaregiverChildConsentForm(SubjectModelFormMixin):
 
-    # form_validator_cls = CaregiverChildConsentFormValidator
+    form_validator_cls = CaregiverChildConsentFormValidator
 
     child_dataset_model = 'flourish_child.childdataset'
 
@@ -29,6 +29,8 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         study_child_identifier = self.initial.get('study_child_identifier', None)
         gender = self.initial.get('gender', None)
         child_dob = self.initial.get('child_dob', None)
+
+        # import pdb; pdb.set_trace()
 
         self.fields['version'].disabled = True
         self.fields['child_dob'].disabled = True

@@ -16,7 +16,7 @@ class CaregiverRequisitionForm(SubjectModelFormMixin, RequisitionFormMixin,
     requisition_identifier = forms.CharField(
         label='Requisition identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-
+    
     def clean(self):
         self.subject_identifier = self.cleaned_data.get(
             'maternal_visit').subject_identifier
@@ -34,10 +34,6 @@ class CaregiverRequisitionForm(SubjectModelFormMixin, RequisitionFormMixin,
                 raise forms.ValidationError({
                     'requisition_datetime':
                     f'Invalid. Cannot be before date of visit {formatted}.'})
-
-    def validate_other_specify_field(self, form_validator=None):
-        form_validator.validate_other_specify(
-            field='reason_not_drawn', other_stored_value='other')
 
     class Meta:
         model = CaregiverRequisition
