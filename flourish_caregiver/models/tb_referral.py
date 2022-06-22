@@ -6,7 +6,7 @@ from flourish_caregiver.maternal_choices import GC_DHMT_CLINICS
 from flourish_caregiver.models.model_mixins import CrfModelMixin, ReferralFormMixin
 
 
-class TbReferral(ReferralFormMixin, CrfModelMixin):
+class TbReferral(CrfModelMixin):
     referral_question = models.CharField(
         verbose_name='Were you referred to a TB clinic at this study visit? ',
         choices=YES_NO,

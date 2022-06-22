@@ -245,7 +245,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
                 'cohort_a_tb_2_months', instance=instance,
                 subject_identifier=instance.subject_identifier,
                 child_subject_identifier=child_consents[0].subject_identifier,
-                base_appt_datetime=instance.created.replace(
+                base_appt_datetime=instance.delivery_datetime.replace(
                     microsecond=0))
 
 
