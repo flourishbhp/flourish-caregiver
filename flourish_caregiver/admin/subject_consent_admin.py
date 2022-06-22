@@ -139,8 +139,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
         elif study_maternal_id:
             child_datasets = self.child_dataset_cls.objects.filter(
-                study_maternal_identifier=study_maternal_id,
-                preg_enroll=False)
+                study_maternal_identifier=study_maternal_id,)
             if not obj:
                 child_count = child_datasets.count()
                 extra = child_count
