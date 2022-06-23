@@ -1,9 +1,10 @@
 from django.contrib import admin
+from edc_model_admin import audit_fieldset_tuple
+
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalDiagnosesForm
 from ..models import MaternalDiagnoses
 from .modeladmin_mixins import CrfModelAdminMixin
-from edc_model_admin import audit_fieldset_tuple
 
 
 @admin.register(MaternalDiagnoses, site=flourish_caregiver_admin)
@@ -29,4 +30,4 @@ class MaternalDiagnosesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'new_diagnoses': admin.VERTICAL,
     }
 
-    filter_horizontal = ('who','diagnoses')
+    filter_horizontal = ('who', 'diagnoses')

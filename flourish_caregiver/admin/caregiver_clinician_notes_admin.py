@@ -1,5 +1,6 @@
 from django.contrib import admin
 from edc_model_admin import TabularInlineMixin, audit_fields
+from edc_model_admin import TabularInlineMixin
 from edc_odk.admin import StampImageActionMixin
 
 from ..admin_site import flourish_caregiver_admin

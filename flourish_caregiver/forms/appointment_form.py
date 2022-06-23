@@ -1,13 +1,14 @@
-import pytz
 from django import forms
 from django.core.exceptions import ValidationError
-from edc_appointment.form_validators import AppointmentFormValidator
-from edc_appointment.models import Appointment
 from edc_base.sites.forms import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
+import pytz
 
-from flourish_caregiver.models.caregiver_child_consent import CaregiverChildConsent
+from edc_appointment.form_validators import AppointmentFormValidator
+from edc_appointment.models import Appointment
 from flourish_child.models import ChildAssent
+
+from ..models import CaregiverChildConsent, SubjectConsent
 
 
 class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormValidator,
@@ -34,7 +35,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                                 visit_definition.rupper).astimezone(
                 pytz.timezone('Africa/Gaborone'))
 
-            if (cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
+            if (cleaned_data.get('visit_code_sequence') == 0
+                    and cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
                     microsecond=0)
                     or (self.instance.visit_code not in ['1000M', '2000M']
                         and cleaned_data.get('appt_datetime') > latest_appt_date.replace(
@@ -47,6 +49,12 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
 
         child_assents_exists = []
 
+        maternal_consents = SubjectConsent.objects.filter(
+            subject_identifier=subject_identifier)
+
+        if maternal_consents:
+            maternal_consent = maternal_consents.latest('consent_datetime')
+
         child_consents = CaregiverChildConsent.objects.filter(
             subject_consent__subject_identifier=subject_identifier,
             is_eligible=True, child_age_at_enrollment__gte=7)
@@ -56,7 +64,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             for child_consent in child_consents:
                 exists = ChildAssent.objects.filter(
                     subject_identifier=child_consent.subject_identifier,
-                    version=child_consent.version).exists()
+                    version=maternal_consent.version).exists()
                 child_assents_exists.append(exists)
 
             child_assents_exists = all(child_assents_exists)
@@ -70,7 +78,6 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
         validation functions.
         """
         pass
-
 
     class Meta:
         model = Appointment

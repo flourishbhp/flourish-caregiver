@@ -36,7 +36,7 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
         caregiver_consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
 
         subject_consents = caregiver_consent_cls.objects.filter(
-            subject_identifier=self.subject_identifier, )
+            subject_identifier=self.subject_identifier,)
         if subject_consents:
             latest_consent = subject_consents.latest('consent_datetime')
             return latest_consent.version
@@ -49,7 +49,6 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
     def save(self, *args, **kwargs):
         self.consent_version = self.latest_consent_obj_version
         super().save(*args, **kwargs)
-
 
     class Meta:
         unique_together = ('subject_identifier', 'schedule_name')

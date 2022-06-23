@@ -1,5 +1,12 @@
+import os
+from datetime import datetime
+
+import PIL
+import pyminizip
+from PIL import Image
 from django import forms
 from django.apps import apps as django_apps
+from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
@@ -16,6 +23,7 @@ from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
+from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .locator_logs import LocatorLog, LocatorLogEntry
@@ -23,9 +31,9 @@ from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
-from .tb_informed_consent import TbInformedConsent
 from .ultrasound import UltraSound
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.cohort import Cohort
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
@@ -43,49 +51,79 @@ class SubjectConsentError(Exception):
     pass
 
 
+def update_maternal_dataset_and_worklist(subject_identifier,
+        screening_identifier=None,
+        study_child_identifier=None, ):
+    study_maternal_identifier = None
+
+    if study_child_identifier:
+        child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+        try:
+            child_dataset_obj = child_dataset_cls.objects.get(
+                study_child_identifier=study_child_identifier)
+        except child_dataset_cls.DoesNotExist:
+            pass
+        else:
+            study_maternal_identifier = child_dataset_obj.study_maternal_identifier
+
+    if screening_identifier or study_maternal_identifier:
+        maternal_dataset_q = MaternalDataset.objects.filter(
+            Q(screening_identifier=screening_identifier) |
+            Q(study_maternal_identifier=study_maternal_identifier))
+
+        if maternal_dataset_q:
+            worklist_cls = django_apps.get_model('flourish_follow.worklist')
+            maternal_dataset = maternal_dataset_q[0]
+
+            if not maternal_dataset.subject_identifier:
+                maternal_dataset.subject_identifier = subject_identifier
+                maternal_dataset.save()
+
+            study_maternal_identifier = maternal_dataset.study_maternal_identifier
+            try:
+                worklist = worklist_cls.objects.get(
+                    study_maternal_identifier=study_maternal_identifier)
+            except worklist_cls.DoesNotExist:
+                pass
+            else:
+                worklist.consented = True
+                worklist.assigned = None
+                worklist.date_assigned = None
+                worklist.save()
+
+            try:
+                screening_obj = ScreeningPriorBhpParticipants.objects.get(
+                    study_maternal_identifier=study_maternal_identifier)
+            except ScreeningPriorBhpParticipants.DoesNotExist:
+                pass
+            else:
+                screening_obj.subject_identifier = subject_identifier
+                screening_obj.save_base(raw=True)
+
+
 @receiver(post_save, weak=False, sender=SubjectConsent,
           dispatch_uid='subject_consent_on_post_save')
 def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Create locator log entry
     """
-    worklist_cls = django_apps.get_model('flourish_follow.worklist')
     if not raw:
-        if created:
-            try:
-                maternal_dataset = MaternalDataset.objects.get(
-                    screening_identifier=instance.screening_identifier)
-            except MaternalDataset.DoesNotExist:
-                pass
-            else:
-                study_maternal_identifier = maternal_dataset.study_maternal_identifier
-                try:
-                    worklist = worklist_cls.objects.get(
-                        study_maternal_identifier=study_maternal_identifier)
-                except worklist_cls.DoesNotExist:
-                    pass
-                else:
-                    worklist.consented = True
-                    worklist.assigned = None
-                    worklist.date_assigned = None
-                    worklist.save()
+        update_maternal_dataset_and_worklist(
+            instance.subject_identifier,
+            screening_identifier=instance.screening_identifier)
 
-            """
-            - Update subject identifier on the screening obj when created
-            """
-            screening_obj = None
-            try:
-                screening_obj = ScreeningPregWomen.objects.get(
-                    screening_identifier=instance.screening_identifier)
-            except ScreeningPregWomen.DoesNotExist:
-                try:
-                    screening_obj = ScreeningPriorBhpParticipants.objects.get(
-                        screening_identifier=instance.screening_identifier)
-                except ScreeningPriorBhpParticipants.DoesNotExist:
-                    pass
-            if screening_obj and instance.subject_identifier:
-                screening_obj.subject_identifier = instance.subject_identifier
-                screening_obj.save_base(raw=True)
+        """
+        - Update subject identifier on the screening obj when created
+        """
+        screening_obj = None
+        try:
+            screening_obj = ScreeningPregWomen.objects.get(
+                screening_identifier=instance.screening_identifier)
+        except ScreeningPregWomen.DoesNotExist:
+            pass
+        else:
+            screening_obj.subject_identifier = instance.subject_identifier
+            screening_obj.save_base(raw=True)
 
 
 @receiver(post_save, weak=False, sender=LocatorLogEntry,
@@ -225,7 +263,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     tb_informed_consent_cls = django_apps.get_model(
         'flourish_caregiver.tbinformedconsent')
 
-    child_consents=get_child_consents(instance.subject_identifier)
+    child_consents = get_child_consents(instance.subject_identifier)
 
     if instance.live_infants_to_register == 1:
         if not raw and created:
@@ -357,6 +395,21 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                             child_dummy_consent.cohort = instance.cohort
                         child_dummy_consent.save()
 
+        if instance.study_child_identifier:
+            update_maternal_dataset_and_worklist(
+                instance.subject_consent.subject_identifier,
+                study_child_identifier=instance.study_child_identifier)
+
+
+@receiver(post_save, weak=False, sender=ClinicianNotesImage,
+          dispatch_uid='clinician_notes_image_on_post_save')
+def clinician_notes_image_on_post_save(sender, instance, raw, created, **kwargs):
+    """
+    Ecrypt an image and add stamp before saving
+    """
+    if not raw and created:
+        stamp_image(instance)
+
 
 @receiver(post_save, weak=False, sender=MaternalVisit,
           dispatch_uid='maternal_visit_on_post_save')
@@ -374,6 +427,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             instance.subject_identifier)
 
     if not raw and created and instance.visit_code in ['2000M', '2000D']:
+
+        cohort = None
 
         if 'sec' in instance.schedule_name:
 
@@ -393,9 +448,15 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
         put_on_schedule(cohort, instance=instance,
                         subject_identifier=instance.subject_identifier,
                         child_subject_identifier=instance.subject_identifier,
-                        base_appt_datetime=instance.created.replace(
+                        base_appt_datetime=instance.report_datetime.replace(
                             microsecond=0),
                         caregiver_visit_count=caregiver_visit_count)
+    """
+    For parents with tow kids, crfs collected on a visit of one kid are being 
+    filled when opening such crf
+    """
+    complete_child_crfs = AutoCompleteChildCrfs(instance=instance)
+    complete_child_crfs.pre_fill_crfs()
 
     # complete_child_crfs=AutoCompleteChildCrfs(instance=instance)
     # complete_child_crfs.pre_fill_crfs()
@@ -668,7 +729,7 @@ def get_onschedule_model_obj(schedule, subject_identifier):
 
 
 def get_registration_date(subject_identifier):
-    child_consents=get_child_consents(subject_identifier)
+    child_consents = get_child_consents(subject_identifier)
     if (child_consents and child_consents.values_list(
             'subject_identifier', flat=True).distinct().count() == 1):
         child_consent = child_consents[0]
@@ -698,18 +759,19 @@ def create_registered_infant(instance):
                         'flourish_caregiver.caregiverchildconsent')
 
                     # Create caregiver child consent
-                    try:
-                        caregiver_child_consent_obj = caregiver_child_consent_cls.objects.get(
-                            subject_identifier__startswith=instance.subject_identifier,
-                            version=maternal_consent.version)
-                    except caregiver_child_consent_cls.DoesNotExist:
+                    caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
+                        subject_identifier__startswith=instance.subject_identifier,
+                        preg_enroll=True)
+
+                    if not caregiver_child_consent_objs:
                         caregiver_child_consent_cls.objects.create(
                             subject_consent=maternal_consent,
-                            version=maternal_consent.version,
                             child_dob=instance.delivery_datetime.date(),
                             consent_datetime=get_utcnow(),
                             is_eligible=True)
                     else:
+                        caregiver_child_consent_obj = caregiver_child_consent_objs.latest(
+                            'consent_datetime')
                         child_dummy_consent_cls = django_apps.get_model(
                             'flourish_child.childdummysubjectconsent')
                         try:
@@ -726,8 +788,7 @@ def create_registered_infant(instance):
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
-        repeat=False, opt_trigger=True
-):
+        repeat=False, opt_trigger=True):
     action_cls = site_action_items.get(
         model_cls.action_name)
     action_item_model_cls = action_cls.action_item_model_cls()
@@ -773,6 +834,7 @@ def create_consent_version(instance, version):
         consent_version = consent_version_cls(
             screening_identifier=instance.screening_identifier,
             version=version,
+            child_version=2.1,
             user_created=instance.user_modified or instance.user_created,
             created=get_utcnow())
         consent_version.save()
@@ -782,3 +844,59 @@ def get_child_consents(subject_identifier):
     child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
     return child_consent_cls.objects.filter(
         subject_identifier__startswith=subject_identifier).order_by('-consent_datetime')
+
+
+def stamp_image(instance):
+    filefield = instance.image
+    filename = filefield.name  # gets the "normal" file name as it was uploaded
+    storage = filefield.storage
+    path = storage.path(filename)
+    add_image_stamp(image_path=path)
+
+
+def add_image_stamp(image_path=None, position=(25, 25), resize=(600, 600)):
+    """
+    Superimpose image of a stamp over copy of the base image
+    @param image_path: dir to base image
+    @param position: pixels(w,h) to superimpose stamp at
+    """
+    base_image = Image.open(image_path)
+    stamp = Image.open('media/stamp/true-copy.png')
+    if resize:
+        stamp = stamp.resize(resize, PIL.Image.ANTIALIAS)
+
+    width, height = base_image.size
+    stamp_width, stamp_height = stamp.size
+
+    # Determine orientation of the base image before pasting stamp
+    if width < height:
+        pos_width = round(width / 2) - round(stamp_width / 2)
+        pos_height = height - stamp_height
+        position = (pos_width, pos_height)
+    elif width > height:
+        stamp = stamp.rotate(90)
+        pos_width = width - stamp_width
+        pos_height = round(height / 2) - round(stamp_height / 2)
+        position = (pos_width, pos_height)
+
+    # paste stamp over image
+    base_image.paste(stamp, position, mask=stamp)
+    base_image.save(image_path)
+
+
+def encrypt_files(instance, subject_identifier):
+    base_path = settings.MEDIA_ROOT
+    if instance.image:
+        upload_to = f'{instance.image.field.upload_to}'
+        timestamp = datetime.timestamp(get_utcnow())
+        zip_filename = f'{subject_identifier}_{timestamp}.zip'
+        with open('filekey.key', 'r') as filekey:
+            key = filekey.read().rstrip()
+        com_lvl = 8
+        pyminizip.compress(f'{instance.image.path}', None,
+                           f'{base_path}/{upload_to}{zip_filename}', key, com_lvl)
+    # remove unencrypted file
+    if os.path.exists(f'{instance.image.path}'):
+        os.remove(f'{instance.image.path}')
+    instance.image = f'{upload_to}{zip_filename}'
+    instance.save()

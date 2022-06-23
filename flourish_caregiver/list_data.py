@@ -190,7 +190,58 @@ list_data = {
         ('gestational_hypertension', 'Gestational Hypertension'),
         (NOT_APPLICABLE, 'Not Applicable'),
         (OTHER, 'Other, specify')
-    ]
+    ],
+    
+    'flourish_caregiver.caregiversocialworkreferrallist': [
+        ('arguments_with_partner','Arguments with partner/spouse'),
+        ('violence_with_partner','Violence with partner/spouse'),
+        ('distrust_with_partner','Distrust with partner/spouse'),
+        ('financial_challenges','Financial challenges'),
+        ('difficultly_dealing_with_diagnoses','Difficultly dealing with diagnoses of chronic illness or infectious disease'),
+        ('grief_counseling','Grief counseling (for loss of loved one)'),
+        ('adherence_counseling','Adherence counseling'),
+        (OTHER, 'Other, specify')
+    ],
+    
+    'flourish_caregiver.pregnancyinfluencerslist': [
+        ('the_father', 'The father of the child'),
+        ('maternal_family_members', 'Members of my family '),
+        ('paternal_family_members', 'Family members of the father of my child'),
+        ('anc_staff', 'The ANC staff'),
+        ('no_one', 'No other individual influenced my feeding choice decision'),
+        (OTHER, 'Other, specify'),
+    ],
+    
+    'flourish_caregiver.afterpregnancyinfluencerslist': [
+        ('the_father', 'The father of the child'),
+        ('maternal_family_members', 'Members of my family '),
+        ('paternal_family_members', 'Family members of the father of my child'),
+        ('anc_staff', 'The ANC staff'),
+        ('no_one', 'No other individual influenced my feeding choice decision'),
+        (OTHER, 'Other, specify'),
+    ],
+    
+    'flourish_caregiver.receivedtrainingonfeedinglist': [
+        ('antenatal_clinic', 'ANC'),
+        ('labour_delivery_ward', 'Labour and Delivery Ward'),
+        ('maternatiy_ward', 'Maternity Ward after delivery'),
+        ('flourish_team', 'The FLOURISH study team'),
+        (NONE, 'None'),
+    ],
+    
+    'flourish_caregiver.reasonsforinfantfeedinglist': [
+        ('no_time_for_breastfeeding','I did not have time to breastfeed'),
+        ('returned_work_school','I had to return to school/work'),
+        ('unable_to_produce_enough_milk','I was not able to produce enough breastmilk to keep my infant satisfied'),
+        ('infant_refused_breastmilk','My infant refused breastmilk'),
+        ('painfull_breastfeeding','Breastfeeding was too painful'),
+        ('cracked_bleeding_nipples','My nipples were cracked and/or bleeding'),
+        ('did_not_like_breast_shape','I did not like the way breastfeeding changed my breast shape'),
+        ('wanted_to_give_infant_traditional_medicine','I wanted to give traditional medicines to my infant'),
+        (OTHER, 'Other, specify'),
+
+    ],
+    
 
 }
 

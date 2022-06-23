@@ -6,21 +6,18 @@ from edc_base.sites import SiteModelFormMixin
 from edc_constants.constants import OFF_STUDY, DEAD, YES, ON_STUDY, NEW, OTHER
 from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
 from edc_form_validators import FormValidatorMixin
-
 from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, MISSED_VISIT
 from edc_visit_tracking.form_validators import VisitFormValidator
-from flourish_form_validations.form_validators import FormValidatorMixin as FlourishFormValidatorMixin
-from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 
-from ..models import MaternalVisit
+from flourish_form_validations.form_validators import \
+    FormValidatorMixin as FlourishFormValidatorMixin
+from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
+from ..models import MaternalVisit, SubjectConsent
 
 
 class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin):
-
     consent_version_model = 'flourish_caregiver.flourishconsentversion'
-
-
 
     def clean(self):
         super().clean()
@@ -67,9 +64,9 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             onschedule_datetime = onschedule_obj.onschedule_datetime
             if report_datetime < onschedule_datetime:
                 msg = {'report_datetime':
-                       'Report datetime cannot be before Onschedule datetime.'
-                       f'Got Report datetime: {report_datetime}, and Onschedule '
-                       f'datetime: {onschedule_datetime}'}
+                           'Report datetime cannot be before Onschedule datetime.'
+                           f'Got Report datetime: {report_datetime}, and Onschedule '
+                           f'datetime: {onschedule_datetime}'}
                 self._errors.update(msg)
                 raise ValidationError(msg)
 
@@ -78,7 +75,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
                 and self.cleaned_data.get('study_status') == ON_STUDY
                 and self.cleaned_data.get('require_crfs') == NO):
             msg = {'require_crfs': 'This field must be yes if participant'
-                   'is on study and present.'}
+                                   'is on study and present.'}
             self._errors.update(msg)
             raise ValidationError(msg)
 
@@ -117,7 +114,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         if (reason == LOST_VISIT and
                 self.cleaned_data.get('info_source') == 'other_contact'):
             msg = {'info_source': 'Source of information cannot be other contact with '
-                   'participant if participant has been lost to follow up.'}
+                                  'participant if participant has been lost to follow up.'}
             self._errors.update(msg)
             raise ValidationError(msg)
 
@@ -128,14 +125,14 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         if (reason == LOST_VISIT and
                 self.cleaned_data.get('study_status') != OFF_STUDY):
             msg = {'study_status': 'Participant has been lost to follow up, '
-                   'study status should be off study.'}
+                                   'study status should be off study.'}
             self._errors.update(msg)
             raise ValidationError(msg)
 
         if (reason == COMPLETED_PROTOCOL_VISIT and
                 self.cleaned_data.get('study_status') != OFF_STUDY):
             msg = {'study_status': 'Participant is completing protocol, '
-                   'study status should be off study.'}
+                                   'study status should be off study.'}
             self._errors.update(msg)
             raise ValidationError(msg)
 
@@ -143,21 +140,21 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             if self.cleaned_data.get('info_source') != PARTICIPANT:
                 raise forms.ValidationError(
                     {'info_source': 'Source of information must be from '
-                     'participant if participant is present.'})
+                                    'participant if participant is present.'})
 
     def validate_death(self):
         if (self.cleaned_data.get('survival_status') == DEAD
                 and self.cleaned_data.get('study_status') != OFF_STUDY):
             msg = {'study_status': 'Participant is deceased, study status '
-                   'should be off study.'}
+                                   'should be off study.'}
             self._errors.update(msg)
             raise ValidationError(msg)
         if self.cleaned_data.get('survival_status') != ALIVE:
             if (self.cleaned_data.get('is_present') == YES
                     or self.cleaned_data.get('info_source') == PARTICIPANT):
                 msg = {'survival_status': 'Participant cannot be present or '
-                       'source of information if their survival status is not'
-                       'alive.'}
+                                          'source of information if their survival status is not'
+                                          'alive.'}
                 self._errors.update(msg)
                 raise ValidationError(msg)
 
@@ -167,7 +164,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
 
         latest_consent = self.latest_consent_obj
         last_alive_date = self.cleaned_data.get('last_alive_date')
-        if (last_alive_date
+        if (last_alive_date and not self.instance.pk
                 and last_alive_date < latest_consent.consent_datetime.date()):
             msg = {'last_alive_date': 'Date cannot be before consent date'}
             self._errors.update(msg)
@@ -198,11 +195,11 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
                 if self.cleaned_data.get('study_status') == ON_STUDY:
                     raise forms.ValidationError(
                         {'study_status': 'Participant has been taken offstudy.'
-                         ' Cannot be indicated as on study.'})
+                                         ' Cannot be indicated as on study.'})
         else:
             if (action_item.parent_reference_model_obj
-                and self.cleaned_data.get(
-                    'report_datetime') >= action_item.parent_reference_model_obj.report_datetime):
+                    and self.cleaned_data.get(
+                        'report_datetime') >= action_item.parent_reference_model_obj.report_datetime):
                 raise forms.ValidationError(
                     'Participant is scheduled to go offstudy.'
                     ' Cannot edit visit until offstudy form is completed.')
@@ -210,8 +207,9 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         if (self.cleaned_data.get('reason') == FAILED_ELIGIBILITY
                 and self.cleaned_data.get('study_status') == ON_STUDY):
             raise forms.ValidationError(
-                {'study_status': 'Participant failed eligibility, they cannot be  indicated '
-                 'as on study.'})
+                {
+                    'study_status': 'Participant failed eligibility, they cannot be  indicated '
+                                    'as on study.'})
 
     def validate_required_fields(self):
 
@@ -230,20 +228,24 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         raises an exception if not found."""
         subject_consents = self.subject_consent_cls.objects.filter(
             subject_identifier=self.subject_identifier)
-        if subject_consents.earliest('consent_datetime'):
-            if report_datetime and report_datetime < subject_consents.earliest(
-                    'consent_datetime').consent_datetime:
+        if not self.instance.pk:
+            try:
+                subject_consents.latest('consent_datetime')
+
+            except SubjectConsent.DoesNotExist:
                 raise forms.ValidationError(
-                    "Report datetime cannot be before consent datetime")
-        else:
-            raise forms.ValidationError(
-                'Please complete Caregiver Consent form '
-                f'before proceeding.')
+                    'Please complete Caregiver Consent form '
+                    f'before proceeding.')
+            else:
+                if report_datetime and report_datetime < subject_consents.latest(
+                        'consent_datetime').consent_datetime:
+                    raise forms.ValidationError(
+                        "Report datetime cannot be before consent datetime")
 
 
 class MaternalVisitForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
-
     form_validator_cls = MaternalVisitFormValidator
+
 
     class Meta:
         model = MaternalVisit
