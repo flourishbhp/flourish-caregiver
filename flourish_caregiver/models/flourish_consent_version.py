@@ -1,13 +1,12 @@
 from django.db import models
+from django.utils import timezone
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugModelMixin
-from django.utils import timezone
 
-
-from ..choices import CONSENT_VERSION
+from ..choices import CONSENT_VERSION, CHILD_CONSENT_VERSION
 
 
 class FlourishConsentVersion(SiteModelMixin, SearchSlugModelMixin,
@@ -22,6 +21,14 @@ class FlourishConsentVersion(SiteModelMixin, SearchSlugModelMixin,
         verbose_name="Which version of the consent would you like to be consented with?",
         choices=CONSENT_VERSION,
         max_length=3)
+
+    child_version = models.CharField(
+        verbose_name=("Which version of the consent would you like to consent on behalf of "
+                      "your child with?"),
+        choices=CHILD_CONSENT_VERSION,
+        max_length=3,
+        null=True,
+        blank=True)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report datetime.",

@@ -14,15 +14,16 @@ from edc_consent.actions import (
     flag_as_verified_against_paper, unflag_as_verified_against_paper)
 from edc_constants.constants import MALE, FEMALE
 from edc_model_admin import ModelAdminBasicMixin
-from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, audit_fields
+from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, \
+    audit_fields
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
 import xlwt
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
-from ..models import CaregiverChildConsent, SubjectConsent
-from ..models import ScreeningPregWomen
+from ..helper_classes import MaternalStatusHelper
+from ..models import CaregiverChildConsent, SubjectConsent, CaregiverLocator
 from .modeladmin_mixins import ModelAdminMixin
 
 
@@ -52,6 +53,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 'confirm_identity',
                 'future_studies_contact',
                 'specimen_consent',
+                'version',
                 'consent_datetime'
             ]}
          ),)
@@ -82,15 +84,23 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         if subject_identifier and screening_identifier:
             preg_women_obj = self.preg_women_cls.objects.filter(
                 screening_identifier=screening_identifier)
-            caregiver_child_consents = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier, version='1')
-            if preg_women_obj and caregiver_child_consents:
-                for caregiver_child_consent in caregiver_child_consents:
 
-                    caregiver_child_consents_dict = caregiver_child_consent.__dict__
+            caregiver_child_consents_pids = self.consent_cls.objects.filter(
+                subject_consent__subject_identifier=subject_identifier,
+                preg_enroll=True).order_by(
+                    'consent_datetime').values_list('subject_identifier', flat=True).distinct()
+
+            if preg_women_obj and caregiver_child_consents_pids:
+
+                for caregiver_child_consent in caregiver_child_consents_pids:
+
+                    child_consent_obj = self.consent_cls.objects.filter(
+                        subject_identifier=caregiver_child_consent).latest('consent_datetime')
+
+                    caregiver_child_consents_dict = child_consent_obj.__dict__
                     exclude_options = ['consent_datetime', 'id', '_state',
                                        'created', 'modified', 'user_created',
-                                       'user_modified']
+                                       'user_modified', 'version']
                     for option in exclude_options:
                         del caregiver_child_consents_dict[option]
                     initial.append(caregiver_child_consents_dict)
@@ -114,17 +124,20 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         return formset
 
     def get_extra(self, request, obj=None, **kwargs):
-        extra = super().get_extra(request, obj, **kwargs)
+        extra = (super().get_extra(request, obj, **kwargs) +
+                 self.get_child_reconsent_extra(request))
         study_maternal_id = request.GET.get('study_maternal_identifier')
         subject_identifier = request.GET.get('subject_identifier')
 
         if subject_identifier:
             caregiver_child_consents = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier, version='1')
+                subject_consent__subject_identifier=subject_identifier
+                ).values_list('subject_identifier', flat=True).distinct()
+
             if not obj:
                 extra = caregiver_child_consents.count()
 
-        if study_maternal_id:
+        elif study_maternal_id:
             child_datasets = self.child_dataset_cls.objects.filter(
                 study_maternal_identifier=study_maternal_id)
             if not obj:
@@ -132,12 +145,36 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 extra = child_count
             else:
                 extra = len(self.get_difference(child_datasets, obj))
+
         return extra
 
     def get_difference(self, model_objs, obj=None):
         cc_ids = obj.caregiverchildconsent_set.values_list(
             'study_child_identifier', flat=True)
         return [x for x in model_objs if x.study_child_identifier not in cc_ids]
+
+    def get_child_reconsent_extra(self, request):
+        consent_version_cls = django_apps.get_model(
+            'flourish_caregiver.flourishconsentversion')
+        screening_identifier = request.GET.get('screening_identifier')
+        subject_identifier = request.GET.get('subject_identifier')
+
+        if screening_identifier:
+            try:
+                consent_version_obj = consent_version_cls.objects.get(
+                    screening_identifier=screening_identifier)
+            except consent_version_cls.DoesNotExist:
+                pass
+            else:
+                if consent_version_obj.version:
+                    try:
+                        self.consent_cls.objects.get(
+                            subject_consent__subject_identifier=subject_identifier,
+                            preg_enroll=True,
+                            version=consent_version_obj.version)
+                    except self.consent_cls.DoesNotExist:
+                        return 1
+        return 0
 
 
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)
@@ -270,9 +307,13 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
             SubjectConsentAdmin, self).response_change(request, obj)
 
     def _redirector(self, obj):
-        caregiver_locator = ScreeningPregWomen.objects.filter(
+        caregiver_locator = CaregiverLocator.objects.filter(
             screening_identifier=obj.screening_identifier)
-        if caregiver_locator:
+        kwargs = {'subject_identifier': obj.subject_identifier}
+        if caregiver_locator.count() > 0:
+            return redirect(settings.DASHBOARD_URL_NAMES.get(
+                'subject_dashboard_url'), **kwargs)
+        else:
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'maternal_screening_listboard_url'))
 
@@ -297,6 +338,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'identity',
                 'identity_type',
                 'confirm_identity',
+                'version',
                 'consent_datetime']}
 
          ),
@@ -338,13 +380,20 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         return super(CaregiverChildConsentAdmin, self).render_change_form(
             request, context, *args, **kwargs)
 
+    def caregiver_hiv_status(self, subject_identifier=None):
+
+        status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
+
+        return status_helper.hiv_status
+
     def export_as_csv(self, request, queryset):
         queryset = queryset.defer('site_id', 'initials', 'dob',
                                   'is_dob_estimated', 'guardian_name',
                                   'subject_type', 'consent_reviewed',
                                   'study_questions', 'assessment_score',
                                   'consent_signature', 'consent_copy',
-                                  'first_name', 'last_name', 'identity', 'confirm_identity')
+                                  'first_name', 'last_name', 'identity',
+                                  'confirm_identity')
 
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
@@ -363,6 +412,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         field_names = [a for a in field_names.keys()]
         field_names.remove('_state')
 
+        field_names.append('hiv_exposure')
         field_names.append('protocol')
         field_names.append('study_maternal_identifier')
 
@@ -376,7 +426,13 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             extra_data = {}
             if maternal_dataset_qs:
                 extra_data = maternal_dataset_qs.__dict__
-            data = [obj_data[field] if field not in ['protocol', 'study_maternal_identifier']
+
+            subject_identifier = getattr(obj, 'subject_identifier')
+            extra_data.update({'hiv_exposure': self.caregiver_hiv_status(
+                subject_identifier=subject_identifier[:-3])})
+
+            data = [obj_data[field] if field not in ['protocol', 'study_maternal_identifier',
+                                                     'hiv_exposure']
                     else extra_data.get(field, '') for field in field_names]
 
             row_num += 1
