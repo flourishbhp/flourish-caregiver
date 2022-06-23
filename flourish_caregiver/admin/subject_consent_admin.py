@@ -124,6 +124,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         return formset
 
     def get_extra(self, request, obj=None, **kwargs):
+
         extra = (super().get_extra(request, obj, **kwargs) +
                  self.get_child_reconsent_extra(request))
         study_maternal_id = request.GET.get('study_maternal_identifier')
@@ -166,12 +167,11 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
             except consent_version_cls.DoesNotExist:
                 pass
             else:
-                if consent_version_obj.version:
+                if consent_version_obj.child_version:
                     try:
                         self.consent_cls.objects.get(
                             subject_consent__subject_identifier=subject_identifier,
-                            preg_enroll=True,
-                            version=consent_version_obj.version)
+                            version=consent_version_obj.child_version)
                     except self.consent_cls.DoesNotExist:
                         return 1
         return 0
