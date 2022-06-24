@@ -121,7 +121,7 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     during_preg_influencers = models.ManyToManyField(
         PregnancyInfluencersList,
         verbose_name='During pregnancy, the individuals most influential in helping me '
-                     'plan a feeding choice for this baby were (select 3):', )
+                     'plan a feeding choice for this baby were (Select all that apply):', )
 
     during_preg_influencers_other = OtherCharField(
         verbose_name="if other specify...",
@@ -139,7 +139,8 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     after_delivery_influencers = models.ManyToManyField(
         AfterPregnancyInfluencersList,
         verbose_name='Since this baby was born, the individuals most influential in '
-                     'helping me make a feeding choice for this baby have been (select 3):',
+                     'helping me make a feeding choice for this baby have been '
+                     '(Select all that apply):',
          )
 
     after_delivery_influencers_other = OtherCharField(
