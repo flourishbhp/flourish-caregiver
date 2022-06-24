@@ -28,8 +28,7 @@ class ClinicianNotesImageInline(TabularInlineMixin, admin.TabularInline):
 
 @admin.register(ClinicianNotes, site=flourish_caregiver_admin)
 class ClinicianNotesAdmin(
-        StampImageActionMixin, CrfModelAdminMixin, admin.ModelAdmin):
-
+    StampImageActionMixin, CrfModelAdminMixin, admin.ModelAdmin):
     form = ClinicianNotesForm
 
     fieldsets = (

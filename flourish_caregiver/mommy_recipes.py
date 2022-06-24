@@ -7,20 +7,20 @@ from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery, \
-    TbInformedConsent
+    TbInformedConsent, TbStudyEligibility, TbOffStudy, TbVisitScreeningWomen
 from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
                      CaregiverEdinburghDeprScreening)
 from .models import CaregiverPreviouslyEnrolled
 from .models import FlourishConsentVersion
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit
-from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants
+from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
 
 fake = Faker()
 
 maternaldataset = Recipe(
     MaternalDataset,
-    )
+)
 
 caregiverlocator = Recipe(
     CaregiverLocator,
@@ -46,7 +46,7 @@ screeningpregwomen = Recipe(
 
 flourishconsentversion = Recipe(
     FlourishConsentVersion,
-    )
+)
 
 subjectconsent = Recipe(
     SubjectConsent,
@@ -70,7 +70,7 @@ subjectconsent = Recipe(
     child_consent=YES,
     citizen=YES,
     version='1'
-    )
+)
 
 tbinformedconsent = Recipe(
     TbInformedConsent,
@@ -81,7 +81,7 @@ tbinformedconsent = Recipe(
     is_literate=YES,
     consent_to_participate=YES,
     optional_sample_collection=YES
-    )
+)
 
 caregiverpreviouslyenrolled = Recipe(
     CaregiverPreviouslyEnrolled,
@@ -103,7 +103,7 @@ caregiverchildconsent = Recipe(
     identity=seq('234513187'),
     identity_type='birth_cert',
     confirm_identity=seq('234513187')
-    )
+)
 
 antenatalenrollment = Recipe(
     AntenatalEnrollment,
@@ -188,3 +188,18 @@ caregiveredinburghdeprscreening = Recipe(
 
 hivrapidtest = Recipe(
     HIVRapidTestCounseling, )
+
+tbstudyeligibility = Recipe(
+    TbStudyEligibility, )
+
+tboffstudy = Recipe(
+    TbOffStudy,
+)
+
+tbvisitscreeningwomen = Recipe(
+    TbVisitScreeningWomen,
+)
+
+ultrasound = Recipe(
+    UltraSound
+)
