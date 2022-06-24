@@ -722,14 +722,12 @@ FEEDING_HIV_STATUS = (
 HIV_STATUS_AWARE = (
     ('during_preg', 'Later during pregnancy'),
     ('before_delivery', 'At/shortly after delivery'),
-    ('after_delivery', 'After Delivery'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('after_delivery', 'After Delivery'),)
 
 ON_HIV_STATUS_AWARE = (
     (YES, 'Yes'),
     (NO, 'No'),
-    ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'),)
 
 
 HIV_STATUS_KNOWN_BY = (

@@ -37,6 +37,7 @@ from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.cohort import Cohort
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
+from ..models.tb_informed_consent import TbInformedConsent
 
 
 class PreFlourishError(Exception):
