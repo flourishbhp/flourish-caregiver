@@ -41,4 +41,4 @@ site_consents.validator_cls = ConsentObjectValidator
 
 site_consents.register(caregiver_v1)
 site_consents.register(caregiver_v2)
-# site_consents.register(tb_caregiver_v1)
+site_consents.register(tb_caregiver_v1)
