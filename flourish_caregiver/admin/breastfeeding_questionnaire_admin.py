@@ -6,11 +6,11 @@ from .modeladmin_mixins import CrfModelAdminMixin
 from ..models import BreastFeedingQuestionnaire
 from ..forms import BreastFeedingQuestionnaireForm
 
+
 @admin.register(BreastFeedingQuestionnaire, site=flourish_caregiver_admin)
-class BreastFeedingQuestionnaireAdmin(CrfModelAdminMixin,admin.ModelAdmin):
-    
+class BreastFeedingQuestionnaireAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = BreastFeedingQuestionnaireForm
-    
+
     fieldsets = (
         (None, {
             "fields": (
@@ -46,35 +46,34 @@ class BreastFeedingQuestionnaireAdmin(CrfModelAdminMixin,admin.ModelAdmin):
                 'infant_feeding_reasons',
                 'infant_feeding_other',
             ),
-        }),audit_fieldset_tuple
+        }), audit_fieldset_tuple
     )
-    
-    radio_fields = {
-        'feeding_hiv_status':admin.VERTICAL,
-        'hiv_status_aware':admin.VERTICAL,
-        'on_hiv_status_aware':admin.VERTICAL,
-        'hiv_status_during_preg':admin.VERTICAL,
-        'hiv_status_known_by':admin.VERTICAL,
-        'father_knew_hiv_status':admin.VERTICAL,
-        'delivery_advice_vl_results':admin.VERTICAL,
-        'delivery_advice_on_viralload':admin.VERTICAL,
-        'after_delivery_advice_vl_results':admin.VERTICAL,
-        'after_delivery_advice_on_viralload':admin.VERTICAL,
-        'use_medicines':admin.VERTICAL,
-        'breastfeeding_duration':admin.VERTICAL,
-        'influenced_during_preg':admin.VERTICAL,
-        'influenced_after_delivery':admin.VERTICAL,
-        'training_outcome':admin.VERTICAL,
-        'community_breastfeeding_bias':admin.VERTICAL,
-        'community_exclusive_breastfeeding_bias':admin.VERTICAL,
-        'after_birth_opinion':admin.VERTICAL,
-        'return_to_work_school':admin.VERTICAL,
-        'returned_to_work_school':admin.VERTICAL,
-        'six_months_feeding':admin.VERTICAL,
-       
-    }
-    
-    filter_horizontal = ('during_preg_influencers','after_delivery_influencers',
-                         'received_training','infant_feeding_reasons',)
-    
 
+    radio_fields = {
+        'feeding_hiv_status': admin.VERTICAL,
+        'hiv_status_aware': admin.VERTICAL,
+        'on_hiv_status_aware': admin.VERTICAL,
+        'hiv_status_during_preg': admin.VERTICAL,
+        'hiv_status_known_by': admin.VERTICAL,
+        'father_knew_hiv_status': admin.VERTICAL,
+        'delivery_advice_vl_results': admin.VERTICAL,
+        'delivery_advice_on_viralload': admin.VERTICAL,
+        'after_delivery_advice_vl_results': admin.VERTICAL,
+        'after_delivery_advice_on_viralload': admin.VERTICAL,
+        'use_medicines': admin.VERTICAL,
+        'breastfeeding_duration': admin.VERTICAL,
+        'influenced_during_preg': admin.VERTICAL,
+        'influenced_after_delivery': admin.VERTICAL,
+        'training_outcome': admin.VERTICAL,
+        'community_breastfeeding_bias': admin.VERTICAL,
+        'community_exclusive_breastfeeding_bias': admin.VERTICAL,
+        'after_birth_opinion': admin.VERTICAL,
+        'return_to_work_school': admin.VERTICAL,
+        'returned_to_work_school': admin.VERTICAL,
+        'six_months_feeding': admin.VERTICAL,
+        'feeding_advice': admin.VERTICAL,
+
+    }
+
+    filter_horizontal = ('during_preg_influencers', 'after_delivery_influencers',
+                         'received_training', 'infant_feeding_reasons',)

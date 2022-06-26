@@ -180,7 +180,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
-            # if self.consent_datetime >=
             self.version = '2.1'
 
             if self.preg_enroll:
@@ -345,3 +344,4 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         app_label = 'flourish_caregiver'
         verbose_name = 'Caregiver Consent On Behalf Of Child'
         verbose_name_plural = 'Caregiver Consent On Behalf Of Child'
+        # unique_together = ('subject_consent', 'subject_identifier', 'version')

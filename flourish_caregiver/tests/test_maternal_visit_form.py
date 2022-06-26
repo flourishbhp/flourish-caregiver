@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_constants.constants import OFF_STUDY, ON_STUDY, NOT_APPLICABLE
 from edc_constants.constants import UNKNOWN, DEAD, ALIVE, YES, PARTICIPANT, NO
@@ -30,6 +30,13 @@ class TestMaternalVisitFormValidator(TestCase):
             **self.options)
 
         mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=self.subject_consent,
+            child_dob=None,
+            first_name=None,
+            last_name=None, )
+
+        mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=self.subject_consent.subject_identifier,)
 
@@ -52,8 +59,10 @@ class TestMaternalVisitFormValidator(TestCase):
         except ValidationError as e:
             self.fail(f'ValidationError unexpectedly raised. Got{e}')
 
+    @tag('last_alife')
     def test_last_alive_date_not_required_valid(self):
         cleaned_data = {
+            'pk': 'hhdks',
             'report_datetime': get_utcnow(),
             'survival_status': UNKNOWN,
             'last_alive_date': None,
