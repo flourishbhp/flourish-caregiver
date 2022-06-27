@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
+from django.db.transaction import TransactionManagementError
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -462,7 +463,14 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     filled when opening such crf
     """
     complete_child_crfs = AutoCompleteChildCrfs(instance=instance)
-    complete_child_crfs.pre_fill_crfs()
+    try:
+        complete_child_crfs.pre_fill_crfs()
+    except TransactionManagementError:
+        """
+        Ignore the all errors and do not create any objects (Ostrich algorithm).
+        Nothing will be affected
+        """
+        pass
 
 
 def screening_preg_exists(caregiver_child_consent_obj):
