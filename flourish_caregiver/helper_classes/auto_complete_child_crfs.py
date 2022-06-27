@@ -24,9 +24,9 @@ class AutoCompleteChildCrfs:
             if crf.model in self.visit_crfs:
                 model_cls = django_apps.get_model(crf.model)
                 try:
-                    model_obj = model_cls.objects.get(
+                    model_obj = model_cls.objects.filter(
                         maternal_visit__subject_identifier=self.subject_identifier,
-                        maternal_visit__visit_code=self.visit_code)
+                        maternal_visit__visit_code=self.visit_code,).latest('report_datetime')
                 except model_cls.DoesNotExist:
                     pass
                 else:
@@ -119,6 +119,9 @@ class AutoCompleteChildCrfs:
         new_obj = model_cls.objects.create(**kwargs,
                                            maternal_visit_id=self.id,
                                            maternal_visit=self.instance)
+        
+ 
+        
         for key in self.get_many_to_many_fields(model_obj):
             getattr(new_obj, key).set(self.get_many_to_many_fields(model_obj).get(key))
         new_obj.save()
