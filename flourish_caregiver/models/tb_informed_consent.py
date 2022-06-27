@@ -20,7 +20,6 @@ from edc_search.model_mixins import SearchSlugManager
 from .model_mixins import SearchSlugModelMixin
 from ..choices import GENDER_OTHER
 from ..choices import IDENTITY_TYPE
-from ..subject_identifier import SubjectIdentifier
 
 
 class InformedConsentManager(ConsentManager, SearchSlugManager, models.Manager):
@@ -48,8 +47,8 @@ class TbInformedConsent(ConsentModelMixin, SiteModelMixin,
 
     consent_datetime = models.DateTimeField(
         verbose_name='Consent date and time',
-        default=get_utcnow,
-        help_text='Date and time of consent.')
+        help_text='Date and time of consent.',
+        null=True)
 
     identity_type = models.CharField(
         verbose_name='What type of identity number is this?',
