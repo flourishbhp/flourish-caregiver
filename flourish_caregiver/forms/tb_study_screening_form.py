@@ -1,10 +1,19 @@
 from django import forms
+from edc_base.sites import SiteModelFormMixin
+from edc_form_validators import FormValidatorMixin
 
-from .form_mixins import SubjectModelFormMixin
-from ..models import TbStudyEligibility
+from ..models import TbStudyEligibility, MaternalVisit
 
 
-class TbStudyScreeningForm(SubjectModelFormMixin, forms.ModelForm):
+class TbStudyScreeningForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
+    visit_model = MaternalVisit
+
+    visit_attr = None
+
+    def clean(self):
+        return super().clean()
+
+
     class Meta:
         model = TbStudyEligibility
         fields = '__all__'
