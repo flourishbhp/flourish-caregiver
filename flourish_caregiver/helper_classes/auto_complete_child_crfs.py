@@ -1,11 +1,11 @@
 from copy import deepcopy
 
 from django.apps import apps as django_apps
-from django.db import models
 from django.forms import model_to_dict
+from django.db import IntegrityError, models
 from edc_metadata import REQUIRED, KEYED
 from edc_metadata.models import CrfMetadata
-
+from django.db.transaction import TransactionManagementError
 from flourish_caregiver.models import MaternalVisit
 
 
@@ -24,9 +24,9 @@ class AutoCompleteChildCrfs:
             if crf.model in self.visit_crfs:
                 model_cls = django_apps.get_model(crf.model)
                 try:
-                    model_obj = model_cls.objects.get(
+                    model_obj = model_cls.objects.filter(
                         maternal_visit__subject_identifier=self.subject_identifier,
-                        maternal_visit__visit_code=self.visit_code)
+                        maternal_visit__visit_code=self.visit_code,).latest('report_datetime')
                 except model_cls.DoesNotExist:
                     pass
                 else:
@@ -111,15 +111,26 @@ class AutoCompleteChildCrfs:
         Get an existing model object as params and copy and save the model copy to create
         copy of the existing object
         """
-        kwargs = model_to_dict(model_obj,
-                               fields=[field.name for field in
-                                       model_obj._meta.fields],
-                               exclude=['id', 'maternal_visit_id',
-                                        'maternal_visit'])
-        new_obj = model_cls.objects.create(**kwargs,
-                                           maternal_visit_id=self.id,
-                                           maternal_visit=self.instance)
-        for key in self.get_many_to_many_fields(model_obj):
-            getattr(new_obj, key).set(self.get_many_to_many_fields(model_obj).get(key))
-        new_obj.save()
-        self.save_inlines(new_obj, model_obj)
+        try:
+        
+            kwargs = model_to_dict(model_obj,
+                                fields=[field.name for field in
+                                        model_obj._meta.fields],
+                                exclude=['id', 'maternal_visit_id',
+                                            'maternal_visit'])
+            new_obj = model_cls.objects.create(**kwargs,
+                                            maternal_visit_id=self.id,
+                                            maternal_visit=self.instance)
+        
+            for key in self.get_many_to_many_fields(model_obj):
+                getattr(new_obj, key).set(self.get_many_to_many_fields(model_obj).get(key))
+            new_obj.save()
+            self.save_inlines(new_obj, model_obj)
+        
+        except Exception:
+            """
+            Ignore the all errors and do not create any objects (Ostrich algorithm).
+            Nothing will be affected
+            """
+            pass
+

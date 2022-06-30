@@ -35,9 +35,9 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                                 visit_definition.rupper).astimezone(
                 pytz.timezone('Africa/Gaborone'))
 
-            if (cleaned_data.get('visit_code_sequence') == 0
+            if (self.instance.visit_code_sequence == 0
                     and cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
-                    microsecond=0)
+                        microsecond=0)
                     or (self.instance.visit_code not in ['1000M', '2000M']
                         and cleaned_data.get('appt_datetime') > latest_appt_date.replace(
                                 microsecond=0))):
@@ -78,6 +78,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
         validation functions.
         """
         pass
+
 
     class Meta:
         model = Appointment
