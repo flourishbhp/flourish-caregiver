@@ -25,6 +25,7 @@ class ExportActionMixin:
 
         row_num = 0
         obj_count = 0
+        self.inline_header = False
 
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
@@ -129,7 +130,7 @@ class ExportActionMixin:
             if inline_objs:
                 # Update header
                 inline_field_names = self.inline_exclude(field_names=inline_field_names)
-                if obj_count == 0:
+                if not self.inline_header:
                     self.update_headers_inline(
                         inline_fields=inline_field_names, field_names=field_names,
                         ws=ws, row_num=0, font_style=font_style)
@@ -178,6 +179,7 @@ class ExportActionMixin:
         for col_num in range(len(inline_fields)):
             ws.write(row_num, top_num, inline_fields[col_num], font_style)
             top_num += 1
+            self.inline_header = True
 
     def get_export_filename(self):
         date_str = datetime.datetime.now().strftime('%Y-%m-%d')
