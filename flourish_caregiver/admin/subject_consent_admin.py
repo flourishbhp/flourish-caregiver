@@ -168,11 +168,11 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 pass
             else:
                 if consent_version_obj.child_version:
-                    try:
-                        self.consent_cls.objects.get(
+
+                    child_consent_objs = self.consent_cls.objects.filter(
                             subject_consent__subject_identifier=subject_identifier,
                             version=consent_version_obj.child_version)
-                    except self.consent_cls.DoesNotExist:
+                    if not child_consent_objs:
                         return 1
         return 0
 
