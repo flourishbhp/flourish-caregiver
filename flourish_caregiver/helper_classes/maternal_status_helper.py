@@ -104,16 +104,19 @@ class MaternalStatusHelper(object):
             if previous_enrollment.current_hiv_status is not None:
                 return previous_enrollment.current_hiv_status
 
-        try:
-            maternal_dataset_obj = maternal_dataset_cls.objects.get(
+        maternal_dataset_objs = maternal_dataset_cls.objects.filter(
                 subject_identifier=self.subject_identifier)
-        except maternal_dataset_cls.DoesNotExist:
-            return UNK
-        else:
-            status_dict = {'HIV-infected': POS,
-                           'HIV-uninfected': NEG}
-            return status_dict.get(
-                maternal_dataset_obj.mom_hivstatus)
+
+        # for maternal_dataset_obj in maternal_dataset_objs:
+        if maternal_dataset_objs:
+            mom_hiv_statuses = maternal_dataset_objs.values_list('mom_hivstatus', flat=True)
+
+            if 'HIV-infected' in mom_hiv_statuses:
+                return POS
+            else:
+                return NEG
+
+        return UNK
 
     @property
     def eligible_for_cd4(self):
