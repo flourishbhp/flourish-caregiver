@@ -733,8 +733,7 @@ ON_HIV_STATUS_AWARE = (
 HIV_STATUS_KNOWN_BY = (
     ('no_one', '0 persons in my household'),
     ('one_person', '1 persons in my household'),
-    ('two_or_more', '≥2 persons in my household'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('two_or_more', '≥2 persons in my household'),)
 
 HIV_STATUS_KNOWN_BY_FATHER = (
     (YES, 'Yes'),
@@ -750,8 +749,7 @@ AGREE_DISAGREE = (
     ('disagree', 'Disagree'),
     ('neutral', 'Neither agree or disagree'),
     ('agree', 'Agree'),
-    ('strongly_agree', 'Strongly agree'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('strongly_agree', 'Strongly agree'),)
 
 BREASTFEEDING_DURATION = (
     ('less_than_six_months', '<6 months'),
