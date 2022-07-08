@@ -8,7 +8,7 @@ from ..choices import (HIV_STATUS_AWARE, FEEDING_HIV_STATUS,
                        HIV_STATUS_KNOWN_BY_FATHER,
                        ADVICED, AGREE_DISAGREE, BREASTFEEDING_DURATION, FEEDING_ADVICE,
                        AFTER_BIRTH_OPINION, FEEDING_INFLUENCE, RETURNED_TO_WORK,
-                       FEEDING_AFTER_SIX_MONTHS)
+                       FEEDING_AFTER_SIX_MONTHS, TRAINEE_OUTCOME)
 from .list_models import (PregnancyInfluencersList, AfterPregnancyInfluencersList,
                           ReceivedTrainingOnFeedingList,
                           ReasonsForInfantFeedingList)
@@ -166,19 +166,13 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     training_outcome = models.CharField(
         verbose_name='The training increased my understanding of the risk and benefits of breastfeeding and formula feeding.',
         max_length=20,
-        choices=AGREE_DISAGREE,
+        choices=TRAINEE_OUTCOME,
     )
 
     feeding_advice = models.CharField(
         verbose_name='I was advised by a health worker to feed my baby by:',
         max_length=20,
         choices=FEEDING_ADVICE,
-    )
-
-    training_outcome = models.CharField(
-        verbose_name='The training increased my understanding of the risk and benefits of breastfeeding and formula feeding.',
-        max_length=20,
-        choices=AGREE_DISAGREE,
     )
 
     community_breastfeeding_bias = models.CharField(
