@@ -790,3 +790,10 @@ FEEDING_AFTER_SIX_MONTHS = (
     (NO, 'No'),
     ('do_not_remember', 'Unsure/Do not remember'),)
 
+TRAINEE_OUTCOME = (
+    ('strongly_disagree', 'Strongly disagree'),
+    ('disagree', 'Disagree'),
+    ('neutral', 'Neither agree or disagree'),
+    ('agree', 'Agree'),
+    ('strongly_agree', 'Strongly agree'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
