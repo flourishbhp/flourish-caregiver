@@ -733,8 +733,7 @@ ON_HIV_STATUS_AWARE = (
 HIV_STATUS_KNOWN_BY = (
     ('no_one', '0 persons in my household'),
     ('one_person', '1 persons in my household'),
-    ('two_or_more', '≥2 persons in my household'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('two_or_more', '≥2 persons in my household'),)
 
 HIV_STATUS_KNOWN_BY_FATHER = (
     (YES, 'Yes'),
@@ -750,8 +749,7 @@ AGREE_DISAGREE = (
     ('disagree', 'Disagree'),
     ('neutral', 'Neither agree or disagree'),
     ('agree', 'Agree'),
-    ('strongly_agree', 'Strongly agree'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('strongly_agree', 'Strongly agree'),)
 
 BREASTFEEDING_DURATION = (
     ('less_than_six_months', '<6 months'),
@@ -768,16 +766,18 @@ FEEDING_ADVICE = (
     (NOT_APPLICABLE, 'Not applicable'),)
 
 AFTER_BIRTH_OPINION = (
-    ('continued_breastfeeding','Wanted to continue breastfeeding and was able to do so'),
-    ('unable_to_breastfeed','Wanted to continue breastfeeding but was unable to do so'),
-    ('did_not_want_to_breastfeed','No longer wanted to breastfeed'),
-    ('told_not_to_breastfeed_before','Was told not to breastfeed before/at delivery'),
-    ('did_not_want_to_breastfeed_before','Did not want to breastfeed even before this baby was born '),
-    (NONE,'None of the above'),)
+    ('continued_breastfeeding', 'Wanted to continue breastfeeding and was able to do so'),
+    ('unable_to_breastfeed', 'Wanted to continue breastfeeding but was unable to do so'),
+    ('did_not_want_to_breastfeed', 'No longer wanted to breastfeed'),
+    ('told_not_to_breastfeed_before', 'Was told not to breastfeed before/at delivery'),
+    ('did_not_want_to_breastfeed_before',
+     'Did not want to breastfeed even before this baby was born '),
+    (NONE, 'None of the above'),)
 
-FEEDING_INFLUENCE =(
+FEEDING_INFLUENCE = (
     (YES, 'Yes'),
-    (NO, 'No'),)
+    (NO, 'No'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 RETURNED_TO_WORK = (
     ('less_than_one_month_after_delivery', '<1 month after delivery'),
@@ -790,3 +790,10 @@ FEEDING_AFTER_SIX_MONTHS = (
     (NO, 'No'),
     ('do_not_remember', 'Unsure/Do not remember'),)
 
+TRAINEE_OUTCOME = (
+    ('strongly_disagree', 'Strongly disagree'),
+    ('disagree', 'Disagree'),
+    ('neutral', 'Neither agree or disagree'),
+    ('agree', 'Agree'),
+    ('strongly_agree', 'Strongly agree'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
