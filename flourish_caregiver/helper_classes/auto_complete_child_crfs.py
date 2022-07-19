@@ -31,6 +31,22 @@ class AutoCompleteChildCrfs:
                     pass
                 else:
                     self.save_model(model_obj=model_obj, model_cls=model_cls)
+                    
+    @property               
+    def exclude_models(self):
+        """
+        Gives models names that should not be cloned
+
+        Returns:
+            list: models that should not be cloned
+        """
+        models = [
+            'flourish_caregiver.ClinicianNotesImage',
+            'flourish_caregiver.ClinicianNotes'
+        ]
+        
+        return models
+
 
     @property
     def maternal_inlines_crfs(self):
@@ -38,7 +54,7 @@ class AutoCompleteChildCrfs:
         Returns a list of possible inline forms found in child crfs
         """
         return {
-            'cliniciannotesimage': ['cliniciannotesimage', 'clinician_notes'],
+            # 'cliniciannotesimage': ['cliniciannotesimage', 'clinician_notes'],
             'maternalarvduringpreg': ['maternalarv', 'maternal_arv_durg_preg']}
 
     @property
@@ -111,6 +127,12 @@ class AutoCompleteChildCrfs:
         Get an existing model object as params and copy and save the model copy to create
         copy of the existing object
         """
+        
+        for model_name in self.exclude_models:
+            # Function is returned when model_obj is too be excluded
+            if isinstance(model_obj, django_apps.get_model(model_name)):
+                return 
+        
         try:
         
             kwargs = model_to_dict(model_obj,
