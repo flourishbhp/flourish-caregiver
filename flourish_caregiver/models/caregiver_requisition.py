@@ -14,7 +14,7 @@ from edc_metadata.model_mixins.updates import UpdatesRequisitionMetadataModelMix
 from edc_reference.model_mixins import RequisitionReferenceModelMixin
 from edc_search.model_mixins import SearchSlugManager
 
-# from edc_senaite_interface.model_mixins import SenaiteRequisitionModelMixin
+from edc_senaite_interface.model_mixins import SenaiteRequisitionModelMixin
 from edc_visit_schedule.model_mixins import SubjectScheduleCrfModelMixin
 from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModelManager
 from edc_visit_tracking.model_mixins import CrfModelMixin as VisitTrackingCrfModelMixin

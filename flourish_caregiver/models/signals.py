@@ -24,9 +24,10 @@ from edc_visit_tracking.constants import MISSED_VISIT
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
-# import pyminizip
+import pyminizip
 
 from ..action_items import TB_OFF_STUDY_ACTION
+
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.cohort import Cohort
@@ -359,7 +360,11 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
+<<<<<<< HEAD
                         version=instance.version,)
+=======
+                        version=instance.subject_consent.version,)
+>>>>>>> 1a9f823 (add follow up enrol helper)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
