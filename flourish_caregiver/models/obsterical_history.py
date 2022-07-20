@@ -43,6 +43,12 @@ class ObstericalHistory(CrfModelMixin):
         validators=[MinValueValidator(0), MaxValueValidator(20), ],
     )
 
+    children_died_aft_5yrs = models.IntegerField(
+        verbose_name='How many of the participant\'s children died after 5 years of age',
+        validators=[MinValueValidator(0), MaxValueValidator(20), ],
+        default=0,
+    )
+
     children_deliv_before_37wks = models.IntegerField(
         verbose_name='Number of previous pregnancies delivered at < 37'
         ' weeks GA?',
