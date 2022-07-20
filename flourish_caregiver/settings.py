@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
-import sys
 from pathlib import Path
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'edc_base.apps.AppConfig',
     'edc_consent.apps.AppConfig',
     'edc_visit_schedule.apps.AppConfig',
+    'edc_data_manager.apps.AppConfig',
     'flourish_prn.apps.AppConfig',
     'flourish_reference.apps.AppConfig',
     'flourish_metadata_rules.apps.AppConfig',
@@ -167,6 +168,7 @@ STATIC_URL = '/static/'
 DASHBOARD_URL_NAMES = {}
 
 if 'test' in sys.argv:
+
     class DisableMigrations:
 
         def __contains__(self, item):
@@ -174,7 +176,6 @@ if 'test' in sys.argv:
 
         def __getitem__(self, item):
             return None
-
 
     MIGRATION_MODULES = DisableMigrations()
     PASSWORD_HASHERS = ('django.contrib.auth.hashers.MD5PasswordHasher',)
