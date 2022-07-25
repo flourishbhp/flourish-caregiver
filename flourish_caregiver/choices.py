@@ -79,6 +79,9 @@ ARV_INTERRUPTION_REASON = (
     ('NO_DRUGS', 'No drugs available'),
     ('NO_REFILL', 'Didn\'t get to clinic for refill'),
     ('FORGOT', 'Mother forgot to take the ARVs'),
+    ('DEFAULT', 'Defaulted ARV treatment (7 days or more)'),
+    ('TOLERABILITY', 'Switch for tolerability'),
+    ('FAILURE', 'Treatment failure'),
     (OTHER, 'Other'),
     (NOT_APPLICABLE, 'Not Applicable'),
     )
@@ -797,3 +800,5 @@ TRAINEE_OUTCOME = (
     ('agree', 'Agree'),
     ('strongly_agree', 'Strongly agree'),
     (NOT_APPLICABLE, 'Not Applicable'),)
+
+
