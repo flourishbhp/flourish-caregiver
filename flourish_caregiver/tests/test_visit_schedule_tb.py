@@ -164,6 +164,15 @@ class TestVisitScheduleTb(TestCase):
             visit_code='2100T').entry_status, REQUIRED)
 
     def test_tb_screening_form(self):
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.consent.subject_identifier, )
+        child_consent = ChildDummySubjectConsent.objects.get(
+            subject_identifier=self.child_consent.subject_identifier,
+        )
+
+        child_consent.dob = (get_utcnow() - relativedelta(days=1)).date()
+        child_consent.save()
 
         self.assertEqual(CrfMetadata.objects.get(
             model='flourish_caregiver.tbstudyeligibility',
