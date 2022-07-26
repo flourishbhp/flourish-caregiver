@@ -29,7 +29,8 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'confirm_values',
                 'is_preg',
                 'waist_circ',
-                'hip_circ'
+                'hip_circ',
+                'all_measurements',
             ]}
          ), audit_fieldset_tuple)
 
@@ -51,5 +52,6 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         except ObjectDoesNotExist:
             schedule_name = None
         else:
-            schedule_name = model_obj.schedule_name
-        return schedule_name
+            if model_obj:
+                return model_obj.schedule_name
+
