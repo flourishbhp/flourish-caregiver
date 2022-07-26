@@ -4,8 +4,8 @@ from django import forms
 from django.apps import apps as django_apps
 from edc_constants.constants import YES, NO
 
-from ..models import MaternalArvDuringPreg
-from .form_mixins import SubjectModelFormMixin
+from ..models import MaternalArvDuringPreg, MaternalArvTableDuringPreg
+from .form_mixins import SubjectModelFormMixin, InlineSubjectModelFormMixin
 
 from flourish_form_validations.form_validators import MaternalArvDuringPregFormValidator
 
@@ -48,7 +48,7 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
 
     def validate_maternal_arv_required(self):
         maternal_arv = self.data.get(
-            'maternalarv_set-0-arv_code')
+            'maternalarvtableduringpreg_set-0-arv_code')
         took_arv = self.cleaned_data.get('took_arv')
         is_interrupt = self.cleaned_data.get('is_interrupt')
         visit_code = self.cleaned_data.get(
@@ -66,11 +66,11 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
 
     def validate_date_arv_stopped(self):
         maternal_arv_count = self.data.get(
-            'maternalarv_set-TOTAL_FORMS')
+            'maternalarvtableduringpreg_set-TOTAL_FORMS')
         arvs_with_stop_date = 0
         for i in range(int(maternal_arv_count)):
             maternal_arv = self.data.get(
-                'maternalarv_set-' + str(i) + '-stop_date')
+                'maternalarvtableduringpreg_set-' + str(i) + '-stop_date')
             if maternal_arv:
                 arvs_with_stop_date = arvs_with_stop_date + 1
         if (int(maternal_arv_count) - arvs_with_stop_date) < 3:
@@ -88,12 +88,12 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
                 ' form before proceeding.')
         else:
             maternal_arv_count = self.data.get(
-                'maternalarv_set-TOTAL_FORMS')
+                'maternalarvtableduringpreg_set-TOTAL_FORMS')
 
             for i in range(int(maternal_arv_count)):
-                if self.data.get('maternalarv_set-' + str(i) + '-start_date'):
+                if self.data.get('maternalarvtableduringpreg_set-' + str(i) + '-start_date'):
                     set_start_date = self.data.get(
-                        'maternalarv_set-' + str(i) + '-start_date')
+                        'maternalarvtableduringpreg_set-' + str(i) + '-start_date')
                     date_time_obj = datetime.datetime.strptime(set_start_date,
                                                                '%Y-%m-%d')
                     if date_time_obj.date() < \
@@ -123,14 +123,14 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
 
     def check_new_arv_start_date(self):
 
-        arv_count = self.data.get('maternalarv_set-TOTAL_FORMS')
+        arv_count = self.data.get('maternalarvtableduringpreg_set-TOTAL_FORMS')
 
         for num in range(int(arv_count)):
             arv_stop_date = self.data.get(
-                'maternalarv_set-' + str(num) + '-stop_date')
+                'maternalarvtableduringpreg_set-' + str(num) + '-stop_date')
             if arv_stop_date:
                 arv_code = self.data.get(
-                    'maternalarv_set-' + str(num) + '-arv_code')
+                    'maternalarvtableduringpreg_set-' + str(num) + '-arv_code')
                 self.validate_new_maternal_arv_preg_start_date(
                     arv_stop_date, arv_code, arv_count)
 
@@ -140,10 +140,10 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
         if switch_arv_code:
             for num in range(int(count)):
                 if switch_arv_code == self.data.get(
-                        'maternalarv_set-' + str(num) + '-arv_code'):
+                        'maternalarvtableduringpreg_set-' + str(num) + '-arv_code'):
 
                     start_date = self.data.get(
-                        'maternalarv_set-' + str(num) + '-start_date')
+                        'maternalarvtableduringpreg_set-' + str(num) + '-start_date')
                     start_date = datetime.datetime.strptime(
                         start_date, '%Y-%m-%d').date() if start_date else None
 
@@ -186,19 +186,19 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
         previous_arv_preg = self.get_previous_arv_preg(subject_identifier,
                                                        report_datetime)
         if previous_arv_preg:
-            arv_count = self.data.get('maternalarv_set-TOTAL_FORMS')
+            arv_count = self.data.get('maternalarvtableduringpreg_set-TOTAL_FORMS')
 
             for index in range(int(arv_count)):
                 arv_start_date = self.data.get(
-                    'maternalarv_set-' + str(index) + '-start_date')
+                    'maternalarvtableduringpreg_set-' + str(index) + '-start_date')
                 start_date = datetime.datetime.strptime(
                     arv_start_date, '%Y-%m-%d') if arv_start_date else None
 
                 arv_code = self.data.get(
-                    'maternalarv_set-' + str(index) + '-arv_code')
+                    'maternalarvtableduringpreg_set-' + str(index) + '-arv_code')
 
                 arv_stop_date = self.data.get(
-                    'maternalarv_set-' + str(index) + '-stop_date')
+                    'maternalarvtableduringpreg_set-' + str(index) + '-stop_date')
                 stop_date = datetime.datetime.strptime(
                     arv_stop_date, '%Y-%m-%d') if arv_stop_date else None
 
@@ -215,12 +215,12 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
         """
         function that checks the most recent arv stop date and returns it
         """
-        arv_count = int(self.data.get('maternalarv_set-TOTAL_FORMS'))
+        arv_count = int(self.data.get('maternalarvtableduringpreg_set-TOTAL_FORMS'))
         arv_stop_dates = []
 
         for index in range(arv_count):
             arv_stop_date = self.data.get(
-                'maternalarv_set-' + str(index) + '-stop_date')
+                'maternalarvtableduringpreg_set-' + str(index) + '-stop_date')
             arv_stop_dates.append(arv_stop_date)
 
         if arv_stop_dates and max(arv_stop_dates):
@@ -244,4 +244,10 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
 
     class Meta:
         model = MaternalArvDuringPreg
+        fields = '__all__'
+
+
+class MaternalArvTableDuringPregForm(InlineSubjectModelFormMixin):
+    class Meta:
+        model = MaternalArvTableDuringPreg
         fields = '__all__'
