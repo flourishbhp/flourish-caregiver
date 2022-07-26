@@ -29,7 +29,8 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'confirm_values',
                 'is_preg',
                 'waist_circ',
-                'hip_circ'
+                'hip_circ',
+                'all_measurements',
             ]}
          ), audit_fieldset_tuple)
 
