@@ -54,6 +54,7 @@ class ExportActionMixin:
         if ((queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound') and
                 queryset[0].get_current_ga):
             field_names.append('current_ga')
+            field_names.append('maternal_delivery_date')
 
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
@@ -73,6 +74,8 @@ class ExportActionMixin:
                 study_maternal_identifier = self.study_maternal_identifier(
                     screening_identifier=screening_identifier)
                 caregiver_hiv_status = self.caregiver_hiv_status(
+                    subject_identifier=subject_identifier)
+                maternal_delivery_obj = self.maternal_delivery_obj(
                     subject_identifier=subject_identifier)
 
                 data.append(subject_identifier)
@@ -115,17 +118,19 @@ class ExportActionMixin:
                     inline_values = key_manager.all()
                     fields = field.related_model._meta.get_fields()
                     inline_field_names.extend(
-                            [field.name for field in fields if not isinstance(
-                                field, (ForeignKey, OneToOneField,))])
+                        [field.name for field in fields if not isinstance(
+                            field, (ForeignKey, OneToOneField,))])
                     if inline_values:
                         inline_objs.append(inline_values)
                 field_value = getattr(obj, field.name, '')
                 data.append(field_value)
 
-            if ((queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound') and
-                    queryset[0].get_current_ga):
-                field_value = getattr(obj, 'get_current_ga', '')
-                data.append(field_value)
+            if queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound':
+                if queryset[0].get_current_ga:
+                    field_value = getattr(obj, 'get_current_ga', '')
+                    data.append(field_value)
+                if maternal_delivery_obj:
+                    data.append(maternal_delivery_obj.delivery_datetime.date())
 
             if inline_objs:
                 # Update header
@@ -257,3 +262,19 @@ class ExportActionMixin:
                 'identifier_prefix', 'primary_aliquot_identifier', 'clinic_verified',
                 'clinic_verified_datetime', 'drawn_datetime', 'related_tracking_identifier',
                 'parent_tracking_identifier']
+
+    @property
+    def maternal_delivery(self):
+        return django_apps.get_model('flourish_caregiver.maternaldelivery')
+
+    def maternal_delivery_obj(self, subject_identifier):
+        """
+        Takes subject identifier and return a maternal delivery objects
+        """
+        try:
+            maternal_delivery_obj = self.maternal_delivery.objects.get(
+                subject_identifier=subject_identifier)
+        except self.maternal_delivery.DoesNotExist:
+            return None
+        else:
+            return maternal_delivery_obj
