@@ -2,15 +2,15 @@ from django.contrib import admin
 from edc_model_admin import TabularInlineMixin
 from edc_model_admin import audit_fieldset_tuple
 
-from ..admin_site import flourish_caregiver_admin
-from ..forms import MaternalArvDuringPregForm, MaternalArvForm
-from ..models import MaternalArvDuringPreg, MaternalArv
 from .modeladmin_mixins import CrfModelAdminMixin, ModelAdminMixin
+from ..admin_site import flourish_caregiver_admin
+from ..forms import MaternalArvDuringPregForm, MaternalArvTableDuringPregForm
+from ..models import MaternalArvDuringPreg, MaternalArvTableDuringPreg
 
 
-class MaternalArvInlineAdmin(TabularInlineMixin, admin.TabularInline):
-    model = MaternalArv
-    form = MaternalArvForm
+class MaternalArvTableDuringPregInlineAdmin(TabularInlineMixin, admin.TabularInline):
+    model = MaternalArvTableDuringPreg
+    form = MaternalArvTableDuringPregForm
     extra = 1
 
     fieldsets = (
@@ -27,7 +27,7 @@ class MaternalArvInlineAdmin(TabularInlineMixin, admin.TabularInline):
 @admin.register(MaternalArvDuringPreg, site=flourish_caregiver_admin)
 class MaternalArvDuringPregAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = MaternalArvDuringPregForm
-    inlines = [MaternalArvInlineAdmin, ]
+    inlines = [MaternalArvTableDuringPregInlineAdmin, ]
     list_display = ('maternal_visit', 'took_arv', 'is_interrupt',)
     list_filter = ('took_arv',)
 
@@ -48,9 +48,9 @@ class MaternalArvDuringPregAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     }
 
 
-@admin.register(MaternalArv, site=flourish_caregiver_admin)
-class MaternalArvAdmin(ModelAdminMixin, admin.ModelAdmin):
-    form = MaternalArvForm
+@admin.register(MaternalArvTableDuringPreg, site=flourish_caregiver_admin)
+class MaternalArvTableDuringPregAdmin(ModelAdminMixin, admin.ModelAdmin):
+    form = MaternalArvTableDuringPregForm
 
     fieldsets = (
         (None, {
@@ -64,9 +64,9 @@ class MaternalArvAdmin(ModelAdminMixin, admin.ModelAdmin):
             ]
         }
 
-        ), audit_fieldset_tuple,
+         ), audit_fieldset_tuple,
     )
-    list_display = ('arv_code', 'start_date', 'stop_date', 'reason_for_stop', )
+    list_display = ('arv_code', 'start_date', 'stop_date', 'reason_for_stop',)
 
     search_fields = [
         'maternal_arv_durg_preg__child_visit__appointment__subject_identifier',

@@ -80,7 +80,6 @@ tbinformedconsent = Recipe(
     confirm_identity=seq('123427675'),
     is_literate=YES,
     consent_to_participate=YES,
-    optional_sample_collection=YES
 )
 
 caregiverpreviouslyenrolled = Recipe(
