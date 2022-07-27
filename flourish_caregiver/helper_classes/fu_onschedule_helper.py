@@ -6,9 +6,13 @@ from edc_registration.models import RegisteredSubject
 from edc_appointment.constants import NEW_APPT
 from edc_appointment.models import Appointment
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
+from flourish_child.helper_classes.child_fu_onschedule_helper import ChildFollowUpEnrolmentHelper
 
 from ..models import OnScheduleCohortAFU, OnScheduleCohortBFU
+from ..models import OnScheduleCohortAFU, OnScheduleCohortBFU
+from ..models import OnScheduleCohortBFUQuart, OnScheduleCohortCFUQuart
 from ..models import OnScheduleCohortBFUQuarterly, OnScheduleCohortCFUQuarterly
+from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuart
 from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuarterly
 
 
@@ -133,4 +137,3 @@ class FollowUpEnrolmentHelper(object):
             self.caregiver_off_current_schedule(latest_appt)
 
             print("Done!")
-
