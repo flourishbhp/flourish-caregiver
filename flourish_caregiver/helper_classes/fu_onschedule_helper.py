@@ -1,6 +1,6 @@
 from django.apps import apps as django_apps
 from edc_base.utils import get_utcnow
-
+from edc_registration.models import RegisteredSubject
 from edc_appointment.constants import NEW_APPT
 from edc_appointment.models import Appointment
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
@@ -131,6 +131,14 @@ class FollowUpEnrolmentHelper(object):
                 subject_identifier=old_onschedule_obj.child_subject_identifier)
             child_schedule_enrol_helper.activate_child_fu_schedule()
 
+    def get_related_child_pids(self, subject_identifier):
+
+        related_children = RegisteredSubject.objects.filter(
+            subject_identifier__startswith=subject_identifier,
+            subject_type='infant')
+
+        return related_children.values_list('subject_identifier', flat=True)
+
     def activate_fu_schedule(self):
 
         latest_appointments = self.get_latest_completed_appointments(
@@ -144,3 +152,12 @@ class FollowUpEnrolmentHelper(object):
                 self.caregiver_off_current_schedule(latest_appt)
 
                 print("Done!")
+
+        if self.update_child:
+            child_pids = self.get_related_child_pids(self.subject_identifier)
+
+            for child_pid in child_pids:
+                child_schedule_enrol_helper = ChildFollowUpEnrolmentHelper(
+                        subject_identifier=child_pid)
+
+                child_schedule_enrol_helper.activate_child_fu_schedule()
