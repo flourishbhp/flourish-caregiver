@@ -1,21 +1,33 @@
 import datetime
 import uuid
+import xlwt
 
 from django.contrib import admin
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.utils import timezone
 from edc_lab.admin import RequisitionAdminMixin
-from edc_lab.admin import requisition_identifier_fields
-from edc_lab.admin import requisition_identifier_fieldset, requisition_verify_fields
+from edc_lab.admin import requisition_verify_fields
 from edc_lab.admin import requisition_verify_fieldset, requisition_status_fieldset
 from edc_model_admin import audit_fieldset_tuple
-import xlwt
+from edc_senaite_interface.admin import SenaiteRequisitionAdminMixin
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverRequisitionForm
 from ..models import CaregiverRequisition
 from .modeladmin_mixins import CrfModelAdminMixin
+
+
+requisition_identifier_fields = (
+    'requisition_identifier',
+    'identifier_prefix',
+    'primary_aliquot_identifier',
+    'sample_id',
+)
+
+requisition_identifier_fieldset = (
+    'Identifiers', {
+        'classes': ('collapse',),
+        'fields': (requisition_identifier_fields)})
 
 
 class ExportRequisitionCsvMixin:
@@ -81,15 +93,16 @@ class ExportRequisitionCsvMixin:
         wb.save(response)
         return response
 
-    export_as_csv.short_description = "Export with panel name"
+    export_as_csv.short_description = 'Export with panel name'
 
 
 @admin.register(CaregiverRequisition, site=flourish_caregiver_admin)
 class CaregiverRequisitionAdmin(ExportRequisitionCsvMixin, CrfModelAdminMixin,
-                                RequisitionAdminMixin, admin.ModelAdmin):
+                                RequisitionAdminMixin, SenaiteRequisitionAdminMixin,
+                                admin.ModelAdmin):
 
     form = CaregiverRequisitionForm
-    actions = ["export_as_csv"]
+    actions = ['export_as_csv']
     ordering = ('requisition_identifier',)
 
     fieldsets = (
@@ -126,8 +139,8 @@ class CaregiverRequisitionAdmin(ExportRequisitionCsvMixin, CrfModelAdminMixin,
 
     def get_readonly_fields(self, request, obj=None):
         return (super().get_readonly_fields(request, obj)
-                +requisition_identifier_fields
-                +requisition_verify_fields)
+                + requisition_identifier_fields
+                + requisition_verify_fields)
 
     def get_previous_instance(self, request, instance=None, **kwargs):
         """Returns a model instance that is the first occurrence of a previous
