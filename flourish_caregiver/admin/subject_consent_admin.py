@@ -316,11 +316,9 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         ).exists()
         
         if caregiver_locator.count() > 0 or consent_exist:
-            breakpoint()
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'subject_dashboard_url'), **kwargs)
         else:
-            breakpoint()
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'maternal_screening_listboard_url'))
             
