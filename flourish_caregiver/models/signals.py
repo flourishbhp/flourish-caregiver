@@ -24,7 +24,7 @@ from edc_visit_tracking.constants import MISSED_VISIT
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
-import pyminizip
+# import pyminizip
 
 from ..action_items import TB_OFF_STUDY_ACTION
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS

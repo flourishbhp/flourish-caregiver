@@ -87,10 +87,8 @@ class FollowUpEnrolmentHelper(object):
 
         if 'quarterly' in latest_appt.schedule_name:
             schedule_name = '_'.join([vs[0], vs[1].replace('quarterly', 'fu'), vs[2]])
-            quart_schedule_name = '_'.join([vs[0], vs[1].replace('quarterly', 'fu_quarterly'), vs[2]])
         else:
             schedule_name = '_'.join([vs[0], vs[2].replace('quart', 'fu'), vs[3]])
-            quart_schedule_name = '_'.join([vs[0], vs[2].replace('quart', 'fu_quarterly'), vs[3]])
 
         onschedule_model_cls = self.cohort_dict.get(schedule_name[0])
         onschedule_quart_model_cls = self.cohort_quart_dict.get(schedule_name[0])
@@ -99,17 +97,9 @@ class FollowUpEnrolmentHelper(object):
             name=schedule_name,
             onschedule_model=onschedule_model_cls._meta.label_lower)
 
-        _, new_quart_schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
-            name=quart_schedule_name,
-            onschedule_model=onschedule_quart_model_cls._meta.label_lower)
-
         new_schedule.put_on_schedule(
             subject_identifier=latest_appt.subject_identifier,
             schedule_name=schedule_name)
-
-        new_quart_schedule.put_on_schedule(
-            subject_identifier=latest_appt.subject_identifier,
-            schedule_name=quart_schedule_name)
 
         print("Going well..")
 
