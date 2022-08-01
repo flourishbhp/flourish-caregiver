@@ -1,9 +1,13 @@
 from django.apps import apps as django_apps
+from django.conf import settings
 from django.contrib import admin
+from django.shortcuts import redirect
 from edc_base.utils import get_utcnow
 from edc_fieldsets import FieldsetsModelAdminMixin
 from edc_fieldsets.fieldlist import Insert
 from edc_model_admin import audit_fieldset_tuple
+
+from flourish_caregiver.models.subject_consent import SubjectConsent
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import FlourishConsentVersionForm
@@ -96,3 +100,23 @@ class FlourishConsentVersionAdmin(ModelAdminMixin,
 
         if (obj and obj.child_version) or self.check_if_preg_enroll(request, obj):
             return 'is_preg'
+        
+    def response_add(self, request, obj, **kwargs):
+        response = self._redirector(obj)
+        return response if response else super().response_add(request, obj)
+
+    def response_change(self, request, obj):
+        response = self._redirector(obj)
+        return response if response else super().response_change(request, obj)
+        
+    def _redirector(self, obj):
+        
+
+        consent = SubjectConsent.objects.filter(
+                screening_identifier=obj.screening_identifier)
+            
+        if consent.exists():
+            kwargs = {'subject_identifier': consent.first().subject_identifier}
+            
+            return redirect(settings.DASHBOARD_URL_NAMES.get(
+                'subject_dashboard_url'), **kwargs)
