@@ -48,13 +48,13 @@ from .onschedule import OnScheduleCohortAEnrollment, OnScheduleCohortAFU
 from .onschedule import OnScheduleCohortAQuarterly, OnScheduleCohortBEnrollment
 from .onschedule import OnScheduleCohortASecQuart, OnScheduleCohortBSecQuart
 from .onschedule import OnScheduleCohortATb2Months
-from .onschedule import OnScheduleCohortBFUQuart, OnScheduleCohortCFUQuart
+from .onschedule import OnScheduleCohortBFUQuarterly, OnScheduleCohortCFUQuarterly
 from .onschedule import OnScheduleCohortBQuarterly, OnScheduleCohortCEnrollment
 from .onschedule import OnScheduleCohortBSec, OnScheduleCohortCSec, \
     OnScheduleCohortAAntenatal
 from .onschedule import OnScheduleCohortCQuarterly, OnScheduleCohortCPool, \
     OnScheduleCohortASec
-from .onschedule import OnScheduleCohortCSecQuart, OnScheduleCohortAFUQuart
+from .onschedule import OnScheduleCohortCSecQuart, OnScheduleCohortAFUQuarterly
 from .screening_preg_women import ScreeningPregWomen
 from .screening_prior_bhp_participants import ScreeningPriorBhpParticipants
 from .signals import antenatal_enrollment_on_post_save
@@ -75,4 +75,3 @@ from .tb_screen_preg import TbScreenPreg
 from .tb_study_screening import TbStudyEligibility
 from .tb_visit_screening_women import TbVisitScreeningWomen
 from .ultrasound import UltraSound
-
