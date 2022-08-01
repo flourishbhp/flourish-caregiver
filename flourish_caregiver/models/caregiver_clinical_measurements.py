@@ -19,12 +19,6 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         null=True,
         help_text='Measured in Centimeters (cm)')
 
-    weight_available = models.CharField(
-        verbose_name="Is the mother's weight available?",
-        choices=YES_NO,
-        max_length=3
-    )
-
     weight_kg = models.DecimalField(
         max_digits=5,
         decimal_places=2,
