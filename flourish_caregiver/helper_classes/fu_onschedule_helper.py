@@ -6,8 +6,8 @@ from edc_appointment.models import Appointment
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_child.helper_classes.child_fu_onschedule_helper import ChildFollowUpEnrolmentHelper
 from ..models import OnScheduleCohortAFU, OnScheduleCohortBFU
-from ..models import OnScheduleCohortBFUQuart, OnScheduleCohortCFUQuart
-from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuart
+from ..models import OnScheduleCohortBFUQuarterly, OnScheduleCohortCFUQuarterly
+from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuarterly
 
 
 class FollowUpEnrolmentHelper(object):
@@ -30,9 +30,9 @@ class FollowUpEnrolmentHelper(object):
                             'b': OnScheduleCohortBFU,
                             'c': OnScheduleCohortCFU, }
 
-        self.cohort_quart_dict = {'a': OnScheduleCohortAFUQuart,
-                                  'b': OnScheduleCohortBFUQuart,
-                                  'c': OnScheduleCohortCFUQuart, }
+        self.cohort_quart_dict = {'a': OnScheduleCohortAFUQuarterly,
+                                  'b': OnScheduleCohortBFUQuarterly,
+                                  'c': OnScheduleCohortCFUQuarterly, }
 
     def get_latest_completed_appointments(self, subject_identifier):
 
