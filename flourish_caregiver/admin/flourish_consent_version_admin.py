@@ -55,7 +55,7 @@ class FlourishConsentVersionAdmin(ModelAdminMixin,
                 else:
                       try:
                           maternal_dataset_obj = maternal_dataset_cls.objects.get(
-                              screening_identifier=prior_screening_obj.screening_identifier)
+                              screening_identifier=obj.screening_identifier)
 
                       except maternal_dataset_cls.DoesNotExist:
                           pass
