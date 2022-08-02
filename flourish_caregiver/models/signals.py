@@ -650,17 +650,17 @@ def get_assent_onschedule_datetime(subject_identifier):
 
 
 def get_schedule_sequence(subject_identifier, instance,
-        onschedule_cls, caregiver_visit_count=None):
+                          onschedule_cls, caregiver_visit_count=None):
     children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
-                subject_identifier=subject_identifier).exclude(
-                child_subject_identifier=instance.subject_identifier).count())
+                          subject_identifier=subject_identifier).exclude(
+                              child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
-        child_subject_identifier=None, base_appt_datetime=None,
-        caregiver_visit_count=None):
+                    child_subject_identifier=None, base_appt_datetime=None,
+                    caregiver_visit_count=None):
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
         schedule, onschedule_model_cls, schedule_name = get_onschedule_model(
