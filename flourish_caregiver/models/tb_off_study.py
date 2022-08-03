@@ -1,19 +1,24 @@
 from django.db import models
+from edc_action_item.model_mixins import ActionModelMixin
 from edc_base import get_utcnow
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import datetime_not_future, date_not_future
-from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
+from edc_identifier.managers import SubjectIdentifierManager
 from edc_protocol.validators import datetime_not_before_study_start, \
     date_not_before_study_start
 from edc_visit_schedule.model_mixins import OffScheduleModelMixin
 
 from flourish_prn.choices import CAREGIVER_OFF_STUDY_REASON, OFFSTUDY_POINT
 from . import CaregiverOffSchedule
+from ..action_items import TB_OFF_STUDY_ACTION
 
 
-class TbOffStudy(OffScheduleModelMixin, BaseUuidModel):
+class TbOffStudy(OffScheduleModelMixin, ActionModelMixin, BaseUuidModel):
+
+    action_name = TB_OFF_STUDY_ACTION
+
     report_datetime = models.DateTimeField(
         verbose_name="Report Date",
         validators=[
@@ -49,6 +54,8 @@ class TbOffStudy(OffScheduleModelMixin, BaseUuidModel):
         verbose_name="Comment",
         blank=True,
         null=True)
+
+    objects = SubjectIdentifierManager()
 
     history = HistoricalRecords()
 

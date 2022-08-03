@@ -1,8 +1,9 @@
-from datetime import datetime
 import os
+from datetime import datetime
 
-from PIL import Image
 import PIL
+import pyminizip
+from PIL import Image
 from django import forms
 from django.apps import apps as django_apps
 from django.conf import settings
@@ -16,19 +17,13 @@ from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
-
+from edc_constants.constants import YES
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
+from edc_visit_tracking.constants import MISSED_VISIT
+
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
-import pyminizip
-
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from ..models.tb_informed_consent import TbInformedConsent
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -40,6 +35,14 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
+from ..action_items import TB_OFF_STUDY_ACTION
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
+from ..models.tb_informed_consent import TbInformedConsent
+from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 
 
 class PreFlourishError(Exception):
@@ -420,13 +423,23 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on quarterly schedule at enrollment visit.
     """
-
     survival_status = instance.survival_status
     death_report_cls = django_apps.get_model(
         'flourish_prn.caregiverdeathreport')
     if survival_status == 'dead':
         trigger_action_item(death_report_cls,
                             CAREGIVER_DEATH_REPORT_ACTION,
+                            instance.subject_identifier)
+
+    """
+    triger off schedule for participants who missed a tb visit
+    """
+    tb_off_study_cls = django_apps.get_model(
+        'flourish_caregiver.tboffstudy'
+    )
+    if instance.visit_code == '2100T' and instance.reason == MISSED_VISIT:
+        trigger_action_item(tb_off_study_cls,
+                            TB_OFF_STUDY_ACTION,
                             instance.subject_identifier)
 
     if not raw and created and instance.visit_code in ['2000M', '2000D']:
@@ -468,8 +481,26 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
         """
         pass
 
-    # complete_child_crfs=AutoCompleteChildCrfs(instance=instance)
-    # complete_child_crfs.pre_fill_crfs()
+@receiver(post_save, weak=False, sender=TbVisitScreeningWomen,
+          dispatch_uid='tb_visit_screening_women_post_save')
+def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs):
+    if not raw and created:
+        tb_off_study_cls = django_apps.get_model(
+            'flourish_caregiver.tboffstudy'
+        )
+        tb_take_off_study = (
+                instance.have_cough == YES or
+                instance.cough_duration == '=>2 week' or
+                instance.fever == YES or
+                instance.night_sweats == YES or
+                instance.weight_loss == YES or
+                instance.cough_blood == YES or
+                instance.enlarged_lymph_nodes == YES
+        )
+        if not tb_take_off_study:
+            trigger_action_item(tb_off_study_cls,
+                                TB_OFF_STUDY_ACTION,
+                                instance.subject_identifier)
 
 
 @receiver(post_save, weak=False, sender=CaregiverOffStudy,
