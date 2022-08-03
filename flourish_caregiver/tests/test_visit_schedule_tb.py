@@ -1,9 +1,10 @@
 from dateutil.relativedelta import relativedelta
+from django.apps import apps as django_apps
 from django.test import TestCase, tag
+from edc_action_item.site_action_items import site_action_items
 from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
-from edc_constants.constants import POS
-from edc_constants.constants import YES, NO
+from edc_constants.constants import YES, NO, NEW
 from edc_facility.import_holidays import import_holidays
 from edc_metadata import REQUIRED, NOT_REQUIRED
 from edc_metadata.models import CrfMetadata
@@ -12,9 +13,7 @@ from model_mommy import mommy
 
 from flourish_child.models import ChildDummySubjectConsent
 from ..helper_classes import MaternalStatusHelper
-from ..models.onschedule import OnScheduleCohortATb2Months, OnScheduleCohortAAntenatal, \
-    OnScheduleCohortAQuarterly
-from ..models import CaregiverOffSchedule
+from ..models.onschedule import OnScheduleCohortATb2Months
 
 
 @tag('tb')
@@ -186,4 +185,73 @@ class TestVisitScheduleTb(TestCase):
         self.assertEqual(CrfMetadata.objects.get(
             model='flourish_caregiver.tbstudyeligibility',
             subject_identifier=self.consent.subject_identifier,
-            visit_code='1000M').entry_status, REQUIRED)
+            visit_code='1000M').entry_status, NOT_REQUIRED)
+
+    def test_tb_off_study_required(self):
+        mommy.make_recipe(
+            'flourish_caregiver.tbinformedconsent',
+            subject_identifier=self.consent.subject_identifier,
+            consent_datetime=get_utcnow()
+        )
+        self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
+            subject_identifier=self.consent.subject_identifier,
+            schedule_name='tb_2_months_schedule').count(), 0)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.consent.subject_identifier, )
+
+        child_consent = ChildDummySubjectConsent.objects.get(
+            subject_identifier=self.child_consent.subject_identifier,
+        )
+
+        child_consent.dob = (get_utcnow() - relativedelta(days=1)).date()
+        child_consent.save()
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
+            subject_identifier=self.consent.subject_identifier,
+            schedule_name='tb_2_months_schedule').count(), 1)
+
+        tb_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2100T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(CrfMetadata.objects.get(
+            model='flourish_caregiver.tbvisitscreeningwomen',
+            subject_identifier=self.consent.subject_identifier,
+            visit_code='2100T').entry_status, REQUIRED)
+
+        mommy.make_recipe('flourish_caregiver.tbvisitscreeningwomen',
+                          have_cough=NO,
+                          maternal_visit=tb_visit)
+
+        tb_off_study_cls = django_apps.get_model(
+            'flourish_caregiver.tboffstudy'
+        )
+
+        action_cls = site_action_items.get(tb_off_study_cls.action_name)
+        action_item_model_cls = action_cls.action_item_model_cls()
+
+        try:
+            action_item_obj = action_item_model_cls.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                action_type__name=tb_off_study_cls.action_name,
+                status=NEW)
+        except action_item_model_cls.DoesNotExist:
+            self.fail('Action Item to created')
+            self.assertNotIsInstance(obj=action_item_obj, cls=action_item_model_cls)
+
+
+
