@@ -1,27 +1,34 @@
-import os
 from datetime import datetime
+import os
 
-import PIL
-import pyminizip
 from PIL import Image
+import PIL
 from django import forms
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
-from django.db.transaction import TransactionManagementError
 from django.db.models import Q
 from django.db.models.signals import post_save
+from django.db.transaction import TransactionManagementError
 from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
-from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
+import pyminizip
+
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
+from ..models.tb_informed_consent import TbInformedConsent
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -33,12 +40,6 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from ..models.tb_informed_consent import TbInformedConsent
 
 
 class PreFlourishError(Exception):
@@ -55,7 +56,7 @@ class SubjectConsentError(Exception):
 
 def update_maternal_dataset_and_worklist(subject_identifier,
         screening_identifier=None,
-        study_child_identifier=None, ):
+        study_child_identifier=None,):
     study_maternal_identifier = None
 
     if study_child_identifier:
@@ -333,7 +334,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob, ).count()
+            ).exclude(dob=instance.child_dob,).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
@@ -352,7 +353,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-                        version=instance.subject_consent.version, )
+                        version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -483,7 +484,8 @@ def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=onschedule_model_obj.schedule_name)
                 schedule.take_off_schedule(
-                    subject_identifier=instance.subject_identifier)
+                    subject_identifier=instance.subject_identifier,
+                    offschedule_datetime=instance.report_datetime)
 
 
 @receiver(post_save, weak=False, sender=CaregiverOffSchedule,
