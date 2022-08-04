@@ -16,7 +16,7 @@ class MaternalArvAtDeliveryForm(SubjectModelFormMixin, forms.ModelForm):
         maternal_arv_count = self.data.get(
             'maternalarvtableatdelivery_set-TOTAL_FORMS')
 
-        if int(maternal_arv_count) == 0 and cleaned_data.get('last_visit_change') != YES:
+        if int(maternal_arv_count) == 0 and cleaned_data.get('last_visit_change') == YES:
             raise forms.ValidationError('Please complete the maternal arv table.')
 
         elif int(maternal_arv_count) != 0 and cleaned_data.get('last_visit_change') == NO:
