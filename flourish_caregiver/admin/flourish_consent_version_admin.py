@@ -32,8 +32,6 @@ class FlourishConsentVersionAdmin(ModelAdminMixin,
 
             consent_model = django_apps.get_model('flourish_caregiver.subjectconsent')
             preg_screening_cls = django_apps.get_model('flourish_caregiver.screeningpregwomen')
-            prior_screening_cls = django_apps.get_model(
-                'flourish_caregiver.screeningpriorbhpparticipants')
             maternal_dataset_cls = django_apps.get_model(
                 'flourish_caregiver.maternaldataset')
 
@@ -56,26 +54,24 @@ class FlourishConsentVersionAdmin(ModelAdminMixin,
                     options['subject_identifier'] = consents[0].subject_identifier
 
                 else:
-                      try:
-                          maternal_dataset_obj = maternal_dataset_cls.objects.get(
-                              screening_identifier=obj.screening_identifier)
-
-                      except maternal_dataset_cls.DoesNotExist:
-                          pass
-                      else:
-                          del options['screening_identifier']
-                          options['study_maternal_identifier'] = maternal_dataset_obj.study_maternal_identifier
-                          url_name = settings.DASHBOARD_URL_NAMES.get(
-                              'maternal_dataset_listboard_url')
-
-                try:
-                    preg_screening_cls.objects.get(
-                        screening_identifier=obj.screening_identifier)
-                except preg_screening_cls.DoesNotExist:
-                    pass
-                else:
-                    url_name = settings.DASHBOARD_URL_NAMES.get(
-                        'maternal_screening_listboard_url')
+                    try:
+                        maternal_dataset_obj = maternal_dataset_cls.objects.get(
+                            screening_identifier=obj.screening_identifier)
+                    except maternal_dataset_cls.DoesNotExist:
+                        pass
+                    else:
+                        del options['screening_identifier']
+                        options['study_maternal_identifier'] = maternal_dataset_obj.study_maternal_identifier
+                        url_name = settings.DASHBOARD_URL_NAMES.get(
+                            'maternal_dataset_listboard_url')
+                    try:
+                        preg_screening_cls.objects.get(
+                            screening_identifier=obj.screening_identifier)
+                    except preg_screening_cls.DoesNotExist:
+                        pass
+                    else:
+                        url_name = settings.DASHBOARD_URL_NAMES.get(
+                            'maternal_screening_listboard_url')
 
                     options['screening_identifier'] = request.GET.get('screening_identifier')
 
