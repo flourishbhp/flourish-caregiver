@@ -802,3 +802,65 @@ TRAINEE_OUTCOME = (
     (NOT_APPLICABLE, 'Not Applicable'),)
 
 
+# 6247
+YES_NO_PNTA_UNKNOWN = (
+    (YES, YES),
+    (NO, NO),
+    (DWTA, _('Prefer not to answer')),
+    (UNKNOWN, 'Unknown'),
+)
+YES_NO_PNTA = (
+    (YES, YES),
+    (NO, NO),
+    (DWTA, _('Prefer not to answer')),
+)
+
+HIV_STATUS_DISCUSSION = {
+    ('very_easy', 'Very Unsupportive'),
+    ('easy', 'Unsupportive'),
+    ('neutral', 'Neutral'),
+    ('difficult', 'Difficult'),
+    ('very_difficult', 'Very Difficult'),   
+}
+
+PARTNERS_SUPPORT = {
+    ('very_unsupportive', 'Very Unsupportive'),
+    ('unsupportive', 'Unsupportive'),
+    ('neutral', 'Neutral'),
+    ('supportive', 'Supportive'),
+    ('very_Supportive', 'Very Supportive'),    
+}
+
+CHOICE_FREQUENCY = {
+    ('all_the_time', 'All the time'),
+    ('most_of_the_time', 'Most of the time'),
+    ('more_often', 'More of than not'),
+    ('occasionally', 'Occasionally'),
+    ('rarely', 'Rarely'),
+    ('never', 'Never'),
+}
+
+HAPPINESS_CHOICES = {
+    ('perfect', 'Perfect'),
+    ('extremely_happy', 'Extremely Happy'),
+    ('very_happy', 'Very Happy'),
+    ('happy', 'Happy'),
+    ('little_happy', 'A little happy'),
+    ('little_unhappy', 'A little unhappy'),
+    ('fairly_unhappy', 'Fairly unhappy'),
+    
+}
+
+FUTURE_OF_RELATIONSHIP = {
+    ('do_anything', 
+     'I want desperately for the partnership to succeed and will do anything to see that it does'),
+    ('do_what_I_can', 
+     'I want for my partnership to succeed and will do what I can to see that it does'),
+    ('cannot_do_much', 
+     'It would be nice if my partnership succeeded, but I can’t do too much more than I do now'),
+    ('refuse_to_do_more', 
+     'It would be nice if my partnership succeeded, but I refuse to do more'),
+    ('nothing_more', 
+     'My partnership can never succeed and there is nothing more I can do'),
+    
+}
