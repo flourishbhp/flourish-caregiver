@@ -106,5 +106,12 @@ class CaregiverRequisition(
             'human_readable_identifier', 'identifier_prefix'])
         return fields
 
+    @property
+    def senaite_priority(self):
+        """Overrides senaite interface priority mapping.
+        """
+        priorities = {'normal': '3', 'urgent': '1'}
+        return priorities.get(self.priority)
+
     class Meta:
         unique_together = ('panel', 'maternal_visit')

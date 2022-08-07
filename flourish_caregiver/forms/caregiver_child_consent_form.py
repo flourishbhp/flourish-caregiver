@@ -30,8 +30,6 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         gender = self.initial.get('gender', None)
         child_dob = self.initial.get('child_dob', None)
 
-        # import pdb; pdb.set_trace()
-
         self.fields['version'].disabled = True
         self.fields['child_dob'].disabled = True
         # # if and only if the above fields exist, make the field readonly

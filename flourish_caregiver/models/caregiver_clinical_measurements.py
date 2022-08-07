@@ -19,12 +19,6 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         null=True,
         help_text='Measured in Centimeters (cm)')
 
-    weight_available = models.CharField(
-        verbose_name="Is the mother's weight available?",
-        choices=YES_NO,
-        max_length=3
-    )
-
     weight_kg = models.DecimalField(
         max_digits=5,
         decimal_places=2,
@@ -36,12 +30,16 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
 
     systolic_bp = models.IntegerField(
         verbose_name='Caregiver\'s systolic blood pressure?',
-        help_text='in mm e.g. 120, normal values are between 100 and 130.'
+        help_text='in mm e.g. 120, normal values are between 100 and 130.',
+        null=True,
+        blank=True,
     )
 
     diastolic_bp = models.IntegerField(
         verbose_name='Caregiver\'s diastolic blood pressure?',
-        help_text='in hg e.g. 80, normal values are between 60 and 80.'
+        help_text='in hg e.g. 80, normal values are between 60 and 80.',
+        null=True,
+        blank=True,
     )
 
     confirm_values = models.CharField(
@@ -74,6 +72,12 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         blank=True,
         help_text=('only measure waist circumference for caregivers who are '
                    'not pregnant'))
+
+    all_measurements = models.CharField(
+        verbose_name='Were you able to obtain all clinical measurement at this visit',
+        max_length=3,
+        choices=YES_NO
+    )
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'

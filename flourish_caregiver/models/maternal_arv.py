@@ -1,54 +1,64 @@
 from django.db import models
 from django.db.models.deletion import PROTECT
-from edc_base.model_mixins import BaseUuidModel
+from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import date_not_future
+from edc_constants.choices import YES_NO, YES_NO_NA
+from edc_constants.constants import NOT_APPLICABLE
 
-from ..choices import ARV_DRUG_LIST, REASON_ARV_STOP
-from .maternal_arv_during_preg import MaternalArvDuringPreg
+from .model_mixins import CrfModelMixin
+from .model_mixins.martenal_arv_table_mixin import MaternalArvTableMixin
+from ..choices import ARV_INTERRUPTION_REASON
 
 
-class MaternalArv(BaseUuidModel):
+class MaternalArvAtDelivery(CrfModelMixin):
+    """ This model is for all HIV positive mothers who
+       have just delivered
+       """
 
+    last_visit_change = models.CharField(
+        verbose_name='Was there any change or interruption in the ARVs received during '
+                     'pregnancy since the enrolment visit through delivery?',
+        max_length=20,
+        choices=YES_NO
+    )
+
+    change_reason = models.CharField(
+        verbose_name='Please give reason for the change or interruption',
+        max_length=35,
+        choices=ARV_INTERRUPTION_REASON,
+        default=NOT_APPLICABLE
+    )
+
+    change_reason_other = OtherCharField()
+
+    resume_treat = models.CharField(
+        verbose_name='If interruption occurred after enrolment visit, did the participant'
+                     ' resume the ARV treatment?',
+        max_length=35,
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE
+    )
+
+
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Maternal ARV At Delivery'
+        verbose_name_plural = 'Maternal ARV At Delivery'
+
+
+class MaternalArvTableAtDelivery(MaternalArvTableMixin):
     """ Inline ARV table to indicate ARV medication taken by mother """
 
-    maternal_arv_durg_preg = models.ForeignKey(MaternalArvDuringPreg, on_delete=PROTECT)
+    maternal_arv_at_delivery = models.ForeignKey(MaternalArvAtDelivery, on_delete=PROTECT)
 
-    arv_code = models.CharField(
-        verbose_name="ARV code",
-        max_length=35,
-        choices=ARV_DRUG_LIST,
-        help_text='Regimen has to be at least 3.')
-
-    start_date = models.DateField(
-        verbose_name="Date Started",
-        validators=[date_not_future],
-        null=True,
-        blank=False,
-        help_text='WARNING: If date started is less than 4 weeks at delivery, '
-        'complete off study.')
-
-    stop_date = models.DateField(
-        verbose_name="Date Stopped",
+    date_resumed = models.DateField(
+        verbose_name="Date Resumed",
         validators=[date_not_future],
         null=True,
         blank=True)
 
-    reason_for_stop = models.CharField(
-        verbose_name="Reason for stop",
-        choices=REASON_ARV_STOP,
-        max_length=50,
-        null=True,
-        blank=True,
-        help_text='If "Treatment Failure", notify study coordinator')
-
-    reason_for_stop_other = models.TextField(
-        max_length=250,
-        verbose_name="Other, specify ",
-        blank=True,
-        null=True)
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = 'Maternal ARV'
-        verbose_name_plural = 'Maternal ARV'
-        unique_together = ('maternal_arv_durg_preg', 'arv_code', 'start_date')
+        verbose_name = 'Maternal ARV Table At Delivery'
+        verbose_name_plural = 'Maternal ARV Table At Delivery'

@@ -22,19 +22,18 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'maternal_visit',
                 'report_datetime',
                 'height',
-                'weight_available',
                 'weight_kg',
                 'systolic_bp',
                 'diastolic_bp',
                 'confirm_values',
                 'is_preg',
                 'waist_circ',
-                'hip_circ'
+                'hip_circ',
+                'all_measurements',
             ]}
          ), audit_fieldset_tuple)
 
     radio_fields = {
-        'weight_available': admin.VERTICAL,
         'is_preg': admin.VERTICAL,
         'confirm_values': admin.VERTICAL, }
 

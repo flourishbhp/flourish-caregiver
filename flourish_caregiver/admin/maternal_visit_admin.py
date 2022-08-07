@@ -83,5 +83,4 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         'info_source': admin.VERTICAL,
         'is_present': admin.VERTICAL,
         'survival_status': admin.VERTICAL,
-        'tb_participation': admin.VERTICAL,
     }

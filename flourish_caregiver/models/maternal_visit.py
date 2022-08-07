@@ -26,7 +26,6 @@ class CurrentSiteManager(VisitModelManager, BaseCurrentSiteManager):
 class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
                     ReferenceModelMixin, RequiresConsentFieldsModelMixin,
                     CaretakerFieldsMixin, SiteModelMixin, BaseUuidModel):
-
     """ Maternal visit form that links all antenatal/ postnatal follow-up forms
     """
 
@@ -72,13 +71,6 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
         blank=True,
         null=True,
         validators=[date_not_before_study_start, date_not_future])
-
-    tb_participation = models.CharField(
-        verbose_name='Participant willing to do an Informed consent for the Tb Study',
-        choices=YES_NO,
-        max_length=10,
-        default=''
-        )
 
     on_site = CurrentSiteManager()
 

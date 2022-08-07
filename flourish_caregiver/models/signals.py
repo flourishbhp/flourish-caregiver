@@ -10,14 +10,16 @@ from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
-from django.db.transaction import TransactionManagementError
 from django.db.models import Q
 from django.db.models.signals import post_save
+from django.db.transaction import TransactionManagementError
 from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
+from edc_constants.constants import YES
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
+from edc_visit_tracking.constants import MISSED_VISIT
 
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
@@ -33,12 +35,14 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
+from ..action_items import TB_OFF_STUDY_ACTION
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.cohort import Cohort
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
+from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 
 
 class PreFlourishError(Exception):
@@ -55,7 +59,7 @@ class SubjectConsentError(Exception):
 
 def update_maternal_dataset_and_worklist(subject_identifier,
         screening_identifier=None,
-        study_child_identifier=None, ):
+        study_child_identifier=None,):
     study_maternal_identifier = None
 
     if study_child_identifier:
@@ -333,7 +337,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob, ).count()
+            ).exclude(dob=instance.child_dob,).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
@@ -352,7 +356,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-                        version=instance.subject_consent.version, )
+                        version=instance.subject_consent.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -419,13 +423,23 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on quarterly schedule at enrollment visit.
     """
-
     survival_status = instance.survival_status
     death_report_cls = django_apps.get_model(
         'flourish_prn.caregiverdeathreport')
     if survival_status == 'dead':
         trigger_action_item(death_report_cls,
                             CAREGIVER_DEATH_REPORT_ACTION,
+                            instance.subject_identifier)
+
+    """
+    triger off schedule for participants who missed a tb visit
+    """
+    tb_off_study_cls = django_apps.get_model(
+        'flourish_caregiver.tboffstudy'
+    )
+    if instance.visit_code == '2100T' and instance.reason == MISSED_VISIT:
+        trigger_action_item(tb_off_study_cls,
+                            TB_OFF_STUDY_ACTION,
                             instance.subject_identifier)
 
     if not raw and created and instance.visit_code in ['2000M', '2000D']:
@@ -467,8 +481,26 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
         """
         pass
 
-    # complete_child_crfs=AutoCompleteChildCrfs(instance=instance)
-    # complete_child_crfs.pre_fill_crfs()
+@receiver(post_save, weak=False, sender=TbVisitScreeningWomen,
+          dispatch_uid='tb_visit_screening_women_post_save')
+def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs):
+    if not raw and created:
+        tb_off_study_cls = django_apps.get_model(
+            'flourish_caregiver.tboffstudy'
+        )
+        tb_take_off_study = (
+                instance.have_cough == YES or
+                instance.cough_duration == '=>2 week' or
+                instance.fever == YES or
+                instance.night_sweats == YES or
+                instance.weight_loss == YES or
+                instance.cough_blood == YES or
+                instance.enlarged_lymph_nodes == YES
+        )
+        if not tb_take_off_study:
+            trigger_action_item(tb_off_study_cls,
+                                TB_OFF_STUDY_ACTION,
+                                instance.subject_identifier)
 
 
 @receiver(post_save, weak=False, sender=CaregiverOffStudy,
@@ -483,7 +515,8 @@ def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=onschedule_model_obj.schedule_name)
                 schedule.take_off_schedule(
-                    subject_identifier=instance.subject_identifier)
+                    subject_identifier=instance.subject_identifier,
+                    offschedule_datetime=instance.report_datetime)
 
 
 @receiver(post_save, weak=False, sender=CaregiverOffSchedule,
@@ -648,17 +681,17 @@ def get_assent_onschedule_datetime(subject_identifier):
 
 
 def get_schedule_sequence(subject_identifier, instance,
-        onschedule_cls, caregiver_visit_count=None):
+                          onschedule_cls, caregiver_visit_count=None):
     children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
-                subject_identifier=subject_identifier).exclude(
-                child_subject_identifier=instance.subject_identifier).count())
+                          subject_identifier=subject_identifier).exclude(
+                              child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
-        child_subject_identifier=None, base_appt_datetime=None,
-        caregiver_visit_count=None):
+                    child_subject_identifier=None, base_appt_datetime=None,
+                    caregiver_visit_count=None):
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
         schedule, onschedule_model_cls, schedule_name = get_onschedule_model(
