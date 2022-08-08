@@ -35,7 +35,7 @@ class ConsentVersionModelModelMixin:
             screening_identifiers = subject_screening_objs.values_list(
                 'screening_identifier', flat=True)
         elif subject_screening_obj:
-            screening_identifiers = [subject_screening_obj, ]
+            screening_identifiers = [subject_screening_obj.screening_identifier, ]
 
         if screening_identifiers:
 
