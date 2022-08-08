@@ -39,14 +39,19 @@ class ConsentVersionModelModelMixin:
 
         if screening_identifiers:
 
-            try:
-                consent_version_obj = consent_version_cls.objects.get(
+            consent_version_obj = consent_version_cls.objects.filter(
                     screening_identifier__in=screening_identifiers)
-            except consent_version_cls.DoesNotExist:
+
+            if consent_version_obj.count() > 1:
+                raise ValidationError(
+                    'Multiple Consent Version forms found. Please correct '
+                    'before proceeding.')
+            elif not consent_version_obj:
                 raise ValidationError(
                     'Missing Consent Version form. Please complete '
                     'it before proceeding.')
-            return consent_version_obj.version
+            else:
+                return consent_version_obj.version
 
     def save(self, *args, **kwargs):
         self.consent_version = self.get_consent_version()
