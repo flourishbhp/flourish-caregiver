@@ -23,18 +23,25 @@ class ConsentVersionModelModelMixin:
                 subject_identifier=self.subject_identifier)
         except preg_subject_screening_cls.DoesNotExist:
 
-            try:
-                subject_screening_obj = prior_subject_screening_cls.objects.get(
+            subject_screening_objs = prior_subject_screening_cls.objects.filter(
                     subject_identifier=self.subject_identifier)
-            except prior_subject_screening_cls.DoesNotExist:
+
+            if not subject_screening_objs:
                 raise ValidationError(
                     'Missing Subject Screening form. Please complete '
                     'it before proceeding.')
 
-        if subject_screening_obj:
+        if subject_screening_objs:
+            screening_identifiers = subject_screening_objs.values_list(
+                'screening_identifier', flat=True)
+        elif subject_screening_obj:
+            screening_identifiers = [subject_screening_obj, ]
+
+        if screening_identifiers:
+
             try:
                 consent_version_obj = consent_version_cls.objects.get(
-                    screening_identifier=subject_screening_obj.screening_identifier)
+                    screening_identifier__in=screening_identifiers)
             except consent_version_cls.DoesNotExist:
                 raise ValidationError(
                     'Missing Consent Version form. Please complete '
