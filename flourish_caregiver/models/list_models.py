@@ -36,19 +36,22 @@ class CovidSymptoms(ListModelMixin, BaseUuidModel):
 class CovidSymptomsAfter14Days(ListModelMixin, BaseUuidModel):
     pass
 
-class MaternalDiagnosesList(ListModelMixin, BaseUuidModel):
-    pass
 
 class CaregiverSocialWorkReferralList(ListModelMixin, BaseUuidModel):
     pass
 
+
 class PregnancyInfluencersList(ListModelMixin, BaseUuidModel):
     pass
+
+
 class AfterPregnancyInfluencersList(ListModelMixin, BaseUuidModel):
     pass
 
+
 class ReceivedTrainingOnFeedingList(ListModelMixin, BaseUuidModel):
     pass
+
 
 class ReasonsForInfantFeedingList(ListModelMixin, BaseUuidModel):
     pass

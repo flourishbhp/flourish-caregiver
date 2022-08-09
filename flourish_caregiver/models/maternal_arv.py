@@ -52,7 +52,7 @@ class MaternalArvTableAtDelivery(MaternalArvTableMixin):
     maternal_arv_at_delivery = models.ForeignKey(MaternalArvAtDelivery, on_delete=PROTECT)
 
     date_resumed = models.DateField(
-        verbose_name="Date Stopped",
+        verbose_name="Date Resumed",
         validators=[date_not_future],
         null=True,
         blank=True)

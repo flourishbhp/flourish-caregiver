@@ -6,6 +6,7 @@ CAREGIVER_LOCATOR_ACTION = 'submit-caregiver-locator'
 ULTRASOUND_ACTION = 'submit-ultrasound'
 MATERNAL_COVID_SCREENING_ACTION = 'update-maternal-covid-results'
 MATERNAL_VISIT_ACTION = 'maternal-visit'
+TB_OFF_STUDY_ACTION = 'submit-tb-off-study'
 
 
 class CaregiverOffStudyAction(Action):
@@ -58,5 +59,19 @@ class MaternalCovidScreeningAction(Action):
         return self.reference_model_obj.covid_results != 'pending'
 
 
+class TbOffStudyAction(Action):
+    name = TB_OFF_STUDY_ACTION
+    display_name = 'Submit Tb Offstudy'
+    reference_model = 'flourish_caregiver.tboffstudy'
+    admin_site_name = 'flourish_caregiver_admin'
+    priority = HIGH_PRIORITY
+    singleton = True
+
+    def get_next_actions(self):
+        self.delete_if_new(CaregiverOffStudyAction)
+        return []
+
+
 site_action_items.register(CaregiverLocatorAction)
+site_action_items.register(TbOffStudyAction)
 site_action_items.register(MaternalUltrasoundAction)
