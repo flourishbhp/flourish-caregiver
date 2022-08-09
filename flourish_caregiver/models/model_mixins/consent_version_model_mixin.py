@@ -16,7 +16,7 @@ class ConsentVersionModelModelMixin:
         consent_version_cls = django_apps.get_model(
             'flourish_caregiver.flourishconsentversion')
 
-        subject_screening_obj = None
+        subject_screening_objs = None
 
         try:
             subject_screening_obj = preg_subject_screening_cls.objects.get(

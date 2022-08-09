@@ -91,7 +91,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 caregiver_child_consents.values_list('subject_identifier', flat=True))
 
             if obj:
-                caregiver_child_consents = set(
+                caregiver_child_consents_pids = set(
                     self.get_difference(caregiver_child_consents, obj))
 
             if caregiver_child_consents_pids:
