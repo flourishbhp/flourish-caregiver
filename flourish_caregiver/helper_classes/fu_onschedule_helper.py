@@ -1,10 +1,12 @@
 from django.apps import apps as django_apps
+from django.db.models import Q
 from edc_base.utils import get_utcnow
 from edc_registration.models import RegisteredSubject
+
 from edc_appointment.constants import NEW_APPT
 from edc_appointment.models import Appointment
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-from flourish_child.helper_classes.child_fu_onschedule_helper import ChildFollowUpEnrolmentHelper
+
 from ..models import OnScheduleCohortAFU, OnScheduleCohortBFU
 from ..models import OnScheduleCohortBFUQuarterly, OnScheduleCohortCFUQuarterly
 from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuarterly
@@ -20,11 +22,14 @@ class FollowUpEnrolmentHelper(object):
     """
 
     def __init__(self, subject_identifier, onschedule_datetime=None,
-                 update_child=False, exception_cls=None):
+                 update_child=False, cohort=None, schedule_number=None,
+                 exception_cls=None):
 
         self.subject_identifier = subject_identifier
         self.onschedule_datetime = onschedule_datetime or get_utcnow()
         self.update_child = update_child
+        self.cohort = cohort
+        self.schedule_number = schedule_number
 
         self.cohort_dict = {'a': OnScheduleCohortAFU,
                             'b': OnScheduleCohortBFU,
@@ -34,21 +39,19 @@ class FollowUpEnrolmentHelper(object):
                                   'b': OnScheduleCohortBFUQuarterly,
                                   'c': OnScheduleCohortCFUQuarterly, }
 
-    def get_latest_completed_appointments(self, subject_identifier):
+    def get_latest_completed_appointment(self, subject_identifier, cohort, schedule_number):
 
-        schedules = list(set(Appointment.objects.filter(
-            schedule_name__icontains='quart',
+        schedule = list(set(Appointment.objects.filter(
+            Q(schedule_name__icontains=f'{cohort}_quarterly') &
+            Q(schedule_name__icontains=schedule_number),
             subject_identifier=subject_identifier).values_list('schedule_name', flat=True)))
-        latest_appts = []
-        for schedule in schedules:
-            latest = Appointment.objects.filter(
-                subject_identifier=subject_identifier,
-                schedule_name=schedule,
-                visit_code_sequence=0).exclude(
-                    appt_status=NEW_APPT).order_by('timepoint').last()
-            if latest:
-                latest_appts.append(latest)
-        return latest_appts
+
+        latest = Appointment.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name__in=schedule,
+            visit_code_sequence=0).exclude(
+                appt_status=NEW_APPT).order_by('timepoint').last()
+        return latest
 
     def update_child_identifier_onschedule(self, onschedule_model_cls, subject_identifier,
                                            schedule_name, child_subject_identifier):
@@ -116,11 +119,6 @@ class FollowUpEnrolmentHelper(object):
             onschedule_quart_model_cls, latest_appt.subject_identifier, schedule_name,
             old_onschedule_obj.child_subject_identifier)
 
-        if self.update_child:
-            child_schedule_enrol_helper = ChildFollowUpEnrolmentHelper(
-                subject_identifier=old_onschedule_obj.child_subject_identifier)
-            child_schedule_enrol_helper.activate_child_fu_schedule()
-
     def get_related_child_pids(self, subject_identifier):
 
         related_children = RegisteredSubject.objects.filter(
@@ -131,23 +129,13 @@ class FollowUpEnrolmentHelper(object):
 
     def activate_fu_schedule(self):
 
-        latest_appointments = self.get_latest_completed_appointments(
-            self.subject_identifier)
+        latest_appt = self.get_latest_completed_appointment(
+            self.subject_identifier, self.cohort, self.schedule_number)
 
-        for latest_appt in latest_appointments:
+        if latest_appt:
 
-            if 'sec' not in latest_appt.schedule_name:
+            self.put_on_fu_schedule(latest_appt)
+            self.caregiver_off_current_schedule(latest_appt)
 
-                self.put_on_fu_schedule(latest_appt)
-                self.caregiver_off_current_schedule(latest_appt)
+            print("Done!")
 
-                print("Done!")
-
-        if self.update_child:
-            child_pids = self.get_related_child_pids(self.subject_identifier)
-
-            for child_pid in child_pids:
-                child_schedule_enrol_helper = ChildFollowUpEnrolmentHelper(
-                        subject_identifier=child_pid)
-
-                child_schedule_enrol_helper.activate_child_fu_schedule()
