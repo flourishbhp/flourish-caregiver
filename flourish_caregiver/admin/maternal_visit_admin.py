@@ -11,13 +11,14 @@ from edc_model_admin import (
     ModelAdminNextUrlRedirectMixin,
     ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
 from edc_model_admin import audit_fieldset_tuple
+
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
 
-from .exportaction_mixin import ExportActionMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalVisitForm
 from ..models import MaternalVisit
+from .exportaction_mixin import ExportActionMixin
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
