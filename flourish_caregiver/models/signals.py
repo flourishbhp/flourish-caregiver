@@ -541,6 +541,7 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
         'flourish_prn.caregiveroffstudy')
 
     registration_datetime = get_registration_date(instance.subject_identifier)
+    
     if registration_datetime:
         weeks_diff = (instance.report_datetime - registration_datetime).days / 7
 
@@ -772,10 +773,30 @@ def get_onschedule_model_obj(schedule, subject_identifier):
 
 def get_registration_date(subject_identifier):
     child_consents = get_child_consents(subject_identifier)
+    
+    '''
+    To cater for empty names, and unborn babies 
+    have neither first_name nor last_name,
+    used a built-in filter instead since is_preg is not
+    '''
+    unborn_baby_consents = list(filter(
+        lambda child: child.is_preg, child_consents.filter(
+        first_name='', last_name='',)))
+    
+        
+    
     if (child_consents and child_consents.values_list(
             'subject_identifier', flat=True).distinct().count() == 1):
         child_consent = child_consents[0]
         return child_consent.consent_datetime
+    
+    elif child_consents and unborn_baby_consents:
+        '''
+        Catering for unborn baby, if twins, the consent_datetime 
+        of the first child is relavent
+        '''
+        return unborn_baby_consents[0].consent_datetime
+    
     else:
         raise forms.ValidationError(
             'Missing matching Child Subject Consent form, cannot proceed.')
@@ -883,7 +904,9 @@ def create_consent_version(instance, version):
 
 
 def get_child_consents(subject_identifier):
+    
     child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+
     return child_consent_cls.objects.filter(
         subject_identifier__startswith=subject_identifier).order_by('-consent_datetime')
 

@@ -10,6 +10,37 @@
 {% endblock %}
 
 {% block field_sets %}
+    {% if maternalarvduringpreg %}
+        <div class="col-md-12">
+            <h2 class="header-text">Arv During Pregnancy </h2>
+            <table style="width:98%">
+                <thead>
+                    <th>Visit Code</th>
+                    <th>ARV Code</th>
+                    <th>Start Date</th>
+                    <th>Stop Date</th>
+                </thead>
+                <tbody>
+                    {% for key, values in maternalarvduringpreg.items %}
+                        <tr>
+                            <th rowspan={{ values|length|add:"1"}}>{{ key }}</th>
+                        </tr>
+                            {% for value in values %}
+                                <tr>
+                                    <td>
+                                        {{ value.arv_code | default_if_none:""}}
+                                    </td>
+                                    <td>{{  value.start_date | default_if_none:"" }}</td>
+                                    <td>{{  value.stop_date | default_if_none:"" }}</td>
+                                </tr>
+                            {% endfor %}
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <br>
+    {% endif %}
     {{ block.super }}
 {% endblock field_sets %}
 

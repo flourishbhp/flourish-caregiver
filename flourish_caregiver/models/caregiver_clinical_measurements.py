@@ -17,6 +17,7 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         verbose_name='Caregiver\'s height? ',
         validators=[MinValueValidator(114), MaxValueValidator(195), ],
         null=True,
+        blank=True,
         help_text='Measured in Centimeters (cm)')
 
     weight_kg = models.DecimalField(
@@ -45,7 +46,9 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
     confirm_values = models.CharField(
         verbose_name='Are you sure about given values',
         max_length=3,
-        choices=YES_NO
+        choices=YES_NO,
+        null=True,
+        blank=True,
     )
 
     is_preg = models.CharField(
@@ -76,7 +79,8 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
     all_measurements = models.CharField(
         verbose_name='Were you able to obtain all clinical measurement at this visit',
         max_length=3,
-        choices=YES_NO
+        choices=YES_NO,
+
     )
 
     class Meta(CrfModelMixin.Meta):

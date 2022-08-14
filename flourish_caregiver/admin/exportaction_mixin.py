@@ -34,9 +34,9 @@ class ExportActionMixin:
         field_names = []
         for field in self.get_model_fields:
             if isinstance(field, ManyToManyField):
-                choices_count = len(field.get_choices())
-                for num in range(choices_count):
-                    field_names.append(f'{field.name}_{num}')
+                choices = self.m2m_list_data(field.related_model)
+                for choice in choices:
+                    field_names.append(choice)
                 continue
             field_names.append(field.name)
 
@@ -100,11 +100,19 @@ class ExportActionMixin:
             inline_objs = []
             for field in self.get_model_fields:
                 if isinstance(field, ManyToManyField):
-                    choices_count = len(field.get_choices())
-                    m2m_values = [None] * choices_count
+                    model_cls = field.related_model
+                    choices = self.m2m_list_data(model_cls=model_cls)
+                    m2m_values = []
                     key_manager = getattr(obj, field.name)
-                    for _count, m2m_obj in enumerate(key_manager.all()):
-                        m2m_values[_count] = m2m_obj.name
+                    for choice in choices:
+                        selected = 0
+                        try:
+                            key_manager.get(short_name=choice)
+                        except model_cls.DoesNotExist:
+                            pass
+                        else:
+                            selected = 1
+                        m2m_values.append(selected)
                     data.extend(m2m_values)
                     continue
                 if isinstance(field, (ForeignKey, OneToOneField,)):
@@ -278,3 +286,7 @@ class ExportActionMixin:
             return None
         else:
             return maternal_delivery_obj
+
+    def m2m_list_data(self, model_cls=None):
+        qs = model_cls.objects.order_by('created').values_list('short_name', flat=True)
+        return list(qs)
