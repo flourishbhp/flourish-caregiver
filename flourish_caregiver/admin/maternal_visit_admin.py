@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
+from django.apps import apps as django_apps
 from edc_base import get_utcnow
 from edc_constants.constants import NO
 from edc_fieldsets import FieldsetsModelAdminMixin
@@ -13,6 +14,8 @@ from edc_model_admin import (
 from edc_model_admin import audit_fieldset_tuple
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
+from edc_fieldsets.fieldlist import Insert
+from numpy import insert
 
 from .exportaction_mixin import ExportActionMixin
 from ..admin_site import flourish_caregiver_admin
@@ -83,4 +86,26 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         'info_source': admin.VERTICAL,
         'is_present': admin.VERTICAL,
         'survival_status': admin.VERTICAL,
+        'brain_scan': admin.VERTICAL
     }
+    conditional_fieldlists = {
+        'interested_in_brain_scan': Insert('brain_scan', after='survival_status')
+    }
+    
+    def get_key(self, request, obj=None):
+        
+        key = super().get_key(request, obj)
+        
+        appointment_model_cls = django_apps.get_model(self.appointment_model)
+        
+        appointment_pk = request.GET.get('appointment', None)
+        
+        try:
+            appointment_obj = appointment_model_cls.objects.get(pk = appointment_pk)
+        except appointment_model_cls.DoesNotExist:
+            pass
+        else:
+            if appointment_obj.visit_code == '2000D' or appointment_obj.visit_code == '1000M':
+                # field brain_scan is only required for birth visit and enrollment visit
+                key =  'interested_in_brain_scan'
+        return key
