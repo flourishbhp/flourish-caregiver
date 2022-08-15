@@ -9,7 +9,7 @@ from edc_form_validators import FormValidatorMixin
 from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, MISSED_VISIT
 from edc_visit_tracking.form_validators import VisitFormValidator
-
+from edc_constants.constants import ALIVE
 from flourish_form_validations.form_validators import \
     FormValidatorMixin as FlourishFormValidatorMixin
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
@@ -45,6 +45,15 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         self.validate_is_present()
 
         self.validate_last_alive_date(id=id)
+        
+        self.validate_brain_scan()
+        
+    def validate_brain_scan(self):
+        self.applicable(
+            ALIVE,
+            field='survival_status',
+            field_applicable='brain_scan'
+        )
 
     def validate_against_onschedule_datetime(self):
 
