@@ -15,6 +15,7 @@ from django.db.models.signals import post_save
 from django.db.transaction import TransactionManagementError
 from django.dispatch import receiver
 from edc_action_item import site_action_items
+from edc_data_manager.models import DataActionItem
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
 from edc_constants.constants import YES
@@ -430,6 +431,17 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
         trigger_action_item(death_report_cls,
                             CAREGIVER_DEATH_REPORT_ACTION,
                             instance.subject_identifier)
+        
+    if instance.brain_scan and instance.brain_scan == YES:
+        breakpoint()
+        DataActionItem.objects.update_or_create(
+            subject = 'Mother is interested to the Infant Ultrasound\
+                component, please complete it on REDCAP',
+            subject_identifier = instance.subject_identifier,
+            assigned = 'clinic'
+            
+        )
+        
 
     """
     triger off schedule for participants who missed a tb visit
