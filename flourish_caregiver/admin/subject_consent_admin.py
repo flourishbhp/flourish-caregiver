@@ -314,20 +314,12 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         caregiver_locator = CaregiverLocator.objects.filter(
             screening_identifier=obj.screening_identifier)
         kwargs = {'subject_identifier': obj.subject_identifier}
-        
-        consent_exist = SubjectConsent.objects.filter(
-            **kwargs
-        ).exists()
-        
-        if caregiver_locator.count() > 0 or consent_exist:
+        if caregiver_locator.count() > 0:
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'subject_dashboard_url'), **kwargs)
         else:
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'maternal_screening_listboard_url'))
-            
-        
-        
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
