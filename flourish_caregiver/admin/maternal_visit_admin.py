@@ -106,5 +106,6 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             pass
         else:
             if appointment_obj.visit_code == '2000D' or appointment_obj.visit_code == '1000M':
+                # field brain_scan is only required for birth visit and enrollment visit
                 key =  'interested_in_brain_scan'
         return key

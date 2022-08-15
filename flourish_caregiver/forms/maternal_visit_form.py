@@ -49,6 +49,10 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         self.validate_brain_scan()
         
     def validate_brain_scan(self):
+        """
+        A validation check was added incase the caregiver is not alive,
+        so brain scan is only applicable if the caregiver is alive
+        """
         self.applicable(
             ALIVE,
             field='survival_status',
