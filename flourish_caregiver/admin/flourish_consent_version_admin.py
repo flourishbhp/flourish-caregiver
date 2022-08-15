@@ -157,3 +157,4 @@ class FlourishConsentVersionAdmin(ModelAdminMixin,
 
         if (obj and obj.child_version) or self.check_if_preg_enroll(request, obj):
             return 'is_preg'
+        
