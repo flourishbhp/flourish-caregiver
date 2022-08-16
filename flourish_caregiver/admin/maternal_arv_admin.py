@@ -73,19 +73,17 @@ class MaternalArvAtDeliveryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         for model_name in self.extra_context_models:
             data_dict = {}
             model_cls = django_apps.get_model(f'flourish_caregiver.{model_name}')
-            try:
-                model_obj = model_cls.objects.get(
-                    maternal_visit__subject_identifier=subject_identifier)
-            except model_cls.DoesNotExist:
-                pass
-            else:
-                inlines = model_obj.maternalarvtableduringpreg_set.all()
+            model_objs = model_cls.objects.filter(
+                maternal_visit__subject_identifier=subject_identifier)
+            for obj in model_objs:
+                inlines = obj.maternalarvtableduringpreg_set.all()
                 for inline_obj in inlines:
-                    visit_code = model_obj.maternal_visit.visit_code
+                    visit_code = obj.maternal_visit.visit_code
                     data_dict.setdefault(visit_code, [])
                     data_dict[visit_code].append(inline_obj)
 
-                model_dict.update({model_name: data_dict})
+            model_dict.update({model_name: data_dict})
+
         return model_dict
 
 
