@@ -21,7 +21,8 @@ class TbStudyEligibility(CrfModelMixin):
                   '2001',
         choices=REASONS_NOT_PARTICIPATING,
         max_length=50,
-        default=''
+        blank=True,
+        null=True
     )
 
     reasons_not_participating_other = OtherCharField()
