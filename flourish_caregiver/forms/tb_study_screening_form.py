@@ -2,10 +2,12 @@ from django import forms
 from edc_base.sites import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
 
+from flourish_form_validations.form_validators import TbStudyEligibilityFormValidator
 from ..models import TbStudyEligibility, MaternalVisit
 
 
 class TbStudyScreeningForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
+    form_validator_cls = TbStudyEligibilityFormValidator
     visit_model = MaternalVisit
 
     visit_attr = None

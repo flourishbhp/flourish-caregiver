@@ -16,7 +16,9 @@ class TbStudyEligibilityAdmin(CrfModelAdminMixin):
             'fields': [
                 'maternal_visit',
                 'report_datetime',
-                'tb_participation'
+                'tb_participation',
+                'reasons_not_participating',
+                'reasons_not_participating_other',
             ]}
          ), audit_fieldset_tuple)
 
