@@ -359,7 +359,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-                        version=instance.subject_consent.version,)
+                        version=instance.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -367,7 +367,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         consent_datetime=instance.consent_datetime,
                         identity=instance.identity,
                         dob=instance.child_dob,
-                        version=instance.subject_consent.version,
+                        version=instance.version,
                         cohort=cohort)
 
             instance.cohort = cohort
@@ -395,7 +395,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     try:
                         child_dummy_consent = child_dummy_consent_cls.objects.get(
                             subject_identifier=instance.subject_identifier,
-                            version=instance.subject_consent.version,
+                            version=instance.version,
                             identity=instance.identity)
                     except child_dummy_consent_cls.DoesNotExist:
                         pass
