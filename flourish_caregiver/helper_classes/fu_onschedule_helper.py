@@ -41,17 +41,12 @@ class FollowUpEnrolmentHelper(object):
 
     def get_latest_completed_appointment(self, subject_identifier, cohort, schedule_number):
 
-        schedule = list(set(Appointment.objects.filter(
-            Q(schedule_name__icontains=f'{cohort}_quarterly') &
-            Q(schedule_name__icontains=schedule_number),
-            subject_identifier=subject_identifier).values_list('schedule_name', flat=True)))
+        appts = Appointment.objects.filter(~Q(appt_status=NEW_APPT) & ~Q(
+            schedule_name__icontains='sec'), subject_identifier=subject_identifier)
 
-        latest = Appointment.objects.filter(
-            subject_identifier=subject_identifier,
-            schedule_name__in=schedule,
-            visit_code_sequence=0).exclude(
-                appt_status=NEW_APPT).order_by('timepoint').last()
-        return latest
+        if appts:
+            latest = appts.order_by('timepoint').last()
+            return latest
 
     def update_child_identifier_onschedule(self, onschedule_model_cls, subject_identifier,
                                            schedule_name, child_subject_identifier):
