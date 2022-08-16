@@ -20,11 +20,11 @@ from edc_constants.constants import YES
 from edc_data_manager.models import DataActionItem
 
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
-# import pyminizip
 
 from ..action_items import TB_OFF_STUDY_ACTION
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
@@ -436,15 +436,13 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     if instance.brain_scan and instance.brain_scan == YES:
         """
         If the mother is interested in brain scan, a notification will be created
-        so a crf can be completed on redcap 
+        so a crf can be completed on redcap
         """
         DataActionItem.objects.update_or_create(
             subject='Caregiver is interested in ultrasound brain scan for the infant,\
                 please complete Infant Ultrasound Component on REDCAP',
             subject_identifier=instance.subject_identifier,
-            assigned='clinic'
-
-        )
+            assigned='clinic')
 
     """
     triger off schedule for participants who missed a tb visit

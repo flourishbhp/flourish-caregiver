@@ -133,4 +133,3 @@ class FollowUpEnrolmentHelper(object):
             self.caregiver_off_current_schedule(latest_appt)
 
             print("Done!")
-
