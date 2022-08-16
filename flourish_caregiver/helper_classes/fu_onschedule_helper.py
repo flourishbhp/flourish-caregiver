@@ -74,8 +74,24 @@ class FollowUpEnrolmentHelper(object):
             _, old_schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
                         name=latest_appointment.schedule_name,
                         onschedule_model=latest_appointment.schedule.onschedule_model)
+
             old_schedule.take_off_schedule(
                 subject_identifier=latest_appointment.subject_identifier)
+
+            # take off quarterly schedule
+            if ('quart' not in latest_appointment.schedule_name
+                    and 'qt' not in latest_appointment.schedule_name):
+
+                quart_appt = Appointment.objects.filter(
+                    subject_identifier=latest_appointment.subject_identifier,
+                    schedule_name__icontains='q').latest('-appt_datetime')
+
+                _, old_qt_schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                        name=quart_appt.schedule_name,
+                        onschedule_model=quart_appt.schedule.onschedule_model)
+
+                old_qt_schedule.take_off_schedule(
+                     subject_identifier=quart_appt.subject_identifier)
 
             return latest_appointment.schedule_name
 
