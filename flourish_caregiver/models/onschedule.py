@@ -63,7 +63,7 @@ class OnScheduleCohortAFU(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortAFUQuart(OnScheduleModelMixin):
+class OnScheduleCohortAFUQuarterly(OnScheduleModelMixin):
     pass
 
 
@@ -87,7 +87,7 @@ class OnScheduleCohortBFU(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortBFUQuart(OnScheduleModelMixin):
+class OnScheduleCohortBFUQuarterly(OnScheduleModelMixin):
     pass
 
 
@@ -103,7 +103,7 @@ class OnScheduleCohortCFU(OnScheduleModelMixin):
     pass
 
 
-class OnScheduleCohortCFUQuart(OnScheduleModelMixin):
+class OnScheduleCohortCFUQuarterly(OnScheduleModelMixin):
     pass
 
 

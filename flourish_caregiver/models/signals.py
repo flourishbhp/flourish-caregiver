@@ -457,7 +457,7 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             TB_OFF_STUDY_ACTION,
                             instance.subject_identifier)
 
-    if not raw and created and instance.visit_code in ['2000M', '2000D']:
+    if not raw and created and instance.visit_code in ['2000M', '2000D', '3000M']:
 
         cohort = None
 
@@ -468,6 +468,13 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
             caregiver_visit_count = cohort_list[1][-1:]
 
             cohort = '_'.join(['cohort', cohort_list[0], 'sec_quart'])
+        elif 'fu' in instance.schedule_name:
+
+            cohort_list = instance.schedule_name.split('_')
+
+            caregiver_visit_count = cohort_list[1][-1:]
+
+            cohort = '_'.join(['cohort', cohort_list[0], 'fu_quarterly'])
 
         else:
             cohort_list = instance.schedule_name.split('_')
@@ -483,8 +490,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             microsecond=0),
                         caregiver_visit_count=caregiver_visit_count)
     """
-    For parents with tow kids, crfs collected on a visit of one kid are being 
-    filled when opening such crf
+    For parents with tow kids, crfs collected on a visit of one kid are being
+      when opening such crf
     """
     complete_child_crfs = AutoCompleteChildCrfs(instance=instance)
     try:
@@ -522,6 +529,7 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
 @receiver(post_save, weak=False, sender=CaregiverOffStudy,
           dispatch_uid='caregiver_off_study_on_post_save')
 def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
+
     for visit_schedule in site_visit_schedules.visit_schedules.values():
         for schedule in visit_schedule.schedules.values():
             onschedule_model_obj = get_onschedule_model_obj(
@@ -721,6 +729,7 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
 
         assent_onschedule_datetime = get_assent_onschedule_datetime(
             subject_identifier)
+
         schedule.put_on_schedule(
             subject_identifier=subject_identifier,
             onschedule_datetime=(base_appt_datetime
@@ -869,7 +878,6 @@ def create_registered_infant(instance):
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
                         repeat=False, opt_trigger=True):
-
     action_cls = site_action_items.get(
         model_cls.action_name)
     action_item_model_cls = action_cls.action_item_model_cls()
@@ -976,8 +984,8 @@ def encrypt_files(instance, subject_identifier):
         with open('filekey.key', 'r') as filekey:
             key = filekey.read().rstrip()
         com_lvl = 8
-        pyminizip.compress(f'{instance.image.path}', None,
-                           f'{base_path}/{upload_to}{zip_filename}', key, com_lvl)
+        # pyminizip.compress(f'{instance.image.path}', None,
+        #                    f'{base_path}/{upload_to}{zip_filename}', key, com_lvl)
     # remove unencrypted file
     if os.path.exists(f'{instance.image.path}'):
         os.remove(f'{instance.image.path}')
