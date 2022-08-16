@@ -1,10 +1,10 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
-from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import TbStudyScreeningForm
 from ..models import TbStudyEligibility
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(TbStudyEligibility, site=flourish_caregiver_admin)

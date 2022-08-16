@@ -13,7 +13,7 @@ from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..models import OnScheduleCohortAFU, OnScheduleCohortAFUQuarterly
 
 
-@tag('vsa1')
+@tag('ccfu')
 class TestVisitScheduleFUA(TestCase):
 
     databases = '__all__'
@@ -96,7 +96,8 @@ class TestVisitScheduleFUA(TestCase):
             reason=SCHEDULED)
 
         schedule_enrol_helper = FollowUpEnrolmentHelper(
-            subject_identifier=self.subject_identifier)
+            subject_identifier=self.subject_identifier,
+            cohort='a')
         schedule_enrol_helper.activate_fu_schedule()
 
         self.assertEqual(OnScheduleCohortAFU.objects.filter(
