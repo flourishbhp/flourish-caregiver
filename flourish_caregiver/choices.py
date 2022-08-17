@@ -801,4 +801,13 @@ TRAINEE_OUTCOME = (
     ('strongly_agree', 'Strongly agree'),
     (NOT_APPLICABLE, 'Not Applicable'),)
 
+REASONS_NOT_PARTICIPATING = (
+    ('still_thinking ', 'Still thinking '),
+    ('prefers_not_to_Say', 'Prefers not to say why unwilling '),
+    ('outside_study_area', 'Confinement outside study area'),
+    ('too_many_dr_apps', 'Has too many Doctors’ appointment '),
+    ('family_refuse', 'Family member/ partner declines participant’s enrolment'),
+    ('not_interested', 'Not Interested in participating'),
+    (OTHER, 'Other'),)
+
 

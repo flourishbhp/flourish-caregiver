@@ -32,7 +32,6 @@ class MaternalArvAtDeliveryForm(SubjectModelFormMixin, forms.ModelForm):
             for i in range(int(maternal_arv_count)):
                 maternal_arv_date_resumed = self.data.get(
                     'maternalarvtableatdelivery_set-' + str(i) + '-date_resumed')
-                breakpoint()
                 if maternal_arv_date_resumed == "":
                     raise forms.ValidationError('Maternal ARV tables date resumed '
                                                 'is required')

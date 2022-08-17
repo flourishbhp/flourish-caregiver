@@ -45,9 +45,9 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         self.validate_is_present()
 
         self.validate_last_alive_date(id=id)
-        
+
         self.validate_brain_scan()
-        
+
     def validate_brain_scan(self):
         """
         A validation check was added incase the caregiver is not alive,
