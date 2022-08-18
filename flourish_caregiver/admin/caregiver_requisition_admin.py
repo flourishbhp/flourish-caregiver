@@ -1,6 +1,5 @@
 import datetime
 import uuid
-import xlwt
 
 from django.contrib import admin
 from django.http import HttpResponse
@@ -9,14 +8,14 @@ from edc_lab.admin import RequisitionAdminMixin
 from edc_lab.admin import requisition_verify_fields
 from edc_lab.admin import requisition_verify_fieldset, requisition_status_fieldset
 from edc_model_admin import audit_fieldset_tuple
-from edc_senaite_interface.admin import SenaiteRequisitionAdminMixin
+import xlwt
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverRequisitionForm
 from ..models import CaregiverRequisition
 from .modeladmin_mixins import CrfModelAdminMixin
 
-
+# from edc_senaite_interface.admin import SenaiteRequisitionAdminMixin
 requisition_identifier_fields = (
     'requisition_identifier',
     'identifier_prefix',
@@ -98,7 +97,8 @@ class ExportRequisitionCsvMixin:
 
 @admin.register(CaregiverRequisition, site=flourish_caregiver_admin)
 class CaregiverRequisitionAdmin(ExportRequisitionCsvMixin, CrfModelAdminMixin,
-                                RequisitionAdminMixin, SenaiteRequisitionAdminMixin,
+                                RequisitionAdminMixin,
+                                # SenaiteRequisitionAdminMixin,
                                 admin.ModelAdmin):
 
     form = CaregiverRequisitionForm
@@ -139,8 +139,8 @@ class CaregiverRequisitionAdmin(ExportRequisitionCsvMixin, CrfModelAdminMixin,
 
     def get_readonly_fields(self, request, obj=None):
         return (super().get_readonly_fields(request, obj)
-                + requisition_identifier_fields
-                + requisition_verify_fields)
+                +requisition_identifier_fields
+                +requisition_verify_fields)
 
     def get_previous_instance(self, request, instance=None, **kwargs):
         """Returns a model instance that is the first occurrence of a previous
