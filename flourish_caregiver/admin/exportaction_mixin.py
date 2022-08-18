@@ -30,20 +30,16 @@ class ExportActionMixin:
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
         font_style.num_format_str = 'YYYY/MM/DD h:mm:ss'
-        is_visit_report = (queryset and queryset[0]._meta.label_lower.split('.')[
-            1] == 'maternalvisit')
 
         field_names = []
         for field in self.get_model_fields:
-            if isinstance(field, ManyToManyField) and not is_visit_report:
+            if isinstance(field, ManyToManyField):
                 choices = self.m2m_list_data(field.related_model)
                 for choice in choices:
                     field_names.append(choice)
                 continue
-            if field.name in self.visit_fields:
-                field_names.append(field.name)
-            elif not is_visit_report:
-                field_names.append(field.name)
+            field_names.append(field.name)
+
         if queryset and self.is_consent(queryset[0]):
             field_names.insert(0, 'previous_study')
             field_names.insert(1, 'hiv_status')
@@ -135,11 +131,7 @@ class ExportActionMixin:
                     if inline_values:
                         inline_objs.append(inline_values)
                 field_value = getattr(obj, field.name, '')
-
-                if field.name in self.visit_fields:
-                    data.append(field_value)
-                elif not is_visit_report:
-                    data.append(field_value)
+                data.append(field_value)
 
             if queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound':
                 if queryset[0].get_current_ga:
@@ -195,7 +187,7 @@ class ExportActionMixin:
                 ws.write(row_num, col_num, data[col_num])
 
     def update_headers_inline(self, inline_fields=None, field_names=None,
-                              ws=None, row_num=None, font_style=None):
+            ws=None, row_num=None, font_style=None):
         top_num = len(field_names)
         for col_num in range(len(inline_fields)):
             ws.write(row_num, top_num, inline_fields[col_num], font_style)
@@ -258,11 +250,13 @@ class ExportActionMixin:
     @property
     def get_model_fields(self):
         return [field for field in self.model._meta.get_fields()
-                if field.name not in self.exclude_fields]
+                if field.name not in self.exclude_fields
+                and not isinstance(field, OneToOneRel)]
 
     def inline_exclude(self, field_names=[]):
         return [field_name for field_name in field_names
-                if field_name not in self.exclude_fields]
+                if field_name not in self.exclude_fields
+                and not isinstance(field_name, OneToOneRel)]
 
     @property
     def exclude_fields(self):
@@ -276,7 +270,8 @@ class ExportActionMixin:
                 'maternal_visit_id', 'processed', 'processed_datetime', 'packed',
                 'packed_datetime', 'shipped', 'shipped_datetime', 'received_datetime',
                 'identifier_prefix', 'primary_aliquot_identifier', 'clinic_verified',
-                'clinic_verified_datetime', 'drawn_datetime', 'related_tracking_identifier',
+                'clinic_verified_datetime', 'drawn_datetime',
+                'related_tracking_identifier',
                 'parent_tracking_identifier']
 
     @property
@@ -298,16 +293,3 @@ class ExportActionMixin:
     def m2m_list_data(self, model_cls=None):
         qs = model_cls.objects.order_by('created').values_list('short_name', flat=True)
         return list(qs)
-
-    @property
-    def visit_fields(self):
-        return [
-            'user_created', 'user_modified', 'site', 'subject_identifier',
-            'visit_schedule_name', 'schedule_name', 'visit_code', 'visit_code_sequence',
-            'consent_version', 'information_provider', 'information_provider_other',
-            'is_present', 'report_datetime', 'reason_unscheduled_other',
-            'reason_missed_other', 'require_crfs', 'info_source_other', 'comments',
-            'appointment', 'reason', 'reason_missed', 'reason_unscheduled',
-            'study_status', 'survival_status', 'info_source', 'last_alive_date',
-            'brain_scan'
-        ]
