@@ -438,11 +438,13 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
         so a crf can be completed on redcap 
         """
         DataActionItem.objects.update_or_create(
-            subject = 'Caregiver is interested in ultrasound brain scan for the infant,\
-                please complete Infant Ultrasound Component on REDCAP',
+            subject = 'Complete Infant Ultrasound Component on REDCAP',
             subject_identifier = instance.subject_identifier,
-            assigned = 'clinic'
-            
+            assigned = 'clinic',
+            comment = '''\
+                    Caregiver is interested in ultrasound brain scan for the infant, please complete Infant Ultrasound Component on REDCAP
+                    '''
+
         )
         
 

@@ -187,7 +187,7 @@ class ExportActionMixin:
                 ws.write(row_num, col_num, data[col_num])
 
     def update_headers_inline(self, inline_fields=None, field_names=None,
-                              ws=None, row_num=None, font_style=None):
+            ws=None, row_num=None, font_style=None):
         top_num = len(field_names)
         for col_num in range(len(inline_fields)):
             ws.write(row_num, top_num, inline_fields[col_num], font_style)
@@ -250,11 +250,13 @@ class ExportActionMixin:
     @property
     def get_model_fields(self):
         return [field for field in self.model._meta.get_fields()
-                if field.name not in self.exclude_fields]
+                if field.name not in self.exclude_fields
+                and not isinstance(field, OneToOneRel)]
 
     def inline_exclude(self, field_names=[]):
         return [field_name for field_name in field_names
-                if field_name not in self.exclude_fields]
+                if field_name not in self.exclude_fields
+                and not isinstance(field_name, OneToOneRel)]
 
     @property
     def exclude_fields(self):
@@ -268,7 +270,8 @@ class ExportActionMixin:
                 'maternal_visit_id', 'processed', 'processed_datetime', 'packed',
                 'packed_datetime', 'shipped', 'shipped_datetime', 'received_datetime',
                 'identifier_prefix', 'primary_aliquot_identifier', 'clinic_verified',
-                'clinic_verified_datetime', 'drawn_datetime', 'related_tracking_identifier',
+                'clinic_verified_datetime', 'drawn_datetime',
+                'related_tracking_identifier',
                 'parent_tracking_identifier']
 
     @property
