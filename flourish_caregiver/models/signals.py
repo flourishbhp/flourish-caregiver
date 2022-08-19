@@ -537,8 +537,7 @@ def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=onschedule_model_obj.schedule_name)
                 schedule.take_off_schedule(
-                    subject_identifier=instance.subject_identifier,
-                    offschedule_datetime=instance.report_datetime)
+                    subject_identifier=instance.subject_identifier,)
 
 
 @receiver(post_save, weak=False, sender=CaregiverOffSchedule,
@@ -554,7 +553,8 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=instance.schedule_name)
                 schedule.take_off_schedule(
-                    subject_identifier=instance.subject_identifier)
+                    subject_identifier=instance.subject_identifier,
+                    offschedule_datetime=instance.offschedule_datetime)
 
 
 @receiver(post_save, weak=False, sender=UltraSound,
