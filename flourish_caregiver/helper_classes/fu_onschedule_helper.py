@@ -8,7 +8,7 @@ from edc_appointment.models import Appointment
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_child.helper_classes.child_fu_onschedule_helper import ChildFollowUpEnrolmentHelper
 
-from ..models import OnScheduleCohortAFU, OnScheduleCohortBFU
+from ..models import OnScheduleCohortAFU, OnScheduleCohortBFU, CaregiverOffSchedule
 from ..models import OnScheduleCohortBFUQuarterly, OnScheduleCohortCFUQuarterly
 from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuarterly
 
@@ -80,12 +80,19 @@ class FollowUpEnrolmentHelper(object):
                 schedule_name__icontains=f'{cohort}_quarterly').exclude(
                     schedule_name__icontains='fu_').latest('-appt_datetime')
 
-            _, old_schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
-                        name=quart_appt.schedule_name,
-                        onschedule_model=quart_appt.schedule.onschedule_model)
+            try:
+                offschedule_obj = CaregiverOffSchedule.objects.get(
+                    subject_identifier=quart_appt.subject_identifier,
+                    schedule_name=quart_appt.schedule_name)
+            except CaregiverOffSchedule.DoesNotExist:
+                CaregiverOffSchedule.objects.create(
+                    subject_identifier=quart_appt.subject_identifier,
+                    schedule_name=quart_appt.schedule_name,
+                    offschedule_datetime=get_utcnow())
+            else:
+                offschedule_obj.save()
 
-            old_schedule.take_off_schedule(
-                subject_identifier=quart_appt.subject_identifier)
+            return quart_appt.schedule_name
 
             return latest_appointment.schedule_name
 
