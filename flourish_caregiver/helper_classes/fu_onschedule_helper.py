@@ -148,7 +148,7 @@ class FollowUpEnrolmentHelper(object):
         latest_appt = self.get_latest_completed_appointment(
             self.subject_identifier, self.cohort, self.schedule_number)
 
-        if latest_appt:
+        if latest_appt and 'sec' not in latest_appt.schedule_name:
 
             self.put_on_fu_schedule(latest_appt)
             self.caregiver_off_current_schedule(latest_appt)
