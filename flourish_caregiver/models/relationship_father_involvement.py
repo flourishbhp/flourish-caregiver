@@ -4,19 +4,20 @@ from edc_protocol.validators import datetime_not_before_study_start
 from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 from edc_base.model_fields import OtherCharField
 from edc_constants.constants import NOT_APPLICABLE
 from edc_constants.choices import YES_NO, YES_NO_NA
 from ..choices import (YES_NO_PNTA,YES_NO_PNTA_UNKNOWN,
                        HIV_STATUS_DISCUSSION,PARTNERS_SUPPORT,
-                       CHOICE_FREQUENCY,HAPPINESS_CHOICES)
+                       CHOICE_FREQUENCY,HAPPINESS_CHOICES,FATHER_VISITS,
+                       FATHERS_FINANCIAL_SUPPORT,HOUSEHOLD_MEMBER)
 
+from django_crypto_fields.fields import EncryptedCharField
 
-class RelationshipFatherInvolment(CrfModelMixin):
+class RelationshipFatherInvolvement(CrfModelMixin):
     """A CRF to be completed by biological mothers living with HIV,
     at enrollment, annual (every 4th quarterly call), and follow-up
-    
-    
     """
     # section 1 questions
     report_datetime = models.DateTimeField(
@@ -38,7 +39,16 @@ class RelationshipFatherInvolment(CrfModelMixin):
         max_length=25
     )
     
-    # Q3-duration_with_partner -help_text='(Months,Years)'
+    Q3-duration_with_partner-help_text='(Months,Years)'
+    duration_with_partner_months = models.PositiveIntegerField(
+        verbose_name='How long have you been with your current partner?',
+        help_text='(Months)',)
+    
+    duration_with_partner_years = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Years',
+        help_text='(Years)',)
+    
     
     
     Q4-partner_age
@@ -150,28 +160,30 @@ class RelationshipFatherInvolment(CrfModelMixin):
         choices=CHOICE_FREQUENCY,
         max_length=20
     )
+    
     Q19
     kissing_partner = models.CharField(
         verbose_name="How often do you and your partner kiss each other? ",
         choices=CHOICE_FREQUENCY,
         max_length=20
     )
+    
     Q20
     engage_in_interests = models.CharField(
         verbose_name="Do you and your partner engage in shared interests together?",
         choices=CHOICE_FREQUENCY,
         max_length=20
     )
+    
     Q21
-    engage_in_interests = models.CharField(
-        verbose_name='Which of the following statements best describes how you'
-        'feel about the future of your relationship?',
+    happiness_in_relationship = models.CharField(
+        verbose_name='All things considered, how happy are you in your relationship?',
         choices=HAPPINESS_CHOICES,
         max_length=20,
     )
     
     Q22
-    engage_in_interests = models.CharField(
+    future_relationship = models.CharField(
         verbose_name='Which of the following statements best describes how you'
         'feel about the future of your relationship?',
         choices=HAPPINESS_CHOICES,
@@ -180,3 +192,91 @@ class RelationshipFatherInvolment(CrfModelMixin):
     )
     
     # section 3 questions
+    
+    Q23
+    father_child_contact = models.CharField(
+        verbose_name='How often does the biologic father have contact '
+        '(home visits, phone calls, meeting up at another place) with your child? ',
+        choices=FATHER_VISITS,
+        max_length=30,
+    )
+    
+    Q24
+    fathers_financial_support = models.CharField(
+        verbose_name='How supportive is the father in financially supporting the child?',
+        choices=FATHERS_FINANCIAL_SUPPORT,
+        max_length=20,
+    )
+    
+    Q25
+    child_left_alone = models.PositiveIntegerField(
+        default=0,
+        verbose_name='How many days in the last week did you have to'
+        'leave your child alone at home without an adult?',
+        help_text='Range from (0-7)',
+        validators=[MinValueValidator(0), MaxValueValidator(7), ],
+       )
+    
+    Q26
+    read_books = models.CharField(
+        verbose_name='Read books or looked at picture books with your child',
+        choices=HOUSEHOLD_MEMBER,
+        max_length=10,
+    )
+    
+    Q27
+    told_stories = models.CharField(
+        verbose_name='Told stories to your child',
+        choices=HOUSEHOLD_MEMBER,
+        max_length=10,
+    )
+    
+    Q28
+    sang_songs = models.CharField(
+        verbose_name='Sang songs to or with your child, including lullabies',
+        choices=HOUSEHOLD_MEMBER,
+        max_length=10,
+    )
+    
+    Q29
+    took_child_outside = models.CharField(
+        verbose_name='Took your child outside the home',
+        choices=HOUSEHOLD_MEMBER,
+        max_length=10,
+    )
+    
+    Q30
+    played_with_child = models.CharField(
+        verbose_name='Played with your child',
+        choices=HOUSEHOLD_MEMBER,
+        max_length=10,
+    )
+    
+    Q31
+    named_with_child = models.CharField(
+        verbose_name='Named, counted, or drew things with or for your child',
+        choices=HOUSEHOLD_MEMBER,
+        max_length=10,
+    )
+    
+    # Stem question for Q25 – Q30: In the past 3 days, did you or any household member aged 15 or over engage in any of the following activities with the child
+    
+    # SECTION 4
+    Q32
+    interview_participation = models.CharField(
+        verbose_name='Would you be willing to participate in an interview'
+        'to teach us more about caregiving?',
+        choices=YES_NO,
+        max_length=3
+    )
+    
+    Q33
+    contact_info = models.CharField(
+        verbose_name='Would you be willing to provide us contact information so we'
+        'can invite your partner to an interview about caregiving?',
+        choices=YES_NO,
+        max_length=3
+    )
+    Q33 -contact_info
+    
+    

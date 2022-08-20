@@ -864,3 +864,25 @@ FUTURE_OF_RELATIONSHIP = {
      'My partnership can never succeed and there is nothing more I can do'),
     
 }
+
+FATHER_VISITS = {
+    ('every_day', 'Every day'),
+    ('every_week_weekend', "Every week/weekend"),
+    ('every_couple_of_months', 'Every couple of months'),
+    ('every_year', 'Every year'),
+    ('do_not_know', 'I don’t know'),
+}
+
+FATHERS_FINANCIAL_SUPPORT = {
+    ('not_supportive', 'Not supportive'),
+    ('supportive', 'Supportive'),
+    ('very_supportive', 'Very supportive'),
+}
+
+
+HOUSEHOLD_MEMBER = {
+    ('mother','Mother'),
+    ('father','Father'),
+    ('other','Other'),
+    ('no_one','No-one'),
+}
