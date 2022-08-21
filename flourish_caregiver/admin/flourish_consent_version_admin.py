@@ -6,6 +6,7 @@ from django.urls.exceptions import NoReverseMatch
 from edc_base.utils import get_utcnow
 from edc_fieldsets import FieldsetsModelAdminMixin
 from edc_fieldsets.fieldlist import Insert
+from edc_model_admin import ModelAdminNextUrlRedirectMixin
 from edc_model_admin import audit_fieldset_tuple, ModelAdminNextUrlRedirectError
 
 from ..admin_site import flourish_caregiver_admin
@@ -15,7 +16,7 @@ from .modeladmin_mixins import ModelAdminMixin
 
 
 @admin.register(FlourishConsentVersion, site=flourish_caregiver_admin)
-class FlourishConsentVersionAdmin(ModelAdminMixin,
+class FlourishConsentVersionAdmin(ModelAdminMixin, ModelAdminNextUrlRedirectMixin,
                                   FieldsetsModelAdminMixin,
                                   admin.ModelAdmin):
 
@@ -55,28 +56,30 @@ class FlourishConsentVersionAdmin(ModelAdminMixin,
                         maternal_dataset_obj = maternal_dataset_cls.objects.get(
                             screening_identifier=obj.screening_identifier)
                     except maternal_dataset_cls.DoesNotExist:
-                        pass
+                        try:
+                            preg_screening_cls.objects.get(
+                                screening_identifier=obj.screening_identifier)
+                        except preg_screening_cls.DoesNotExist:
+                            pass
+                        else:
+                            url_name = settings.DASHBOARD_URL_NAMES.get(
+                                'maternal_screening_listboard_url')
+
+                            options['screening_identifier'] = request.GET.get(
+                                'screening_identifier')
+
                     else:
                         del options['screening_identifier']
                         options['study_maternal_identifier'] = maternal_dataset_obj.study_maternal_identifier
                         url_name = settings.DASHBOARD_URL_NAMES.get(
                             'maternal_dataset_listboard_url')
-                    try:
-                        preg_screening_cls.objects.get(
-                            screening_identifier=obj.screening_identifier)
-                    except preg_screening_cls.DoesNotExist:
-                        pass
-                    else:
-                        url_name = settings.DASHBOARD_URL_NAMES.get(
-                            'maternal_screening_listboard_url')
-
-                        options['screening_identifier'] = request.GET.get('screening_identifier')
 
             try:
                 redirect_url = reverse(url_name, kwargs=options)
             except NoReverseMatch as e:
                 raise ModelAdminNextUrlRedirectError(
                     f'{e}. Got url_name={url_name}, kwargs={options}.')
+
         return redirect_url
 
     fieldsets = (

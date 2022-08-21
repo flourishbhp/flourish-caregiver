@@ -51,11 +51,6 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         blank=True,
     )
 
-    is_preg = models.CharField(
-        verbose_name='Is the caregiver pregnant? ',
-        max_length=3,
-        choices=YES_NO)
-
     waist_circ = models.DecimalField(
         max_digits=5,
         decimal_places=2,

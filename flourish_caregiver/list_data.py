@@ -127,7 +127,7 @@ list_data = {
         ('prior_arv_dtg', 'DTG'),
         ('prior_arv_unknown', 'ART, unknown'),
         ('prior_arv_na', 'Not Applicable'),
-        ('prior_arv_other', 'Other, specify')
+        ('prior_arv_specify', 'Other, specify')
     ],
     'flourish_caregiver.covidsymptoms': [
         ('c19m_iso_chestpain', 'Chest pain'),
