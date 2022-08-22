@@ -31,6 +31,14 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         choices=YES_NO,
         max_length=3
     )
+    
+    why_partner_upsent = models.TextField(
+        verbose_name='Why not',
+        max_length=250,
+        blank=True,
+        null=True)
+    
+    
     Q2-is_partner_the_father
     is_partner_the_father = models.CharField(
         verbose_name='Is the partner you are currently with also the' 
@@ -42,15 +50,18 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     Q3-duration_with_partner-help_text='(Months,Years)'
     duration_with_partner_months = models.PositiveIntegerField(
         verbose_name='How long have you been with your current partner?',
-        help_text='(Months)',)
+        help_text='(Months)',
+        blank=True,
+        null=True)
     
     duration_with_partner_years = models.PositiveIntegerField(
         default=0,
         verbose_name='Years',
-        help_text='(Years)',)
+        help_text='(Years)',
+        blank=True,
+        null=True)
     
-    
-    
+
     Q4-partner_age
     partner_age_in_years = models.PositiveIntegerField(
         verbose_name='How old is your partner?',
@@ -63,15 +74,15 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         max_length=3
     )
     
-    not_living_with_partner = models.TextField(
+    why_not_living_with_partner = models.TextField(
         verbose_name='Why not',
         max_length=250,
         blank=True,
         null=True)
     
     
-    Q6-discloure_to_partner
-    discloure_to_partner = models.CharField(
+    Q6-disclosure_to_partner
+    disclosure_to_partner = models.CharField(
         verbose_name="Have you disclosed your HIV status to your partner",
         choices=YES_NO_PNTA,
         max_length=25
