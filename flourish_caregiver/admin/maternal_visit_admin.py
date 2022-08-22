@@ -3,9 +3,9 @@ from django.contrib import admin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
-from django.apps import apps as django_apps
+from django.db.models import Q
 from edc_base import get_utcnow
-from edc_constants.constants import NO
+from edc_constants.constants import NO, NOT_APPLICABLE
 from edc_fieldsets import FieldsetsModelAdminMixin
 from edc_model_admin import (
     ModelAdminFormAutoNumberMixin, ModelAdminInstitutionMixin,
@@ -15,6 +15,7 @@ from edc_model_admin import audit_fieldset_tuple
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
 from edc_fieldsets.fieldlist import Insert
+from edc_constants.constants import YES, NO
 from numpy import insert
 
 from .exportaction_mixin import ExportActionMixin
@@ -93,19 +94,34 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
     }
     
     def get_key(self, request, obj=None):
-        
+    
+                
         key = super().get_key(request, obj)
         
-        appointment_model_cls = django_apps.get_model(self.appointment_model)
-        
-        appointment_pk = request.GET.get('appointment', None)
-        
         try:
-            appointment_obj = appointment_model_cls.objects.get(pk = appointment_pk)
-        except appointment_model_cls.DoesNotExist:
-            pass
+            enrollment_visit = self.model.objects.get(
+                    subject_identifier = obj.subject_identifier,
+                    visit_code='1000M')
+            
+        except self.model.DoesNotExist:
+            """
+            1000M visit doen't exist, check if the current vist yet to be saved 
+            is visit 1000M
+            """
+            if obj.visit_vode == '1000M':
+                key = 'interested_in_brain_scan'
+            
         else:
-            if appointment_obj.visit_code == '2000D' or appointment_obj.visit_code == '1000M':
-                # field brain_scan is only required for birth visit and enrollment visit
-                key =  'interested_in_brain_scan'
+            """
+            If previous visit does exist, and if response is brain_scan == NO
+            or NOT_APPLICABLE and current visit is 2000D show brain scan option
+            """
+            
+            if (enrollment_visit.brain_scan == NO or \
+                enrollment_visit.brain_scan == NOT_APPLICABLE) \
+                and obj.visit_code == '2000D':
+                    
+                key = 'interested_in_brain_scan'
+                
+
         return key
