@@ -5,7 +5,7 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
 
 from django.core.validators import MinValueValidator, MaxValueValidator
-from edc_base.model_fields import OtherCharField
+# from edc_base.model_fields import OtherCharField
 from edc_constants.constants import NOT_APPLICABLE
 from edc_constants.choices import YES_NO, YES_NO_NA
 from ..choices import (YES_NO_PNTA,YES_NO_PNTA_UNKNOWN,
@@ -14,6 +14,7 @@ from ..choices import (YES_NO_PNTA,YES_NO_PNTA_UNKNOWN,
                        FATHERS_FINANCIAL_SUPPORT,HOUSEHOLD_MEMBER)
 
 from django_crypto_fields.fields import EncryptedCharField
+from edc_base.model_validators import CellNumber
 
 class RelationshipFatherInvolvement(CrfModelMixin):
     """A CRF to be completed by biological mothers living with HIV,
@@ -288,6 +289,12 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         choices=YES_NO,
         max_length=3
     )
-    Q33 -contact_info
     
+    partner_cell = EncryptedCharField(
+        verbose_name="Cell number",
+        max_length=8,
+        validators=[CellNumber, ],
+        blank=True,
+        null=True)
+
     
