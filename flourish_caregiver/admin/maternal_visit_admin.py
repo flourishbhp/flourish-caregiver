@@ -105,7 +105,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         try:
             
             subject_identifier = request.GET.get('subject_identifier', None) \
-                                 | request.GET.get('subject_identifier', None)
+                                 or request.POST.get('subject_identifier', None)
             
             enrollment_visit = self.model.objects.get(
                     subject_identifier = subject_identifier,
@@ -118,7 +118,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             """
             try:
                 appointment_id = request.GET.get('appointment', None) \
-                                | request.POST.get('appointment', None) 
+                                or request.POST.get('appointment', None) 
                                 
                 appointment = self.appointment_model_cls.objects.get(id = appointment_id)
                 
