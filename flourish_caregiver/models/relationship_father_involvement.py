@@ -256,3 +256,7 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         null=True)
 
     
+    class Meta(CrfModelMixin.Meta):
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Relationship and Father Involvement'
+        verbose_name_plural = 'Relationship and Father Involvement'
