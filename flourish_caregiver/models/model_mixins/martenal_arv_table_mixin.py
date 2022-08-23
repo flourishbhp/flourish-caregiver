@@ -31,3 +31,4 @@ class MaternalArvTableMixin(BaseUuidModel):
 
     class Meta:
         unique_together = ('arv_code', 'start_date')
+        abstract = True

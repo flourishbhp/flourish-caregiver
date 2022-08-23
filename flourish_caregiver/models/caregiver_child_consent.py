@@ -173,10 +173,10 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
 
+        self.set_defaults()
+
         self.child_age_at_enrollment = (
             self.get_child_age_at_enrollment() if self.child_dob else 0)
-
-        self.set_defaults()
 
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
@@ -293,19 +293,19 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                         else:
                             child_identifier_postfix = '56'
             else:
-                children_count = caregiver_child_consent_cls.objects.filter(
+                children_count = len(set(caregiver_child_consent_cls.objects.filter(
                     subject_identifier__startswith=self.subject_consent.subject_identifier).exclude(
                         child_dob=self.child_dob,
-                        first_name=self.first_name).count()
+                        first_name=self.first_name).values_list('subject_identifier', flat=True)))
                 if children_count:
                     child_identifier_postfix = str((children_count + 5) * 10)
                 else:
                     child_identifier_postfix = 10
         else:
-            children_count = caregiver_child_consent_cls.objects.filter(
+            children_count = len(set(caregiver_child_consent_cls.objects.filter(
                     subject_identifier__startswith=self.subject_consent.subject_identifier).exclude(
                         child_dob=self.child_dob,
-                        first_name=self.first_name).count()
+                        first_name=self.first_name).values_list('subject_identifier', flat=True)))
             if children_count:
                 child_identifier_postfix = str((children_count + 5) * 10)
             else:

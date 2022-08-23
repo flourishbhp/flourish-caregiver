@@ -6,8 +6,8 @@ from edc_base.model_validators import date_not_future
 from edc_base.sites import CurrentSiteManager as BaseCurrentSiteManager
 from edc_base.sites.site_model_mixin import SiteModelMixin
 from edc_consent.model_mixins import RequiresConsentFieldsModelMixin
-from edc_constants.choices import YES_NO
-from edc_constants.constants import ALIVE, PARTICIPANT
+from edc_constants.choices import YES_NO_NA
+from edc_constants.constants import ALIVE, PARTICIPANT, NOT_APPLICABLE
 from edc_metadata.model_mixins.creates import CreatesMetadataModelMixin
 from edc_protocol.validators import date_not_before_study_start
 from edc_reference.model_mixins import ReferenceModelMixin
@@ -26,7 +26,6 @@ class CurrentSiteManager(VisitModelManager, BaseCurrentSiteManager):
 class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
                     ReferenceModelMixin, RequiresConsentFieldsModelMixin,
                     CaretakerFieldsMixin, SiteModelMixin, BaseUuidModel):
-
     """ Maternal visit form that links all antenatal/ postnatal follow-up forms
     """
 
@@ -72,13 +71,13 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
         blank=True,
         null=True,
         validators=[date_not_before_study_start, date_not_future])
-
-    tb_participation = models.CharField(
-        verbose_name='Participant willing to do an Informed consent for the Tb Study',
-        choices=YES_NO,
-        max_length=10,
-        default=''
-        )
+    
+    brain_scan = models.CharField(
+        verbose_name='Is participant interested infant ultrasound brain scan?',
+        max_length=3,
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE
+    )
 
     on_site = CurrentSiteManager()
 

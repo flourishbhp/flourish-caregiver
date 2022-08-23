@@ -16,22 +16,27 @@ class MaternalArvAtDeliveryForm(SubjectModelFormMixin, forms.ModelForm):
         maternal_arv_count = self.data.get(
             'maternalarvtableatdelivery_set-TOTAL_FORMS')
 
-        if int(maternal_arv_count) < 0 and cleaned_data.get('last_visit_change') == YES:
-            raise forms.ValidationError({'Please complete the maternal arv table.'})
+        if int(maternal_arv_count) == 0 and cleaned_data.get('last_visit_change') == YES:
+            raise forms.ValidationError('Please complete the maternal arv table.')
 
-        elif int(maternal_arv_count) > 0 and cleaned_data.get('last_visit_change') == NO:
-            raise forms.ValidationError({'Maternal ARV tables are not required.'})
+        elif int(maternal_arv_count) != 0 and cleaned_data.get('last_visit_change') == NO:
+            raise forms.ValidationError('Maternal ARV tables are not required.')
+
+        self.validate_date_resumed()
 
     def validate_date_resumed(self):
         maternal_arv_count = self.data.get(
             'maternalarvtableatdelivery_set-TOTAL_FORMS')
 
-        for i in range(int(maternal_arv_count)):
-            maternal_arv_date_resumed = self.data.get(
-                'maternalarvtableatdelivery_set-' + str(i) + '-date_resumed')
-            if maternal_arv_date_resumed and self.cleaned_data.get('resume_treat') == YES:
-                raise forms.ValidationError({'Maternal ARV tables date resumed '
-                                             'is not required'})
+        if int(maternal_arv_count) != 0 and self.cleaned_data.get('resume_treat') == YES:
+            for i in range(int(maternal_arv_count)):
+                maternal_arv_date_resumed = self.data.get(
+                    'maternalarvtableatdelivery_set-' + str(i) + '-date_resumed')
+                if maternal_arv_date_resumed == "":
+                    raise forms.ValidationError('Maternal ARV tables date resumed '
+                                                'is required')
+        elif self.cleaned_data.get('resume_treat') == YES:
+            raise forms.ValidationError('Please complete the maternal arv table.')
 
 
     class Meta:
