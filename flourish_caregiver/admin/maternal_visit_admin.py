@@ -1,5 +1,6 @@
 from dateutil import relativedelta
 from django.contrib import admin
+from django.apps import apps as django_apps
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
@@ -92,15 +93,22 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
     conditional_fieldlists = {
         'interested_in_brain_scan': Insert('brain_scan', after='survival_status')
     }
-    
+    def appointment_model_cls(self):
+        
+        return django_apps.get_model(self.appointment_model)
+        
     def get_key(self, request, obj=None):
     
                 
         key = super().get_key(request, obj)
         
         try:
+            
+            subject_identifier = request.GET.get('subject_identifier', None) \
+                                 or request.POST.get('subject_identifier', None)
+            
             enrollment_visit = self.model.objects.get(
-                    subject_identifier = obj.subject_identifier,
+                    subject_identifier = subject_identifier,
                     visit_code='1000M')
             
         except self.model.DoesNotExist:
@@ -108,8 +116,17 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             1000M visit doen't exist, check if the current vist yet to be saved 
             is visit 1000M
             """
-            if obj.visit_vode == '1000M':
-                key = 'interested_in_brain_scan'
+            try:
+                appointment_id = request.GET.get('appointment', None) \
+                                or request.POST.get('appointment', None) 
+                                
+                appointment = self.appointment_model_cls.objects.get(id = appointment_id)
+                
+            except self.appointment_model_cls.DoesNotExist:
+                pass
+            else:
+                if appointment.visit_vode == '1000M':
+                    key = 'interested_in_brain_scan'
             
         else:
             """
@@ -117,9 +134,8 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             or NOT_APPLICABLE and current visit is 2000D show brain scan option
             """
             
-            if (enrollment_visit.brain_scan == NO or \
-                enrollment_visit.brain_scan == NOT_APPLICABLE) \
-                and obj.visit_code == '2000D':
+            if (enrollment_visit.brain_scan == NO or enrollment_visit.brain_scan == NOT_APPLICABLE) \
+                and (enrollment_visit.visit_code in ['2000D', '1000M']):
                     
                 key = 'interested_in_brain_scan'
                 
