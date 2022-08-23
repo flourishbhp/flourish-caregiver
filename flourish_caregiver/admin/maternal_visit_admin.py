@@ -135,7 +135,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             """
             
             if (enrollment_visit.brain_scan == NO or enrollment_visit.brain_scan == NOT_APPLICABLE) \
-                and (obj.visit_code == '2000D' or obj.visit_code == '1000M'):
+                and (enrollment_visit.visit_code in ['2000D', '1000M']):
                     
                 key = 'interested_in_brain_scan'
                 
