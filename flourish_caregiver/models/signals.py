@@ -501,7 +501,7 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
 @receiver(post_save, weak=False, sender=TbVisitScreeningWomen,
           dispatch_uid='tb_visit_screening_women_post_save')
 def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs):
-    if not raw and created:
+    if not raw:
         tb_off_study_cls = django_apps.get_model(
             'flourish_caregiver.tboffstudy'
         )
