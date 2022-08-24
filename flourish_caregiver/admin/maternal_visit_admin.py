@@ -89,11 +89,12 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         'info_source': admin.VERTICAL,
         'is_present': admin.VERTICAL,
         'survival_status': admin.VERTICAL,
-        # 'brain_scan': admin.VERTICAL
+        'brain_scan': admin.VERTICAL
     }
-    # conditional_fieldlists = {
-    #     'interested_in_brain_scan': Insert('brain_scan', after='survival_status')
-    # }
+
+    conditional_fieldlists = {
+        'interested_in_brain_scan': Insert('brain_scan', after='survival_status')
+    }
 
     @property
     def appointment_model_cls(self):
