@@ -139,8 +139,8 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             or NOT_APPLICABLE and current visit is 2000D show brain scan option
             """
             
-            if (enrollment_visit.brain_scan == NO or enrollment_visit.brain_scan == NOT_APPLICABLE) \
-                and (enrollment_visit.visit_code in ['2000D', '1000M']):
+            if enrollment_visit.brain_scan in [NO or NOT_APPLICABLE] and \
+                enrollment_visit.visit_code in ['2000D', '1000M']:
                     
                 key = 'interested_in_brain_scan'
                 
