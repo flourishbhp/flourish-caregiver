@@ -1,34 +1,35 @@
 from dateutil import relativedelta
-from django.contrib import admin
 from django.apps import apps as django_apps
+from django.contrib import admin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
-from django.db.models import Q
 from edc_base import get_utcnow
+from edc_base.sites.admin import ModelAdminSiteMixin
 from edc_constants.constants import NO, NOT_APPLICABLE
 from edc_fieldsets import FieldsetsModelAdminMixin
+from edc_fieldsets.fieldlist import Insert
 from edc_model_admin import (
     ModelAdminFormAutoNumberMixin, ModelAdminInstitutionMixin,
-    ModelAdminNextUrlRedirectMixin,
+    ModelAdminNextUrlRedirectMixin, ModelAdminAuditFieldsMixin,
     ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
 from edc_model_admin import audit_fieldset_tuple
+
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
-from edc_fieldsets.fieldlist import Insert
-from edc_constants.constants import YES, NO
-from numpy import insert
 
-from .exportaction_mixin import ExportActionMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalVisitForm
 from ..models import MaternalVisit
+from .exportaction_mixin import ExportActionMixin
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
                       ModelAdminRevisionMixin, ModelAdminReplaceLabelTextMixin,
                       ModelAdminInstitutionMixin, ExportActionMixin,
-                      FieldsetsModelAdminMixin):
+                      ModelAdminAuditFieldsMixin, FieldsetsModelAdminMixin,
+                      ModelAdminSiteMixin):
+
     list_per_page = 10
     date_hierarchy = 'modified'
     empty_value_display = '-'
@@ -90,13 +91,17 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         'survival_status': admin.VERTICAL,
         'brain_scan': admin.VERTICAL
     }
+
     conditional_fieldlists = {
         'interested_in_brain_scan': Insert('brain_scan', after='survival_status')
     }
+
+    @property
     def appointment_model_cls(self):
-        
+
         return django_apps.get_model(self.appointment_model)
-        
+    
+
     def get_key(self, request, obj=None):
     
                 
