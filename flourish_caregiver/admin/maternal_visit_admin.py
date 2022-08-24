@@ -125,7 +125,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             except self.appointment_model_cls.DoesNotExist:
                 pass
             else:
-                if appointment.visit_vode == '1000M':
+                if appointment.visit_code == '1000M':
                     key = 'interested_in_brain_scan'
             
         else:
