@@ -9,7 +9,7 @@ from ..models import RelationshipFatherInvolvement
 from ..forms import RelationshipFatherInvolvementForm
 
 
-@register(RelationshipFatherInvolvement, site=flourish_caregiver_admin)
+@admin.register(RelationshipFatherInvolvement, site=flourish_caregiver_admin)
 class RelationshipFatherInvolmentAdmin(CrfModelAdminMixin,admin.ModelAdmin):
     
     form = RelationshipFatherInvolvementForm
