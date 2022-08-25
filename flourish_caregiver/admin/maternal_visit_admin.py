@@ -112,7 +112,8 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
 
             enrollment_visit = self.model.objects.get(
                     subject_identifier=subject_identifier,
-                    visit_code='1000M')
+                    visit_code='1000M',
+                    visit_code_sequence='1')
 
         except self.model.DoesNotExist:
             """
