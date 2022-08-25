@@ -1,9 +1,8 @@
-import os
 from datetime import datetime
+import os
 
-import PIL
-import pyminizip
 from PIL import Image
+import PIL
 from django import forms
 from django.apps import apps as django_apps
 from django.conf import settings
@@ -15,16 +14,27 @@ from django.db.models.signals import post_save
 from django.db.transaction import TransactionManagementError
 from django.dispatch import receiver
 from edc_action_item import site_action_items
-from edc_data_manager.models import DataActionItem
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
 from edc_constants.constants import YES
+from edc_data_manager.models import DataActionItem
+
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
-
+from flourish_caregiver.models.flourish_consent_version import FlourishConsentVersion
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
+import pyminizip
+
+from ..action_items import TB_OFF_STUDY_ACTION
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
+from ..models.tb_informed_consent import TbInformedConsent
+from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -36,14 +46,6 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .ultrasound import UltraSound
-from ..action_items import TB_OFF_STUDY_ACTION
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from ..models.tb_informed_consent import TbInformedConsent
-from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 
 
 class PreFlourishError(Exception):
@@ -59,8 +61,8 @@ class SubjectConsentError(Exception):
 
 
 def update_maternal_dataset_and_worklist(subject_identifier,
-        screening_identifier=None,
-        study_child_identifier=None,):
+                                         screening_identifier=None,
+                                         study_child_identifier=None,):
     study_maternal_identifier = None
 
     if study_child_identifier:
@@ -498,6 +500,7 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
         """
         pass
 
+
 @receiver(post_save, weak=False, sender=TbVisitScreeningWomen,
           dispatch_uid='tb_visit_screening_women_post_save')
 def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs):
@@ -558,7 +561,7 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
         'flourish_prn.caregiveroffstudy')
 
     registration_datetime = get_registration_date(instance.subject_identifier)
-    
+
     if registration_datetime:
         weeks_diff = (instance.report_datetime - registration_datetime).days / 7
 
@@ -790,7 +793,7 @@ def get_onschedule_model_obj(schedule, subject_identifier):
 
 def get_registration_date(subject_identifier):
     child_consents = get_child_consents(subject_identifier)
-    
+
     '''
     To cater for empty names, and unborn babies 
     have neither first_name nor last_name,
@@ -799,25 +802,22 @@ def get_registration_date(subject_identifier):
     unborn_baby_consents = list(filter(
         lambda child: child.is_preg, child_consents.filter(
         first_name='', last_name='',)))
-    
-        
-    
+
     if (child_consents and child_consents.values_list(
             'subject_identifier', flat=True).distinct().count() == 1):
         child_consent = child_consents[0]
         return child_consent.consent_datetime
-    
+
     elif child_consents and unborn_baby_consents:
         '''
         Catering for unborn baby, if twins, the consent_datetime 
         of the first child is relavent
         '''
         return unborn_baby_consents[0].consent_datetime
-    
+
     else:
         raise forms.ValidationError(
             'Missing matching Child Subject Consent form, cannot proceed.')
-
 
 
 def create_registered_infant(instance):
@@ -922,7 +922,7 @@ def create_consent_version(instance, version):
 
 
 def get_child_consents(subject_identifier):
-    
+
     child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
 
     return child_consent_cls.objects.filter(
