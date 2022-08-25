@@ -123,7 +123,8 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
                               or request.POST.get('appointment', None))
             try:
                 self.appointment_model_cls.objects.get(id=appointment_id,
-                                                       visit_code='1000M')
+                                                       visit_code='1000M',
+                                                       visit_code_sequence='1')
 
             except self.appointment_model_cls.DoesNotExist:
                 pass
