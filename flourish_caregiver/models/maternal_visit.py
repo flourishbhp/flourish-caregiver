@@ -72,13 +72,13 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
         blank=True,
         null=True,
         validators=[date_not_before_study_start, date_not_future])
-    
-    brain_scan = models.CharField(
-        verbose_name='Is participant interested infant ultrasound brain scan?',
-        max_length=3,
-        choices=YES_NO_NA,
-        default=NOT_APPLICABLE
-    )
+
+    # brain_scan = models.CharField(
+    #     verbose_name='Is participant interested infant ultrasound brain scan?',
+    #     max_length=3,
+    #     choices=YES_NO_NA,
+    #     default=NOT_APPLICABLE
+    # )
 
     on_site = CurrentSiteManager()
 

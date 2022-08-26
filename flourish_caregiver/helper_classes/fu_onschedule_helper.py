@@ -84,7 +84,9 @@ class FollowUpEnrolmentHelper(object):
 
         vs = latest_appt.schedule_name.split('_')
 
-        if 'quarterly' in latest_appt.schedule_name:
+        if 'enrol' in latest_appt.schedule_name:
+            schedule_name = '_'.join([vs[0], vs[1].replace('enrol', 'fu'), vs[2]])
+        elif 'quarterly' in latest_appt.schedule_name:
             schedule_name = '_'.join([vs[0], vs[1].replace('quarterly', 'fu'), vs[2]])
         else:
             schedule_name = '_'.join([vs[0], vs[2].replace('quart', 'fu'), vs[3]])
