@@ -8,10 +8,7 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from flourish_child.helper_classes.child_fu_onschedule_helper import ChildFollowUpEnrolmentHelper
 
 from ..models import OnScheduleCohortAFU, OnScheduleCohortBFU
-from ..models import OnScheduleCohortAFU, OnScheduleCohortBFU
-from ..models import OnScheduleCohortBFUQuart, OnScheduleCohortCFUQuart
 from ..models import OnScheduleCohortBFUQuarterly, OnScheduleCohortCFUQuarterly
-from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuart
 from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuarterly
 
 
