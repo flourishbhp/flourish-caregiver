@@ -98,6 +98,7 @@ class TestVisitScheduleFUA(TestCase):
         schedule_enrol_helper = FollowUpEnrolmentHelper(
             subject_identifier=self.subject_identifier,
             cohort='a')
+
         schedule_enrol_helper.activate_fu_schedule()
 
         self.assertEqual(OnScheduleCohortAFU.objects.filter(
