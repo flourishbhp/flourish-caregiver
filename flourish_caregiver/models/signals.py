@@ -360,11 +360,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                     child_dummy_consent_cls.objects.get(
                         identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
-<<<<<<< HEAD
                         version=instance.version,)
-=======
-                        version=instance.subject_consent.version,)
->>>>>>> 1a9f823 (add follow up enrol helper)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
