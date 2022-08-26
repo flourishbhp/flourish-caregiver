@@ -21,7 +21,6 @@ from edc_data_manager.models import DataActionItem
 
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
-from flourish_caregiver.models.flourish_consent_version import FlourishConsentVersion
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
@@ -63,6 +62,7 @@ class SubjectConsentError(Exception):
 def update_maternal_dataset_and_worklist(subject_identifier,
                                          screening_identifier=None,
                                          study_child_identifier=None,):
+
     study_maternal_identifier = None
 
     if study_child_identifier:
@@ -433,22 +433,21 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
         trigger_action_item(death_report_cls,
                             CAREGIVER_DEATH_REPORT_ACTION,
                             instance.subject_identifier)
-        
+
     if instance.brain_scan and instance.brain_scan == YES:
         """
         If the mother is interested in brain scan, a notification will be created
-        so a crf can be completed on redcap 
+        so a crf can be completed on redcap
         """
         DataActionItem.objects.update_or_create(
-            subject = 'Complete Infant Ultrasound Component on REDCAP',
-            subject_identifier = instance.subject_identifier,
-            assigned = 'clinic',
-            comment = '''\
-                    Caregiver is interested in ultrasound brain scan for the infant, please complete Infant Ultrasound Component on REDCAP
+            subject='Complete Infant Ultrasound Component on REDCAP',
+            subject_identifier=instance.subject_identifier,
+            assigned='clinic',
+            comment='''\
+                    Caregiver is interested in ultrasound brain scan for the infant,
+                     please complete Infant Ultrasound Component on REDCAP
                     '''
-
         )
-        
 
     """
     triger off schedule for participants who missed a tb visit
@@ -546,7 +545,8 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
         for schedule in visit_schedule.schedules.values():
             onschedule_model_obj = get_onschedule_model_obj(
                 schedule, instance.subject_identifier)
-            if onschedule_model_obj and onschedule_model_obj.schedule_name == instance.schedule_name:
+            if (onschedule_model_obj
+                    and onschedule_model_obj.schedule_name == instance.schedule_name):
                 _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=instance.schedule_name)
@@ -713,6 +713,7 @@ def get_schedule_sequence(subject_identifier, instance,
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
                     child_subject_identifier=None, base_appt_datetime=None,
                     caregiver_visit_count=None):
+
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
         schedule, onschedule_model_cls, schedule_name = get_onschedule_model(
@@ -751,7 +752,8 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
 
 
 def get_onschedule_model(cohort, caregiver_visit_count=None, subject_identifier=None,
-        instance=None):
+                         instance=None):
+
     cohort_label_lower = ''.join(cohort.split('_'))
 
     if 'enrol' in cohort:
@@ -795,13 +797,13 @@ def get_registration_date(subject_identifier):
     child_consents = get_child_consents(subject_identifier)
 
     '''
-    To cater for empty names, and unborn babies 
-    have neither first_name nor last_name,
-    used a built-in filter instead since is_preg is not
+    To cater for empty names, and unborn babies
+     have neither first_name nor last_name,
+     used a built-in filter instead since is_preg is not
     '''
     unborn_baby_consents = list(filter(
         lambda child: child.is_preg, child_consents.filter(
-        first_name='', last_name='',)))
+            first_name='', last_name='',)))
 
     if (child_consents and child_consents.values_list(
             'subject_identifier', flat=True).distinct().count() == 1):
@@ -810,8 +812,8 @@ def get_registration_date(subject_identifier):
 
     elif child_consents and unborn_baby_consents:
         '''
-        Catering for unborn baby, if twins, the consent_datetime 
-        of the first child is relavent
+        Catering for unborn baby, if twins, the consent_datetime
+         of the first child is relavent
         '''
         return unborn_baby_consents[0].consent_datetime
 
@@ -869,7 +871,8 @@ def create_registered_infant(instance):
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
-        repeat=False, opt_trigger=True):
+                        repeat=False, opt_trigger=True):
+
     action_cls = site_action_items.get(
         model_cls.action_name)
     action_item_model_cls = action_cls.action_item_model_cls()
