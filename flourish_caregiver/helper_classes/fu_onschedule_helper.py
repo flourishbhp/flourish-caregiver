@@ -2,7 +2,6 @@ from django.apps import apps as django_apps
 from django.db.models import Q
 from edc_base.utils import get_utcnow
 from edc_registration.models import RegisteredSubject
-
 from edc_appointment.constants import NEW_APPT
 from edc_appointment.models import Appointment
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
