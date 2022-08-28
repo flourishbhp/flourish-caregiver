@@ -23,7 +23,7 @@ from edc_visit_tracking.constants import MISSED_VISIT
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
-# import pyminizip
+import pyminizip
 
 from ..action_items import TB_OFF_STUDY_ACTION
 
@@ -987,8 +987,8 @@ def encrypt_files(instance, subject_identifier):
         with open('filekey.key', 'r') as filekey:
             key = filekey.read().rstrip()
         com_lvl = 8
-        # pyminizip.compress(f'{instance.image.path}', None,
-        #                    f'{base_path}/{upload_to}{zip_filename}', key, com_lvl)
+        pyminizip.compress(f'{instance.image.path}', None,
+                           f'{base_path}/{upload_to}{zip_filename}', key, com_lvl)
     # remove unencrypted file
     if os.path.exists(f'{instance.image.path}'):
         os.remove(f'{instance.image.path}')

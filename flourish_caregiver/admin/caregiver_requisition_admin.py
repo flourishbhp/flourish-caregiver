@@ -10,12 +10,13 @@ from edc_lab.admin import requisition_verify_fieldset, requisition_status_fields
 from edc_model_admin import audit_fieldset_tuple
 import xlwt
 
+from edc_senaite_interface.admin import SenaiteRequisitionAdminMixin
+
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverRequisitionForm
 from ..models import CaregiverRequisition
 from .modeladmin_mixins import CrfModelAdminMixin
 
-# from edc_senaite_interface.admin import SenaiteRequisitionAdminMixin
 requisition_identifier_fields = (
     'requisition_identifier',
     'identifier_prefix',
@@ -98,7 +99,7 @@ class ExportRequisitionCsvMixin:
 @admin.register(CaregiverRequisition, site=flourish_caregiver_admin)
 class CaregiverRequisitionAdmin(ExportRequisitionCsvMixin, CrfModelAdminMixin,
                                 RequisitionAdminMixin,
-                                # SenaiteRequisitionAdminMixin,
+                                SenaiteRequisitionAdminMixin,
                                 admin.ModelAdmin):
 
     form = CaregiverRequisitionForm
