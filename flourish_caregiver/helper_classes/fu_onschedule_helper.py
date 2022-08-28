@@ -6,7 +6,6 @@ from edc_registration.models import RegisteredSubject
 from edc_appointment.constants import NEW_APPT
 from edc_appointment.models import Appointment
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-from flourish_child.helper_classes.child_fu_onschedule_helper import ChildFollowUpEnrolmentHelper
 
 from ..models import OnScheduleCohortAFU, OnScheduleCohortBFU, CaregiverOffSchedule
 from ..models import OnScheduleCohortBFUQuarterly, OnScheduleCohortCFUQuarterly
