@@ -18,7 +18,6 @@ from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
 from edc_constants.constants import YES
 from edc_data_manager.models import DataActionItem
-
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
