@@ -15,17 +15,17 @@ class TbStudyEligibility(CrfModelMixin):
         default=''
     )
 
-    reasons_not_participating = models.CharField(
-        verbose_name='Reasons unable to obtain an informed consent for TB study',
-        help_text='if <22 weeks GA or Still thinking, The form should appear at 2000D/ '
-                  '2001',
-        choices=REASONS_NOT_PARTICIPATING,
-        max_length=50,
-        blank=True,
-        null=True
-    )
-
-    reasons_not_participating_other = OtherCharField()
+    # reasons_not_participating = models.CharField(
+    #     verbose_name='Reasons unable to obtain an informed consent for TB study',
+    #     help_text='if <22 weeks GA or Still thinking, The form should appear at 2000D/ '
+    #               '2001',
+    #     choices=REASONS_NOT_PARTICIPATING,
+    #     max_length=50,
+    #     blank=True,
+    #     null=True
+    # )
+    #
+    # reasons_not_participating_other = OtherCharField()
 
     class Meta:
         app_label = 'flourish_caregiver'

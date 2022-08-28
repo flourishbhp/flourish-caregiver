@@ -24,4 +24,5 @@ class TbStudyEligibilityAdmin(CrfModelAdminMixin):
 
     radio_fields = {
         'tb_participation': admin.VERTICAL,
-        'reasons_not_participating': admin.VERTICAL, }
+        # 'reasons_not_participating': admin.VERTICAL,
+         }
