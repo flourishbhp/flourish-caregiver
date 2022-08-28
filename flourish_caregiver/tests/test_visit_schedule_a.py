@@ -177,8 +177,6 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 1)
 
-        # import pdb; pdb.set_trace()
-
         self.assertEqual(ccc2.caregiver_visit_count, 2)
 
     @tag('ax2')

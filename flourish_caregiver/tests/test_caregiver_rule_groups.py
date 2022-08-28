@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES, NEG, POS
@@ -8,6 +9,12 @@ from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 from edc_metadata.models import CrfMetadata
 from model_mommy import mommy
 
+from edc_appointment.constants import NEW_APPT
+from edc_appointment.creators import AppointmentInProgressError
+from edc_appointment.creators import InvalidParentAppointmentMissingVisitError
+from edc_appointment.creators import InvalidParentAppointmentStatusError
+from edc_appointment.creators import UnscheduledAppointmentCreator
+from edc_appointment.creators import UnscheduledAppointmentError
 from edc_appointment.models import Appointment
 from edc_visit_schedule.subject_schedule import SubjectSchedule
 from edc_visit_tracking.constants import SCHEDULED
@@ -44,17 +51,18 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
-            subject_identifier=self.subject_consent.subject_identifier)
+            subject_identifier=self.subject_consent.subject_identifier,
+            )
 
         self.subject_identifier = self.subject_consent.subject_identifier
 
-        mommy.make_recipe(
+        self.mv = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='1000M'),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
-    @tag('bbh')
+    @tag('rgy')
     def test_hiv_viralload_cd4_not_required_cohort_a(self):
         self.assertEqual(
             CrfMetadata.objects.get(
@@ -62,6 +70,53 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
                 visit_code_sequence='0').entry_status, NOT_REQUIRED)
+
+    @tag('rgxx')
+    def test_hiv_viralload_cd4_required_cohort_a(self):
+        mommy.make_recipe(
+            'flourish_caregiver.hivrapidtestcounseling',
+            maternal_visit=self.mv,
+            rapid_test_done=YES,
+            result_date=get_utcnow(),
+            result=POS)
+
+        self.mv.save()
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.hivviralloadandcd4',
+                subject_identifier=self.subject_identifier,
+                visit_code='1000M',
+                visit_code_sequence='0').entry_status, REQUIRED)
+
+    def create_unscheduled_appointment(self, base_appointment):
+
+        unscheduled_appointment_cls = UnscheduledAppointmentCreator
+
+        options = {
+            'subject_identifier': base_appointment.subject_identifier,
+            'visit_schedule_name': base_appointment.visit_schedule.name,
+            'schedule_name': base_appointment.schedule.name,
+            'visit_code': base_appointment.visit_code,
+            'suggested_datetime': get_utcnow(),
+            'check_appointment': False,
+            'appt_status': NEW_APPT,
+            'facility': base_appointment.facility
+        }
+
+        try:
+            unscheduled_appointment_cls(**options)
+        except (ObjectDoesNotExist, UnscheduledAppointmentError,
+                InvalidParentAppointmentMissingVisitError,
+                InvalidParentAppointmentStatusError,
+                AppointmentInProgressError) as e:
+            raise ValidationError(str(e))
 
     @tag('sub')
     def test_substanceuse_prior_to_preg_required_cohort_a(self):
@@ -139,6 +194,7 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)
+
     @tag('ttt')
     def test_tbroutinehealthscreen_required_cohort_a(self):
         self.assertEqual(
@@ -155,7 +211,7 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)
-        
+
     def test_tbpresencehouseholdmembers_cohort_a(self):
         self.assertEqual(
             CrfMetadata.objects.get(
@@ -195,7 +251,7 @@ class TestRuleGroups(TestCase):
                 visit_code='1000M').entry_status, REQUIRED)
 
     @tag('sub')
-    def test_hiv_viralload_cd4_required_cohort_a(self):
+    def test_hiv_viralload_cd4_required_cohort_a_200M(self):
         maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
             'mom_enrolldate': get_utcnow(),
@@ -566,12 +622,6 @@ class TestRuleGroups(TestCase):
                 subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
-
-        self.assertEqual(
-            CrfMetadata.objects.get(
-                model='flourish_caregiver.hivrapidtestcounseling',
-                subject_identifier=subject_identifier,
-                visit_code='2000M').entry_status, REQUIRED)
 
     @tag('rtt')
     def test_hiv_rapid_test_not_required(self):
