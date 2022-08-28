@@ -17,12 +17,12 @@ class TbStudyEligibilityAdmin(CrfModelAdminMixin):
                 'maternal_visit',
                 'report_datetime',
                 'tb_participation',
-                # 'reasons_not_participating',
-                # 'reasons_not_participating_other',
+                'reasons_not_participating',
+                'reasons_not_participating_other',
             ]}
          ), audit_fieldset_tuple)
 
     radio_fields = {
         'tb_participation': admin.VERTICAL,
-        # 'reasons_not_participating': admin.VERTICAL,
+        'reasons_not_participating': admin.VERTICAL,
          }
