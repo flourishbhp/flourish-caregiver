@@ -260,7 +260,8 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
             put_on_schedule('cohort_a_antenatal', instance=instance,
                             subject_identifier=instance.subject_identifier,
                             child_subject_identifier=child_subject_identifier,
-                            caregiver_visit_count=children_count)
+                            caregiver_visit_count=children_count,
+                            base_appt_datetime=instance.report_datetime.replace(microsecond=0))
 
 
 @receiver(post_save, weak=False, sender=MaternalDelivery,
