@@ -128,6 +128,8 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
         for num in range(int(arv_count)):
             arv_stop_date = self.data.get(
                 'maternalarvtableduringpreg_set-' + str(num) + '-stop_date')
+            
+            
             if arv_stop_date:
                 arv_code = self.data.get(
                     'maternalarvtableduringpreg_set-' + str(num) + '-arv_code')
@@ -149,8 +151,10 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
 
                     stop_date = datetime.datetime.strptime(
                         stop_date, '%Y-%m-%d').date() if stop_date else None
-
-                    if start_date != stop_date:
+                    
+                    interrupt = self.cleaned_data.get('interrupt', None)
+                    
+                    if interrupt and interrupt == 'DEFAULT' and start_date != stop_date:
                         raise forms.ValidationError(
                             f'Stop date {stop_date} for {arv_code}, does not match '
                             f'{switch_arv_code} {start_date} start date.')
