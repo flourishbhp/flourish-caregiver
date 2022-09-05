@@ -98,7 +98,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         return django_apps.get_model(self.appointment_model)
         
     def get_key(self, request, obj=None):
-    
+        
                 
         key = super().get_key(request, obj)
         
@@ -116,13 +116,15 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             1000M visit doen't exist, check if the current vist yet to be saved 
             is visit 1000M
             """
+            
+            appt  = self.appointment_model_cls()
             try:
                 appointment_id = request.GET.get('appointment', None) \
                                 or request.POST.get('appointment', None) 
                                 
                 appointment = self.appointment_model_cls.objects.get(id = appointment_id)
                 
-            except self.appointment_model_cls.DoesNotExist:
+            except appt.DoesNotExist:
                 pass
             else:
                 if appointment.visit_vode == '1000M':

@@ -71,4 +71,34 @@ class RelationshipFatherInvolmentAdmin(CrfModelAdminMixin,admin.ModelAdmin):
     
     search_fields = ('subject_identifier',) 
     
+    radio_fields = {'partner_present': admin.VERTICAL,
+                    'is_partner_the_father': admin.VERTICAL,
+                    'living_with_partner': admin.VERTICAL,
+                    'disclosure_to_partner': admin.VERTICAL,
+                    'discussion_with_partner': admin.VERTICAL,
+                    'disclose_status': admin.VERTICAL,
+                    'partners_support': admin.VERTICAL,
+                    'separation_consideration': admin.VERTICAL,
+                    'after_fight': admin.VERTICAL,
+                    'relationship_progression': admin.VERTICAL,
+                    'confide_in_partner': admin.VERTICAL,
+                    'relationship_regret': admin.VERTICAL,
+                    'quarrel_frequency': admin.VERTICAL,
+                    'bothering_partner': admin.VERTICAL,
+                    'kissing_partner': admin.VERTICAL,
+                    'engage_in_interests': admin.VERTICAL,
+                    'happiness_in_relationship': admin.VERTICAL,
+                    'future_relationship': admin.VERTICAL,
+                    'father_child_contact': admin.VERTICAL,
+                    'fathers_financial_support': admin.VERTICAL,
+                    'read_books': admin.VERTICAL,
+                    'told_stories': admin.VERTICAL,
+                    'sang_songs': admin.VERTICAL,
+                    'took_child_outside': admin.VERTICAL,
+                    'played_with_child': admin.VERTICAL,
+                    'named_with_child': admin.VERTICAL,
+                    'interview_participation': admin.VERTICAL,
+                    'contact_info': admin.VERTICAL,
+                    }
+    
     

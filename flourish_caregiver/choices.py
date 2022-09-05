@@ -810,8 +810,6 @@ REASONS_NOT_PARTICIPATING = (
     ('not_interested', 'Not Interested in participating'),
     (OTHER, 'Other'),)
 
-
-# 6247
 YES_NO_PNTA_UNKNOWN = (
     (YES, YES),
     (NO, NO),
@@ -887,7 +885,6 @@ FATHERS_FINANCIAL_SUPPORT = {
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very supportive'),
 }
-
 
 HOUSEHOLD_MEMBER = {
     ('mother','Mother'),
