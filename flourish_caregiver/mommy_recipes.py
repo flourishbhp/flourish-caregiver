@@ -13,10 +13,16 @@ from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
 from .models import CaregiverPreviouslyEnrolled
 from .models import FlourishConsentVersion
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
-from .models import MaternalDataset, CaregiverLocator, MaternalVisit
+from .models import MaternalDataset, CaregiverLocator, MaternalVisit, RelationshipFatherInvolvement
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
 
 fake = Faker()
+
+# father involement
+
+relationshipfatherinvolvement = Recipe (
+    RelationshipFatherInvolvement,
+)
 
 maternaldataset = Recipe(
     MaternalDataset,
