@@ -103,12 +103,6 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         return django_apps.get_model(self.appointment_model)
 
     def get_key(self, request, obj=None):
-<<<<<<< HEAD
-        
-                
-=======
-
->>>>>>> f91820e6077c864664bc6bd3c9692ac591be1350
         key = super().get_key(request, obj)
 
         subject_identifier = (request.GET.get('subject_identifier', None)
