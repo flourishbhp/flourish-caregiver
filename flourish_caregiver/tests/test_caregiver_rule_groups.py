@@ -747,10 +747,11 @@ class TestRuleGroups(TestCase):
                 model='flourish_caregiver.breastfeedingquestionnaire',
                 subject_identifier=self.subject_identifier,
                 visit_code='2002M').entry_status, REQUIRED)
-          
+        
+    @tag('firx')      
     def test_father_involvement_required_2000(self):
 
-        maternal_dataset_options = {
+        self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
@@ -769,9 +770,10 @@ class TestRuleGroups(TestCase):
 
         maternal_dataset_obj = mommy.make_recipe(
            'flourish_caregiver.maternaldataset',
-           **maternal_dataset_options)
+           **self.maternal_dataset_options)
 
         sh = SubjectHelperMixin()
+        
 
         subject_identifier = sh.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier,
@@ -788,28 +790,31 @@ class TestRuleGroups(TestCase):
         
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2001M'),
+            appointment=Appointment.objects.get(visit_code='2001M',
+                subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2002M'),
+            appointment=Appointment.objects.get(visit_code='2002M',
+                subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED) 
                
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2003M'),
+            appointment=Appointment.objects.get(visit_code='2003M',
+                subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)        
         
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2004M'),
+            appointment=Appointment.objects.get(visit_code='2004M',
+                subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
-            reason=SCHEDULED)  
-        
+            reason=SCHEDULED)
         
         self.assertEqual(
             CrfMetadata.objects.get(
@@ -831,34 +836,39 @@ class TestRuleGroups(TestCase):
             'flourish_caregiver.maternaldelivery',
             subject_identifier=self.subject_consent.subject_identifier,
             live_infants_to_register=1)
-        
+         
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2000D'),
+            appointment=Appointment.objects.get(visit_code='2000D',
+            subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2001M'),
+            appointment=Appointment.objects.get(visit_code='2001M',
+            subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2002M'),
+            appointment=Appointment.objects.get(visit_code='2002M',
+            subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED) 
                
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2003M'),
+            appointment=Appointment.objects.get(visit_code='2003M',
+            subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)        
         
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2004M'),
+            appointment=Appointment.objects.get(visit_code='2004M',
+            subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)       
     

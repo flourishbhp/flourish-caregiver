@@ -5,7 +5,7 @@ from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
-from flourish_caregiver.constants import NONE
+from flourish_caregiver.constants import NONE, PNTA
 from .constants import BREASTFEED_ONLY
 
 ABLE_TO_LAUGH = (
@@ -813,13 +813,13 @@ REASONS_NOT_PARTICIPATING = (
 YES_NO_PNTA_UNKNOWN = (
     (YES, YES),
     (NO, NO),
-    (DWTA, _('Prefer not to answer')),
+    (PNTA, _('Prefer not to answer')),
     (UNKNOWN, 'Unknown'),
 )
 YES_NO_PNTA = (
     (YES, YES),
     (NO, NO),
-    (DWTA, _('Prefer not to answer')),
+    (PNTA, _('Prefer not to answer')),
 )
 
 HIV_STATUS_DISCUSSION = {
@@ -835,7 +835,7 @@ PARTNERS_SUPPORT = {
     ('unsupportive', 'Unsupportive'),
     ('neutral', 'Neutral'),
     ('supportive', 'Supportive'),
-    ('very_Supportive', 'Very Supportive'),    
+    ('very_supportive', 'Very Supportive'),    
 }
 
 CHOICE_FREQUENCY = {
@@ -855,7 +855,6 @@ HAPPINESS_CHOICES = {
     ('little_happy', 'A little happy'),
     ('little_unhappy', 'A little unhappy'),
     ('fairly_unhappy', 'Fairly unhappy'),
-    
 }
 
 FUTURE_OF_RELATIONSHIP = {
@@ -869,7 +868,6 @@ FUTURE_OF_RELATIONSHIP = {
      'It would be nice if my partnership succeeded, but I refuse to do more'),
     ('nothing_more', 
      'My partnership can never succeed and there is nothing more I can do'),
-    
 }
 
 FATHER_VISITS = {
