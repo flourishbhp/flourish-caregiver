@@ -30,7 +30,7 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         max_length=3
     )
     
-    why_partner_upsent = models.TextField(
+    why_partner_absent = models.TextField(
         verbose_name='Why not',
         max_length=250,
         blank=True,
@@ -115,7 +115,7 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         max_length=20
     )
     
-    after_fight = models.CharField(
+    leave_after_fight = models.CharField(
         verbose_name="How often do you or your partner leave the house after a fight?",
         choices=CHOICE_FREQUENCY,
         max_length=20
