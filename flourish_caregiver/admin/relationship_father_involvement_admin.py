@@ -10,7 +10,7 @@ from ..forms import RelationshipFatherInvolvementForm
 
 
 @admin.register(RelationshipFatherInvolvement, site=flourish_caregiver_admin)
-class RelationshipFatherInvolmentAdmin(CrfModelAdminMixin,admin.ModelAdmin):
+class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin,admin.ModelAdmin):
     
     form = RelationshipFatherInvolvementForm
     
@@ -78,6 +78,7 @@ class RelationshipFatherInvolmentAdmin(CrfModelAdminMixin,admin.ModelAdmin):
                     'discussion_with_partner': admin.VERTICAL,
                     'disclose_status': admin.VERTICAL,
                     'partners_support': admin.VERTICAL,
+                    'ever_separated': admin.VERTICAL,
                     'separation_consideration': admin.VERTICAL,
                     'leave_after_fight': admin.VERTICAL,
                     'relationship_progression': admin.VERTICAL,
