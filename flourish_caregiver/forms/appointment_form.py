@@ -35,15 +35,15 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                                 visit_definition.rupper).astimezone(
                 pytz.timezone('Africa/Gaborone'))
 
-            if (self.instance.visit_code_sequence == 0
-                    and cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
+            if self.instance.visit_code_sequence == 0:
+                if (cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
                         microsecond=0)
                     or (self.instance.visit_code not in ['1000M', '2000M']
                         and cleaned_data.get('appt_datetime') > latest_appt_date.replace(
                                 microsecond=0))):
-                raise forms.ValidationError(
-                    'The appointment datetime cannot be outside the window period, '
-                    'please correct. See earliest, ideal and latest datetimes below.')
+                    raise forms.ValidationError(
+                        'The appointment datetime cannot be outside the window period, '
+                        'please correct. See earliest, ideal and latest datetimes below.')
 
     def _check_child_assent(self, subject_identifier):
 
@@ -78,7 +78,6 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
         validation functions.
         """
         pass
-
 
     class Meta:
         model = Appointment
