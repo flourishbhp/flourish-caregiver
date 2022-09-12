@@ -167,7 +167,6 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         if self.multiple_births in ['twins', 'triplets']:
             self.multiple_birth = True
         if self.is_eligible:
-
             if self.created and not self.subject_identifier:
                 self.subject_identifier = self.update_subject_identifier_on_save()
 
