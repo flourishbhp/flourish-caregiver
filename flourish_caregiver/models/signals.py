@@ -358,7 +358,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             if child_age is not None and child_age.years < 7:
                 try:
                     child_dummy_consent_cls.objects.get(
-                        identity=instance.identity,
                         subject_identifier=instance.subject_identifier,
                         version=instance.version,)
                 except child_dummy_consent_cls.DoesNotExist:
