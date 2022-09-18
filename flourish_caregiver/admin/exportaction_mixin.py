@@ -98,6 +98,7 @@ class ExportActionMixin:
                 data.append(caregiver_hiv_status)
 
             inline_objs = []
+
             for field in self.get_model_fields:
                 if isinstance(field, ManyToManyField):
                     m2m_values = self.get_m2m_values(obj, m2m_field=field)
@@ -109,12 +110,12 @@ class ExportActionMixin:
                     continue
                 if isinstance(field, OneToOneRel):
                     continue
-                if isinstance(field, ManyToOneRel):
+                if not self.is_consent(obj) and isinstance(field, ManyToOneRel):
                     key_manager = getattr(obj, f'{field.name}_set')
                     inline_values = key_manager.all()
                     fields = field.related_model._meta.get_fields()
                     for field in fields:
-                        if not isinstance(field, (ForeignKey, OneToOneField, ManyToManyField, )):
+                        if not isinstance(field, (ForeignKey, OneToOneField, ManyToManyField,)):
                             inline_field_names.append(field.name)
                         if isinstance(field, ManyToManyField):
                             choices = self.m2m_list_data(field.related_model)
@@ -132,7 +133,7 @@ class ExportActionMixin:
                 if maternal_delivery_obj:
                     data.append(maternal_delivery_obj.delivery_datetime.date())
 
-            if inline_objs:
+            if not self.is_consent(obj) and inline_objs:
                 # Update header
                 inline_field_names = self.inline_exclude(field_names=inline_field_names)
                 if not self.inline_header:
