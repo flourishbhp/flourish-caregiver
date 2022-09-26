@@ -38,6 +38,11 @@ class TbRoutineHealthScreen(CrfModelMixin):
         blank=True,
         choices=YES_NO_UNK_DWTA)
 
+    referral_reason = models.TextField(
+        max_length=350,
+        null=True,
+        blank=True)
+
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'Screen for TB at routine health encounters'
