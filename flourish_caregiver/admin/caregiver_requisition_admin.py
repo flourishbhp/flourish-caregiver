@@ -21,7 +21,6 @@ requisition_identifier_fields = (
     'requisition_identifier',
     'identifier_prefix',
     'primary_aliquot_identifier',
-    'sample_id',
 )
 
 requisition_identifier_fieldset = (
@@ -121,6 +120,8 @@ class CaregiverRequisitionAdmin(ExportRequisitionCsvMixin, CrfModelAdminMixin,
                 'item_count',
                 'estimated_volume',
                 'priority',
+                'exists_on_lis',
+                'sample_id',
                 'comments',
             )}),
         requisition_status_fieldset,
@@ -134,14 +135,17 @@ class CaregiverRequisitionAdmin(ExportRequisitionCsvMixin, CrfModelAdminMixin,
         'item_type': admin.VERTICAL,
         'priority': admin.VERTICAL,
         'study_site': admin.VERTICAL,
+        'exists_on_lis': admin.VERTICAL,
     }
 
     list_display = ('maternal_visit', 'is_drawn', 'panel', 'estimated_volume',)
 
     def get_readonly_fields(self, request, obj=None):
-        return (super().get_readonly_fields(request, obj)
-                +requisition_identifier_fields
-                +requisition_verify_fields)
+        on_lis = getattr(obj, 'sample_id', None)
+        read_only = (super().get_readonly_fields(request, obj)
+                     + requisition_identifier_fields
+                     + requisition_verify_fields)
+        return read_only + ('exists_on_lis', 'sample_id', ) if on_lis else read_only
 
     def get_previous_instance(self, request, instance=None, **kwargs):
         """Returns a model instance that is the first occurrence of a previous
