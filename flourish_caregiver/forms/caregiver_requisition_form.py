@@ -5,18 +5,20 @@ from django.utils import timezone
 from edc_base.utils import convert_php_dateformat
 from edc_form_validators import FormValidatorMixin
 from edc_lab.forms.modelform_mixins import RequisitionFormMixin
+from edc_senaite_interface.forms import SenaiteRequisitionFormValidatorMixin
 
 from ..models import CaregiverRequisition
 from .form_mixins import SubjectModelFormMixin
 
 
 class CaregiverRequisitionForm(SubjectModelFormMixin, RequisitionFormMixin,
+                               SenaiteRequisitionFormValidatorMixin,
                                FormValidatorMixin):
 
     requisition_identifier = forms.CharField(
         label='Requisition identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    
+
     def clean(self):
         self.subject_identifier = self.cleaned_data.get(
             'maternal_visit').subject_identifier
