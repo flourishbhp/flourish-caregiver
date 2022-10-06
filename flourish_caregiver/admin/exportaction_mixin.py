@@ -25,6 +25,7 @@ class ExportActionMixin:
 
         row_num = 0
         obj_count = 0
+        self.inline_header = False
 
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
@@ -33,9 +34,9 @@ class ExportActionMixin:
         field_names = []
         for field in self.get_model_fields:
             if isinstance(field, ManyToManyField):
-                choices_count = len(field.get_choices())
-                for num in range(choices_count):
-                    field_names.append(f'{field.name}_{num}')
+                choices = self.m2m_list_data(field.related_model)
+                for choice in choices:
+                    field_names.append(choice)
                 continue
             field_names.append(field.name)
 
@@ -53,6 +54,7 @@ class ExportActionMixin:
         if ((queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound') and
                 queryset[0].get_current_ga):
             field_names.append('current_ga')
+            field_names.append('maternal_delivery_date')
 
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
@@ -72,6 +74,8 @@ class ExportActionMixin:
                 study_maternal_identifier = self.study_maternal_identifier(
                     screening_identifier=screening_identifier)
                 caregiver_hiv_status = self.caregiver_hiv_status(
+                    subject_identifier=subject_identifier)
+                maternal_delivery_obj = self.maternal_delivery_obj(
                     subject_identifier=subject_identifier)
 
                 data.append(subject_identifier)
@@ -94,13 +98,10 @@ class ExportActionMixin:
                 data.append(caregiver_hiv_status)
 
             inline_objs = []
+
             for field in self.get_model_fields:
                 if isinstance(field, ManyToManyField):
-                    choices_count = len(field.get_choices())
-                    m2m_values = [None] * choices_count
-                    key_manager = getattr(obj, field.name)
-                    for _count, m2m_obj in enumerate(key_manager.all()):
-                        m2m_values[_count] = m2m_obj.name
+                    m2m_values = self.get_m2m_values(obj, m2m_field=field)
                     data.extend(m2m_values)
                     continue
                 if isinstance(field, (ForeignKey, OneToOneField,)):
@@ -109,27 +110,33 @@ class ExportActionMixin:
                     continue
                 if isinstance(field, OneToOneRel):
                     continue
-                if isinstance(field, ManyToOneRel):
+                if not self.is_consent(obj) and isinstance(field, ManyToOneRel):
                     key_manager = getattr(obj, f'{field.name}_set')
                     inline_values = key_manager.all()
                     fields = field.related_model._meta.get_fields()
-                    inline_field_names.extend(
-                            [field.name for field in fields if not isinstance(
-                                field, (ForeignKey, OneToOneField,))])
+                    for field in fields:
+                        if not isinstance(field, (ForeignKey, OneToOneField, ManyToManyField,)):
+                            inline_field_names.append(field.name)
+                        if isinstance(field, ManyToManyField):
+                            choices = self.m2m_list_data(field.related_model)
+                            inline_field_names.extend(
+                                [choice for choice in choices])
                     if inline_values:
                         inline_objs.append(inline_values)
                 field_value = getattr(obj, field.name, '')
                 data.append(field_value)
 
-            if ((queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound') and
-                    queryset[0].get_current_ga):
-                field_value = getattr(obj, 'get_current_ga', '')
-                data.append(field_value)
+            if queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound':
+                if queryset[0].get_current_ga:
+                    field_value = getattr(obj, 'get_current_ga', '')
+                    data.append(field_value)
+                if maternal_delivery_obj:
+                    data.append(maternal_delivery_obj.delivery_datetime.date())
 
-            if inline_objs:
+            if not self.is_consent(obj) and inline_objs:
                 # Update header
                 inline_field_names = self.inline_exclude(field_names=inline_field_names)
-                if obj_count == 0:
+                if not self.inline_header:
                     self.update_headers_inline(
                         inline_fields=inline_field_names, field_names=field_names,
                         ws=ws, row_num=0, font_style=font_style)
@@ -138,9 +145,12 @@ class ExportActionMixin:
                     for inline_obj in inline_qs:
                         inline_data = []
                         inline_data.extend(data)
-                        for field in inline_field_names:
-                            field_value = getattr(inline_obj, field, '')
-                            inline_data.append(field_value)
+                        for field in inline_obj._meta.get_fields():
+                            if field.name in inline_field_names:
+                                inline_data.append(getattr(inline_obj, field.name, ''))
+                            if isinstance(field, ManyToManyField):
+                                m2m_values = self.get_m2m_values(inline_obj, m2m_field=field)
+                                inline_data.extend(m2m_values)
                         row_num += 1
                         self.write_rows(data=inline_data, row_num=row_num, ws=ws)
                 obj_count += 1
@@ -178,6 +188,7 @@ class ExportActionMixin:
         for col_num in range(len(inline_fields)):
             ws.write(row_num, top_num, inline_fields[col_num], font_style)
             top_num += 1
+            self.inline_header = True
 
     def get_export_filename(self):
         date_str = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -235,7 +246,7 @@ class ExportActionMixin:
     @property
     def get_model_fields(self):
         return [field for field in self.model._meta.get_fields()
-                if field.name not in self.exclude_fields]
+                if field.name not in self.exclude_fields and not isinstance(field, OneToOneRel)]
 
     def inline_exclude(self, field_names=[]):
         return [field_name for field_name in field_names
@@ -253,5 +264,42 @@ class ExportActionMixin:
                 'maternal_visit_id', 'processed', 'processed_datetime', 'packed',
                 'packed_datetime', 'shipped', 'shipped_datetime', 'received_datetime',
                 'identifier_prefix', 'primary_aliquot_identifier', 'clinic_verified',
-                'clinic_verified_datetime', 'drawn_datetime', 'related_tracking_identifier',
+                'clinic_verified_datetime', 'drawn_datetime',
+                'related_tracking_identifier',
                 'parent_tracking_identifier']
+
+    @property
+    def maternal_delivery(self):
+        return django_apps.get_model('flourish_caregiver.maternaldelivery')
+
+    def maternal_delivery_obj(self, subject_identifier):
+        """
+        Takes subject identifier and return a maternal delivery objects
+        """
+        try:
+            maternal_delivery_obj = self.maternal_delivery.objects.get(
+                subject_identifier=subject_identifier)
+        except self.maternal_delivery.DoesNotExist:
+            return None
+        else:
+            return maternal_delivery_obj
+
+    def m2m_list_data(self, model_cls=None):
+        qs = model_cls.objects.order_by('created').values_list('short_name', flat=True)
+        return list(qs)
+
+    def get_m2m_values(self, model_obj, m2m_field=None):
+        m2m_values = []
+        model_cls = m2m_field.related_model
+        choices = self.m2m_list_data(model_cls=model_cls)
+        key_manager = getattr(model_obj, m2m_field.name)
+        for choice in choices:
+            selected = 0
+            try:
+                key_manager.get(short_name=choice)
+            except model_cls.DoesNotExist:
+                pass
+            else:
+                selected = 1
+            m2m_values.append(selected)
+        return m2m_values

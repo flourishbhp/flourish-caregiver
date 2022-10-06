@@ -82,15 +82,19 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         screening_identifier = request.GET.get('screening_identifier')
 
         if subject_identifier and screening_identifier:
-            preg_women_obj = self.preg_women_cls.objects.filter(
-                screening_identifier=screening_identifier)
 
-            caregiver_child_consents_pids = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier,
-                preg_enroll=True).order_by(
-                    'consent_datetime').values_list('subject_identifier', flat=True).distinct()
+            caregiver_child_consents = self.consent_cls.objects.filter(
+                subject_consent__subject_identifier=subject_identifier).order_by(
+                    'consent_datetime')
 
-            if preg_women_obj and caregiver_child_consents_pids:
+            caregiver_child_consents_pids = set(
+                caregiver_child_consents.values_list('subject_identifier', flat=True))
+
+            if obj:
+                caregiver_child_consents_pids = set(
+                    self.get_difference(caregiver_child_consents, obj))
+
+            if caregiver_child_consents_pids:
 
                 for caregiver_child_consent in caregiver_child_consents_pids:
 
@@ -124,18 +128,19 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         return formset
 
     def get_extra(self, request, obj=None, **kwargs):
+
         extra = (super().get_extra(request, obj, **kwargs) +
                  self.get_child_reconsent_extra(request))
         study_maternal_id = request.GET.get('study_maternal_identifier')
         subject_identifier = request.GET.get('subject_identifier')
 
         if subject_identifier:
-            caregiver_child_consents = self.consent_cls.objects.filter(
+            caregiver_child_consents = set(list(self.consent_cls.objects.filter(
                 subject_consent__subject_identifier=subject_identifier
-                ).values_list('subject_identifier', flat=True).distinct()
+                ).values_list('subject_identifier', flat=True)))
 
             if not obj:
-                extra = caregiver_child_consents.count()
+                extra = len(caregiver_child_consents)
 
         elif study_maternal_id:
             child_datasets = self.child_dataset_cls.objects.filter(
@@ -150,8 +155,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
     def get_difference(self, model_objs, obj=None):
         cc_ids = obj.caregiverchildconsent_set.values_list(
-            'study_child_identifier', flat=True)
-        return [x for x in model_objs if x.study_child_identifier not in cc_ids]
+            'subject_identifier', flat=True)
+        return [x for x in model_objs if x.subject_identifier not in cc_ids]
 
     def get_child_reconsent_extra(self, request):
         consent_version_cls = django_apps.get_model(
@@ -166,13 +171,12 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
             except consent_version_cls.DoesNotExist:
                 pass
             else:
-                if consent_version_obj.version:
-                    try:
-                        self.consent_cls.objects.get(
+                if consent_version_obj.child_version:
+
+                    child_consent_objs = self.consent_cls.objects.filter(
                             subject_consent__subject_identifier=subject_identifier,
-                            preg_enroll=True,
-                            version=consent_version_obj.version)
-                    except self.consent_cls.DoesNotExist:
+                            version=consent_version_obj.child_version)
+                    if not child_consent_objs:
                         return 1
         return 0
 

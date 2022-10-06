@@ -53,6 +53,7 @@ class TestVisitScheduleSetupB(TestCase):
                                                       months=year_3_months)
         return child_dob
 
+    @tag("vvv")
     def test_cohort_b_onschedule_valid(self):
         """Assert that a 5.1 year old by year 3 participant's mother who is on
          efv regimen from Mpepu study is put on cohort b schedule.

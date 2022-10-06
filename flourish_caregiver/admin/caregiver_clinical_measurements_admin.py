@@ -22,34 +22,31 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'maternal_visit',
                 'report_datetime',
                 'height',
-                'weight_available',
                 'weight_kg',
                 'systolic_bp',
                 'diastolic_bp',
                 'confirm_values',
-                'is_preg',
                 'waist_circ',
-                'hip_circ'
+                'hip_circ',
+                'all_measurements',
             ]}
          ), audit_fieldset_tuple)
 
     radio_fields = {
-        'weight_available': admin.VERTICAL,
-        'is_preg': admin.VERTICAL,
         'confirm_values': admin.VERTICAL, }
 
     conditional_fieldlists = {
-        'a_birth1_schedule1': Remove('height'),
-        'tb_2_months_schedule': Remove('height', 'is_preg', 'waist_circ', 'hip_circ'),
-
+        'a_antenatal1_schedule1': Remove('waist_circ', 'hip_circ'),
+        'a_birth1_schedule1': Remove('height', 'waist_circ', 'hip_circ'),
+        'tb_2_months_schedule': Remove('height', 'waist_circ', 'hip_circ'), 
     }
-
+    
     def get_key(self, request, obj=None):
         super().get_key(request, obj)
         try:
             model_obj = self.get_instance(request)
         except ObjectDoesNotExist:
-            schedule_name = None
+            return None
         else:
-            schedule_name = model_obj.schedule_name
-        return schedule_name
+            if model_obj:
+                return model_obj.schedule_name

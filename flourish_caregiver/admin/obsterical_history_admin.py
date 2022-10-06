@@ -21,6 +21,7 @@ class ObstericalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'lost_after_24wks',
                 'live_children',
                 'children_died_b4_5yrs',
+                'children_died_aft_5yrs',
                 'children_deliv_before_37wks',
                 'children_deliv_aftr_37wks']}
          ), audit_fieldset_tuple)

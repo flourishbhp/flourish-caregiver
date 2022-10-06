@@ -88,11 +88,10 @@ class TbInformedConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'identity_type',
                 'confirm_identity',
                 'consent_to_participate',
-                'optional_sample_collection',
-                ),
-            }),
+            ),
+        }),
         audit_fieldset_tuple
-        )
+    )
 
     radio_fields = {
         'language': admin.VERTICAL,
@@ -100,9 +99,8 @@ class TbInformedConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'gender': admin.VERTICAL,
         'identity_type': admin.VERTICAL,
         'is_dob_estimated': admin.VERTICAL,
-        'optional_sample_collection': admin.VERTICAL,
         'consent_to_participate': admin.VERTICAL,
-        }
+    }
 
     list_display = ('subject_identifier',
                     'verified_by',
@@ -139,7 +137,7 @@ class TbInformedConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
             actions = OrderedDict(
                 (name, (func, name, desc))
                 for func, name, desc in actions
-                )
+            )
 
             super_actions.update(actions)
 
@@ -149,12 +147,11 @@ class TbInformedConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         return super().get_readonly_fields(request, obj=obj) + audit_fields
 
     def render_change_form(self, request, context, add=False, change=False, form_url='',
-            obj=None
-            ):
+            obj=None):
         context.update({
             'show_save': True,
             'show_save_and_continue': False,
             'show_save_and_add_another': False,
             'show_delete': True
-            })
+        })
         return super().render_change_form(request, context, add, change, form_url, obj)

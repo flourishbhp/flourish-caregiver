@@ -5,7 +5,7 @@ from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
-from flourish_caregiver.constants import NONE
+from flourish_caregiver.constants import NONE, PNTA
 from .constants import BREASTFEED_ONLY
 
 ABLE_TO_LAUGH = (
@@ -79,6 +79,9 @@ ARV_INTERRUPTION_REASON = (
     ('NO_DRUGS', 'No drugs available'),
     ('NO_REFILL', 'Didn\'t get to clinic for refill'),
     ('FORGOT', 'Mother forgot to take the ARVs'),
+    ('DEFAULT', 'Defaulted ARV treatment (7 days or more)'),
+    ('TOLERABILITY', 'Switch for tolerability'),
+    ('FAILURE', 'Treatment failure'),
     (OTHER, 'Other'),
     (NOT_APPLICABLE, 'Not Applicable'),
     )
@@ -146,6 +149,11 @@ CRYING = (
     ('1', 'Only occasionally'),
     ('0', 'No, never')
     )
+
+DECLINE_REASON = (
+    ('cant_physically_attend', 'Not able to physically come to clinic'),
+    ('not_interested', 'Not interested in participating'),
+    (OTHER, 'Other (Specify)'),)
 
 DEPRESSION_SCALE = (
     ('0', 'Not at all'),
@@ -556,8 +564,12 @@ YES_NO_UNK_DWTA = (
     (YES, YES),
     (NO, NO),
     (UNKNOWN, 'Unknown'),
-    (DWTA, 'Prefer not to answer'),
-    )
+    (DWTA, 'Prefer not to answer'),)
+
+YES_NO_UNABLE_DET = (
+    (YES, YES),
+    (NO, NO),
+    ('unable_to_determine', 'Unable to determine'),)
 
 YES_NO_UNK_NA = (
     (YES, YES),
@@ -722,21 +734,17 @@ FEEDING_HIV_STATUS = (
 HIV_STATUS_AWARE = (
     ('during_preg', 'Later during pregnancy'),
     ('before_delivery', 'At/shortly after delivery'),
-    ('after_delivery', 'After Delivery'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('after_delivery', 'After Delivery'),)
 
 ON_HIV_STATUS_AWARE = (
     (YES, 'Yes'),
     (NO, 'No'),
-    ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
-
+    ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'),)
 
 HIV_STATUS_KNOWN_BY = (
     ('no_one', '0 persons in my household'),
     ('one_person', '1 persons in my household'),
-    ('two_or_more', '≥2 persons in my household'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('two_or_more', '≥2 persons in my household'),)
 
 HIV_STATUS_KNOWN_BY_FATHER = (
     (YES, 'Yes'),
@@ -752,8 +760,7 @@ AGREE_DISAGREE = (
     ('disagree', 'Disagree'),
     ('neutral', 'Neither agree or disagree'),
     ('agree', 'Agree'),
-    ('strongly_agree', 'Strongly agree'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('strongly_agree', 'Strongly agree'),)
 
 BREASTFEEDING_DURATION = (
     ('less_than_six_months', '<6 months'),
@@ -770,16 +777,18 @@ FEEDING_ADVICE = (
     (NOT_APPLICABLE, 'Not applicable'),)
 
 AFTER_BIRTH_OPINION = (
-    ('continued_breastfeeding','Wanted to continue breastfeeding and was able to do so'),
-    ('unable_to_breastfeed','Wanted to continue breastfeeding but was unable to do so'),
-    ('did_not_want_to_breastfeed','No longer wanted to breastfeed'),
-    ('told_not_to_breastfeed_before','Was told not to breastfeed before/at delivery'),
-    ('did_not_want_to_breastfeed_before','Did not want to breastfeed even before this baby was born '),
-    (NONE,'None of the above'),)
+    ('continued_breastfeeding', 'Wanted to continue breastfeeding and was able to do so'),
+    ('unable_to_breastfeed', 'Wanted to continue breastfeeding but was unable to do so'),
+    ('did_not_want_to_breastfeed', 'No longer wanted to breastfeed'),
+    ('told_not_to_breastfeed_before', 'Was told not to breastfeed before/at delivery'),
+    ('did_not_want_to_breastfeed_before',
+     'Did not want to breastfeed even before this baby was born '),
+    (NONE, 'None of the above'),)
 
-FEEDING_INFLUENCE =(
+FEEDING_INFLUENCE = (
     (YES, 'Yes'),
-    (NO, 'No'),)
+    (NO, 'No'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
 
 RETURNED_TO_WORK = (
     ('less_than_one_month_after_delivery', '<1 month after delivery'),
@@ -792,3 +801,122 @@ FEEDING_AFTER_SIX_MONTHS = (
     (NO, 'No'),
     ('do_not_remember', 'Unsure/Do not remember'),)
 
+TRAINEE_OUTCOME = (
+    ('strongly_disagree', 'Strongly disagree'),
+    ('disagree', 'Disagree'),
+    ('neutral', 'Neither agree or disagree'),
+    ('agree', 'Agree'),
+    ('strongly_agree', 'Strongly agree'),
+    (NOT_APPLICABLE, 'Not Applicable'),)
+
+REASONS_NOT_PARTICIPATING = (
+    ('still_thinking ', 'Still thinking '),
+    ('prefers_not_to_Say', 'Prefers not to say why unwilling '),
+    ('outside_study_area', 'Confinement outside study area'),
+    ('too_many_dr_apps', 'Has too many Doctors’ appointment '),
+    ('family_refuse', 'Family member/ partner declines participant’s enrolment'),
+    ('not_interested', 'Not Interested in participating'),
+    (OTHER, 'Other'),)
+
+REASONS_UNWILLING_ADOL = (
+    ('unable_to_provide_consent ', 'Caregiver unavailable to provide consent'),
+    ('refuses_to_provide_consent', 'Caregiver refuses to provide consent'),
+    ('unwilling_to_blood_draw_adolescent', 'Unwilling for adolescent to do blood draw'),
+    ('cannot_come_to_clinic', 'Cannot physically come to clinic'),
+    ('not_interested', 'Not Interested in participating'),
+    (OTHER, 'Other (Specify'),)
+
+YES_NO_PNTA_UNKNOWN = (
+    (YES, YES),
+    (NO, NO),
+    (PNTA, _('Prefer not to answer')),
+    (UNKNOWN, 'Unknown'),
+)
+
+YES_NO_DN_PNTA = (
+    (YES, YES),
+    (NO, NO),
+    ('dont_know', 'I do not know'),
+    (PNTA, _('Prefer not to answer')),
+)
+
+YES_NO_PNTA = (
+    (YES, YES),
+    (NO, NO),
+    (PNTA, _('Prefer not to answer')),
+)
+
+HIV_STATUS_DISCUSSION = (
+    ('very_easy', 'Very Unsupportive'),
+    ('easy', 'Unsupportive'),
+    ('neutral', 'Neutral'),
+    ('difficult', 'Difficult'),
+    ('very_difficult', 'Very Difficult'),
+)
+
+INTERVIEW_LOCATIONS = (
+    ('FLOURISH_clinic', 'FLOURISH clinic'),
+    ('BHP_site', 'BHP site'),
+    ('part_home', 'Participant home'),
+    (OTHER, 'Other'))
+
+PARTNERS_SUPPORT = {
+    ('very_unsupportive', 'Very Unsupportive'),
+    ('unsupportive', 'Unsupportive'),
+    ('neutral', 'Neutral'),
+    ('supportive', 'Supportive'),
+    ('very_supportive', 'Very Supportive'),
+}
+
+CHOICE_FREQUENCY = {
+    ('all_the_time', 'All the time'),
+    ('most_of_the_time', 'Most of the time'),
+    ('more_often', 'More of than not'),
+    ('occasionally', 'Occasionally'),
+    ('rarely', 'Rarely'),
+    ('never', 'Never'),
+}
+
+HAPPINESS_CHOICES = {
+    ('perfect', 'Perfect'),
+    ('extremely_happy', 'Extremely Happy'),
+    ('very_happy', 'Very Happy'),
+    ('happy', 'Happy'),
+    ('little_happy', 'A little happy'),
+    ('little_unhappy', 'A little unhappy'),
+    ('fairly_unhappy', 'Fairly unhappy'),
+}
+
+FUTURE_OF_RELATIONSHIP = {
+    ('do_anything',
+     'I want desperately for the partnership to succeed and will do anything to see that it does'),
+    ('do_what_I_can',
+     'I want for my partnership to succeed and will do what I can to see that it does'),
+    ('cannot_do_much',
+     'It would be nice if my partnership succeeded, but I can’t do too much more than I do now'),
+    ('refuse_to_do_more',
+     'It would be nice if my partnership succeeded, but I refuse to do more'),
+    ('nothing_more',
+     'My partnership can never succeed and there is nothing more I can do'),
+}
+
+FATHER_VISITS = {
+    ('every_day', 'Every day'),
+    ('every_week_weekend', "Every week/weekend"),
+    ('every_couple_of_months', 'Every couple of months'),
+    ('every_year', 'Every year'),
+    ('do_not_know', 'I don’t know'),
+}
+
+FATHERS_FINANCIAL_SUPPORT = {
+    ('not_supportive', 'Not supportive'),
+    ('supportive', 'Supportive'),
+    ('very_supportive', 'Very supportive'),
+}
+
+HOUSEHOLD_MEMBER = {
+    ('mother', 'Mother'),
+    ('father', 'Father'),
+    ('other', 'Other'),
+    ('no_one', 'No-one'),
+}
