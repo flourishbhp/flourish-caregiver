@@ -1,19 +1,20 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.test import TestCase, tag
-from edc_action_item.site_action_items import site_action_items
-from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES, NO, NEW
 from edc_facility.import_holidays import import_holidays
 from edc_metadata import REQUIRED, NOT_REQUIRED
 from edc_metadata.models import CrfMetadata
-from edc_visit_tracking.constants import SCHEDULED
 from model_mommy import mommy
 
+from edc_action_item.site_action_items import site_action_items
+from edc_appointment.models import Appointment
+from edc_visit_tracking.constants import SCHEDULED
 from flourish_child.models import ChildDummySubjectConsent
+
 from ..helper_classes import MaternalStatusHelper
-from ..models.onschedule import OnScheduleCohortATb2Months
+from ..models.onschedule import OnScheduleCohortATb2Months, OnScheduleCohortATb6Months
 
 
 @tag('tb')
@@ -96,7 +97,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
-            subject_identifier=self.consent.subject_identifier, )
+            subject_identifier=self.consent.subject_identifier,)
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
@@ -118,7 +119,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
-            subject_identifier=self.consent.subject_identifier, )
+            subject_identifier=self.consent.subject_identifier,)
 
         child_consent = ChildDummySubjectConsent.objects.get(
             subject_identifier=self.child_consent.subject_identifier,
@@ -194,7 +195,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
-            subject_identifier=self.consent.subject_identifier, )
+            subject_identifier=self.consent.subject_identifier,)
         child_consent = ChildDummySubjectConsent.objects.get(
             subject_identifier=self.child_consent.subject_identifier,
         )
@@ -227,7 +228,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
-            subject_identifier=self.consent.subject_identifier, )
+            subject_identifier=self.consent.subject_identifier,)
 
         child_consent = ChildDummySubjectConsent.objects.get(
             subject_identifier=self.child_consent.subject_identifier,
@@ -280,3 +281,105 @@ class TestVisitScheduleTb(TestCase):
         except action_item_model_cls.DoesNotExist:
             self.fail('Action Item to created')
             self.assertNotIsInstance(obj=action_item_obj, cls=action_item_model_cls)
+
+    @tag('tb6')
+    def test_6_month_visit_invalid(self):
+
+        mommy.make_recipe(
+            'flourish_caregiver.tbinformedconsent',
+            subject_identifier=self.consent.subject_identifier,
+            consent_datetime=get_utcnow()
+        )
+
+        self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
+            subject_identifier=self.consent.subject_identifier,
+            schedule_name='tb_2_months_schedule').count(), 0)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.consent.subject_identifier,)
+
+        child_consent = ChildDummySubjectConsent.objects.get(
+            subject_identifier=self.child_consent.subject_identifier,
+        )
+
+        child_consent.dob = (get_utcnow() - relativedelta(days=1)).date()
+        child_consent.save()
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        tb_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2100T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe('flourish_caregiver.tbvisitscreeningwomen',
+                          have_cough=YES,
+                          maternal_visit=tb_visit)
+
+        self.assertEqual(OnScheduleCohortATb6Months.objects.filter(
+            subject_identifier=self.consent.subject_identifier,
+            schedule_name='tb_6_months_schedule').count(), 0)
+
+    @tag('tb7')
+    def test_6_month_visit_valid(self):
+
+        mommy.make_recipe(
+            'flourish_caregiver.tbinformedconsent',
+            subject_identifier=self.consent.subject_identifier,
+            consent_datetime=get_utcnow()
+        )
+
+        self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
+            subject_identifier=self.consent.subject_identifier,
+            schedule_name='tb_2_months_schedule').count(), 0)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.consent.subject_identifier,)
+
+        child_consent = ChildDummySubjectConsent.objects.get(
+            subject_identifier=self.child_consent.subject_identifier,
+        )
+
+        child_consent.dob = (get_utcnow() - relativedelta(days=1)).date()
+        child_consent.save()
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        tb_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2100T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe('flourish_caregiver.tbvisitscreeningwomen',
+                          have_cough=NO,
+                          fever=NO,
+                          night_sweats=NO,
+                          weight_loss=NO,
+                          cough_blood=NO,
+                          cough_duration=None,
+                          enlarged_lymph_nodes=NO,
+                          maternal_visit=tb_visit)
+
+        self.assertEqual(OnScheduleCohortATb6Months.objects.filter(
+            subject_identifier=self.consent.subject_identifier,
+            schedule_name='tb_6_months_schedule').count(), 1)

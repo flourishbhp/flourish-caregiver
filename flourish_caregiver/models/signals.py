@@ -18,6 +18,7 @@ from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW
 from edc_constants.constants import YES
 from edc_data_manager.models import DataActionItem
+
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
@@ -26,7 +27,6 @@ from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
 import pyminizip
 
 from ..action_items import TB_OFF_STUDY_ACTION
-
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.cohort import Cohort
@@ -511,10 +511,9 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
           dispatch_uid='tb_visit_screening_women_post_save')
 def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs):
     if not raw:
-        tb_off_study_cls = django_apps.get_model(
-            'flourish_caregiver.tboffstudy'
-        )
-        tb_take_off_study = (
+        tb_off_study_cls = django_apps.get_model('flourish_caregiver.tboffstudy')
+
+        take_off_schedule = (
                 instance.have_cough == YES or
                 instance.cough_duration == '=>2 week' or
                 instance.fever == YES or
@@ -523,10 +522,25 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
                 instance.cough_blood == YES or
                 instance.enlarged_lymph_nodes == YES
         )
-        if not tb_take_off_study:
+
+        if take_off_schedule:
             trigger_action_item(tb_off_study_cls,
                                 TB_OFF_STUDY_ACTION,
                                 instance.subject_identifier)
+        else:
+            try:
+                child_consent = CaregiverChildConsent.objects.filter(
+                    subject_identifier__startswith=instance.subject_identifier,
+                    preg_enroll=True).latest('consent_datetime')
+            except CaregiverChildConsent.DoesNotExist:
+                pass
+            else:
+                put_on_schedule(
+                    'cohort_a_tb_6_months', instance=instance,
+                    subject_identifier=instance.subject_identifier,
+                    child_subject_identifier=child_consent.subject_identifier,
+                    base_appt_datetime=instance.report_datetime.replace(
+                        microsecond=0))
 
 
 @receiver(post_save, weak=False, sender=CaregiverOffStudy,
@@ -785,6 +799,9 @@ def get_onschedule_model(cohort, caregiver_visit_count=None, subject_identifier=
     if 'tb_2_months' in cohort:
         onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
         schedule_name = 'tb_2_months_schedule'
+    if 'tb_6_months' in cohort:
+        onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
+        schedule_name = 'tb_6_months_schedule'
 
     _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
         onschedule_model=onschedule_model, name=schedule_name)
