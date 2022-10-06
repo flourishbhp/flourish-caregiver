@@ -1,3 +1,5 @@
+from datetime import date
+
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.test import TestCase, tag
@@ -10,6 +12,7 @@ import pytz
 from edc_appointment.models import Appointment
 from edc_visit_schedule.models import SubjectScheduleHistory
 from edc_visit_tracking.constants import SCHEDULED
+
 from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
 from ..models import OnScheduleCohortBSec, OnScheduleCohortBSecQuart
 from ..subject_helper_mixin import SubjectHelperMixin
@@ -52,6 +55,67 @@ class TestVisitScheduleSetupB(TestCase):
         child_dob = start_date_year_3 - relativedelta(years=year_3_years,
                                                       months=year_3_months)
         return child_dob
+
+    @tag("whet")
+    def test_cohort_b_onschedule_invalid1(self):
+        """Assert that a 5.1 year old by year 3 participant's mother who is on
+         efv regimen from Mpepu study is put on cohort b schedule.
+        """
+
+        self.subject_identifier = self.subject_identifier[:-1] + '2'
+        self.study_maternal_identifier = '981232'
+        self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['delivdt'] = date(2011, 7, 13)
+
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            subject_identifier=self.subject_identifier,
+            preg_efv=1,
+            **self.maternal_dataset_options)
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            dob=date(2011, 7, 13),
+            **self.child_dataset_options)
+
+        sh = SubjectHelperMixin()
+
+        subject_identifier = sh.enroll_prior_participant(
+            maternal_dataset_obj.screening_identifier,
+            study_child_identifier=self.child_dataset_options['study_child_identifier'])
+
+        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_enrol1_schedule1').count(), 1)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_quarterly1_schedule1').count(), 0)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2000M',
+                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='b_quarterly1_schedule1').count(), 1)
+
+        # self.assertEqual(OnScheduleCohortBFU.objects.filter(
+            # subject_identifier=subject_identifier,
+            # schedule_name='b_fu1_schedule1').count(), 1)
+            #
+        # self.assertEqual(Appointment.objects.get(
+            # subject_identifier=subject_identifier,
+            # schedule_name='b_fu1_schedule1',
+            # visit_code='3000M').appt_datetime.date(), (django_apps.get_app_config(
+                # 'edc_protocol').study_open_datetime + relativedelta(years=3)).date())
+
+        # self.assertGreater(Appointment.objects.filter(
+        #     subject_identifier=subject_identifier).count(), 15)
 
     @tag("vvv")
     def test_cohort_b_onschedule_valid(self):
