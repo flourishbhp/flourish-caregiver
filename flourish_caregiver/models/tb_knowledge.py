@@ -2,6 +2,7 @@ from django.db import models
 from edc_constants.choices import YES_NO
 
 from ..choices import YES_NO_PNTA, YES_NO_DN_PNTA
+from .list_models import TbKnowledgeMedium
 from .model_mixins import CrfModelMixin
 
 
@@ -12,11 +13,9 @@ class TbKnowledge(CrfModelMixin):
         choices=YES_NO_PNTA,
         max_length=15,)
 
-    # ManyToMany
-    tb_knowledge_medium = models.CharField(
-        verbose_name='Where did you first learn about TB? Did you learn about TB through',
-        # choices=TB_DRUGS_FREQ,
-        max_length=15,)
+    tb_knowledge_medium = models.ManyToManyField(
+        TbKnowledgeMedium,
+        verbose_name='Where did you first learn about TB? Did you learn about TB through')
 
     tb_knowledge_medium_other = models.TextField(
         verbose_name='If other, specify',
@@ -87,3 +86,4 @@ class TbKnowledge(CrfModelMixin):
 
     class Meta:
         app_label = 'flourish_caregiver'
+        verbose_name = 'TB Knowledge'

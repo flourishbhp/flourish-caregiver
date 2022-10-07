@@ -19,20 +19,26 @@ class TbKnowledgeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'report_datetime',
                 'tb_informed',
                 'tb_knowledge_medium',
-                'tb_knowledge_medium_other',
+                'tb_knowledge_medium_other', ]
+            }),
+        ('TB Knowledge Section', {
+            'fields': [
                 'fever_knowledge',
                 'cough_knowledge',
                 'night_sweats_knowledge',
                 'weight_loss_knowledge',
                 'rash_knowledge',
                 'headache_knowledge',
-                'other_knowledge',
+                'other_knowledge']
+        }),
+        ('TB Contraction Section', {
+            'fields': [
                 'tb_utensils_transmit',
                 'tb_air_transmit',
                 'tb_treatable',
-                'tb_curable'
-            ]}
-         ), audit_fieldset_tuple)
+                'tb_curable']
+        }),
+        audit_fieldset_tuple)
 
     radio_fields = {'tb_informed': admin.VERTICAL,
                     'fever_knowledge': admin.VERTICAL,
@@ -45,3 +51,5 @@ class TbKnowledgeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'tb_air_transmit': admin.VERTICAL,
                     'tb_treatable': admin.VERTICAL,
                     'tb_curable': admin.VERTICAL, }
+
+    filter_horizontal = ('tb_knowledge_medium',)

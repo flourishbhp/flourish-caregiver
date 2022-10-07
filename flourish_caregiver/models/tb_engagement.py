@@ -27,3 +27,4 @@ class TbEngagement(CrfModelMixin):
 
     class Meta:
         app_label = 'flourish_caregiver'
+        verbose_name = 'TB Engagement'

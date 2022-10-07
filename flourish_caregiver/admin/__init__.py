@@ -54,8 +54,10 @@ from .tb_adol_screening_admin import TbAdolEligibilityAdmin
 from .tb_engagement_admin import TbEngagementAdmin
 from .tb_history_preg_admin import TbHistoryPregAdmin
 from .tb_informed_consent_admin import TbInformedConsentAdmin
+from .tb_int_transcription_admin import TbInterviewTranscriptionAdmin
+from .tb_int_translation_admin import TbInterviewTranslationAdmin
 from .tb_interview_admin import TbInterviewAdmin
-# from .tb_knowledge_admin import TbKnowledgeAdmin
+from .tb_knowledge_admin import TbKnowledgeAdmin
 from .tb_off_study_admin import TbOffStudyAdmin
 from .tb_presence_household_members_admin import TbPresenceHouseholdMembersAdmin
 from .tb_referral_admin import TbReferralAdmin
@@ -65,4 +67,3 @@ from .tb_screen_preg_admin import TbScreenPregAdmin
 from .tb_study_screening_admin import TbStudyEligibilityAdmin
 from .tb_visit_screening_women_admin import TbVisitScreeningWomenAdmin
 from .ultrasound_admin import UltraSoundAdmin
-

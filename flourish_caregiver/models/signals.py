@@ -15,7 +15,7 @@ from django.db.transaction import TransactionManagementError
 from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
-from edc_constants.constants import OPEN, NEW
+from edc_constants.constants import OPEN, NEW, NO
 from edc_constants.constants import YES
 from edc_data_manager.models import DataActionItem
 
@@ -44,6 +44,8 @@ from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
+from .tb_engagement import TbEngagement
+from .tb_referral_outcomes import TbReferralOutcomes
 from .ultrasound import UltraSound
 
 
@@ -513,7 +515,7 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
     if not raw:
         tb_off_study_cls = django_apps.get_model('flourish_caregiver.tboffstudy')
 
-        take_off_schedule = (
+        tb_referral = (
                 instance.have_cough == YES or
                 instance.cough_duration == '=>2 week' or
                 instance.fever == YES or
@@ -523,7 +525,7 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
                 instance.enlarged_lymph_nodes == YES
         )
 
-        if take_off_schedule:
+        if not tb_referral:
             trigger_action_item(tb_off_study_cls,
                                 TB_OFF_STUDY_ACTION,
                                 instance.subject_identifier)
@@ -626,7 +628,7 @@ def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
 
 
 @receiver(post_save, weak=False, sender=TbInformedConsent,
-          dispatch_uid='tb_informed_consent_on_post_save')
+          dispatch_uid='tb_engagement_post_save')
 def tb_informed_consent_post_save(sender, instance, raw, created, **kwargs):
     """
     Put subject on tb enrolment schedule after tv informed consent
@@ -640,6 +642,37 @@ def tb_informed_consent_post_save(sender, instance, raw, created, **kwargs):
             pass
         else:
             maternal_delivery_obj.save_base(raw=True)
+
+
+@receiver(post_save, weak=False, sender=TbEngagement,
+          dispatch_uid='tb_informed_consent_on_post_save')
+def tb_engagement_post_save(sender, instance, raw, created, **kwargs):
+    """
+    Trigger offstudy if interview consent in NO
+    """
+
+    tb_off_study_cls = django_apps.get_model('flourish_caregiver.tboffstudy')
+
+    trigger_action_item(tb_off_study_cls,
+                        TB_OFF_STUDY_ACTION,
+                        instance.subject_identifier,
+                        opt_trigger=instance.interview_consent == NO)
+
+
+@receiver(post_save, weak=False, sender=TbReferralOutcomes,
+          dispatch_uid='tb_referral_outcomes_post_save')
+def tb_referral_outcomes_post_save(sender, instance, raw, created, **kwargs):
+    """
+    Trigger offstudy if interview consent in NO
+    """
+
+    tb_off_study_cls = django_apps.get_model('flourish_caregiver.tboffstudy')
+
+    trigger_action_item(tb_off_study_cls,
+                        TB_OFF_STUDY_ACTION,
+                        instance.subject_identifier,
+                        opt_trigger=(instance.further_tb_eval == NO
+                                     or instance.tb_treat_start == YES))
 
 
 def screening_preg_exists(caregiver_child_consent_obj):

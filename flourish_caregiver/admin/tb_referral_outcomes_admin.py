@@ -19,7 +19,10 @@ class TbReferralOutcomesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'report_datetime',
                 'referral_clinic_appt',
                 'further_tb_eval',
+                'tb_eval_comments',
                 'tb_diagnostic_perf',
+                'tb_diagnostics',
+                'tb_diagnostics_other',
                 'tb_diagnose_pos',
                 'tb_test_results',
                 'tb_treat_start',
@@ -34,3 +37,5 @@ class TbReferralOutcomesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'tb_diagnose_pos': admin.VERTICAL,
                     'tb_treat_start': admin.VERTICAL,
                     'tb_prev_therapy_start': admin.VERTICAL, }
+
+    filter_horizontal = ('tb_diagnostics',)

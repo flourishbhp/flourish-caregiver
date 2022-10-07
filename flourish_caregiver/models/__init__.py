@@ -68,6 +68,8 @@ from .tb_adol_screening import TbAdolEligibility
 from .tb_engagement import TbEngagement
 from .tb_history_preg import TbHistoryPreg
 from .tb_informed_consent import TbInformedConsent
+from .tb_int_transcription import TbInterviewTranscription
+from .tb_int_translation import TbInterviewTranslation
 from .tb_interview import TbInterview
 from .tb_knowledge import TbKnowledge
 from .tb_off_study import TbOffStudy

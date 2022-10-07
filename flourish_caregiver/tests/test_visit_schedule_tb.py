@@ -323,14 +323,20 @@ class TestVisitScheduleTb(TestCase):
             reason=SCHEDULED)
 
         mommy.make_recipe('flourish_caregiver.tbvisitscreeningwomen',
-                          have_cough=YES,
+                          have_cough=NO,
+                          fever=NO,
+                          night_sweats=NO,
+                          weight_loss=NO,
+                          cough_blood=NO,
+                          cough_duration=None,
+                          enlarged_lymph_nodes=NO,
                           maternal_visit=tb_visit)
 
         self.assertEqual(OnScheduleCohortATb6Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
             schedule_name='tb_6_months_schedule').count(), 0)
 
-    @tag('tb7')
+    @tag('tb6')
     def test_6_month_visit_valid(self):
 
         mommy.make_recipe(
@@ -371,13 +377,7 @@ class TestVisitScheduleTb(TestCase):
             reason=SCHEDULED)
 
         mommy.make_recipe('flourish_caregiver.tbvisitscreeningwomen',
-                          have_cough=NO,
-                          fever=NO,
-                          night_sweats=NO,
-                          weight_loss=NO,
-                          cough_blood=NO,
-                          cough_duration=None,
-                          enlarged_lymph_nodes=NO,
+                          have_cough=YES,
                           maternal_visit=tb_visit)
 
         self.assertEqual(OnScheduleCohortATb6Months.objects.filter(
