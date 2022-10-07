@@ -55,3 +55,11 @@ class ReceivedTrainingOnFeedingList(ListModelMixin, BaseUuidModel):
 
 class ReasonsForInfantFeedingList(ListModelMixin, BaseUuidModel):
     pass
+
+
+class TbKnowledgeMedium(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class TbDiagnostics(ListModelMixin, BaseUuidModel):
+    pass

@@ -860,6 +860,10 @@ INTERVIEW_LOCATIONS = (
     ('part_home', 'Participant home'),
     (OTHER, 'Other'))
 
+INTERVIEW_LANGUAGE = (
+    ('setswana', 'Setswana'),
+    ('english', 'English'))
+
 PARTNERS_SUPPORT = {
     ('very_unsupportive', 'Very Unsupportive'),
     ('unsupportive', 'Unsupportive'),

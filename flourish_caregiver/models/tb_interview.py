@@ -1,6 +1,6 @@
 from django.core.validators import MaxValueValidator
 from django.db import models
-from ..choices import INTERVIEW_LOCATIONS
+from ..choices import INTERVIEW_LOCATIONS, INTERVIEW_LANGUAGE
 from .model_mixins import CrfModelMixin
 
 
@@ -21,6 +21,13 @@ class TbInterview(CrfModelMixin):
         verbose_name='Duration of interview:',
         validators=[MaxValueValidator(1440), ],
         help_text='Insert number of minutes')
+
+    # # mp3 upload field
+
+    interview_language = models.CharField(
+        verbose_name='In what language was the interview performed? ',
+        choices=INTERVIEW_LANGUAGE,
+        max_length=10)
 
     class Meta:
         app_label = 'flourish_caregiver'

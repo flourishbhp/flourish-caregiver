@@ -53,6 +53,8 @@ from .tb_adol_screening_form import TbAdolScreeningForm
 from .tb_engagement_form import TbEngagementForm
 from .tb_history_preg_form import TbHistoryPregForm
 from .tb_informed_consent_form import TbInformedConsentForm
+from .tb_int_transcription_form import TbInterviewTranscriptionForm
+from .tb_int_translation_form import TbInterviewTranslationForm
 from .tb_interview_form import TbInterviewForm
 from .tb_knowledge_form import TbKnowledgeForm
 from .tb_off_study_form import TbOffStudyForm
@@ -64,4 +66,3 @@ from .tb_screen_preg_form import TbScreenPregForm
 from .tb_study_screening_form import TbStudyScreeningForm
 from .tb_visit_screening_women_form import TbVisitScreeningWomenForm
 from .ultrasound_form import UltraSoundForm
-

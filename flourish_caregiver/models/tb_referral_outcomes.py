@@ -1,7 +1,9 @@
 from django.db import models
+from edc_base.model_fields.custom_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
 from ..choices import YES_NO_UNABLE_DET
+from .list_models import TbDiagnostics
 from .model_mixins import CrfModelMixin
 
 
@@ -18,6 +20,12 @@ class TbReferralOutcomes(CrfModelMixin):
         max_length=3,
         choices=YES_NO)
 
+    tb_eval_comments = models.TextField(
+        verbose_name=('Comments'),
+        max_length=200,
+        null=True,
+        blank=True)
+
     tb_diagnostic_perf = models.CharField(
         verbose_name=('Were TB diagnostic studies performed at the clinic visit?'),
         max_length=20,
@@ -25,14 +33,12 @@ class TbReferralOutcomes(CrfModelMixin):
         null=True,
         blank=True)
 
-        # tb_diagnostics = models.ManyToManyField(
-    #     verbose_name=('What TB diagnostic studies were performed? '),
-    #     )
-    #
-    # tb_diagnostic_perf = models.CharField(
-    #     verbose_name=('Were any of the TB diagnostic studies positive? '
-    #     '□0= no □1= yes □2= pending □3= unable to determine Question 10: '
-    #     'If yes, specify test and test result: (free text)'),)
+    tb_diagnostics = models.ManyToManyField(
+        TbDiagnostics,
+        verbose_name=('What TB diagnostic studies were performed? '),
+        blank=True)
+
+    tb_diagnostics_other = OtherCharField()
 
     tb_diagnose_pos = models.CharField(
         verbose_name='Were any of the TB diagnostic studies positive',
@@ -69,3 +75,4 @@ class TbReferralOutcomes(CrfModelMixin):
 
     class Meta:
         app_label = 'flourish_caregiver'
+        verbose_name = 'TB Referral Outcomes'
