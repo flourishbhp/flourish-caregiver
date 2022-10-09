@@ -20,7 +20,9 @@ class TbInterviewAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'interview_location',
                 'interview_location_other',
                 'interview_duration',
+                'interview_language'
             ]}
          ), audit_fieldset_tuple)
 
-    radio_fields = {'interview_location': admin.VERTICAL, }
+    radio_fields = {'interview_location': admin.VERTICAL,
+                    'interview_language': admin.VERTICAL}
