@@ -14,6 +14,7 @@ from edc_model_admin import (
     ModelAdminNextUrlRedirectMixin, ModelAdminAuditFieldsMixin,
     ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
 from edc_model_admin import audit_fieldset_tuple
+from numpy import insert
 
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
@@ -113,20 +114,20 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
                                  or request.POST.get('subject_identifier', None)
             
             enrollment_visit = self.model.objects.get(
-                    subject_identifier = subject_identifier,
-                    visit_code='1000M')
-            
+                    subject_identifier=subject_identifier,
+                    visit_code='1000M',
+                    visit_code_sequence='1')
+
         except self.model.DoesNotExist:
             """
             1000M visit doen't exist, check if the current vist yet to be saved 
             is visit 1000M
             """
             try:
-                appointment_id = request.GET.get('appointment', None) \
-                                or request.POST.get('appointment', None) 
-                                
-                appointment = self.appointment_model_cls.objects.get(id = appointment_id)
-                
+                self.appointment_model_cls.objects.get(id=appointment_id,
+                                                       visit_code='1000M',
+                                                       visit_code_sequence='1')
+
             except self.appointment_model_cls.DoesNotExist:
                 pass
             else:
