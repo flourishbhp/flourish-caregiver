@@ -23,11 +23,38 @@ class TbInterview(CrfModelMixin):
         help_text='Insert number of minutes')
 
     # # mp3 upload field
+    interview_file = models.FileField(upload_to='tb_int/', null=True)
 
     interview_language = models.CharField(
         verbose_name='In what language was the interview performed? ',
         choices=INTERVIEW_LANGUAGE,
         max_length=10)
+
+    translation_date = models.DateField(
+        verbose_name='Date translation completed',
+        null=True,
+        blank=True)
+
+    translator_name = models.CharField(
+        verbose_name='Name of staff who performed translation',
+        max_length=30,
+        blank=True,
+        null=True)
+
+    interview_translation = models.FileField(upload_to='tb_int/docs/', null=True)
+
+    transcription_date = models.DateField(
+        verbose_name='Date transcription completed',
+        null=True,
+        blank=True)
+
+    transcriber_name = models.CharField(
+        verbose_name='Name of staff who performed transcription',
+        max_length=30,
+        blank=True,
+        null=True)
+
+    interview_transcription = models.FileField(upload_to='tb_int/docs/', null=True)
 
     class Meta:
         app_label = 'flourish_caregiver'
