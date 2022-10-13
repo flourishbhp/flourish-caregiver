@@ -101,6 +101,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
     def appointment_model_cls(self):
 
         return django_apps.get_model(self.appointment_model)
+    
 
     def get_key(self, request, obj=None):
 
@@ -111,10 +112,10 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
 
         try:
 
-            enrollment_visit = self.model.objects.get(
+            enrollment_visit = self.model.objects.filter(
                     subject_identifier=subject_identifier,
-                    visit_code='1000M',
-                    visit_code_sequence='1')
+                    visit_code='1000M').last()
+    
 
         except self.model.DoesNotExist:
             """
@@ -124,9 +125,8 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             appointment_id = (request.GET.get('appointment', None)
                               or request.POST.get('appointment', None))
             try:
-                self.appointment_model_cls.objects.get(id=appointment_id,
-                                                       visit_code='1000M',
-                                                       visit_code_sequence='1')
+                self.appointment_model_cls.objects.filter(id=appointment_id,
+                                                       visit_code='1000M').last()
 
             except self.appointment_model_cls.DoesNotExist:
                 pass
@@ -139,7 +139,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             or NOT_APPLICABLE and current visit is 2000D show brain scan option
             """
 
-            if (enrollment_visit.brain_scan in [NO, NOT_APPLICABLE]
+            if (enrollment_visit.brain_scan in [None, NO, NOT_APPLICABLE]
                     and enrollment_visit.visit_code in ['2000D', '1000M']):
 
                 key = 'interested_in_brain_scan'
