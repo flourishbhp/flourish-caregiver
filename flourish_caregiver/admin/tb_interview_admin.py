@@ -21,7 +21,7 @@ class TbInterviewAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'interview_location_other',
                 'interview_duration',
                 'interview_file',
-                'interview_language'
+                'interview_language',
                 'translation_date',
                 'translator_name',
                 'interview_translation',
