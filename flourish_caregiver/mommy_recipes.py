@@ -6,6 +6,7 @@ from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
 from edc_visit_tracking.constants import SCHEDULED
+from flourish_caregiver.models.tb_engagement import TbEngagement
 
 from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
                      CaregiverEdinburghDeprScreening)
@@ -205,6 +206,10 @@ tboffstudy = Recipe(
 
 tbvisitscreeningwomen = Recipe(
     TbVisitScreeningWomen,
+)
+
+tbengagement = Recipe(
+    TbEngagement,
 )
 
 ultrasound = Recipe(

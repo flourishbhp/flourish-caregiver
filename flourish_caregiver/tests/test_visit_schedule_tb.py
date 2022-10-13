@@ -383,3 +383,66 @@ class TestVisitScheduleTb(TestCase):
         self.assertEqual(OnScheduleCohortATb6Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
             schedule_name='tb_6_months_schedule').count(), 1)
+
+    @tag('tbeng')
+    def test_6_month_interview_valid(self):
+
+        mommy.make_recipe(
+            'flourish_caregiver.tbinformedconsent',
+            subject_identifier=self.consent.subject_identifier,
+            consent_datetime=get_utcnow()
+        )
+
+        self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
+            subject_identifier=self.consent.subject_identifier,
+            schedule_name='tb_2_months_schedule').count(), 0)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.consent.subject_identifier,)
+
+        child_consent = ChildDummySubjectConsent.objects.get(
+            subject_identifier=self.child_consent.subject_identifier,
+        )
+
+        child_consent.dob = (get_utcnow() - relativedelta(days=1)).date()
+        child_consent.save()
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        tb_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2100T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe('flourish_caregiver.tbvisitscreeningwomen',
+                          have_cough=YES,
+                          maternal_visit=tb_visit)
+
+        tb_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2200T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe('flourish_caregiver.tbengagement',
+                          maternal_visit=tb_visit,
+                          interview_consent=YES)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.tbinterview',
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2200T',
+                visit_code_sequence='0').entry_status, REQUIRED)
