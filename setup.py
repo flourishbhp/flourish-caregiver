@@ -13,7 +13,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='flourish-caregiver',
-    version='0.3.80',
+    version='0.3.81',
     author=u'Software Engineering & Data Management',
     author_email='se-dmc@bhp.org.bw',
     packages=find_packages(),
