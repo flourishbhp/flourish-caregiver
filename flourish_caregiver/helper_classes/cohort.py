@@ -220,11 +220,25 @@ class Cohort:
         start_date_year_3 = app_config.start_date_year_3
         return self.age_at_enrollment(child_dob=self.child_dob, check_date=start_date_year_3)
 
+    @property
+    def check_age(self):
+
+        app_config = django_apps.get_app_config('flourish_caregiver')
+        start_date_year_3 = app_config.start_date_year_3
+
+        if self.enrollment_date > start_date_year_3:
+            check_age = self.age_at_enrollment()
+        else:
+            check_age = self.age_at_year_3
+
+        return check_age
+
     def cohort_a(self):
         """Return True if the infant mother pair meets criteria for cohort A.
         """
         # TODO: Cater for 200 newly enrolled pregnant woman.
-        if self.age_at_year_3 <= 5:
+
+        if self.check_age <= 5:
             if (self.protocol == 'Tshilo Dikotla' and self.hiv_exposed_uninfected
                     and self.total_HEU(protocol='Tshilo Dikotla') < 200):
                 return 'cohort_a'
@@ -238,7 +252,7 @@ class Cohort:
         """
         protocols = ['Tshilo Dikotla', 'Mpepu', 'Tshipidi']
 
-        if str(self.age_at_year_3) >= str(5.1) and str(self.age_at_year_3) <= str(10.5):
+        if self.check_age >= 5.1 and self.check_age <= 10.5:
 
             if self.protocol in protocols and self.efv_regime:
                 return 'cohort_b' if self.total_efv_regime(cohort='cohort_b') < 100 else 'cohort_b_sec'
@@ -256,7 +270,7 @@ class Cohort:
         """
         # TODO: cater for 125 new enrolled adolescents
 
-        if self.age_at_year_3 >= 10:
+        if self.check_age >= 10:
             if self.huu_adolescents:
                 return ('cohort_c' if self.protocol == 'Tshipidi'
                         and self.total_huu_adolescents(protocol='Tshipidi') < 75
