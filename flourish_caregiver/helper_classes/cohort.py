@@ -33,6 +33,8 @@ class Cohort:
             'flourish_caregiver.caregiverchildconsent')
         self._screening_identifiers = SubjectConsent.objects.values_list(
             'screening_identifier', flat=True).distinct()
+        app_config = django_apps.get_app_config('flourish_caregiver')
+        self.start_date_year_3 = app_config.start_date_year_3
 
     def age_at_enrollment(self, child_dob=None, check_date=None):
         """Returns age months as decimals.
@@ -216,9 +218,17 @@ class Cohort:
     def age_at_year_3(self):
         """Returns the age at year 3.
         """
-        app_config = django_apps.get_app_config('flourish_caregiver')
-        start_date_year_3 = app_config.start_date_year_3
-        return self.age_at_enrollment(child_dob=self.child_dob, check_date=start_date_year_3)
+        return self.age_at_enrollment(child_dob=self.child_dob,
+                                      check_date=self.start_date_year_3)
+
+    @property
+    def year3_benchmark(self):
+
+        age_mark = False
+        if self.start_date_year_3 > self.enrollment_date:
+            age_mark = True
+
+        return age_mark
 
     @property
     def check_age(self):
@@ -255,13 +265,16 @@ class Cohort:
         if self.check_age >= 5.1 and self.check_age <= 10.5:
 
             if self.protocol in protocols and self.efv_regime:
-                return 'cohort_b' if self.total_efv_regime(cohort='cohort_b') < 100 else 'cohort_b_sec'
+                return ('cohort_b' if self.total_efv_regime(
+                    cohort='cohort_b') < 100 else 'cohort_b_sec')
 
             elif self.protocol in protocols and self.dtg_regime:
-                return 'cohort_b' if self.total_dtg_regime(cohort='cohort_b') < 100 else 'cohort_b_sec'
+                return ('cohort_b' if self.total_dtg_regime(
+                    cohort='cohort_b') < 100 else 'cohort_b_sec')
 
             elif self.protocol in protocols and self.no_hiv_during_preg:
-                return 'cohort_b' if self.total_no_hiv_during_preg(cohort='cohort_b') < 100 else 'cohort_b_sec'
+                return ('cohort_b' if self.total_no_hiv_during_preg(
+                    cohort='cohort_b') < 100 else 'cohort_b_sec')
 
             return 'cohort_b_sec'
 
@@ -269,7 +282,6 @@ class Cohort:
         """Return True id an infant mother pair meets criteria for cohort C.
         """
         # TODO: cater for 125 new enrolled adolescents
-
         if self.check_age >= 10:
             if self.huu_adolescents:
                 return ('cohort_c' if self.protocol == 'Tshipidi'
