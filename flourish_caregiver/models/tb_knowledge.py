@@ -66,13 +66,13 @@ class TbKnowledge(CrfModelMixin):
 
     tb_utensils_transmit = models.CharField(
         verbose_name='Can a person get TB by sharing dishes, plates, cups, and spoons?',
-        choices=YES_NO,
-        max_length=3,)
+        choices=YES_NO_DN_PNTA,
+        max_length=25,)
 
     tb_air_transmit = models.CharField(
         verbose_name='Can a person get TB through the air when a person with TB coughs',
-        choices=YES_NO,
-        max_length=3,)
+        choices=YES_NO_DN_PNTA,
+        max_length=25,)
 
     tb_treatable = models.CharField(
         verbose_name='Can TB be treated? ',
