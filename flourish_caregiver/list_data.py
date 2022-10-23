@@ -1,5 +1,5 @@
-from edc_list_data import PreloadData
 from edc_constants.constants import NONE, OTHER
+from edc_list_data import PreloadData
 
 list_data = {
     'flourish_caregiver.chronicconditions': [
@@ -176,6 +176,22 @@ list_data = {
         ('mdiag_hyperten', 'Gestational Hypertension'),
         ('mdiag_na', 'Not Applicable'),
         ('mdiag_other', 'Other, specify')
+    ],
+    'flourish_caregiver.tbknowledgemedium': [
+        ('family', 'Family'),
+        ('friends', 'Friends'),
+        ('neighbors', 'Neighbors'),
+        ('colleagues', 'Colleagues'),
+        ('medical_staff', 'Medical Staff'),
+        ('media', 'Media'),
+        (OTHER, 'Other, specify')
+    ],
+    'flourish_caregiver.tbdiagnostics': [
+        ('sputum', 'Sputum sample'),
+        ('chest_xray', 'Chest XRay'),
+        ('gene_xpert', 'Gene Xpert'),
+        ('tst', 'TST'),
+        (OTHER, 'Other, specify')
     ],
     'flourish_caregiver.caregiversocialworkreferrallist': [
         ('refer_argument', 'Arguments with partner/spouse'),

@@ -98,6 +98,28 @@ class TestRuleGroups(TestCase):
                 visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
+    @tag('tb_int')
+    def test_tb_interview_required_tb_6months(self):
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2200T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.hivviralloadandcd4',
+                subject_identifier=self.subject_identifier,
+                visit_code='1000M',
+                visit_code_sequence='0').entry_status, REQUIRED)
+
     def create_unscheduled_appointment(self, base_appointment):
 
         unscheduled_appointment_cls = UnscheduledAppointmentCreator

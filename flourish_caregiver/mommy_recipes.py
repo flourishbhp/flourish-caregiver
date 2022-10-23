@@ -6,6 +6,7 @@ from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
 from edc_visit_tracking.constants import SCHEDULED
+from flourish_caregiver.models.tb_engagement import TbEngagement
 
 from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
                      CaregiverEdinburghDeprScreening)
@@ -21,7 +22,7 @@ fake = Faker()
 
 # father involement
 
-relationshipfatherinvolvement = Recipe (
+relationshipfatherinvolvement = Recipe(
     RelationshipFatherInvolvement,
 )
 
@@ -68,6 +69,7 @@ subjectconsent = Recipe(
     confirm_identity=seq('123427675'),
     identity_type='country_id',
     is_dob_estimated='-',
+    hiv_testing=YES,
     remain_in_study=YES,
     consent_reviewed=YES,
     study_questions=YES,
@@ -205,6 +207,10 @@ tboffstudy = Recipe(
 
 tbvisitscreeningwomen = Recipe(
     TbVisitScreeningWomen,
+)
+
+tbengagement = Recipe(
+    TbEngagement,
 )
 
 ultrasound = Recipe(

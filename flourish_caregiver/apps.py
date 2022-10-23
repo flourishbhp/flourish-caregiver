@@ -1,8 +1,8 @@
+from datetime import datetime
+
+from dateutil.tz import gettz
 from django.apps import AppConfig as DjangoAppConfig
 from django.conf import settings
-
-from datetime import datetime
-from dateutil.tz import gettz
 
 
 class AppConfig(DjangoAppConfig):
@@ -17,6 +17,9 @@ class AppConfig(DjangoAppConfig):
     form_versions = {
         'flourish_caregiver.tbinformedconsent': 1.0,
         }
+
+    extra_assignee_choices = ()
+    ras_group = 'RA'
 
     def ready(self):
         from .models import antenatal_enrollment_on_post_save

@@ -150,6 +150,11 @@ CRYING = (
     ('0', 'No, never')
     )
 
+DECLINE_REASON = (
+    ('cant_physically_attend', 'Not able to physically come to clinic'),
+    ('not_interested', 'Not interested in participating'),
+    (OTHER, 'Other (Specify)'),)
+
 DEPRESSION_SCALE = (
     ('0', 'Not at all'),
     ('1', 'Several days'),
@@ -559,8 +564,12 @@ YES_NO_UNK_DWTA = (
     (YES, YES),
     (NO, NO),
     (UNKNOWN, 'Unknown'),
-    (DWTA, 'Prefer not to answer'),
-    )
+    (DWTA, 'Prefer not to answer'),)
+
+YES_NO_UNABLE_DET = (
+    (YES, YES),
+    (NO, NO),
+    ('unable_to_determine', 'Unable to determine'),)
 
 YES_NO_UNK_NA = (
     (YES, YES),
@@ -732,7 +741,6 @@ ON_HIV_STATUS_AWARE = (
     (NO, 'No'),
     ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'),)
 
-
 HIV_STATUS_KNOWN_BY = (
     ('no_one', '0 persons in my household'),
     ('one_person', '1 persons in my household'),
@@ -810,32 +818,58 @@ REASONS_NOT_PARTICIPATING = (
     ('not_interested', 'Not Interested in participating'),
     (OTHER, 'Other'),)
 
+REASONS_UNWILLING_ADOL = (
+    ('unable_to_provide_consent ', 'Caregiver unavailable to provide consent'),
+    ('refuses_to_provide_consent', 'Caregiver refuses to provide consent'),
+    ('unwilling_to_blood_draw_adolescent', 'Unwilling for adolescent to do blood draw'),
+    ('cannot_come_to_clinic', 'Cannot physically come to clinic'),
+    ('not_interested', 'Not Interested in participating'),
+    (OTHER, 'Other (Specify'),)
+
 YES_NO_PNTA_UNKNOWN = (
     (YES, YES),
     (NO, NO),
     (PNTA, _('Prefer not to answer')),
     (UNKNOWN, 'Unknown'),
 )
+
+YES_NO_DN_PNTA = (
+    (YES, YES),
+    (NO, NO),
+    ('dont_know', 'I do not know'),
+    (PNTA, _('Prefer not to answer')),
+)
+
 YES_NO_PNTA = (
     (YES, YES),
     (NO, NO),
     (PNTA, _('Prefer not to answer')),
 )
 
-HIV_STATUS_DISCUSSION = {
+HIV_STATUS_DISCUSSION = (
     ('very_easy', 'Very Unsupportive'),
     ('easy', 'Unsupportive'),
     ('neutral', 'Neutral'),
     ('difficult', 'Difficult'),
-    ('very_difficult', 'Very Difficult'),   
-}
+    ('very_difficult', 'Very Difficult'),
+)
+
+INTERVIEW_LOCATIONS = (
+    ('FLOURISH_clinic', 'FLOURISH clinic'),
+    ('BHP_site', 'BHP site'),
+    ('part_home', 'Participant home'),
+    (OTHER, 'Other'))
+
+INTERVIEW_LANGUAGE = (
+    ('setswana', 'Setswana'),
+    ('english', 'English'))
 
 PARTNERS_SUPPORT = {
     ('very_unsupportive', 'Very Unsupportive'),
     ('unsupportive', 'Unsupportive'),
     ('neutral', 'Neutral'),
     ('supportive', 'Supportive'),
-    ('very_supportive', 'Very Supportive'),    
+    ('very_supportive', 'Very Supportive'),
 }
 
 CHOICE_FREQUENCY = {
@@ -858,15 +892,15 @@ HAPPINESS_CHOICES = {
 }
 
 FUTURE_OF_RELATIONSHIP = {
-    ('do_anything', 
+    ('do_anything',
      'I want desperately for the partnership to succeed and will do anything to see that it does'),
-    ('do_what_I_can', 
+    ('do_what_I_can',
      'I want for my partnership to succeed and will do what I can to see that it does'),
-    ('cannot_do_much', 
+    ('cannot_do_much',
      'It would be nice if my partnership succeeded, but I can’t do too much more than I do now'),
-    ('refuse_to_do_more', 
+    ('refuse_to_do_more',
      'It would be nice if my partnership succeeded, but I refuse to do more'),
-    ('nothing_more', 
+    ('nothing_more',
      'My partnership can never succeed and there is nothing more I can do'),
 }
 
@@ -885,8 +919,8 @@ FATHERS_FINANCIAL_SUPPORT = {
 }
 
 HOUSEHOLD_MEMBER = {
-    ('mother','Mother'),
-    ('father','Father'),
-    ('other','Other'),
-    ('no_one','No-one'),
+    ('mother', 'Mother'),
+    ('father', 'Father'),
+    ('other', 'Other'),
+    ('no_one', 'No-one'),
 }
