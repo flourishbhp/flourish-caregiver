@@ -3,15 +3,15 @@ from django.db import models
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_not_future
+from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import date_not_before_study_start
-from edc_base.utils import get_utcnow
-from .ultrasound import UltraSound
-from .maternal_delivery import MaternalDelivery
+
+from ..helper_classes import EnrollmentHelper
 from .enrollment_mixin import EnrollmentMixin
 from .maternal_delivery import MaternalDelivery
-from ..helper_classes import EnrollmentHelper
+from .ultrasound import UltraSound
 
 
 class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
@@ -36,7 +36,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         help_text=" (weeks of gestation at enrollment, LMP). Eligible if"
                   " >16 and <30 weeks GA",
         null=True,
-        blank=True, )
+        blank=True,)
 
     ga_lmp_anc_wks = models.IntegerField(
         verbose_name="What is the mother's gestational age according to"
@@ -44,7 +44,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         validators=[MinValueValidator(1), MaxValueValidator(40)],
         null=True,
         blank=True,
-        help_text=" (weeks of gestation at enrollment, ANC)", )
+        help_text=" (weeks of gestation at enrollment, ANC)",)
 
     edd_by_lmp = models.DateField(
         verbose_name="Estimated date of delivery by lmp",
@@ -69,18 +69,18 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
             result = "Fill The Ultrasound CRF First"
         else:
             try:
-                
+
                 maternal_delivery = MaternalDelivery.objects.get(
                     subject_identifier=self.subject_identifier)
             except MaternalDelivery.DoesNotExist:
                 # if child is not yet delivered
                 today = get_utcnow()
-                result = ultrasound.ga_confirmed + ((today - ultrasound.report_datetime).days / 7 )
+                result = ultrasound.ga_confirmed + ((today - ultrasound.report_datetime).days / 7)
             else:
                 # if child is already delivered stop changing GA
                 delivery_date = maternal_delivery.delivery_datetime
 
-                result = ultrasound.ga_confirmed + ((delivery_date - ultrasound.report_datetime).days / 7 )
+                result = ultrasound.ga_confirmed + ((delivery_date - ultrasound.report_datetime).days / 7)
 
         return round(result, 1)
 
