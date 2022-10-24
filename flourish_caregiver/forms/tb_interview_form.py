@@ -14,10 +14,10 @@ class TbInterviewForm(SubjectModelFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields['translator_name'].widget = forms.RadioSelect(
-            choices=self.instance.ra_users)
+            choices=self.instance.intv_users)
 
         self.fields['transcriber_name'].widget = forms.RadioSelect(
-            choices=self.instance.ra_users)
+            choices=self.instance.intv_users)
 
     class Meta:
         model = TbInterview
