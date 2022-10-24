@@ -406,6 +406,8 @@ REFERRED_TO = (
     ('a&e', 'A&E'),
     ('psychologist', 'Psychologist'),
     ('psychiatrist', 'Psychiatrist'),
+    ('receiving_emotional_care', 'Already receiving emotional care'),
+    ('declined', 'Declined'),
     (OTHER, 'Other'),
     )
 
