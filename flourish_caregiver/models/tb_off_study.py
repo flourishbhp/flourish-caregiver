@@ -1,5 +1,4 @@
 from django.db import models
-from edc_action_item.model_mixins import ActionModelMixin
 from edc_base import get_utcnow
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
@@ -8,10 +7,11 @@ from edc_base.model_validators import datetime_not_future, date_not_future
 from edc_identifier.managers import SubjectIdentifierManager
 from edc_protocol.validators import datetime_not_before_study_start, \
     date_not_before_study_start
-from edc_visit_schedule.model_mixins import OffScheduleModelMixin
 
-from flourish_prn.choices import CAREGIVER_OFF_STUDY_REASON, OFFSTUDY_POINT
-from . import CaregiverOffSchedule
+from edc_action_item.model_mixins import ActionModelMixin
+from edc_visit_schedule.model_mixins import OffScheduleModelMixin
+from flourish_prn.choices import CAREGIVER_OFF_STUDY_REASON
+
 from ..action_items import TB_OFF_STUDY_ACTION
 
 
@@ -34,13 +34,6 @@ class TbOffStudy(OffScheduleModelMixin, ActionModelMixin, BaseUuidModel):
         max_length=115,
         choices=CAREGIVER_OFF_STUDY_REASON)
 
-    offstudy_point = models.CharField(
-        verbose_name='At what point did the mother go off study',
-        choices=OFFSTUDY_POINT,
-        max_length=50,
-        blank=True, null=True,
-        help_text='For pregnant women enrolled in Cohort A')
-
     offstudy_date = models.DateField(
         verbose_name="Off-study Date",
         validators=[
@@ -60,12 +53,7 @@ class TbOffStudy(OffScheduleModelMixin, ActionModelMixin, BaseUuidModel):
     history = HistoricalRecords()
 
     def take_off_schedule(self):
-        off_schedule_obj = CaregiverOffSchedule.objects.create(
-            subject_identifier=self.subject_identifier,
-            offschedule_datetime=self.report_datetime,
-            schedule_name='tb_2_months_schedule')
-        off_schedule_obj.save()
-
+        pass
 
     class Meta:
         app_label = 'flourish_caregiver'

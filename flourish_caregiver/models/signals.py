@@ -19,8 +19,10 @@ from edc_constants.constants import OPEN, NEW, NO
 from edc_constants.constants import YES
 from edc_data_manager.models import DataActionItem
 
+from edc_appointment.models import Appointment
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
+from flourish_caregiver.models.tb_off_study import TbOffStudy
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
@@ -545,6 +547,22 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
                         microsecond=0))
 
 
+@receiver(post_save, weak=False, sender=TbOffStudy,
+          dispatch_uid='tb_offstudy_post_save')
+def tb_offstudy_post_save(sender, instance, raw, created, **kwargs):
+
+    tb_schedules = ['tb_2_months_schedule', 'tb_6_months_schedule']
+    tb_onschedules = ['flourish_caregiver.onschedulecohortatb2months',
+                      'flourish_caregiver.onschedulecohortatb6months']
+
+    for tb_schedule, tb_onschedule in zip(tb_schedules, tb_onschedules):
+        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                        onschedule_model=tb_onschedule,
+                        name=tb_schedule)
+        schedule.take_off_schedule(
+            subject_identifier=instance.subject_identifier,)
+
+
 @receiver(post_save, weak=False, sender=CaregiverOffStudy,
           dispatch_uid='caregiver_off_study_on_post_save')
 def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
@@ -673,6 +691,22 @@ def tb_referral_outcomes_post_save(sender, instance, raw, created, **kwargs):
                         instance.subject_identifier,
                         opt_trigger=(instance.further_tb_eval == NO
                                      or instance.tb_treat_start == YES))
+
+
+@receiver(post_save, weak=False, sender=Appointment,
+          dispatch_uid='tb_appointment_post_save')
+def tb_appointment_post_save(sender, instance, raw, created, **kwargs):
+    """
+    Trigger offstudy if TB 6 month appointment is complete
+    """
+
+    tb_off_study_cls = django_apps.get_model('flourish_caregiver.tboffstudy')
+
+    trigger_action_item(tb_off_study_cls,
+                        TB_OFF_STUDY_ACTION,
+                        instance.subject_identifier,
+                        opt_trigger=(instance.visit_code == '2200T'
+                                     and instance.appt_status == 'done'))
 
 
 def screening_preg_exists(caregiver_child_consent_obj):
