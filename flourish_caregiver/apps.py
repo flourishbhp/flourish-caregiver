@@ -19,7 +19,7 @@ class AppConfig(DjangoAppConfig):
         }
 
     extra_assignee_choices = ()
-    ras_group = 'RA'
+    interviewers_group = 'Interviewer'
 
     def ready(self):
         from .models import antenatal_enrollment_on_post_save

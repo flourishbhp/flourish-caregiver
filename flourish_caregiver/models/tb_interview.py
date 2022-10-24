@@ -1,7 +1,7 @@
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from ..choices import INTERVIEW_LOCATIONS, INTERVIEW_LANGUAGE
@@ -23,7 +23,7 @@ class TbInterview(CrfModelMixin):
 
     interview_duration = models.PositiveIntegerField(
         verbose_name='Duration of interview:',
-        validators=[MaxValueValidator(1440), ],
+        validators=[MinValueValidator(10), MaxValueValidator(1440)],
         help_text='Insert number of minutes')
 
     # # mp3 upload field
@@ -67,38 +67,38 @@ class TbInterview(CrfModelMixin):
         blank=True)
 
     @property
-    def ra_users(self):
+    def intv_users(self):
         """Return a list of users that can be assigned an issue.
         """
-        ras_choices = ()
+        intv_choices = ()
         user = django_apps.get_model('auth.user')
         app_config = django_apps.get_app_config('flourish_caregiver')
-        ras_group = app_config.ras_group
+        interviewers_group = app_config.interviewers_group
         try:
-            Group.objects.get(name=ras_group)
+            Group.objects.get(name=interviewers_group)
         except Group.DoesNotExist:
             pass
 
-        ras = user.objects.filter(
-            groups__name=ras_group)
+        interviewers = user.objects.filter(
+            groups__name=interviewers_group)
         extra_choices = ()
         if app_config.extra_assignee_choices:
             for _, value in app_config.extra_assignee_choices.items():
                 extra_choices += (value[0],)
-        for ra in ras:
-            username = ra.username
-            if not ra.first_name:
+        for intv in interviewers:
+            username = intv.username
+            if not intv.first_name:
                 raise ValidationError(
                     f"The user {username} needs to set their first name.")
-            if not ra.last_name:
+            if not intv.last_name:
                 raise ValidationError(
                     f"The user {username} needs to set their last name.")
-            full_name = (f'{ra.first_name} '
-                         f'{ra.last_name}')
-            ras_choices += ((username, full_name),)
+            full_name = (f'{intv.first_name} '
+                         f'{intv.last_name}')
+            intv_choices += ((username, full_name),)
         if extra_choices:
-            ras_choices += extra_choices
-        return ras_choices
+            intv_choices += extra_choices
+        return intv_choices
 
     class Meta:
         app_label = 'flourish_caregiver'
