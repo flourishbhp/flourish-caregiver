@@ -21,7 +21,9 @@ class TbKnowledgeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'tb_knowledge_medium',
                 'tb_knowledge_medium_other', ]
             }),
-        ('TB Knowledge Section', {
+        ("TB Knowledge Section (BELOW ARE QUESTIONS ABOUT KNOWLEDGE OF SYMPTOMS OF TB. "
+         "FOR EACH QUESTION, PLEASE SAY 'YES' OR 'NO' OR 'I DON’T KNOW' OR 'PREFER NOT TO "
+         "ANSWER')", {
             'fields': [
                 'fever_knowledge',
                 'cough_knowledge',

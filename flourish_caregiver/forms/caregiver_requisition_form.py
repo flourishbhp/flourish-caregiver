@@ -20,6 +20,7 @@ class CaregiverRequisitionForm(SubjectModelFormMixin, RequisitionFormMixin,
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     def clean(self):
+        self.visit_obj = self.cleaned_data.get('maternal_visit')
         self.subject_identifier = self.cleaned_data.get(
             'maternal_visit').subject_identifier
         super().clean()
