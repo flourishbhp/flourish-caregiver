@@ -16,6 +16,7 @@ class TbInterviewTranslationAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': [
                 'maternal_visit',
+                'report_datetime',
                 'translation_date',
                 'translator_name',
                 'interview_translation',
