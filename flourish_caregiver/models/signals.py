@@ -47,6 +47,7 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
 from .tb_engagement import TbEngagement
+from .tb_interview import TbInterview
 from .tb_referral_outcomes import TbReferralOutcomes
 from .ultrasound import UltraSound
 
@@ -693,11 +694,11 @@ def tb_referral_outcomes_post_save(sender, instance, raw, created, **kwargs):
                                      or instance.tb_treat_start == YES))
 
 
-@receiver(post_save, weak=False, sender=Appointment,
-          dispatch_uid='tb_appointment_post_save')
-def tb_appointment_post_save(sender, instance, raw, created, **kwargs):
+@receiver(post_save, weak=False, sender=TbInterview,
+          dispatch_uid='tb_interview_post_save')
+def tb_interview_post_save(sender, instance, raw, created, **kwargs):
     """
-    Trigger offstudy if TB 6 month appointment is complete
+    Trigger offstudy if TB 6 month interview form is complete
     """
 
     tb_off_study_cls = django_apps.get_model('flourish_caregiver.tboffstudy')
@@ -705,8 +706,7 @@ def tb_appointment_post_save(sender, instance, raw, created, **kwargs):
     trigger_action_item(tb_off_study_cls,
                         TB_OFF_STUDY_ACTION,
                         instance.subject_identifier,
-                        opt_trigger=(instance.visit_code == '2200T'
-                                     and instance.appt_status == 'done'))
+                        opt_trigger=True)
 
 
 def screening_preg_exists(caregiver_child_consent_obj):
