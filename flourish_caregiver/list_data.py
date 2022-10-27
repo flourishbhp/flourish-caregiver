@@ -96,6 +96,16 @@ list_data = {
         ('delivery_comp_other', 'Other'),
         ('delivery_comp_none', 'None')
     ],
+    'flourish_caregiver.emosupporttype': [
+        ('adherence_counselling', 'Adherence counseling'),
+        ('grief_counselling', 'Grief counseling'),
+        ('chronic_illness_diagnosis', 'Dealing with diagnosis of chronic illness'),
+        ('financial_advice', 'Financial advice'),
+        ('relationship_therapy', 'Relationship therapy (family, partner)'),
+        ('social_welfare_support', 'Social welfare support (food basket)'),
+        ('emo_trauma_therapy', 'Emotional Trauma therapy'),
+        (OTHER, 'Other, specify')
+    ],
     'flourish_caregiver.phonenumtype': [
         ('cell_phone', 'Cell Phone'),
         ('cell_phone_alt', 'Cell Phone (alternative)'),
