@@ -65,12 +65,10 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                          'a_fu3_schedule1',
                          'a_fu_quarterly1_schedule1', 'a_fu_quarterly2_schedule1',
                          'a_fu_quarterly3_schedule1',
-
                          'b_fu1_schedule1',
                          'b_fu2_schedule1', 'b_fu3_schedule1',
                          'b_fu_quarterly1_schedule1', 'b_fu_quarterly2_schedule1',
-                         'b_fu_quarterly3_schedule1'
-
+                         'b_fu_quarterly3_schedule1',
                          'c_fu1_schedule1',
                          'c_fu2_schedule1', 'c_fu3_schedule1',
                          'c_fu_quarterly1_schedule1', 'c_fu_quarterly2_schedule1',
