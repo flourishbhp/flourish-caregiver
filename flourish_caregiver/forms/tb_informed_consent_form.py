@@ -8,6 +8,7 @@ from ..models import TbInformedConsent
 
 class TbInformedConsentForm(SiteModelFormMixin, FormValidatorMixin,
                             ConsentModelFormMixin, forms.ModelForm):
+
     subject_identifier = forms.CharField(
         label='Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
@@ -15,7 +16,6 @@ class TbInformedConsentForm(SiteModelFormMixin, FormValidatorMixin,
 
     def clean_guardian_and_dob(self):
         pass
-
 
     class Meta:
         model = TbInformedConsent

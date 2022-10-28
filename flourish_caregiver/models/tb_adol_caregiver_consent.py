@@ -1,12 +1,13 @@
 from django.core.validators import RegexValidator
 from django.db import models
 from django_crypto_fields.fields import EncryptedCharField
+from edc_base.model_fields import IsDateEstimatedField
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import CurrentSiteManager
 from edc_base.sites.site_model_mixin import SiteModelMixin
-from edc_consent.field_mixins import IdentityFieldsMixin
+from edc_consent.field_mixins import IdentityFieldsMixin, CitizenFieldsMixin, ReviewFieldsMixin
 from edc_consent.field_mixins import PersonalFieldsMixin, VulnerabilityFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
@@ -31,8 +32,8 @@ class TbAdolConsentManager(ConsentManager, SearchSlugManager, models.Manager):
 class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
                     UpdatesOrCreatesRegistrationModelMixin,
                     NonUniqueSubjectIdentifierModelMixin, IdentityFieldsMixin,
-                    PersonalFieldsMixin, VulnerabilityFieldsMixin,
-                    SearchSlugModelMixin, BaseUuidModel):
+                    PersonalFieldsMixin, VulnerabilityFieldsMixin, CitizenFieldsMixin,
+                    ReviewFieldsMixin, SearchSlugModelMixin, BaseUuidModel):
 
     subject_screening_model = 'flourish_caregiver.subjectscreening'
 
@@ -62,12 +63,32 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         null=True,
         blank=False)
 
-    consent_to_participate = models.CharField(
-        verbose_name='Do you consent to participate in the study?',
-        choices=YES_NO,
+    adol_dob = models.DateField(
+        verbose_name="Adolescent date of birth",
+        null=True,
+        blank=False)
+
+    is_adol_dob_estimated = IsDateEstimatedField(
+        verbose_name="Is the adolescent date of birth estimated?",
+        null=True,
+        blank=False)
+
+    tb_blood_test_consent = models.CharField(
+        verbose_name=('Will you allow for blood testing for TB for your adolescent? '),
         max_length=3,
-        validators=[eligible_if_yes, ],
-        help_text='Participant is not eligible if no')
+        choices=YES_NO)
+
+    future_studies_contact = models.CharField(
+        verbose_name=('Contact for future studies: Do you give us permission for us '
+                      'to contact you or your child for future studies?'),
+        max_length=3,
+        choices=YES_NO)
+
+    samples_future_studies = models.CharField(
+        verbose_name=('Use of Samples in Future Research: Do you give us permission to use '
+                      'your child\'s blood samples for future studies?'),
+        max_length=3,
+        choices=YES_NO,)
 
     is_eligible = models.BooleanField(
         default=True,
