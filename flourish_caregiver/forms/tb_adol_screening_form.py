@@ -19,16 +19,3 @@ class TbAdolScreeningForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFor
     class Meta:
         model = TbAdolEligibility
         fields = '__all__'
-
-# ccc = CaregiverChildConsent.objects.all().exclude(
-#     cohort__startswith='cohort_a')
-#
-# cci = ccc.values_list('subject_identifier', flat=True).distinct()
-#
-# nrm = RequisitionMetadata.objects.filter(
-#     subject_identifier__in=cci, entry_status='REQUIRED')
-#
-# for n in nrm:
-#     print(n.subject_identifier, n.visit_code)
-#     n.entry_status = 'NOT_REQUIRED'
-#     n.save()
