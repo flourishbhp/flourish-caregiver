@@ -70,7 +70,7 @@ class ReferralFormMixin(models.Model):
 
     percieve_counselor = models.CharField(
         verbose_name=('How did you perceive your counselor (social worker or psychologist)?'),
-        max_length=25,
+        max_length=35,
         choices=EMO_HEALTH_IMPROVED,
         blank=True,
         null=True)
@@ -87,7 +87,7 @@ class ReferralFormMixin(models.Model):
                       ' counselling?'),
         max_length=3,
         choices=YES_NO,
-        blanl=True,
+        blank=True,
         null=True)
 
     class Meta:
