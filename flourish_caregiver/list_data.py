@@ -1,5 +1,5 @@
-from edc_list_data import PreloadData
 from edc_constants.constants import NONE, OTHER
+from edc_list_data import PreloadData
 
 list_data = {
     'flourish_caregiver.chronicconditions': [
@@ -96,6 +96,16 @@ list_data = {
         ('delivery_comp_other', 'Other'),
         ('delivery_comp_none', 'None')
     ],
+    'flourish_caregiver.emosupporttype': [
+        ('adherence_counselling', 'Adherence counseling'),
+        ('grief_counselling', 'Grief counseling'),
+        ('chronic_illness_diagnosis', 'Dealing with diagnosis of chronic illness'),
+        ('financial_advice', 'Financial advice'),
+        ('relationship_therapy', 'Relationship therapy (family, partner)'),
+        ('social_welfare_support', 'Social welfare support (food basket)'),
+        ('emo_trauma_therapy', 'Emotional Trauma therapy'),
+        (OTHER, 'Other, specify')
+    ],
     'flourish_caregiver.phonenumtype': [
         ('cell_phone', 'Cell Phone'),
         ('cell_phone_alt', 'Cell Phone (alternative)'),
@@ -176,6 +186,22 @@ list_data = {
         ('mdiag_hyperten', 'Gestational Hypertension'),
         ('mdiag_na', 'Not Applicable'),
         ('mdiag_other', 'Other, specify')
+    ],
+    'flourish_caregiver.tbknowledgemedium': [
+        ('family', 'Family'),
+        ('friends', 'Friends'),
+        ('neighbors', 'Neighbors'),
+        ('colleagues', 'Colleagues'),
+        ('medical_staff', 'Medical Staff'),
+        ('media', 'Media'),
+        (OTHER, 'Other, specify')
+    ],
+    'flourish_caregiver.tbdiagnostics': [
+        ('sputum', 'Sputum sample'),
+        ('chest_xray', 'Chest XRay'),
+        ('gene_xpert', 'Gene Xpert'),
+        ('tst', 'TST'),
+        (OTHER, 'Other, specify')
     ],
     'flourish_caregiver.caregiversocialworkreferrallist': [
         ('refer_argument', 'Arguments with partner/spouse'),

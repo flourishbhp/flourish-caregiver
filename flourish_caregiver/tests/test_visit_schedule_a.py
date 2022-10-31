@@ -51,8 +51,7 @@ class TestVisitScheduleSetupA(TestCase):
         app_config = django_apps.get_app_config('flourish_caregiver')
         start_date_year_3 = app_config.start_date_year_3
 
-        child_dob = start_date_year_3 - relativedelta(years=year_3_years,
-                                                      months=year_3_months)
+        child_dob = start_date_year_3 - relativedelta(years=year_3_years, months=year_3_months)
         return child_dob
 
     @tag('aa')

@@ -150,6 +150,11 @@ CRYING = (
     ('0', 'No, never')
     )
 
+DECLINE_REASON = (
+    ('cant_physically_attend', 'Not able to physically come to clinic'),
+    ('not_interested', 'Not interested in participating'),
+    (OTHER, 'Other (Specify)'),)
+
 DEPRESSION_SCALE = (
     ('0', 'Not at all'),
     ('1', 'Several days'),
@@ -401,6 +406,8 @@ REFERRED_TO = (
     ('a&e', 'A&E'),
     ('psychologist', 'Psychologist'),
     ('psychiatrist', 'Psychiatrist'),
+    ('receiving_emotional_care', 'Already receiving emotional care'),
+    ('declined', 'Declined'),
     (OTHER, 'Other'),
     )
 
@@ -559,8 +566,12 @@ YES_NO_UNK_DWTA = (
     (YES, YES),
     (NO, NO),
     (UNKNOWN, 'Unknown'),
-    (DWTA, 'Prefer not to answer'),
-    )
+    (DWTA, 'Prefer not to answer'),)
+
+YES_NO_UNABLE_DET = (
+    (YES, YES),
+    (NO, NO),
+    ('unable_to_determine', 'Unable to determine'),)
 
 YES_NO_UNK_NA = (
     (YES, YES),
@@ -732,7 +743,6 @@ ON_HIV_STATUS_AWARE = (
     (NO, 'No'),
     ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'),)
 
-
 HIV_STATUS_KNOWN_BY = (
     ('no_one', '0 persons in my household'),
     ('one_person', '1 persons in my household'),
@@ -810,32 +820,104 @@ REASONS_NOT_PARTICIPATING = (
     ('not_interested', 'Not Interested in participating'),
     (OTHER, 'Other'),)
 
+REASONS_UNWILLING_ADOL = (
+    ('unable_to_provide_consent ', 'Caregiver unavailable to provide consent'),
+    ('refuses_to_provide_consent', 'Caregiver refuses to provide consent'),
+    ('unwilling_to_blood_draw_adolescent', 'Unwilling for adolescent to do blood draw'),
+    ('cannot_come_to_clinic', 'Cannot physically come to clinic'),
+    ('not_interested', 'Not Interested in participating'),
+    (OTHER, 'Other (Specify'),)
+
 YES_NO_PNTA_UNKNOWN = (
     (YES, YES),
     (NO, NO),
     (PNTA, _('Prefer not to answer')),
     (UNKNOWN, 'Unknown'),
 )
+
+YES_NO_DN_PNTA = (
+    (YES, YES),
+    (NO, NO),
+    ('dont_know', 'I do not know'),
+    (PNTA, _('Prefer not to answer')),
+)
+
+EMO_SUPPORT_DECLINE = (
+    ('not_yet_sought_clinic', 'I have not yet sought the clinic'),
+    ('could_not_get_clinic_booking',
+     'I went to the clinic but could not get a booking'),
+    ('partner_dnw_me_to_attend', 'My partner does not want me to attend'),
+    ('family_dnw_me_to_attend', 'My family does not want me to attend'),
+    ('no_longer_need_support', 'I felt I no longer need emotional support'),
+    ('work_constraints', 'Work constraints'),
+    ('no_transport_fare', 'I did not have transport fare'),
+    (OTHER, 'Other, specify'),)
+
+NO_EMO_SUPPORT_REASON = (
+    ('professional_not_around', 'Social worker/ Psychologist/ Psychiatrist not around'),
+    ('clinic_long_queue', 'Long queue at the clinic'),
+    ('told_idn_emo_support', 'I was told I don’t need emotional support'),
+    ('was_treated_well_at_facility',
+     'I was not treated well at the health facility and I had to leave'),
+    ('changed_mind', 'Changed mind and returned home'),
+    (OTHER, 'Other, specify'),)
+
+EMO_HEALTH_IMPROVED = (
+    ('difficult_to_tell', 'Difficult to tell because I am still receiving emotional support'),
+    ('mood_has_improved', 'My mood has improved'),
+    ('not_able_to_relax', 'I am now able to relax'),
+    ('relationship_with_other_improved',
+     'My relationship with other people/family members/partner has improved'),
+    ('able_to_manage_emotions', 'I am now able to manage my thoughts, feelings and emotions'),
+    ('accepted_medical_condition',
+     'I have accepted my medical condition and I have learnt to stay positive'),
+    ('accepted_loved_one_loss', 'I have now accepted the loss of my loved one'),
+    ('feeling_fine', 'Emotional support received and feeling fine now'),
+    ('no_longer_suicidal', 'I am no longer suicidal'),
+    ('defaulted', 'Gave up and defaulted (No difference)'),
+    (OTHER, 'Other, specify'))
+
+PERCEIVE_COUNSELOR = (
+    ('approachable', 'Approachable'),
+    ('respectful', 'Respectful'),
+    ('trustworthy', 'Trustworthy'),
+    ('patient', 'Patient'),
+    ('demeaning', 'Demeaning'),
+    ('judgmental', 'Judgmental'),
+    ('discriminatory', 'Discriminatory'),
+    (PNTA, _('Prefer not to answer')),
+    (OTHER, 'Other, specify'))
+
 YES_NO_PNTA = (
     (YES, YES),
     (NO, NO),
     (PNTA, _('Prefer not to answer')),
 )
 
-HIV_STATUS_DISCUSSION = {
+HIV_STATUS_DISCUSSION = (
     ('very_easy', 'Very Unsupportive'),
     ('easy', 'Unsupportive'),
     ('neutral', 'Neutral'),
     ('difficult', 'Difficult'),
-    ('very_difficult', 'Very Difficult'),   
-}
+    ('very_difficult', 'Very Difficult'),
+)
+
+INTERVIEW_LOCATIONS = (
+    ('FLOURISH_clinic', 'FLOURISH clinic'),
+    ('BHP_site', 'BHP site'),
+    ('part_home', 'Participant home'),
+    (OTHER, 'Other'))
+
+INTERVIEW_LANGUAGE = (
+    ('setswana', 'Setswana'),
+    ('english', 'English'))
 
 PARTNERS_SUPPORT = {
     ('very_unsupportive', 'Very Unsupportive'),
     ('unsupportive', 'Unsupportive'),
     ('neutral', 'Neutral'),
     ('supportive', 'Supportive'),
-    ('very_supportive', 'Very Supportive'),    
+    ('very_supportive', 'Very Supportive'),
 }
 
 CHOICE_FREQUENCY = {
@@ -858,15 +940,15 @@ HAPPINESS_CHOICES = {
 }
 
 FUTURE_OF_RELATIONSHIP = {
-    ('do_anything', 
+    ('do_anything',
      'I want desperately for the partnership to succeed and will do anything to see that it does'),
-    ('do_what_I_can', 
+    ('do_what_I_can',
      'I want for my partnership to succeed and will do what I can to see that it does'),
-    ('cannot_do_much', 
+    ('cannot_do_much',
      'It would be nice if my partnership succeeded, but I can’t do too much more than I do now'),
-    ('refuse_to_do_more', 
+    ('refuse_to_do_more',
      'It would be nice if my partnership succeeded, but I refuse to do more'),
-    ('nothing_more', 
+    ('nothing_more',
      'My partnership can never succeed and there is nothing more I can do'),
 }
 
@@ -885,8 +967,8 @@ FATHERS_FINANCIAL_SUPPORT = {
 }
 
 HOUSEHOLD_MEMBER = {
-    ('mother','Mother'),
-    ('father','Father'),
-    ('other','Other'),
-    ('no_one','No-one'),
+    ('mother', 'Mother'),
+    ('father', 'Father'),
+    ('other', 'Other'),
+    ('no_one', 'No-one'),
 }

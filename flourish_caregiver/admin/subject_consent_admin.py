@@ -99,7 +99,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 for caregiver_child_consent in caregiver_child_consents_pids:
 
                     child_consent_obj = self.consent_cls.objects.filter(
-                        subject_identifier=caregiver_child_consent).latest('consent_datetime')
+                        subject_identifier=caregiver_child_consent).latest(
+                            'consent_datetime')
 
                     caregiver_child_consents_dict = child_consent_obj.__dict__
                     exclude_options = ['consent_datetime', 'id', '_state',

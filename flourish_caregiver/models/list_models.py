@@ -13,6 +13,10 @@ class DeliveryComplications(ListModelMixin, BaseUuidModel):
     pass
 
 
+class EmoSupportType(ListModelMixin, BaseUuidModel):
+    pass
+
+
 class MaternalDiagnosesList(ListModelMixin, BaseUuidModel):
     pass
 
@@ -54,4 +58,12 @@ class ReceivedTrainingOnFeedingList(ListModelMixin, BaseUuidModel):
 
 
 class ReasonsForInfantFeedingList(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class TbKnowledgeMedium(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class TbDiagnostics(ListModelMixin, BaseUuidModel):
     pass

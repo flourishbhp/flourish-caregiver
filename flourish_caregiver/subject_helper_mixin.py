@@ -179,7 +179,7 @@ class SubjectHelperMixin:
         return caregiver_locator
 
     def enroll_prior_participant(self, screening_identifier, study_child_identifier,
-            hiv_status=None):
+                                 hiv_status=None):
 
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(

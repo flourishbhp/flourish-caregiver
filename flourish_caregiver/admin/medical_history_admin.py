@@ -50,19 +50,34 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         ]
 
     schedule_names = ['a_quarterly1_schedule1', 'a_quarterly2_schedule1',
-                          'a_quarterly3_schedule1', 'a_sec_quart1_schedule1',
-                          'a_sec_quart2_schedule1', 'a_sec_quart3_schedule1',
-                          'b_quarterly1_schedule1', 'b_quarterly2_schedule1',
-                          'b_quarterly3_schedule1', 'c_quarterly2_schedule1',
-                          'c_quarterly1_schedule1', 'c_quarterly3_schedule1',
-                          'b_sec_quart1_schedule1', 'b_sec_quart2_schedule1',
-                          'b_sec_quart3_schedule1', 'c_sec_quart1_schedule1',
-                          'c_sec_quart2_schedule1', 'c_sec_quart3_schedule1',
-                          'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1',
-                          'a_birth1_schedule1']
+                      'a_quarterly3_schedule1', 'a_sec_quart1_schedule1',
+                      'a_sec_quart2_schedule1', 'a_sec_quart3_schedule1',
+                      'b_quarterly1_schedule1', 'b_quarterly2_schedule1',
+                      'b_quarterly3_schedule1', 'c_quarterly2_schedule1',
+                      'c_quarterly1_schedule1', 'c_quarterly3_schedule1',
+                      'b_sec_quart1_schedule1', 'b_sec_quart2_schedule1',
+                      'b_sec_quart3_schedule1', 'c_sec_quart1_schedule1',
+                      'c_sec_quart2_schedule1', 'c_sec_quart3_schedule1',
+                      'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1',
+                      'a_birth1_schedule1', ]
+
+    fu_schedule_names = ['a_fu1_schedule1', 'a_fu2_schedule1',
+                         'a_fu3_schedule1',
+                         'a_fu_quarterly1_schedule1', 'a_fu_quarterly2_schedule1',
+                         'a_fu_quarterly3_schedule1',
+                         'b_fu1_schedule1',
+                         'b_fu2_schedule1', 'b_fu3_schedule1',
+                         'b_fu_quarterly1_schedule1', 'b_fu_quarterly2_schedule1',
+                         'b_fu_quarterly3_schedule1',
+                         'c_fu1_schedule1',
+                         'c_fu2_schedule1', 'c_fu3_schedule1',
+                         'c_fu_quarterly1_schedule1', 'c_fu_quarterly2_schedule1',
+                         'c_fu_quarterly3_schedule1']
+
+    schedules = schedule_names + fu_schedule_names
 
     conditional_fieldlists = {}
-    for schedule in schedule_names:
+    for schedule in schedules:
         conditional_fieldlists.update(
             {schedule: Insert('med_history_changed', after='report_datetime')})
 

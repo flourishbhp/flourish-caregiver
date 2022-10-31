@@ -2,14 +2,16 @@ from dateutil.relativedelta import relativedelta
 from edc_base.utils import get_utcnow
 from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT, \
     NOT_APPLICABLE, FEMALE, NEG
-from edc_visit_tracking.constants import SCHEDULED
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
-from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery, \
-    TbInformedConsent, TbStudyEligibility, TbOffStudy, TbVisitScreeningWomen
+from edc_visit_tracking.constants import SCHEDULED
+from flourish_caregiver.models.tb_engagement import TbEngagement
+
 from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
                      CaregiverEdinburghDeprScreening)
+from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery, \
+    TbInformedConsent, TbStudyEligibility, TbOffStudy, TbVisitScreeningWomen
 from .models import CaregiverPreviouslyEnrolled
 from .models import FlourishConsentVersion
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
@@ -20,7 +22,7 @@ fake = Faker()
 
 # father involement
 
-relationshipfatherinvolvement = Recipe (
+relationshipfatherinvolvement = Recipe(
     RelationshipFatherInvolvement,
 )
 
@@ -67,6 +69,7 @@ subjectconsent = Recipe(
     confirm_identity=seq('123427675'),
     identity_type='country_id',
     is_dob_estimated='-',
+    hiv_testing=YES,
     remain_in_study=YES,
     consent_reviewed=YES,
     study_questions=YES,
@@ -75,6 +78,7 @@ subjectconsent = Recipe(
     future_contact=YES,
     child_consent=YES,
     citizen=YES,
+    hiv_testing=YES,
     version='1'
 )
 
@@ -154,7 +158,7 @@ maternaldelivery = Recipe(
     valid_regiment_duration=YES)
 
 hivrapidtestcounseling = Recipe(
-    HIVRapidTestCounseling, )
+    HIVRapidTestCounseling,)
 
 gadanxietyscreening = Recipe(
     CaregiverGadAnxietyScreening,
@@ -164,7 +168,7 @@ gadanxietyscreening = Recipe(
     trouble_relaxing='0',
     restlessness='1',
     easily_annoyed='2',
-    fearful='3', )
+    fearful='3',)
 
 caregiverphqdeprscreening = Recipe(
     CaregiverPhqDeprScreening,
@@ -176,7 +180,7 @@ caregiverphqdeprscreening = Recipe(
     self_doubt='0',
     easily_distracted='1',
     restlessness='1',
-    self_harm='0', )
+    self_harm='0',)
 
 caregiveredinburghdeprscreening = Recipe(
     CaregiverEdinburghDeprScreening,
@@ -189,13 +193,13 @@ caregiveredinburghdeprscreening = Recipe(
     sleeping_difficulty='2',
     miserable_feeling='1',
     unhappy='1',
-    self_harm='1', )
+    self_harm='1',)
 
 hivrapidtest = Recipe(
-    HIVRapidTestCounseling, )
+    HIVRapidTestCounseling,)
 
 tbstudyeligibility = Recipe(
-    TbStudyEligibility, )
+    TbStudyEligibility,)
 
 tboffstudy = Recipe(
     TbOffStudy,
@@ -203,6 +207,10 @@ tboffstudy = Recipe(
 
 tbvisitscreeningwomen = Recipe(
     TbVisitScreeningWomen,
+)
+
+tbengagement = Recipe(
+    TbEngagement,
 )
 
 ultrasound = Recipe(

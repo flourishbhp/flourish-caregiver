@@ -22,6 +22,7 @@ class TbRoutineHealthScreenAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'screen_location_other',
                 'pos_screen',
                 'diagnostic_referral',
+                'referral_reason'
             ]}
          ), audit_fieldset_tuple)
 
