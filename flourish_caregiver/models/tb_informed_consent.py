@@ -6,7 +6,6 @@ from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.sites import CurrentSiteManager
 from edc_base.sites.site_model_mixin import SiteModelMixin
-from edc_base.utils import get_utcnow
 from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_consent.field_mixins import PersonalFieldsMixin, VulnerabilityFieldsMixin
 from edc_consent.managers import ConsentManager
@@ -17,9 +16,9 @@ from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 from edc_search.model_mixins import SearchSlugManager
 
-from .model_mixins import SearchSlugModelMixin
 from ..choices import GENDER_OTHER
 from ..choices import IDENTITY_TYPE
+from .model_mixins import SearchSlugModelMixin
 
 
 class InformedConsentManager(ConsentManager, SearchSlugManager, models.Manager):
@@ -96,7 +95,6 @@ class TbInformedConsent(ConsentModelMixin, SiteModelMixin,
     @property
     def consent_version(self):
         return self.version
-
 
     class Meta(ConsentModelMixin.Meta):
         app_label = 'flourish_caregiver'

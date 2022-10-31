@@ -5,9 +5,11 @@ from flourish_form_validations.form_validators import RelationshipFatherInvolvem
 from ..models import RelationshipFatherInvolvement
 
 
-class RelationshipFatherInvolvementForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
+class RelationshipFatherInvolvementForm(SiteModelFormMixin, FormValidatorMixin,
+                                        forms.ModelForm):
 
     form_validator_cls = RelationshipFatherInvolvementFormValidator
+
     class Meta:
         model = RelationshipFatherInvolvement
         fields = '__all__'
