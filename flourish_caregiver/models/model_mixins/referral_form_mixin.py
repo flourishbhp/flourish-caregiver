@@ -52,9 +52,8 @@ class ReferralFormMixin(models.Model):
 
     emo_support_type = models.ManyToManyField(
         EmoSupportType,
-        verbose_name=('If no, please share reason why you have not received emotional'
-                      'support?'),
-        null=True)
+        verbose_name=('If yes, what kind of emotional support did you receive?'),
+        blank=True)
 
     emo_support_type_other = OtherCharField()
 
@@ -80,7 +79,9 @@ class ReferralFormMixin(models.Model):
     satisfied_counselor = models.CharField(
         verbose_name=('Are you satisfied with your counselor?'),
         max_length=3,
-        choices=YES_NO)
+        choices=YES_NO,
+        blank=True,
+        null=True)
 
     additional_counseling = models.CharField(
         verbose_name=('Would you also like us to provide a referral for additional'
