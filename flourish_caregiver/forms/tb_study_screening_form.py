@@ -15,7 +15,6 @@ class TbStudyScreeningForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
     def clean(self):
         return super().clean()
 
-
     class Meta:
         model = TbStudyEligibility
         fields = '__all__'

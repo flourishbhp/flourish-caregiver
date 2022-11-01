@@ -2,20 +2,12 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
-from ...choices import EMO_HEALTH_IMPROVED, REFERRED_TO
+from ...choices import EMO_HEALTH_IMPROVED
 from ...choices import YES_NO_DN_PNTA, EMO_SUPPORT_DECLINE, NO_EMO_SUPPORT_REASON
 from ..list_models import EmoSupportType
 
 
 class ReferralFormMixin(models.Model):
-
-    referred_to = models.CharField(
-        verbose_name='Referred To',
-        choices=REFERRED_TO,
-        max_length=50,
-        null=True)
-
-    referred_to_other = OtherCharField()
 
     attended_referral = models.CharField(
         verbose_name=('Since you were referred for emotional support at the last attended '
