@@ -1,5 +1,4 @@
 from django.contrib import admin
-from edc_fieldsets.fieldlist import Insert
 from edc_model_admin import audit_fieldset_tuple
 
 from ..admin_site import flourish_caregiver_admin
@@ -18,8 +17,6 @@ class CaregiverEdinburghReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             'fields': [
                 'maternal_visit',
                 'report_datetime',
-                'referred_to',
-                'referred_to_other',
                 'attended_referral',
                 'support_ref_decline_reason',
                 'support_ref_decline_reason_other',
@@ -38,8 +35,7 @@ class CaregiverEdinburghReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             ]}
          ), audit_fieldset_tuple)
 
-    radio_fields = {'referred_to': admin.VERTICAL,
-                    'attended_referral': admin.VERTICAL,
+    radio_fields = {'attended_referral': admin.VERTICAL,
                     'support_ref_decline_reason': admin.VERTICAL,
                     'emo_support': admin.VERTICAL,
                     'no_support_reason': admin.VERTICAL,
