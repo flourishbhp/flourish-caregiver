@@ -63,6 +63,7 @@ class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'interview_participation',
                 'contact_info',
                 'partner_cell',
+                'conunselling_referral'
             ), }
          ), audit_fieldset_tuple
     )
@@ -98,4 +99,4 @@ class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'named_with_child': admin.VERTICAL,
                     'interview_participation': admin.VERTICAL,
                     'contact_info': admin.VERTICAL,
-                    }
+                    'conunselling_referral': admin.VERTICAL,}

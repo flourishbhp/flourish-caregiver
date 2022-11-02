@@ -9,7 +9,7 @@ from edc_constants.choices import YES_NO
 from ..choices import (YES_NO_PNTA,YES_NO_PNTA_UNKNOWN,
                        HIV_STATUS_DISCUSSION,PARTNERS_SUPPORT,
                        CHOICE_FREQUENCY,HAPPINESS_CHOICES,FATHER_VISITS,
-                       FATHERS_FINANCIAL_SUPPORT,HOUSEHOLD_MEMBER)
+                       FUTURE_OF_RELATIONSHIP, FATHERS_FINANCIAL_SUPPORT,HOUSEHOLD_MEMBER)
 
 from django_crypto_fields.fields import EncryptedCharField
 from edc_base.model_validators import CellNumber
@@ -26,8 +26,8 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     
     partner_present = models.CharField(
         verbose_name="Do you currently have a partner? ",
-        choices=YES_NO,
-        max_length=3
+        choices=YES_NO_PNTA,
+        max_length=25
     )
     
     why_partner_absent = models.TextField(
@@ -115,8 +115,8 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     
     ever_separated = models.CharField(
         verbose_name="Have you and your partner ever separated before?",
-        choices=YES_NO,
-        max_length=3,
+        choices=YES_NO_PNTA,
+        max_length=25,
         blank=True,
         null=True 
     )
@@ -210,12 +210,19 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     future_relationship = models.CharField(
         verbose_name='Which of the following statements best describes how you'
         ' feel about the future of your relationship?',
-        choices=HAPPINESS_CHOICES,
+        choices=FUTURE_OF_RELATIONSHIP,
         max_length=20,
         help_text='(Partnership success can be defined as staying together.)',
         blank=True,
         null=True
     )
+    
+    biological_father_alive =  models.CharField(
+        verbose_name='Is the biological father of this child alive',
+        choices=YES_NO_PNTA,
+        max_length=4,
+        blank=True,
+        null=True,)
     
     father_child_contact = models.CharField(
         verbose_name='How often does the biologic father have contact '
@@ -296,6 +303,12 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         validators=[CellNumber, ],
         blank=True,
         null=True)
+    
+    conunselling_referral = models.CharField(
+        verbose_name = 'Would this participant like a referral for counselling?',
+        choices=YES_NO,
+        max_length=3,
+    )
 
     
     class Meta(CrfModelMixin.Meta):
