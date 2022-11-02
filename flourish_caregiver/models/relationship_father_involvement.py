@@ -6,7 +6,7 @@ from edc_base.utils import get_utcnow
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from edc_constants.choices import YES_NO
-from ..choices import (YES_NO_PNTA,YES_NO_PNTA_UNKNOWN,
+from ..choices import (YES_NO_PNTA, YES_NO_PNTA_NA,YES_NO_PNTA_UNKNOWN,
                        HIV_STATUS_DISCUSSION,PARTNERS_SUPPORT,
                        CHOICE_FREQUENCY,HAPPINESS_CHOICES,FATHER_VISITS,
                        FUTURE_OF_RELATIONSHIP, FATHERS_FINANCIAL_SUPPORT,HOUSEHOLD_MEMBER)
@@ -45,19 +45,14 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         null=True 
     )
     
-    duration_with_partner_months = models.PositiveIntegerField(
+    duration_with_partner = models.FloatField(
         verbose_name='How long have you been with your current partner?',
-        help_text='(Months)',
+        help_text='(Years).(Months), For example 1.5 year is equavalent to 1 years 6 months',
         default=0,
+        validators=[MinValueValidator(0)],
         blank=True,
         null=True)
-    
-    duration_with_partner_years = models.PositiveIntegerField(
-        verbose_name='Years',
-        help_text='(Years)',
-        default=0,
-        blank=True,
-        null=True)
+
     
     partner_age_in_years = models.PositiveIntegerField(
         verbose_name='How old is your partner?',
@@ -81,10 +76,8 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     
     disclosure_to_partner = models.CharField(
         verbose_name="Have you disclosed your HIV status to your partner",
-        choices=YES_NO_PNTA,
+        choices=YES_NO_PNTA_NA,
         max_length=25,
-        blank=True,
-        null=True
         
     )
     
@@ -92,17 +85,13 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         verbose_name="How easy or difficult is it to  discuss your HIV status  with your partner?",
         choices=HIV_STATUS_DISCUSSION,
         max_length=17,
-        blank=True,
-        null=True
     )
     
     disclose_status = models.CharField(
         verbose_name='Do you plan to disclosure your HIV status to'
         'your partner at some time in the future',
-        choices=YES_NO_PNTA,
+        choices=YES_NO_PNTA_NA,
         max_length=23,
-        blank=True,
-        null=True
     )
     
     partners_support = models.CharField(
@@ -220,9 +209,7 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     biological_father_alive =  models.CharField(
         verbose_name='Is the biological father of this child alive',
         choices=YES_NO_PNTA,
-        max_length=4,
-        blank=True,
-        null=True,)
+        max_length=4,)
     
     father_child_contact = models.CharField(
         verbose_name='How often does the biologic father have contact '

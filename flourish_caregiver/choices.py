@@ -894,6 +894,15 @@ YES_NO_PNTA = (
     (PNTA, _('Prefer not to answer')),
 )
 
+
+YES_NO_PNTA_NA = (
+    (YES, YES),
+    (NO, NO),
+    (PNTA, _('Prefer not to answer')),
+    (NOT_APPLICABLE, 'Not Applicable')
+
+)
+
 HIV_STATUS_DISCUSSION = (
     ('very_easy', 'Very Easy'),
     ('easy', 'Easy'),
@@ -967,7 +976,8 @@ FATHER_VISITS = {
     ('every_couple_of_months', 'Every couple of months'),
     ('every_year', 'Every year'),
     ('do_not_know', 'I don’t know'),
-    (PNTA, 'Prefer not to answer')
+    (PNTA, 'Prefer not to answer'),
+    (NOT_APPLICABLE, 'Not Applicable')
 
 }
 
@@ -975,7 +985,9 @@ FATHERS_FINANCIAL_SUPPORT = {
     ('not_supportive', 'Not supportive'),
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very supportive'),
-    (PNTA, 'Prefer not to answer')
+    (PNTA, 'Prefer not to answer'),
+    (NOT_APPLICABLE, 'Not Applicable')
+
 
 }
 
@@ -984,6 +996,6 @@ HOUSEHOLD_MEMBER = {
     ('father', 'Father'),
     ('other', 'Other'),
     ('no_one', 'No-one'),
-    (PNTA, 'Prefer not to answer')
-
+    (PNTA, 'Prefer not to answer'),
+    (NOT_APPLICABLE, 'Not Applicable')
 }

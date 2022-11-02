@@ -20,8 +20,7 @@ class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'partner_present',
                 'why_partner_absent',
                 'is_partner_the_father',
-                'duration_with_partner_months',
-                'duration_with_partner_years',
+                'duration_with_partner',
                 'partner_age_in_years',
                 'living_with_partner',
                 'why_not_living_with_partner',
@@ -47,6 +46,7 @@ class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
          ),
         ("People involved in taking care of your child", {
             "fields": (
+                'biological_father_alive',
                 'father_child_contact',
                 'fathers_financial_support',
                 'child_left_alone',
@@ -71,6 +71,7 @@ class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     search_fields = ('subject_identifier',)
 
     radio_fields = {'partner_present': admin.VERTICAL,
+                    'biological_father_alive': admin.VERTICAL,
                     'is_partner_the_father': admin.VERTICAL,
                     'living_with_partner': admin.VERTICAL,
                     'disclosure_to_partner': admin.VERTICAL,
