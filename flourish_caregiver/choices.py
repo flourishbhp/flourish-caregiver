@@ -895,11 +895,13 @@ YES_NO_PNTA = (
 )
 
 HIV_STATUS_DISCUSSION = (
-    ('very_easy', 'Very Unsupportive'),
-    ('easy', 'Unsupportive'),
+    ('very_easy', 'Very Easy'),
+    ('easy', 'Easy'),
     ('neutral', 'Neutral'),
     ('difficult', 'Difficult'),
     ('very_difficult', 'Very Difficult'),
+    (PNTA, 'Prefer not to answer'),
+    (NOT_APPLICABLE, 'Not Applicable')
 )
 
 INTERVIEW_LOCATIONS = (
@@ -918,6 +920,9 @@ PARTNERS_SUPPORT = {
     ('neutral', 'Neutral'),
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very Supportive'),
+    (PNTA, 'Prefer not to answer'),
+    (NOT_APPLICABLE, 'Not Applicable')
+
 }
 
 CHOICE_FREQUENCY = {
@@ -927,6 +932,8 @@ CHOICE_FREQUENCY = {
     ('occasionally', 'Occasionally'),
     ('rarely', 'Rarely'),
     ('never', 'Never'),
+    (PNTA, 'Prefer not to answer')
+
 }
 
 HAPPINESS_CHOICES = {
@@ -937,6 +944,8 @@ HAPPINESS_CHOICES = {
     ('little_happy', 'A little happy'),
     ('little_unhappy', 'A little unhappy'),
     ('fairly_unhappy', 'Fairly unhappy'),
+    (PNTA, 'Prefer not to answer')
+
 }
 
 FUTURE_OF_RELATIONSHIP = {
@@ -958,12 +967,16 @@ FATHER_VISITS = {
     ('every_couple_of_months', 'Every couple of months'),
     ('every_year', 'Every year'),
     ('do_not_know', 'I don’t know'),
+    (PNTA, 'Prefer not to answer')
+
 }
 
 FATHERS_FINANCIAL_SUPPORT = {
     ('not_supportive', 'Not supportive'),
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very supportive'),
+    (PNTA, 'Prefer not to answer')
+
 }
 
 HOUSEHOLD_MEMBER = {
@@ -971,4 +984,6 @@ HOUSEHOLD_MEMBER = {
     ('father', 'Father'),
     ('other', 'Other'),
     ('no_one', 'No-one'),
+    (PNTA, 'Prefer not to answer')
+
 }
