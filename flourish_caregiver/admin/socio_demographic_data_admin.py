@@ -1,5 +1,5 @@
 from django.contrib import admin
-from edc_fieldsets.fieldlist import Insert, Remove
+from edc_fieldsets.fieldlist import Fieldlist
 from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 from edc_model_admin import audit_fieldset_tuple
 
@@ -88,12 +88,11 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     schedules = quartely_schedules + fu_schedules
 
     for schedule in schedules:
-        conditional_fieldlists.update(
-            {schedule: Insert('socio_demo_changed', after='report_datetime')})
 
-    for schedule in schedules:
         conditional_fieldlists.update(
-            {schedule: Remove('number_of_household_members')})
+            {schedule: Fieldlist(insert_fields=('socio_demo_changed',),
+                                 remove_fields=('number_of_household_members',),
+                                 insert_after='report_datetime')})
 
     def get_form(self, request, obj=None, *args, **kwargs):
         form = super().get_form(request, *args, **kwargs)

@@ -13,6 +13,10 @@ class DeliveryComplications(ListModelMixin, BaseUuidModel):
     pass
 
 
+class EmoSupportType(ListModelMixin, BaseUuidModel):
+    pass
+
+
 class MaternalDiagnosesList(ListModelMixin, BaseUuidModel):
     pass
 

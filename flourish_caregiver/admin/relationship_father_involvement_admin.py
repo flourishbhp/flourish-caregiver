@@ -1,19 +1,17 @@
-from atexit import register
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
 from ..admin_site import flourish_caregiver_admin
-from .modeladmin_mixins import CrfModelAdminMixin
-
-from ..models import RelationshipFatherInvolvement
 from ..forms import RelationshipFatherInvolvementForm
+from ..models import RelationshipFatherInvolvement
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(RelationshipFatherInvolvement, site=flourish_caregiver_admin)
-class RelationshipFatherInvolmentAdmin(CrfModelAdminMixin,admin.ModelAdmin):
-    
+class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+
     form = RelationshipFatherInvolvementForm
-    
+
     fieldsets = (
         (None, {
             "fields": (
@@ -44,9 +42,9 @@ class RelationshipFatherInvolmentAdmin(CrfModelAdminMixin,admin.ModelAdmin):
                 'engage_in_interests',
                 'happiness_in_relationship',
                 'future_relationship',
-                
-            ),}
-        ),
+
+            ), }
+         ),
         ("People involved in taking care of your child", {
             "fields": (
                 'father_child_contact',
@@ -58,19 +56,19 @@ class RelationshipFatherInvolmentAdmin(CrfModelAdminMixin,admin.ModelAdmin):
                 'took_child_outside',
                 'played_with_child',
                 'named_with_child'
-            ),}
-        ),
+            ), }
+         ),
         ("Participiate in study about caregiving", {
             "fields": (
                 'interview_participation',
                 'contact_info',
                 'partner_cell',
-            ),}
-        ), audit_fieldset_tuple
+            ), }
+         ), audit_fieldset_tuple
     )
-    
-    search_fields = ('subject_identifier',) 
-    
+
+    search_fields = ('subject_identifier',)
+
     radio_fields = {'partner_present': admin.VERTICAL,
                     'is_partner_the_father': admin.VERTICAL,
                     'living_with_partner': admin.VERTICAL,
@@ -78,6 +76,7 @@ class RelationshipFatherInvolmentAdmin(CrfModelAdminMixin,admin.ModelAdmin):
                     'discussion_with_partner': admin.VERTICAL,
                     'disclose_status': admin.VERTICAL,
                     'partners_support': admin.VERTICAL,
+                    'ever_separated': admin.VERTICAL,
                     'separation_consideration': admin.VERTICAL,
                     'leave_after_fight': admin.VERTICAL,
                     'relationship_progression': admin.VERTICAL,
@@ -100,5 +99,3 @@ class RelationshipFatherInvolmentAdmin(CrfModelAdminMixin,admin.ModelAdmin):
                     'interview_participation': admin.VERTICAL,
                     'contact_info': admin.VERTICAL,
                     }
-    
-    
