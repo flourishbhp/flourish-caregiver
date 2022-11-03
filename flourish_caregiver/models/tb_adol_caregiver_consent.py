@@ -76,7 +76,9 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
     tb_blood_test_consent = models.CharField(
         verbose_name=('Will you allow for blood testing for TB for your adolescent? '),
         max_length=3,
-        choices=YES_NO)
+        choices=YES_NO,
+        validators=[eligible_if_yes, ],
+        help_text='Participant is not eligible if no')
 
     future_studies_contact = models.CharField(
         verbose_name=('Contact for future studies: Do you give us permission for us '
@@ -88,7 +90,7 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         verbose_name=('Use of Samples in Future Research: Do you give us permission to use '
                       'your child\'s blood samples for future studies?'),
         max_length=3,
-        choices=YES_NO,)
+        choices=YES_NO)
 
     is_eligible = models.BooleanField(
         default=True,
