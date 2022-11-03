@@ -24,7 +24,7 @@ class TbAdolEligibility(NonUniqueSubjectIdentifierModelMixin,
                       'TB Adolescent Study'),
         choices=YES_NO,
         max_length=10,
-        help_text='Elligible for TB adolescent study if NO')
+        help_text='Eligible for TB adolescent study if NO')
 
     reasons_unwilling_part = models.CharField(
         verbose_name='Reasons unable to obtain an informed consent for TB study',
