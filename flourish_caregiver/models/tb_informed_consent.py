@@ -66,7 +66,7 @@ class TbInformedConsent(ConsentModelMixin, SiteModelMixin,
         choices=YES_NO,
         max_length=3,
         validators=[eligible_if_yes, ],
-        help_text='Participant is not eligible if no')
+        help_text='If no, participant is not eligible.')
 
     is_eligible = models.BooleanField(
         default=True,
