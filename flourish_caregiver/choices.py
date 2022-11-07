@@ -930,14 +930,13 @@ PARTNERS_SUPPORT = {
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very Supportive'),
     (PNTA, 'Prefer not to answer'),
-    (NOT_APPLICABLE, 'Not Applicable')
 
 }
 
 CHOICE_FREQUENCY = {
     ('all_the_time', 'All the time'),
     ('most_of_the_time', 'Most of the time'),
-    ('more_often', 'More of than not'),
+    ('more_often', 'More often than not'),
     ('occasionally', 'Occasionally'),
     ('rarely', 'Rarely'),
     ('never', 'Never'),
