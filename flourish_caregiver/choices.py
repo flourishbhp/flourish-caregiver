@@ -923,16 +923,16 @@ INTERVIEW_LANGUAGE = (
     ('setswana', 'Setswana'),
     ('english', 'English'))
 
-PARTNERS_SUPPORT = {
+PARTNERS_SUPPORT = (
     ('very_supportive', 'Very Supportive'),
     ('supportive', 'Supportive'),
     ('neutral', 'Neutral'),
     ('unsupportive', 'Unsupportive'),
     ('very_unsupportive', 'Very Unsupportive'),
     (PNTA, 'Prefer not to answer'),
-}
+)
 
-CHOICE_FREQUENCY = {
+CHOICE_FREQUENCY = (
     (PNTA, 'Prefer not to answer'),
     ('never', 'Never'),
     ('rarely', 'Rarely'),
@@ -940,9 +940,9 @@ CHOICE_FREQUENCY = {
     ('more_often', 'More often than not'),
     ('most_of_the_time', 'Most of the time'),
     ('all_the_time', 'All the time'),
-}
+)
 
-HAPPINESS_CHOICES = {
+HAPPINESS_CHOICES = (
     ('perfect', 'Perfect'),
     ('extremely_happy', 'Extremely Happy'),
     ('very_happy', 'Very Happy'),
@@ -951,10 +951,9 @@ HAPPINESS_CHOICES = {
     ('little_unhappy', 'A little unhappy'),
     ('fairly_unhappy', 'Fairly unhappy'),
     (PNTA, 'Prefer not to answer')
+)
 
-}
-
-FUTURE_OF_RELATIONSHIP = {
+FUTURE_OF_RELATIONSHIP = (
     ('do_anything',
      'I want desperately for the partnership to succeed and will do anything to see that it does'),
     ('do_what_I_can',
@@ -965,9 +964,9 @@ FUTURE_OF_RELATIONSHIP = {
      'It would be nice if my partnership succeeded, but I refuse to do more'),
     ('nothing_more',
      'My partnership can never succeed and there is nothing more I can do'),
-}
+)
 
-FATHER_VISITS = {
+FATHER_VISITS = (
     ('every_day', 'Every day'),
     ('every_week_weekend', "Every week/weekend"),
     ('every_couple_of_months', 'Every couple of months'),
@@ -976,9 +975,9 @@ FATHER_VISITS = {
     (PNTA, 'Prefer not to answer'),
     (NOT_APPLICABLE, 'Not Applicable')
 
-}
+)
 
-FATHERS_FINANCIAL_SUPPORT = {
+FATHERS_FINANCIAL_SUPPORT = (
     ('not_supportive', 'Not supportive'),
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very supportive'),
@@ -986,12 +985,12 @@ FATHERS_FINANCIAL_SUPPORT = {
     (NOT_APPLICABLE, 'Not Applicable')
 
 
-}
+)
 
-HOUSEHOLD_MEMBER = {
+HOUSEHOLD_MEMBER = (
     ('mother', 'Mother'),
     ('father', 'Father'),
     ('other', 'Other'),
     ('no_one', 'No-one'),
     (PNTA, 'Prefer not to answer'),
-}
+)
