@@ -575,23 +575,8 @@ def tb_offstudy_post_save(sender, instance, raw, created, **kwargs):
                         onschedule_model=tb_onschedule,
                         name=tb_schedule)
         schedule.take_off_schedule(
-            subject_identifier=instance.subject_identifier,)
-
-
-@receiver(post_save, weak=False, sender=CaregiverOffStudy,
-          dispatch_uid='caregiver_off_study_on_post_save')
-def maternal_caregiver_take_off_study(sender, instance, raw, created, **kwargs):
-
-    for visit_schedule in site_visit_schedules.visit_schedules.values():
-        for schedule in visit_schedule.schedules.values():
-            onschedule_model_obj = get_onschedule_model_obj(
-                schedule, instance.subject_identifier)
-            if onschedule_model_obj:
-                _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
-                    onschedule_model=onschedule_model_obj._meta.label_lower,
-                    name=onschedule_model_obj.schedule_name)
-                schedule.take_off_schedule(
-                    subject_identifier=instance.subject_identifier,)
+            subject_identifier=instance.subject_identifier,
+            schedule_name=tb_schedule)
 
 
 @receiver(post_save, weak=False, sender=CaregiverOffSchedule,
@@ -608,7 +593,8 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
                     name=instance.schedule_name)
                 schedule.take_off_schedule(
                     subject_identifier=instance.subject_identifier,
-                    offschedule_datetime=instance.offschedule_datetime)
+                    offschedule_datetime=instance.offschedule_datetime,
+                    schedule_name=instance.schedule_name)
 
 
 @receiver(post_save, weak=False, sender=UltraSound,
