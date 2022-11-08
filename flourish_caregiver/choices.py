@@ -904,11 +904,11 @@ YES_NO_PNTA_NA = (
 )
 
 HIV_STATUS_DISCUSSION = (
-    ('very_easy', 'Very Easy'),
-    ('easy', 'Easy'),
-    ('neutral', 'Neutral'),
-    ('difficult', 'Difficult'),
     ('very_difficult', 'Very Difficult'),
+    ('difficult', 'Difficult'),
+    ('neutral', 'Neutral'),
+    ('easy', 'Easy'),
+    ('very_easy', 'Very Easy'),
     (PNTA, 'Prefer not to answer'),
     (NOT_APPLICABLE, 'Not Applicable')
 )
@@ -924,25 +924,22 @@ INTERVIEW_LANGUAGE = (
     ('english', 'English'))
 
 PARTNERS_SUPPORT = {
-    ('very_unsupportive', 'Very Unsupportive'),
-    ('unsupportive', 'Unsupportive'),
-    ('neutral', 'Neutral'),
-    ('supportive', 'Supportive'),
     ('very_supportive', 'Very Supportive'),
+    ('supportive', 'Supportive'),
+    ('neutral', 'Neutral'),
+    ('unsupportive', 'Unsupportive'),
+    ('very_unsupportive', 'Very Unsupportive'),
     (PNTA, 'Prefer not to answer'),
-    (NOT_APPLICABLE, 'Not Applicable')
-
 }
 
 CHOICE_FREQUENCY = {
-    ('all_the_time', 'All the time'),
-    ('most_of_the_time', 'Most of the time'),
-    ('more_often', 'More of than not'),
-    ('occasionally', 'Occasionally'),
-    ('rarely', 'Rarely'),
+    (PNTA, 'Prefer not to answer'),
     ('never', 'Never'),
-    (PNTA, 'Prefer not to answer')
-
+    ('rarely', 'Rarely'),
+    ('occasionally', 'Occasionally'),
+    ('more_often', 'More often than not'),
+    ('most_of_the_time', 'Most of the time'),
+    ('all_the_time', 'All the time'),
 }
 
 HAPPINESS_CHOICES = {
@@ -997,5 +994,4 @@ HOUSEHOLD_MEMBER = {
     ('other', 'Other'),
     ('no_one', 'No-one'),
     (PNTA, 'Prefer not to answer'),
-    (NOT_APPLICABLE, 'Not Applicable')
 }

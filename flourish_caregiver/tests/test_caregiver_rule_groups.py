@@ -1079,6 +1079,7 @@ class TestRuleGroups(TestCase):
                 visit_code='2004M',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
+    @tag('firx')
     def test_father_involvement_required(self):
 
         mommy.make_recipe(

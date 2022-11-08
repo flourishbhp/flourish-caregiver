@@ -62,8 +62,8 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     
     living_with_partner = models.CharField(
         verbose_name="Are you currently living together? ",
-        choices=YES_NO,
-        max_length=3,
+        choices=YES_NO_PNTA,
+        max_length=4,
         blank=True,
         null=True
     )
@@ -89,7 +89,7 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     
     disclose_status = models.CharField(
         verbose_name='Do you plan to disclosure your HIV status to'
-        'your partner at some time in the future',
+        ' your partner at some time in the future',
         choices=YES_NO_PNTA_NA,
         max_length=23,
     )
