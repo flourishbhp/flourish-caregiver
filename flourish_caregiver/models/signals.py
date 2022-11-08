@@ -491,9 +491,23 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
 
             cohort = '_'.join(['cohort', cohort_list[0], 'quarterly'])
 
+        onschedule_model = django_apps.get_model(
+            instance.appointment.schedule.onschedule_model)
+
+        child_subject_identifier = None
+
+        try:
+            onschedule_obj = onschedule_model.objects.get(
+                subject_identifier=instance.subject_identifier,
+                schedule_name=instance.appointment.schedule_name)
+        except onschedule_model.DoesNotExist:
+            raise
+        else:
+            child_subject_identifier = onschedule_obj.child_subject_identifier
+
         put_on_schedule(cohort, instance=instance,
                         subject_identifier=instance.subject_identifier,
-                        child_subject_identifier=instance.subject_identifier,
+                        child_subject_identifier=child_subject_identifier,
                         base_appt_datetime=instance.report_datetime.replace(
                             microsecond=0),
                         caregiver_visit_count=caregiver_visit_count)
