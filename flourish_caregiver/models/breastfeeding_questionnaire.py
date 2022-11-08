@@ -2,7 +2,6 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
-from edc_constants.constants import NOT_APPLICABLE
 from edc_protocol.validators import datetime_not_before_study_start
 
 from ..choices import (HIV_STATUS_AWARE, FEEDING_HIV_STATUS,

@@ -42,7 +42,7 @@ from .medical_history_admin import MedicalHistoryAdmin
 from .modeladmin_mixins import VersionControlMixin
 from .obsterical_history_admin import ObstericalHistoryAdmin
 from .offschedule_admin import CaregiverOffScheduleAdmin
-from .relationship_father_involvement_admin import RelationshipFatherInvolmentAdmin
+from .relationship_father_involvement_admin import RelationshipFatherInvolvementAdmin
 from .screening_preg_women_admin import ScreeningPregWomenAdmin
 from .screening_prior_bhp_participants_admin import ScreeningPriorBhpParticipantsAdmin
 from .socio_demographic_data_admin import SocioDemographicDataAdmin
