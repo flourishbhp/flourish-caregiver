@@ -78,7 +78,6 @@ subjectconsent = Recipe(
     future_contact=YES,
     child_consent=YES,
     citizen=YES,
-    hiv_testing=YES,
     version='1'
 )
 
