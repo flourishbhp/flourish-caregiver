@@ -6,6 +6,7 @@ from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
 from edc_visit_tracking.constants import SCHEDULED
+from flourish_caregiver.models.hiv_disclosure_status import HIVDisclosureStatusA
 from flourish_caregiver.models.tb_engagement import TbEngagement
 
 from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
@@ -196,6 +197,9 @@ caregiveredinburghdeprscreening = Recipe(
 
 hivrapidtest = Recipe(
     HIVRapidTestCounseling,)
+
+hivdisclosurestatusa = Recipe(
+    HIVDisclosureStatusA,)
 
 tbstudyeligibility = Recipe(
     TbStudyEligibility,)
