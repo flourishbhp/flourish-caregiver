@@ -1,8 +1,10 @@
-from datetime import datetime
 import os
+from datetime import datetime
 
-from PIL import Image
 import PIL
+import pyminizip
+import pypdfium2 as pdfium
+from PIL import Image
 from django import forms
 from django.apps import apps as django_apps
 from django.conf import settings
@@ -17,25 +19,12 @@ from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW, NO
 from edc_constants.constants import YES
-from edc_data_manager.models import DataActionItem
-
-from edc_appointment.models import Appointment
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
+
 from flourish_caregiver.models.tb_off_study import TbOffStudy
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
-from flourish_prn.models.caregiver_off_study import CaregiverOffStudy
-import pyminizip
-
-from ..action_items import TB_OFF_STUDY_ACTION
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from ..models.tb_informed_consent import TbInformedConsent
-from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -50,6 +39,14 @@ from .tb_engagement import TbEngagement
 from .tb_interview import TbInterview
 from .tb_referral_outcomes import TbReferralOutcomes
 from .ultrasound import UltraSound
+from ..action_items import TB_OFF_STUDY_ACTION
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
+from ..models.tb_informed_consent import TbInformedConsent
+from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 
 
 class PreFlourishError(Exception):
@@ -1029,16 +1026,21 @@ def stamp_image(instance):
     filename = filefield.name  # gets the "normal" file name as it was uploaded
     storage = filefield.storage
     path = storage.path(filename)
-    add_image_stamp(image_path=path)
+    if '.pdf' not in path:
+        base_image = Image.open(path)
+        stamped_img = add_image_stamp(base_image=base_image)
+        stamped_img.save(path)
+    else:
+        print_pdf(path)
 
-
-def add_image_stamp(image_path=None, position=(25, 25), resize=(600, 600)):
+def add_image_stamp(base_image=None, position=(25, 25),
+        resize=(100, 100)):
     """
     Superimpose image of a stamp over copy of the base image
     @param image_path: dir to base image
+    @param dont_save: boolean for not saving the image just converting
     @param position: pixels(w,h) to superimpose stamp at
     """
-    base_image = Image.open(image_path)
     stamp = Image.open('media/stamp/true-copy.png')
     if resize:
         stamp = stamp.resize(resize, PIL.Image.ANTIALIAS)
@@ -1059,8 +1061,20 @@ def add_image_stamp(image_path=None, position=(25, 25), resize=(600, 600)):
 
     # paste stamp over image
     base_image.paste(stamp, position, mask=stamp)
-    base_image.save(image_path)
+    return base_image
 
+def print_pdf(filepath):
+    pdf = pdfium.PdfDocument(filepath)
+    page_indices = [i for i in range(len(pdf))]
+    renderer = pdf.render_to(
+        pdfium.BitmapConv.pil_image,
+        page_indices=page_indices,
+    )
+    stamped_pdf_images = []
+    for image, index in zip(renderer, page_indices):
+        stamped_pdf_images.append(add_image_stamp(base_image=image))
+    first_img = stamped_pdf_images[0]
+    first_img.save(filepath, save_all=True, append_images=stamped_pdf_images[1:])
 
 def encrypt_files(instance, subject_identifier):
     base_path = settings.MEDIA_ROOT
