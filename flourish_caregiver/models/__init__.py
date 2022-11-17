@@ -86,3 +86,4 @@ from .tb_study_screening import TbStudyEligibility
 from .tb_visit_screening_women import TbVisitScreeningWomen
 from .ultrasound import UltraSound
 from .tb_routine_health_screen_version_2 import TbRoutineHealthScreenVersionTwo
+from .maternal_arv_post_adherence import MaternalArvPostAdherence

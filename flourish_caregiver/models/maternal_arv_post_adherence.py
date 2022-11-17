@@ -35,7 +35,7 @@ class MaternalArvPostAdherence(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Maternal ARVs Post: Adherence'
-        verbose_name_plural = 'Maternal ARVs Post: Adherence'
+        verbose_name = 'Maternal ARVs Post Adherence'
+        verbose_name_plural = 'Maternal ARVs Post Adherence'
 
 
