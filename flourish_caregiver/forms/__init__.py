@@ -70,3 +70,4 @@ from .tb_screen_preg_form import TbScreenPregForm
 from .tb_study_screening_form import TbStudyScreeningForm
 from .tb_visit_screening_women_form import TbVisitScreeningWomenForm
 from .ultrasound_form import UltraSoundForm
+from .tb_routine_health_screen_version_2_form import TbRoutineHealthScreenVersionTwoForm

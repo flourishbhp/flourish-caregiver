@@ -4,7 +4,7 @@ from flourish_form_validations.form_validators import TbRoutineHealthScreenVersi
 
 from ..models import TbRoutineHealthScreenVersionTwo
 from .form_mixins import SubjectModelFormMixin
-from ..choices import YES_NO_UNK_DWTA
+from ..choices import YES_NO_UNK_DWTA, VISIT_NUMBER
 
 
 class TbRoutineHealthScreenVersionTwoForm(SubjectModelFormMixin, forms.ModelForm):
@@ -30,7 +30,7 @@ class TbRoutineHealthScreenVersionTwoForm(SubjectModelFormMixin, forms.ModelForm
             # if the previous instance exist, change the question
             self.fields['tb_health_visits'] = forms.CharField(
                 label='How many health visits have you had since you became pregnant?',
-                widget=forms.RadioSelect(choices=YES_NO_UNK_DWTA))
+                widget=forms.RadioSelect(choices=VISIT_NUMBER))
 
     class Meta:
         model = TbRoutineHealthScreenVersionTwo
