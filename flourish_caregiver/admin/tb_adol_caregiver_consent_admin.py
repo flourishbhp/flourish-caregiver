@@ -89,8 +89,6 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'tb_blood_test_consent',
                 'future_studies_contact',
                 'samples_future_studies',
-                'consent_datetime',
-
             ),
         }),
         ('Review Questions', {
@@ -100,6 +98,8 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'assessment_score',
                 'consent_signature',
                 'consent_copy',
+                'consent_datetime',
+
             ),
         }),
         audit_fieldset_tuple
