@@ -571,9 +571,11 @@ def tb_offstudy_post_save(sender, instance, raw, created, **kwargs):
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
                         onschedule_model=tb_onschedule,
                         name=tb_schedule)
-        schedule.take_off_schedule(
-            subject_identifier=instance.subject_identifier,
-            schedule_name=tb_schedule)
+        if schedule.is_onschedule(subject_identifier=instance.subject_identifier,
+                                  report_datetime=instance.report_datetime):
+            schedule.take_off_schedule(
+                subject_identifier=instance.subject_identifier,
+                schedule_name=tb_schedule)
 
 
 @receiver(post_save, weak=False, sender=CaregiverOffSchedule,
