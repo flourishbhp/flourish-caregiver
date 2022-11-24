@@ -932,7 +932,8 @@ INTERVIEW_LOCATIONS = (
 
 INTERVIEW_LANGUAGE = (
     ('setswana', 'Setswana'),
-    ('english', 'English'))
+    ('english', 'English'),
+    ('both', 'Both'))
 
 PARTNERS_SUPPORT = (
     ('very_supportive', 'Very Supportive'),
