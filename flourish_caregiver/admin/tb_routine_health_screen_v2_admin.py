@@ -2,15 +2,15 @@ from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
 from ..admin_site import flourish_caregiver_admin
-from ..forms import TbRoutineHealthScreenVersionTwoForm
-from ..models import TbRoutineHealthScreenVersionTwo
+from ..forms import TbRoutineHealthScreenV2Form
+from ..models import TbRoutineHealthScreenV2
 from .modeladmin_mixins import CrfModelAdminMixin
 
 
-@admin.register(TbRoutineHealthScreenVersionTwo, site=flourish_caregiver_admin)
+@admin.register(TbRoutineHealthScreenV2, site=flourish_caregiver_admin)
 class TbRoutineHealthScreenVersionTwoAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
-    form = TbRoutineHealthScreenVersionTwoForm
+    form = TbRoutineHealthScreenV2Form
 
     fieldsets = (
         (None, {
