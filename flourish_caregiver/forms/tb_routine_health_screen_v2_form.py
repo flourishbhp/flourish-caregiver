@@ -1,14 +1,14 @@
 from django import forms
 from django.apps import apps as django_apps
-from flourish_form_validations.form_validators import TbRoutineHealthScreenVersionTwoFormValidator
+from flourish_form_validations.form_validators import TbRoutineHealthScreenV2FormValidator
 
-from ..models import TbRoutineHealthScreenVersionTwo
+from ..models import TbRoutineHealthScreenV2
 from .form_mixins import SubjectModelFormMixin
 from ..choices import YES_NO_UNK_DWTA, VISIT_NUMBER
 
 
-class TbRoutineHealthScreenVersionTwoForm(SubjectModelFormMixin, forms.ModelForm):
-    form_validator_cls = TbRoutineHealthScreenVersionTwoFormValidator
+class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
+    form_validator_cls = TbRoutineHealthScreenV2FormValidator
 
     tb_routine_health_screen_model = 'flourish_caregiver.tbroutinehealthscreenversiontwo'
 
@@ -33,5 +33,5 @@ class TbRoutineHealthScreenVersionTwoForm(SubjectModelFormMixin, forms.ModelForm
                 widget=forms.RadioSelect(choices=VISIT_NUMBER))
 
     class Meta:
-        model = TbRoutineHealthScreenVersionTwo
+        model = TbRoutineHealthScreenV2
         fields = '__all__'

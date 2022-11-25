@@ -6,7 +6,7 @@ from .list_models import TbVisitCareLocation
 from .model_mixins import CrfModelMixin
 
 
-class TbRoutineHealthScreenVersionTwo(CrfModelMixin):
+class TbRoutineHealthScreenV2(CrfModelMixin):
     tb_health_visits = models.CharField(
         verbose_name='How many health visits did you have in the last year since last study visit?',
         max_length=20,
