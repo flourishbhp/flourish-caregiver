@@ -200,6 +200,8 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
         choices=AFTER_BIRTH_OPINION,
     )
 
+    after_birth_opinion_other = OtherCharField()
+
     return_to_work_school = models.CharField(
         verbose_name=('My need to return to work/school influenced my feeding choice for '
                       'this baby.'),
