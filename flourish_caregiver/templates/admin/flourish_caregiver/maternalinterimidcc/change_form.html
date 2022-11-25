@@ -1,0 +1,37 @@
+{% extends 'admin/change_form.html' %}
+{% load static %}
+
+
+{% block field_sets %}
+    {% if interimhx %}
+        <b> 
+            <div class="col-md-12">
+                <h2 class="header-text">Maternal HIV Interim History </h2>
+                <table class="table table-bordered" style="width:80%; margin-bottom: 40px;" >
+                    <thead>
+                        <th>CD4 Date</th>
+                        <th>CD4 Result</th>
+                        <th>VL Date</th>
+                        <th>VL Result</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{interimhx.cd4_date}}</td>
+                            <td>{{interimhx.cd4_result}}</td>
+                            <td>{{interimhx.vl_date}}</td>
+                            <td>{{interimhx.vl_result}}</td>
+                            
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </b>
+
+
+    {% endif %}
+   {% for fieldset in adminform %}
+   {% include "admin/includes/fieldset.html" %}
+ {% endfor %}
+{% endblock  %}
+
+
