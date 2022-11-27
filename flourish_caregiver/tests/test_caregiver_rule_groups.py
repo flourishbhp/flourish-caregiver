@@ -3,7 +3,7 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
-from edc_constants.constants import YES, NEG, POS
+from edc_constants.constants import YES, NEG, POS, NO
 from edc_facility.import_holidays import import_holidays
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 from edc_metadata.models import CrfMetadata
@@ -19,7 +19,9 @@ from edc_appointment.models import Appointment
 from edc_visit_schedule.subject_schedule import SubjectSchedule
 from edc_visit_tracking.constants import SCHEDULED
 
+from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..models import MaternalVisit
+from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuarterly
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
@@ -347,15 +349,70 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M').entry_status, REQUIRED)
 
+    @tag('php')
     def test_phq9gte_5_referral_required(self):
+
         visit = MaternalVisit.objects.get(visit_code='1000M')
         mommy.make_recipe('flourish_caregiver.caregiverphqdeprscreening',
                           maternal_visit=visit)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.subject_consent.subject_identifier,
+            live_infants_to_register=1)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2001M',
+                subject_identifier=self.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.caregiverphqreferral',
                 subject_identifier=self.subject_identifier,
-                visit_code='1000M').entry_status, REQUIRED)
+                visit_code='2001M').entry_status, REQUIRED)
+
+    @tag('php')
+    def test_phq9gte_5_referral_not_required(self):
+
+        visit = MaternalVisit.objects.get(visit_code='1000M')
+        mommy.make_recipe('flourish_caregiver.caregiverphqdeprscreening',
+                          maternal_visit=visit,
+                          fatigued='3')
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.subject_consent.subject_identifier,
+            live_infants_to_register=1)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2001M',
+                subject_identifier=self.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.caregiverphqreferral',
+                subject_identifier=self.subject_identifier,
+                visit_code='2001M').entry_status, NOT_REQUIRED)
 
     def test_edingte_10_referral_required(self):
         visit = MaternalVisit.objects.get(visit_code='1000M')
@@ -522,6 +579,84 @@ class TestRuleGroups(TestCase):
                 model='flourish_caregiver.hivdisclosurestatusb',
                 subject_identifier=subject_identifier,
                 visit_code='2000M').entry_status, NOT_REQUIRED)
+
+    @tag('hdscfu')
+    def test_hiv_disclosure_metadata_fu_required(self):
+        maternal_dataset_options = {
+            'delivdt': get_utcnow() - relativedelta(years=14),
+            'mom_enrolldate': get_utcnow(),
+            'mom_hivstatus': 'HIV-infected',
+            'study_maternal_identifier': '11123',
+            'protocol': 'Mpepu',
+            'preg_pi': 1}
+
+        child_dataset_options = {
+            'infant_hiv_exposed': 'Exposed',
+            'infant_enrolldate': get_utcnow(),
+            'study_maternal_identifier': '11123',
+            'study_child_identifier': '1234',
+            'dob': get_utcnow() - relativedelta(years=14)}
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            **child_dataset_options)
+
+        maternal_dataset_obj = mommy.make_recipe(
+           'flourish_caregiver.maternaldataset',
+           **maternal_dataset_options)
+
+        sh = SubjectHelperMixin()
+
+        subject_identifier = sh.enroll_prior_participant_assent(
+            maternal_dataset_obj.screening_identifier,
+            child_dataset_options.get('study_child_identifier'),
+            hiv_status=POS)
+
+        mv = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2000M',
+                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.hivdisclosurestatusa',
+            maternal_visit=mv,
+            disclosed_status=NO,
+            plan_to_disclose=YES)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2001M',
+                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        schedule_enrol_helper = FollowUpEnrolmentHelper(
+            subject_identifier=subject_identifier,
+            cohort='c')
+
+        schedule_enrol_helper.activate_fu_schedule()
+
+        self.assertEqual(OnScheduleCohortCFU.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='c_fu1_schedule1').count(), 1)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='3000M',
+                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.hivdisclosurestatusa',
+                subject_identifier=subject_identifier,
+                visit_code='3000M').entry_status, REQUIRED)
 
     @tag('hdsc1')
     def test_hiv_disclosure_ab_metadata_required(self):
@@ -944,6 +1079,7 @@ class TestRuleGroups(TestCase):
                 visit_code='2004M',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
+    @tag('firx')
     def test_father_involvement_required(self):
 
         mommy.make_recipe(
