@@ -184,6 +184,13 @@ DEPRESSION_MOOD = (
            'spontaneous verbal and non-verbal communication.'))
 )
 
+EMO_SUPPORT_PROVIDER = (
+    ('psychologist', 'Psychologist'),
+    ('hosp_social_worker', 'Hospital-based social worker'),
+    ('comm_social_worker', 'Community Social worker'),
+    ('psychiatrist', 'Psychiatrist'),
+    (PNTA, _('Prefer not to answer')),)
+
 ENJOYMENT_TO_THINGS = (
     ('0', 'As much as I ever did'),
     ('1', 'Rather less than I used to'),
@@ -797,7 +804,8 @@ AFTER_BIRTH_OPINION = (
     ('told_not_to_breastfeed_before', 'Was told not to breastfeed before/at delivery'),
     ('did_not_want_to_breastfeed_before',
      'Did not want to breastfeed even before this baby was born '),
-    (NONE, 'None of the above'),)
+    (NONE, 'None of the above'),
+    (OTHER, 'Other(specify)'))
 
 FEEDING_INFLUENCE = (
     (YES, 'Yes'),
