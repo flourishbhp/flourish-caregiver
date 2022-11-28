@@ -42,16 +42,16 @@ class MaternalInterimIdccAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     radio_fields = {'info_since_lastvisit': admin.VERTICAL,
                     'value_vl_size': admin.VERTICAL}
     
-    def get_model_data(self,*args):
-        
-        request = args[0]
+    def get_model_data(self, request, object_id=None):
+    
+        subject_identifier = None
         
         if self.get_instance(request):
             subject_identifier = self.get_instance(request).subject_identifier 
-            return MaternalHivInterimHx.objects.get(
-                    maternal_visit__appointment__subject_identifier=subject_identifier)
-        else:
-            subject_identifier = self.get_object(request, args[1]).maternal_visit.subject_identifier
+        elif object_id:
+            subject_identifier = self.get_object(request, object_id).maternal_visit.subject_identifier
+        
+        if subject_identifier:
             try:
                 return MaternalHivInterimHx.objects.get(
                     maternal_visit__appointment__subject_identifier=subject_identifier)
