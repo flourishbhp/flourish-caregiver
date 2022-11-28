@@ -14,7 +14,7 @@ from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuarterly
 
 class FollowUpEnrolmentHelper(object):
     """Class that puts participant into a followup schedule and reschedules
-     consecutive follow ups.
+     consecutive quarterly calls.
 
     * Accepts an registered_subject of RegisteredSubject.
     * is called in the dashboard view for subject.
@@ -65,7 +65,7 @@ class FollowUpEnrolmentHelper(object):
             except onschedule_model_cls.DoesNotExist:
                 pass
             else:
-                onschedule_obj.child_subject_identifier = (child_subject_identifier)
+                onschedule_obj.child_subject_identifier = child_subject_identifier
                 onschedule_obj.save()
 
     def caregiver_off_current_schedule(self, latest_appointment):

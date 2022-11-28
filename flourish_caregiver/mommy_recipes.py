@@ -14,7 +14,7 @@ from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery, \
     TbInformedConsent, TbStudyEligibility, TbOffStudy, TbVisitScreeningWomen
 from .models import CaregiverPreviouslyEnrolled
-from .models import FlourishConsentVersion
+from .models import FlourishConsentVersion, CaregiverPhqReferral
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit, RelationshipFatherInvolvement
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
@@ -181,6 +181,9 @@ caregiverphqdeprscreening = Recipe(
     easily_distracted='1',
     restlessness='1',
     self_harm='0',)
+
+caregiverphqreferral = Recipe(
+    CaregiverPhqReferral)
 
 caregiveredinburghdeprscreening = Recipe(
     CaregiverEdinburghDeprScreening,
