@@ -92,7 +92,7 @@ class TestReferralRuleGroups(TestCase):
                 subject_identifier=visit.subject_identifier,
                 visit_code='2000M').entry_status, REQUIRED)
 
-    def test_phq9_post_referral_required(self):
+    def test_phq9_referral_fu_required(self):
 
         visit = MaternalVisit.objects.get(visit_code='2000M')
         mommy.make_recipe('flourish_caregiver.caregiverphqdeprscreening',
@@ -104,25 +104,11 @@ class TestReferralRuleGroups(TestCase):
 
         self.assertEqual(
             CrfMetadata.objects.get(
-                model='flourish_caregiver.caregiverphqpostreferral',
+                model='flourish_caregiver.caregiverphqreferralfu',
                 subject_identifier=visit.subject_identifier,
                 visit_code='2000M').entry_status, REQUIRED)
 
-        quart_visit = mommy.make_recipe(
-            'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(
-                visit_code='2000M',
-                subject_identifier=visit.subject_identifier),
-            report_datetime=get_utcnow(),
-            reason=SCHEDULED)
-
-        self.assertEqual(
-            CrfMetadata.objects.get(
-                model='flourish_caregiver.caregiverphqpostreferral',
-                subject_identifier=quart_visit.subject_identifier,
-                visit_code='2001M').entry_status, REQUIRED)
-
-    def test_phq9_referral_fu_required(self):
+    def test_phq9_post_referral_required(self):
 
         visit = MaternalVisit.objects.get(visit_code='2000M')
         mommy.make_recipe('flourish_caregiver.caregiverphqdeprscreening',
@@ -142,6 +128,6 @@ class TestReferralRuleGroups(TestCase):
 
         self.assertEqual(
             CrfMetadata.objects.get(
-                model='flourish_caregiver.caregiverphqreferralfu',
+                model='flourish_caregiver.caregiverphqpostreferral',
                 subject_identifier=quart_visit.subject_identifier,
                 visit_code='2001M').entry_status, REQUIRED)
