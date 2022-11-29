@@ -1,6 +1,6 @@
 from django.core.validators import RegexValidator
 from django.db import models
-from django_crypto_fields.fields import EncryptedCharField
+from django_crypto_fields.fields import EncryptedCharField, FirstnameField, LastnameField
 from edc_base.model_fields import IsDateEstimatedField
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
@@ -16,7 +16,7 @@ from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 from edc_search.model_mixins import SearchSlugManager
-
+from edc_constants.choices import GENDER
 from ..choices import GENDER_OTHER
 from ..choices import IDENTITY_TYPE
 from .model_mixins import SearchSlugModelMixin
@@ -45,6 +45,25 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         help_text=('Ensure initials consist of letters '
                    'only in upper case, no spaces.'),
         null=True, blank=False)
+    
+    adol_firstname = FirstnameField(
+        verbose_name = 'Adolescent Firstname',
+        blank=False
+    )
+    
+    adol_lastname = LastnameField(
+        verbose_name='Adolescent Lastname',
+        blank=False
+    )
+    
+    adol_gender = models.CharField(
+        verbose_name='Adolescent Gender',
+        choices=GENDER,
+        max_length=1)
+    
+    adol_dob = models.DateField(
+        verbose_name='Adolescent DOB'
+    )
 
     consent_datetime = models.DateTimeField(
         verbose_name='Consent date and time',

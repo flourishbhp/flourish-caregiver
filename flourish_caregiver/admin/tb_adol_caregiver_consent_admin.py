@@ -91,6 +91,13 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'samples_future_studies',
             ),
         }),
+        ('Adolescent Consent', {
+            'fields': (
+                'adol_firstname',
+                'adol_lastname',
+                'adol_dob',
+                'adol_gender'),
+        }),
         ('Review Questions', {
             'fields': (
                 'consent_reviewed',
@@ -119,6 +126,7 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'study_questions': admin.VERTICAL,
         'assessment_score': admin.VERTICAL,
         'consent_signature': admin.VERTICAL,
+        'adol_gender': admin.VERTICAL,
         'consent_copy': admin.VERTICAL,
     }
 
