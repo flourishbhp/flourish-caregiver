@@ -1074,10 +1074,11 @@ def print_pdf(filepath):
     renderer = pdf.render_to(
         pdfium.BitmapConv.pil_image,
         page_indices=page_indices,
+        scale=300 / 72
     )
     stamped_pdf_images = []
     for image, index in zip(renderer, page_indices):
-        stamped_pdf_images.append(add_image_stamp(base_image=image))
+        stamped_pdf_images.append(add_image_stamp(base_image=image, resize=(300, 300)))
     first_img = stamped_pdf_images[0]
     first_img.save(filepath, save_all=True, append_images=stamped_pdf_images[1:])
 
