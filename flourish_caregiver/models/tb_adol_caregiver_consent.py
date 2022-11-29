@@ -48,13 +48,13 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
     
     adol_firstname = FirstnameField(
         verbose_name = 'Adolescent Firstname',
-        blank=False
-    )
+        blank=False,
+        max_length = 50,)
     
     adol_lastname = LastnameField(
         verbose_name='Adolescent Lastname',
-        blank=False
-    )
+        blank=False,
+        max_length = 50,)
     
     adol_gender = models.CharField(
         verbose_name='Adolescent Gender',
