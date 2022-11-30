@@ -83,7 +83,7 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         blank=False)
 
     is_dob_estimated = IsDateEstimatedField(
-        verbose_name="Is the adolescent date of birth estimated?",
+        verbose_name="Is the caregiver date of birth estimated?",
         null=True,
         blank=False)
 
