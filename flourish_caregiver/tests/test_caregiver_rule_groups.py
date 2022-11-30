@@ -1156,3 +1156,33 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_consent.subject_identifier,
                 visit_code='2004M',
                 visit_code_sequence='0').entry_status, REQUIRED)
+        
+    @tag('tb_interview')    
+    def test_tb_interview_requried(self):
+
+        visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2200T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+        mommy.make_recipe(
+            'flourish_caregiver.tbinterview',
+            interview_language = 'both',
+            visit=visit)
+        
+        
+        tb_translation = CrfMetadata.objects.get(
+            model = 'flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+        
+        tb_transcription = CrfMetadata.objects.get(
+            model = 'flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+        
+        self.assertEqual(tb_translation.entry_status, REQUIRED)
+        self.assertEqual(tb_transcription.entry_status, REQUIRED)
