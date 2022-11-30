@@ -21,7 +21,7 @@ from edc_visit_tracking.constants import SCHEDULED
 
 from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..models import MaternalVisit
-from ..models import OnScheduleCohortCFU, OnScheduleCohortAFUQuarterly
+from ..models import OnScheduleCohortCFU
 from ..subject_helper_mixin import SubjectHelperMixin
 
 

@@ -67,3 +67,7 @@ class TbKnowledgeMedium(ListModelMixin, BaseUuidModel):
 
 class TbDiagnostics(ListModelMixin, BaseUuidModel):
     pass
+
+
+class TbVisitCareLocation(ListModelMixin, BaseUuidModel):
+    pass

@@ -1,10 +1,10 @@
 from django.contrib import admin
-from django.db import models
 from edc_model_admin import audit_fieldset_tuple
+
 from ..admin_site import flourish_caregiver_admin
-from .modeladmin_mixins import CrfModelAdminMixin
-from ..models import BreastFeedingQuestionnaire
 from ..forms import BreastFeedingQuestionnaireForm
+from ..models import BreastFeedingQuestionnaire
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(BreastFeedingQuestionnaire, site=flourish_caregiver_admin)
@@ -40,6 +40,7 @@ class BreastFeedingQuestionnaireAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'community_breastfeeding_bias',
                 'community_exclusive_breastfeeding_bias',
                 'after_birth_opinion',
+                'after_birth_opinion_other',
                 'return_to_work_school',
                 'returned_to_work_school',
                 'six_months_feeding',
