@@ -8,7 +8,6 @@ from flourish_caregiver.models.model_mixins import CrfModelMixin
 
 
 class TbStudyEligibility(CrfModelMixin):
-
     tb_participation = models.CharField(
         verbose_name='Participant willing to do an Informed consent for the Tb Study',
         help_text='Illegible for TB study is NO',
@@ -35,6 +34,8 @@ class TbStudyEligibility(CrfModelMixin):
 
     def save(self, *args, **kwargs):
         self.is_eligibile = self.tb_participation == YES
+        super().save(*args, **kwargs)
+
 
     class Meta:
         app_label = 'flourish_caregiver'
