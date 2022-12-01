@@ -11,9 +11,7 @@ class CaregiverPhqReferralFU(ReferralFUFormMixin, CrfModelMixin):
                       'support services. Do you mind sharing with us where you are receiving '
                       'these services?'),
         max_length=40,
-        choices=EMO_SUPPORT_PROVIDER,
-        blank=True,
-        null=True)
+        choices=EMO_SUPPORT_PROVIDER)
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'

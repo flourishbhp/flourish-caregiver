@@ -38,9 +38,8 @@ class CaregiverHamdPostReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'support_ref_decline_reason': admin.VERTICAL,
                     'emo_support': admin.VERTICAL,
                     'no_support_reason': admin.VERTICAL,
-                    'emo_health_improved': admin.VERTICAL,
                     'percieve_counselor': admin.VERTICAL,
                     'satisfied_counselor': admin.VERTICAL,
                     'additional_counseling': admin.VERTICAL, }
 
-    filter_horizontal = ('emo_support_type',)
+    filter_horizontal = ('emo_support_type', 'emo_health_improved')
