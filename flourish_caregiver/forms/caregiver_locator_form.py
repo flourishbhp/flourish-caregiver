@@ -9,7 +9,6 @@ from ..models import SubjectConsent
 
 
 class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelForm):
-
     form_validator_cls = CaregiverLocatorFormValidator
 
     screening_identifier = forms.CharField(
@@ -36,12 +35,10 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        try:
-            subject_consented = SubjectConsent.objects.get(
-                subject_identifier=self.initial.get('subject_identifier', None))
-        except SubjectConsent.DoesNotExist:
-            pass
-        else:
+        subject_consented = SubjectConsent.objects.filter(
+            subject_identifier=self.initial.get('subject_identifier', None)).latest(
+            'report_datetime')
+        if subject_consented:
             self.fields['first_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
             self.fields['last_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
             self.initial['first_name'] = subject_consented.first_name
