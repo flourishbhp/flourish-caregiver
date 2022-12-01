@@ -5,7 +5,7 @@ from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
-from flourish_caregiver.constants import NONE
+from flourish_caregiver.constants import NONE, PNTA
 from .constants import BREASTFEED_ONLY
 
 ABLE_TO_LAUGH = (
@@ -13,7 +13,7 @@ ABLE_TO_LAUGH = (
     ('1', 'Not quite so much now'),
     ('2', 'Definitely not so much now'),
     ('3', 'Not at all'),
-    )
+)
 
 AGITATION = (
     ('0', 'None'),
@@ -21,22 +21,22 @@ AGITATION = (
     ('2', 'Playing with hands, hair, etc.'),
     ('3', 'Moving about, can’t sit still.'),
     ('4', 'Hand wringing, nail biting, hair-pulling, biting of lips.')
-    )
+)
 
 STUDY_SITES = (
     ('40', 'Gaborone'),
-    )
+)
 
 ALIVE_DEAD_UNKNOWN = (
     (ALIVE, 'Alive'),
     (DEAD, 'Dead'),
     (UNKNOWN, 'Unknown'),
-    )
+)
 
 AMNIOTIC_FLUID = (
     ('0', 'Normal'),
     ('1', 'Abnormal')
-    )
+)
 
 ANXIETY_PYSCHIC = (
     ('0', 'No difficulty'),
@@ -44,7 +44,7 @@ ANXIETY_PYSCHIC = (
     ('2', 'Worrying about minor matters'),
     ('3', 'Apprehensive attitude apparent in face or speech'),
     ('4', 'Fears expressed without questioning')
-    )
+)
 
 ANXIETY = (
     ('0', 'Absent'),
@@ -52,14 +52,14 @@ ANXIETY = (
     ('2', 'Moderate'),
     ('3', 'Severe'),
     ('4', 'Incapacitating')
-    )
+)
 
 ANXIOUS = (
     ('0', 'No, not at all'),
     ('1', 'Hardly ever'),
     ('2', 'Yes, sometimes'),
     ('3', 'Yes, very often')
-    )
+)
 
 ARV_DRUG_LIST = (
     ('Abacavir', 'ABC'),
@@ -72,7 +72,7 @@ ARV_DRUG_LIST = (
     ('Aluvia', 'ALU'),
     ('Dolutegravir', 'DTG'),
     ('HAART,unknown', 'HAART,unknown'),
-    )
+)
 
 ARV_INTERRUPTION_REASON = (
     ('TOXICITY', 'Toxicity'),
@@ -84,7 +84,19 @@ ARV_INTERRUPTION_REASON = (
     ('FAILURE', 'Treatment failure'),
     (OTHER, 'Other'),
     (NOT_APPLICABLE, 'Not Applicable'),
-    )
+)
+
+ARV_INTERRUPTION_REASON_POST_ADHERENCE = (
+    ('TOXICITY_SELF', 'Toxicity, discontinued by self'),
+    ('TOXICITY_HEALTHCARE_PROVIDER', 'Toxicity, discontinued by healthcare provider'),
+    ('NO_DRUGS', 'No drugs available'),
+    ('NO_REFILL', 'Didn\'t get to clinic for refill'),
+    ('FORGOT', 'Participant forgot to take the ARVs'),
+    ('TRAVELING', 'Participant was traveling'),
+    ('DEFAULT', 'Defaulted ARV treatment (7 days or more)'),
+    (OTHER, 'Other'),
+    (NOT_APPLICABLE, 'Not Applicable'),
+)
 
 CHILD_IDENTITY_TYPE = (
     ('country_id', 'Country ID number'),
@@ -92,7 +104,7 @@ CHILD_IDENTITY_TYPE = (
     ('country_id_rcpt', 'Country ID receipt'),
     ('passport', 'Passport'),
     (OTHER, 'Other'),
-    )
+)
 
 COHORTS = (
     ('cohort_a', 'Cohort A'),
@@ -106,13 +118,13 @@ COHORTS = (
 CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2')
-    )
+)
 
 CHILD_CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
     ('2.1', 'Consent version 2.1'),
-    )
+)
 
 CONTACT_FAIL_REASON = (
     ('no_response', 'Phone rang, no response but voicemail left'),
@@ -122,40 +134,45 @@ CONTACT_FAIL_REASON = (
     ('disconnected', 'Phone did not ring/number disconnected'),
     ('number_changed', 'No longer the phone number of BHP participant'),
     (NOT_APPLICABLE, 'Not Applicable'),
-    )
+)
 
 CONTACT_LOCATION = (
     ('phy_addr_unsuc', 'physical_address'),
     ('workplace_unsuc', 'subject_work_place'),
     ('contact_person_unsuc', 'indirect_contact_physical_address'),
-    )
+)
 
 CONTACT_MODE = (
     ('phone_call', 'Phone Call'),
     ('house_visit', 'Visit to household'),
     (OTHER, 'Other'),
-    )
+)
 
 COWS_MILK = (
     ('boiled', '1. Boiled from cow'),
     ('unboiled', '2. Unboiled from cow'),
     ('store', '3. From store'),
     (NOT_APPLICABLE, 'Not Applicable'),
-    )
+)
 
 CRYING = (
     ('3', 'Yes, most of the time'),
     ('2, quite often', 'Yes, quite often'),
     ('1', 'Only occasionally'),
     ('0', 'No, never')
-    )
+)
+
+DECLINE_REASON = (
+    ('cant_physically_attend', 'Not able to physically come to clinic'),
+    ('not_interested', 'Not interested in participating'),
+    (OTHER, 'Other (Specify)'),)
 
 DEPRESSION_SCALE = (
     ('0', 'Not at all'),
     ('1', 'Several days'),
     ('2', 'More than half the days'),
     ('3', 'Nearly every day'),
-    )
+)
 
 DEPRESSION_MOOD = (
     ('0', 'Absent'),
@@ -165,14 +182,21 @@ DEPRESSION_MOOD = (
            'expression, posture, voice and tendency to weep')),
     ('4', ('Patient reports virtually only these feeling states in his/her '
            'spontaneous verbal and non-verbal communication.'))
-    )
+)
+
+EMO_SUPPORT_PROVIDER = (
+    ('psychologist', 'Psychologist'),
+    ('hosp_social_worker', 'Hospital-based social worker'),
+    ('comm_social_worker', 'Community Social worker'),
+    ('psychiatrist', 'Psychiatrist'),
+    (PNTA, _('Prefer not to answer')),)
 
 ENJOYMENT_TO_THINGS = (
     ('0', 'As much as I ever did'),
     ('1', 'Rather less than I used to'),
     ('2', 'Definitely less than I used to'),
     ('3', 'Hardly at all'),
-    )
+)
 
 EXTRA_PULMONARY_LOC = (
     ('lymph_nodes', 'Lymph nodes'),
@@ -180,7 +204,7 @@ EXTRA_PULMONARY_LOC = (
     ('bones', 'Bones '),
     ('brain', 'Brain'),
     (UNKNOWN, 'Unknown'),
-    )
+)
 
 FEEDING_CHOICES = (
     (BREASTFEED_ONLY, 'Breastfeed only'),
@@ -189,7 +213,7 @@ FEEDING_CHOICES = (
      'Both breastfeeding and formula feeding'),
     ('Medical complications: Infant did not feed',
      'Medical complications: Infant did not feed'),
-    )
+)
 
 FLOURISH_PARTICIPATION = (
     ('interested', 'Yes I am interested'),
@@ -197,34 +221,34 @@ FLOURISH_PARTICIPATION = (
     (NO, 'No'),
     ('undecided', 'Undecided'),
     (NOT_APPLICABLE, 'Not applicable'),
-    )
+)
 
 FOOD_FREQUENCY = (
     ('0', 'Often True'),
     ('1', 'Sometimes True'),
     ('2', 'Never True'),
     ("3", "I don’t know or Refused to answer"),
-    )
+)
 
 GENERAL_SOMATIC = (
     ('0', 'None'),
     ('1', ('Heaviness in limbs, back or head. Backaches, headaches, '
            'muscle aches. Loss of energy and fatigability.')),
     ('2', ('Any clear-cut symptom rates 2.')),
-    )
+)
 
 GENITAL_SYMPTOMS = (
     ('0', 'Absent'),
     ('1', 'Mild'),
     ('2', 'Severe')
-    )
+)
 
 GESTATIONS_NUMBER = (
     ('0', '0'),
     ('1', '1'),
     ('2', '2'),
     ('3', '3')
-    )
+)
 
 GUILT_FEELINGS = (
     ('0', 'Absent'),
@@ -233,27 +257,27 @@ GUILT_FEELINGS = (
     ('3', 'Present illness is a punishment; delusions of guilt'),
     ('4', 'Hears accusatory or denunciatory voices and/or experiences threatening'
           ' visual hallucinations.')
-    )
+)
 
 HARM = (
     ('3', 'Yes, quite often'),
     ('2', 'Sometimes'),
     ('1', 'Hardly ever'),
     ('0', 'Never')
-    )
+)
 
 HOME_VISIT_FAIL = (
     ('no_one_home', 'No one was home'),
     ('relocated', 'Previous BHP participant no longer lives at household'),
     (OTHER, 'Other')
-    )
+)
 
 HOW_OFTEN = (
     ('0', 'Acknowledges being depressed and ill'),
     ('1', 'Acknowledges illness but attributes cause to bad food, climate, '
           'overwork, virus, need for rest, etc'),
     ('2', 'Denies being ill at all'),
-    )
+)
 
 HYPOCHONDRIASIS = (
     ('0', 'Not present'),
@@ -261,14 +285,14 @@ HYPOCHONDRIASIS = (
     ('2', 'Preoccupation with health'),
     ('3', 'Frequent complaints, requests for help, etc.'),
     ('4', 'Hypochondriacal delusions')
-    )
+)
 
 IDENTITY_TYPE = (
     ('country_id', 'Country ID number'),
     ('country_id_rcpt', 'Country ID receipt'),
     ('passport', 'Passport'),
     (OTHER, 'Other'),
-    )
+)
 
 INFO_PROVIDER = (
     ('MOTHER', 'Mother'),
@@ -277,71 +301,71 @@ INFO_PROVIDER = (
     ('GRANDFATHER', 'Grandfather'),
     ('SIBLING', 'Sibling'),
     (OTHER, 'Other'),
-    )
+)
 
 INSIGHT = (
     ('0', 'Acknowledges being depressed and ill'),
     ('1', ('Acknowledges illness but attributes cause to bad food, climate, '
            'overwork, virus, need for rest, etc')),
     ('2', 'Denies being ill at all')
-    )
+)
 
 INSOMNIA_INITIAL = (
     ('0', 'No difficulty falling asleep.'),
     ('1', 'Complains of occasional difficulty falling asleep, i.e. more than 1⁄2 hour.'),
     ('2', 'Complains of nightly difficulty falling asleep')
-    )
+)
 
 INSOMIA_MIDNIGHT = (
     ('0', 'No difficulty.'),
     ('1', 'Patient complains of being restless and disturbed during the night.'),
     ('2',
      'Waking during the night – any getting out of bed rates 2 (except for purposes of voiding).')
-    )
+)
 
 INSOMNIA_EARLY = (
     ('0', 'No difficulty.'),
     ('1', 'Waking in early hours of the morning but goes back to sleep.'),
     ('2', 'Unable to fall asleep again if he/she gets out of bed.'),
-    )
+)
 
 LOCATION_FOR_CONTACT = (
     ('physical_address', 'Physical Address with detailed description'),
     ('workplace_location', 'Name and location of workplace'),
     ('contact_person', 'Full physical address '),
-    )
+)
 
 LOCATOR_LOG_STATUS = (
     ('exist', 'Exists'),
     ('not_found', 'Not found')
-    )
+)
 
 MATERNAL_VISIT_STUDY_STATUS = (
     (ON_STUDY, 'On study'),
     (OFF_STUDY,
      'Off study-no further follow-up (including death); use only '
      'for last study contact'),
-    )
+)
 
 MEALS = (
     ('0', 'Yes'),
     ('1', 'No'),
     ('2', "I don’t know"),
-    )
+)
 
 MISERABLE_FEELING = (
     ('0', 'No, not at all'),
     ('1', 'Not very often'),
     ('2', 'Yes, quite often'),
     ('3', 'Yes, most of the time'),
-    )
+)
 
 PANICK = (
     ('3', 'Yes, quite a lot'),
     ('2', 'Yes, sometimes'),
     ('1', 'No, not much'),
     ('0', 'No, not at all')
-    )
+)
 
 PHONE_NUM_TYPE = (
     ('cell_contact', 'Cell Phone'),
@@ -354,14 +378,14 @@ PHONE_NUM_TYPE = (
     ('cell_resp_person', 'Responsible person cell phone'),
     ('tel_resp_person', 'Responsible person telephone'),
     (NONE, 'None')
-    )
+)
 
 REASON_ARV_STOP = (
     ('switch for tolerability', 'Switch for tolerability'),
     ('switch for drug outage', 'Switch for drug outage'),
     ('Treatment failure', 'Treatment failure'),
     (OTHER, 'Other, specify:')
-    )
+)
 
 REASONS_NOT_DISCLOSED = (
     ('fear_of_burdening_the_child', 'Fear of burdening the child'),
@@ -375,7 +399,7 @@ REASONS_NOT_DISCLOSED = (
     ('feel_the_child_needs_to_know', 'Does not feel the child needs to know'),
     ('does_not_know_how_to_explain', 'Does not know how to explain this to their child'),
     (OTHER, 'Other')
-    )
+)
 
 REASON_NOT_DRAWN = (
     ('collection_failed', 'Tried, but unable to obtain sample from patient'),
@@ -393,7 +417,7 @@ REASONS_VACCINES_MISSED = (
      'Mother or Caregiver declines this vaccicnation'),
     ('no stock', 'Stock out at clinic'),
     (OTHER, 'Other, specify'),
-    )
+)
 
 REFERRED_TO = (
     ('community_social_worker', 'Community Social Worker'),
@@ -401,8 +425,10 @@ REFERRED_TO = (
     ('a&e', 'A&E'),
     ('psychologist', 'Psychologist'),
     ('psychiatrist', 'Psychiatrist'),
+    ('receiving_emotional_care', 'Already receiving emotional care'),
+    ('declined', 'Declined'),
     (OTHER, 'Other'),
-    )
+)
 
 RELATION_TO_CHILD = (
     ('father', 'Father'),
@@ -414,7 +440,7 @@ RELATION_TO_CHILD = (
     ('brother', 'Brother'),
     ('guardian', 'Guardian'),
     (OTHER, 'Other'),
-    )
+)
 
 RELATION_TO_INDIVIDUAL = (
     ('partner', 'Partner'),
@@ -423,7 +449,7 @@ RELATION_TO_INDIVIDUAL = (
     ('father', 'Father'),
     ('sibling', 'Sibling'),
     (OTHER, 'Other'),
-    )
+)
 
 RETARDATION = (
     ('0', 'Normal speech and thought.'),
@@ -431,21 +457,21 @@ RETARDATION = (
     ('2', 'Obvious retardation during the interview.'),
     ('3', 'Interview difficult'),
     ('4', 'Complete stupor')
-    )
+)
 
 SLEEPING_DIFFICULTY = (
     ('0', 'No, not at all'),
     ('1', 'Not very often'),
     ('2', 'Yes, sometimes'),
     ('3', 'Yes, most of the time'),
-    )
+)
 
 SELF_BLAME = (
     ('0', 'No, never'),
     ('1', 'Not very often'),
     ('2', 'Yes, some of the time'),
     ('3', 'Yes, most of the time'),
-    )
+)
 
 SOMATIC_SYMPTOMS = (
     ('0', 'None'),
@@ -453,7 +479,7 @@ SOMATIC_SYMPTOMS = (
      'Loss of appetite but eating without staff encouragement. Heavy feelings in abdomen.'),
     ('2', ('Difficulty eating without staff urging. Requests or requires '
            'laxatives or medication for bowels or medication for gastro-intestinal symptoms.')),
-    )
+)
 
 SUICIDAL = (
     ('0', 'Absent'),
@@ -461,7 +487,7 @@ SUICIDAL = (
     ('2', 'Wishes he/she were dead or any thoughts of possible death to self.'),
     ('3', 'Suicidal ideas or gestures'),
     ('4', 'Attempts at suicide')
-    )
+)
 
 TB_SCREENING_LOCATION = (
     ('antenatal_visit', 'Antenatal Visit'),
@@ -469,21 +495,21 @@ TB_SCREENING_LOCATION = (
     ('postpartum_visit', 'Postpartum visit'),
     ('hospital', 'Hospital'),
     (OTHER, 'Other (specify)'),
-    )
+)
 
 TB_DRUGS_FREQ = (
     ('4_drugs', '4 drugs'),
     ('more_than_4', 'More than 4 drugs'),
     (UNKNOWN, 'Unknown'),
     (DWTA, 'Prefer not to answer'),
-    )
+)
 
 TB_TYPE = (
     ('pulmonary', 'Pulmonary'),
     ('extra_pulmonary', 'Extra-pulmonary'),
     (UNKNOWN, 'Unknown'),
     (DWTA, 'Prefer not to answer')
-    )
+)
 
 TIMES_BREASTFED = (
     ('<1 per week', '1. Less than once per week'),
@@ -495,14 +521,14 @@ TIMES_BREASTFED = (
     ('For all feedings',
      '5. For all feedings (i.e no formula or other foods or liquids)'),
     (NOT_APPLICABLE, 'Not Applicable'),
-    )
+)
 
 TOP = (
     ('3', 'Yes, most of the time I haven\'t been able to cope at all'),
     ('2', 'Yes, sometimes I haven\'t been coping as well as usual'),
     ('1', 'No, most of the time I have coped quite well'),
     ('0', 'No, I have been coping as well as ever')
-    )
+)
 
 TRISOME_CHROSOMESOME_ABNORMALITY = (
     ('None', 'None'),
@@ -512,13 +538,13 @@ TRISOME_CHROSOMESOME_ABNORMALITY = (
     ('OTHER trisomy, specify', 'Other trisomy, specify'),
     ('OTHER non-trisomic chromosome',
      'Other non-trisomic chromosome abnormality, specify'),
-    )
+)
 
 UNSUCCESSFUL_VISIT = (
     ('no_one_was_home', 'No one was home'),
     ('location_no_longer_used', 'Previous BHP participant no longer uses this location'),
     (OTHER, 'Other'),
-    )
+)
 
 WATER_USED = (
     ('Water direct from source', 'Water direct from source'),
@@ -529,14 +555,14 @@ WATER_USED = (
     ('Specifically treated water', 'Specifically treated water'),
     (OTHER, 'Other (specify)'),
     (NOT_APPLICABLE, 'Not Applicable'),
-    )
+)
 
 WEIGHT_LOSS = (
     ('0', 'No weight loss'),
     ('1', 'Probable weight loss associated with present illness.'),
     ('2', 'Definite (according to patient) weight loss.'),
     ('3', 'Not assessed.')
-    )
+)
 
 WHERE_SCREENED = (
     ('antenatal_visit', 'Antenatal visit'),
@@ -553,21 +579,25 @@ WORK_INTERESTS = (
            'reported by the patient or indirect in listlessness, indecision and vacillations')),
     ('3', 'Decrease in actual time spent in activities or decrease in productivity'),
     ('4', ('Stopped working because of present illness.'))
-    )
+)
 
 YES_NO_UNK_DWTA = (
     (YES, YES),
     (NO, NO),
     (UNKNOWN, 'Unknown'),
-    (DWTA, 'Prefer not to answer'),
-    )
+    (DWTA, 'Prefer not to answer'),)
+
+YES_NO_UNABLE_DET = (
+    (YES, YES),
+    (NO, NO),
+    ('unable_to_determine', 'Unable to determine'),)
 
 YES_NO_UNK_NA = (
     (YES, YES),
     (NO, NO),
     (UNKNOWN, 'Unknown'),
     (NOT_APPLICABLE, 'Not Applicable'),
-    )
+)
 
 COUGH_DURATION = (
     ('=< 1 week', '=< 1 week'),
@@ -575,7 +605,7 @@ COUGH_DURATION = (
     ('=>2 week', '=>2 week'),
     (DWTA, 'Prefer not to answer'),
 
-    )
+)
 
 VISIT_INFO_SOURCE = [
     (PARTICIPANT, 'Clinic visit with participant'),
@@ -600,7 +630,7 @@ VISIT_REASON = [
 ZERO_ONE = (
     ('0', '0'),
     ('1', '1')
-    )
+)
 
 '''
 Choices for the covid form
@@ -612,12 +642,12 @@ YES_NO_COVID_FORM = (
     ('tried_but_could_not_get_tested', 'Tried, but could not get tested '),
     (UNKNOWN, 'Unknown'),
 
-    )
+)
 
 MONTH_YEAR = (
     ('month', 'Month'),
     ('year', 'Year')
-    )
+)
 
 COVID_RESULTS = (
     ('negative', 'Negative'),
@@ -625,7 +655,7 @@ COVID_RESULTS = (
     (UNKNOWN, 'Unknown'),
     (DWTA, 'Prefer not to answer'),
     ('indeterminate', 'Indeterminate'),
-    )
+)
 
 TESTING_REASONS = (
     ('pre-traveling_screening ', 'Pre-Traveling screening'),
@@ -633,28 +663,28 @@ TESTING_REASONS = (
     ('contact_tracing', 'Contact tracing'),
     ('asymptomatic_testing', 'Routine Testing(Asymptomatic)'),
     (OTHER, 'Other')
-    )
+)
 
 POS_NEG_PENDING_UNKNOWN = (
     (POS, 'Positive'),
     (NEG, 'Negative'),
     ('PENDING', 'Pending'),
     (UNKNOWN, 'Unknown'),
-    )
+)
 
 ISOLATION_LOCATION = (
     ('home', 'Home'),
     ('hospital', 'Hospital'),
     ('clinic', 'Clinic'),
     (OTHER, 'Other'),
-    )
+)
 
 YES_NO_PARTIALLY = (
     (YES, 'Yes'),
     (NO, 'No'),
     ('partially_jab', 'Partially'),
 
-    )
+)
 
 VACCINATION_TYPE = (
     ('astrazeneca', 'AstraZeneca'),
@@ -663,7 +693,7 @@ VACCINATION_TYPE = (
     ('johnson_and_johnson', 'Johnson & Johnson '),
     ('moderna', 'Moderna'),
     (OTHER, 'Other')
-    )
+)
 
 REASONS_NOT_PARTICIPATE = (
     ('not_interested_in_participating', 'Not interested in participating'),
@@ -704,13 +734,13 @@ REASONS_NOT_PARTICIPATE = (
      'Child is unwilling and prefers not to say why'),
     (OTHER, 'Other'),
     (NOT_APPLICABLE, 'Not Applicable')
-    )
+)
 
 GENDER_OTHER = (
     (MALE, _('Male')),
     (FEMALE, _('Female')),
     (OTHER, _('Other')),
-    )
+)
 
 HIV_STATUS = (
     (POS, 'Positive'),
@@ -731,7 +761,6 @@ ON_HIV_STATUS_AWARE = (
     (YES, 'Yes'),
     (NO, 'No'),
     ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status'),)
-
 
 HIV_STATUS_KNOWN_BY = (
     ('no_one', '0 persons in my household'),
@@ -775,7 +804,8 @@ AFTER_BIRTH_OPINION = (
     ('told_not_to_breastfeed_before', 'Was told not to breastfeed before/at delivery'),
     ('did_not_want_to_breastfeed_before',
      'Did not want to breastfeed even before this baby was born '),
-    (NONE, 'None of the above'),)
+    (NONE, 'None of the above'),
+    (OTHER, 'Other(specify)'))
 
 FEEDING_INFLUENCE = (
     (YES, 'Yes'),
@@ -810,4 +840,195 @@ REASONS_NOT_PARTICIPATING = (
     ('not_interested', 'Not Interested in participating'),
     (OTHER, 'Other'),)
 
+REASONS_UNWILLING_ADOL = (
+    ('unable_to_provide_consent ', 'Caregiver unavailable to provide consent'),
+    ('refuses_to_provide_consent', 'Caregiver refuses to provide consent'),
+    ('unwilling_to_blood_draw_adolescent', 'Unwilling for adolescent to do blood draw'),
+    ('cannot_come_to_clinic', 'Cannot physically come to clinic'),
+    ('not_interested', 'Not Interested in participating'),
+    (OTHER, 'Other (Specify'),)
 
+YES_NO_PNTA_UNKNOWN = (
+    (YES, YES),
+    (NO, NO),
+    (PNTA, _('Prefer not to answer')),
+    (UNKNOWN, 'Unknown'),
+)
+
+YES_NO_DN_PNTA = (
+    (YES, YES),
+    (NO, NO),
+    ('dont_know', 'I do not know'),
+    (PNTA, _('Prefer not to answer')),
+)
+
+EMO_SUPPORT_DECLINE = (
+    ('not_yet_sought_clinic', 'I have not yet sought the clinic'),
+    ('could_not_get_clinic_booking',
+     'I went to the clinic but could not get a booking'),
+    ('partner_dnw_me_to_attend', 'My partner does not want me to attend'),
+    ('family_dnw_me_to_attend', 'My family does not want me to attend'),
+    ('no_longer_need_support', 'I felt I no longer need emotional support'),
+    ('work_constraints', 'Work constraints'),
+    ('no_transport_fare', 'I did not have transport fare'),
+    (OTHER, 'Other, specify'),)
+
+NO_EMO_SUPPORT_REASON = (
+    ('professional_not_around', 'Social worker/ Psychologist/ Psychiatrist not around'),
+    ('clinic_long_queue', 'Long queue at the clinic'),
+    ('told_idn_emo_support', 'I was told I don’t need emotional support'),
+    ('was_treated_well_at_facility',
+     'I was not treated well at the health facility and I had to leave'),
+    ('changed_mind', 'Changed mind and returned home'),
+    (OTHER, 'Other, specify'),)
+
+EMO_HEALTH_IMPROVED = (
+    ('difficult_to_tell', 'Difficult to tell because I am still receiving emotional support'),
+    ('mood_has_improved', 'My mood has improved'),
+    ('not_able_to_relax', 'I am now able to relax'),
+    ('relationship_with_other_improved',
+     'My relationship with other people/family members/partner has improved'),
+    ('able_to_manage_emotions', 'I am now able to manage my thoughts, feelings and emotions'),
+    ('accepted_medical_condition',
+     'I have accepted my medical condition and I have learnt to stay positive'),
+    ('accepted_loved_one_loss', 'I have now accepted the loss of my loved one'),
+    ('feeling_fine', 'Emotional support received and feeling fine now'),
+    ('no_longer_suicidal', 'I am no longer suicidal'),
+    ('defaulted', 'Gave up and defaulted (No difference)'),
+    (OTHER, 'Other, specify'))
+
+PERCEIVE_COUNSELOR = (
+    ('approachable', 'Approachable'),
+    ('respectful', 'Respectful'),
+    ('trustworthy', 'Trustworthy'),
+    ('patient', 'Patient'),
+    ('demeaning', 'Demeaning'),
+    ('judgmental', 'Judgmental'),
+    ('discriminatory', 'Discriminatory'),
+    (PNTA, _('Prefer not to answer')),
+    (OTHER, 'Other, specify'))
+
+YES_NO_PNTA = (
+    (YES, YES),
+    (NO, NO),
+    (PNTA, _('Prefer not to answer')),
+)
+
+YES_NO_PNTA_NA = (
+    (YES, YES),
+    (NO, NO),
+    (PNTA, _('Prefer not to answer')),
+    (NOT_APPLICABLE, 'Not Applicable')
+
+)
+
+HIV_STATUS_DISCUSSION = (
+    ('very_difficult', 'Very Difficult'),
+    ('difficult', 'Difficult'),
+    ('neutral', 'Neutral'),
+    ('easy', 'Easy'),
+    ('very_easy', 'Very Easy'),
+    (PNTA, 'Prefer not to answer'),
+    (NOT_APPLICABLE, 'Not Applicable')
+)
+
+INTERVIEW_LOCATIONS = (
+    ('FLOURISH_clinic', 'FLOURISH clinic'),
+    ('BHP_site', 'BHP site'),
+    ('part_home', 'Participant home'),
+    (OTHER, 'Other'))
+
+INTERVIEW_LANGUAGE = (
+    ('setswana', 'Setswana'),
+    ('english', 'English'),
+    ('both', 'Both'))
+
+PARTNERS_SUPPORT = (
+    ('very_supportive', 'Very Supportive'),
+    ('supportive', 'Supportive'),
+    ('neutral', 'Neutral'),
+    ('unsupportive', 'Unsupportive'),
+    ('very_unsupportive', 'Very Unsupportive'),
+    (PNTA, 'Prefer not to answer'),
+)
+
+CHOICE_FREQUENCY = (
+    (PNTA, 'Prefer not to answer'),
+    ('never', 'Never'),
+    ('rarely', 'Rarely'),
+    ('occasionally', 'Occasionally'),
+    ('more_often', 'More often than not'),
+    ('most_of_the_time', 'Most of the time'),
+    ('all_the_time', 'All the time'),
+)
+
+HAPPINESS_CHOICES = (
+    ('perfect', 'Perfect'),
+    ('extremely_happy', 'Extremely Happy'),
+    ('very_happy', 'Very Happy'),
+    ('happy', 'Happy'),
+    ('little_happy', 'A little happy'),
+    ('little_unhappy', 'A little unhappy'),
+    ('fairly_unhappy', 'Fairly unhappy'),
+    (PNTA, 'Prefer not to answer')
+)
+
+FUTURE_OF_RELATIONSHIP = (
+    ('do_anything',
+     'I want desperately for the partnership to succeed and will do anything to see that it does'),
+    ('do_what_I_can',
+     'I want for my partnership to succeed and will do what I can to see that it does'),
+    ('cannot_do_much',
+     'It would be nice if my partnership succeeded, but I can’t do too much more than I do now'),
+    ('refuse_to_do_more',
+     'It would be nice if my partnership succeeded, but I refuse to do more'),
+    ('nothing_more',
+     'My partnership can never succeed and there is nothing more I can do'),
+)
+
+FATHER_VISITS = (
+    ('every_day', 'Every day'),
+    ('every_week_weekend', "Every week/weekend"),
+    ('every_couple_of_months', 'Every couple of months'),
+    ('every_year', 'Every year'),
+    ('do_not_know', 'I don’t know'),
+    (PNTA, 'Prefer not to answer'),
+    (NOT_APPLICABLE, 'Not Applicable')
+
+)
+
+FATHERS_FINANCIAL_SUPPORT = (
+    ('not_supportive', 'Not supportive'),
+    ('supportive', 'Supportive'),
+    ('very_supportive', 'Very supportive'),
+    (PNTA, 'Prefer not to answer'),
+    (NOT_APPLICABLE, 'Not Applicable')
+
+)
+
+HOUSEHOLD_MEMBER = (
+    ('mother', 'Mother'),
+    ('father', 'Father'),
+    ('other', 'Other'),
+    ('no_one', 'No-one'),
+    (PNTA, 'Prefer not to answer'),
+)
+
+VISIT_NUMBER = (
+    ('0', '0'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5', '5'),
+    ('6', '6 or more')
+)
+
+CARE_TYPE = (
+    ('antenatal visit', 'Antenatal visit'),
+    ('IDCC', 'IDCC'),
+    ('postpartum_visit', 'Postpartum visit'),
+    ('hospital', 'Hospital'),
+    ('OPD', 'OPD'),
+    (OTHER, 'Other')
+)

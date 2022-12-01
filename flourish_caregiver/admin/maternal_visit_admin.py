@@ -101,21 +101,18 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
     def appointment_model_cls(self):
 
         return django_apps.get_model(self.appointment_model)
-    
 
     def get_key(self, request, obj=None):
-
         key = super().get_key(request, obj)
 
         subject_identifier = (request.GET.get('subject_identifier', None)
                               or request.POST.get('subject_identifier', None))
 
         try:
-
-            enrollment_visit = self.model.objects.filter(
+            enrollment_visit = self.model.objects.get(
                     subject_identifier=subject_identifier,
-                    visit_code='1000M').last()
-    
+                    visit_code='1000M',
+                    visit_code_sequence='0')
 
         except self.model.DoesNotExist:
             """
@@ -125,9 +122,9 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             appointment_id = (request.GET.get('appointment', None)
                               or request.POST.get('appointment', None))
             try:
-                self.appointment_model_cls.objects.filter(id=appointment_id,
-                                                       visit_code='1000M').last()
-
+                self.appointment_model_cls.objects.get(id=appointment_id,
+                                                       visit_code='1000M',
+                                                       visit_code_sequence='0')
             except self.appointment_model_cls.DoesNotExist:
                 pass
             else:

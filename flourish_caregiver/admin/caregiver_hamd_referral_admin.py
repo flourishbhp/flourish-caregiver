@@ -1,10 +1,10 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
-from .modeladmin_mixins import CrfModelAdminMixin
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverHamdReferralForm
 from ..models import CaregiverHamdReferral
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(CaregiverHamdReferral, site=flourish_caregiver_admin)
@@ -23,3 +23,4 @@ class CaregiverHamdReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
          ), audit_fieldset_tuple)
 
     radio_fields = {'referred_to': admin.VERTICAL}
+

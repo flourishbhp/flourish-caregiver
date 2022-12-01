@@ -16,6 +16,10 @@ class CaregiverOffSchedule(OffScheduleModelMixin, BaseUuidModel):
         blank=True,
         null=True)
 
+    subject_identifier = models.CharField(
+        verbose_name="Subject Identifier",
+        max_length=50)
+
     objects = SubjectIdentifierManager()
 
     on_site = CurrentSiteManager()

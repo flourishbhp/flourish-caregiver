@@ -25,7 +25,7 @@ class AppointmentAdmin(BaseAppointmentAdmin):
         extra_context = extra_context or {}
         app_obj = Appointment.objects.get(id=object_id)
 
-        if app_obj.visit_code_sequence == 0:
+        if app_obj.visit_code_sequence == 0 and app_obj.visit_code != '2200T':
 
             earliest_start = (app_obj.timepoint_datetime -
                               app_obj.visits.get(app_obj.visit_code).rlower).astimezone(

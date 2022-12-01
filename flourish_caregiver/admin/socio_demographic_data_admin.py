@@ -1,5 +1,5 @@
 from django.contrib import admin
-from edc_fieldsets.fieldlist import Insert
+from edc_fieldsets.fieldlist import Fieldlist
 from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 from edc_model_admin import audit_fieldset_tuple
 
@@ -72,9 +72,27 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                           'c_sec_quart2_schedule1', 'c_sec_quart3_schedule1',
                           'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1']
 
-    for schedule in quartely_schedules:
+    fu_schedules = ['a_fu1_schedule1', 'a_fu2_schedule1',
+                    'a_fu3_schedule1',
+                    'a_fu_quarterly1_schedule1', 'a_fu_quarterly2_schedule1',
+                    'a_fu_quarterly3_schedule1',
+                    'b_fu1_schedule1',
+                    'b_fu2_schedule1', 'b_fu3_schedule1',
+                    'b_fu_quarterly1_schedule1', 'b_fu_quarterly2_schedule1',
+                    'b_fu_quarterly3_schedule1',
+                    'c_fu1_schedule1',
+                    'c_fu2_schedule1', 'c_fu3_schedule1',
+                    'c_fu_quarterly1_schedule1', 'c_fu_quarterly2_schedule1',
+                    'c_fu_quarterly3_schedule1']
+
+    schedules = quartely_schedules + fu_schedules
+
+    for schedule in schedules:
+
         conditional_fieldlists.update(
-            {schedule: Insert('socio_demo_changed', after='report_datetime')})
+            {schedule: Fieldlist(insert_fields=('socio_demo_changed',),
+                                 remove_fields=('number_of_household_members',),
+                                 insert_after='report_datetime')})
 
     def get_form(self, request, obj=None, *args, **kwargs):
         form = super().get_form(request, *args, **kwargs)

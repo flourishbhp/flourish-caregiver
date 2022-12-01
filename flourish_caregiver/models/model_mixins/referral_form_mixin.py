@@ -5,6 +5,7 @@ from ...choices import REFERRED_TO
 
 
 class ReferralFormMixin(models.Model):
+
     referred_to = models.CharField(
         verbose_name='Referred To',
         choices=REFERRED_TO,
@@ -12,7 +13,6 @@ class ReferralFormMixin(models.Model):
         null=True)
 
     referred_to_other = OtherCharField()
-
 
     class Meta:
         app_label = 'flourish_caregiver'

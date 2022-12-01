@@ -1,10 +1,10 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
-from .modeladmin_mixins import CrfModelAdminMixin
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverGadReferralForm
 from ..models import CaregiverGadReferral
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(CaregiverGadReferral, site=flourish_caregiver_admin)

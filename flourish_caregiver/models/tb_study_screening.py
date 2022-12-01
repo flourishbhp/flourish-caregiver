@@ -1,6 +1,7 @@
 from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
+from edc_constants.constants import YES
 
 from flourish_caregiver.choices import REASONS_NOT_PARTICIPATING
 from flourish_caregiver.models.model_mixins import CrfModelMixin
@@ -26,6 +27,15 @@ class TbStudyEligibility(CrfModelMixin):
     )
 
     reasons_not_participating_other = OtherCharField()
+
+    is_eligible = models.BooleanField(
+        default=False,
+        editable=False)
+
+    def save(self, *args, **kwargs):
+        self.is_eligibile = self.tb_participation == YES
+        super().save(*args, **kwargs)
+
 
     class Meta:
         app_label = 'flourish_caregiver'

@@ -1,8 +1,9 @@
 from django.db import models
-from .model_mixins import CrfModelMixin
-from edc_protocol.validators import datetime_not_before_study_start
+from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
+from edc_protocol.validators import datetime_not_before_study_start
+
 from ..choices import (HIV_STATUS_AWARE, FEEDING_HIV_STATUS,
                        ON_HIV_STATUS_AWARE, HIV_STATUS, HIV_STATUS_KNOWN_BY,
                        HIV_STATUS_KNOWN_BY_FATHER,
@@ -12,15 +13,14 @@ from ..choices import (HIV_STATUS_AWARE, FEEDING_HIV_STATUS,
 from .list_models import (PregnancyInfluencersList, AfterPregnancyInfluencersList,
                           ReceivedTrainingOnFeedingList,
                           ReasonsForInfantFeedingList)
-from edc_base.model_fields import OtherCharField
-from edc_constants.constants import NOT_APPLICABLE
+from .model_mixins import CrfModelMixin
 
 
 class BreastFeedingQuestionnaire(CrfModelMixin):
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
         default=get_utcnow,
-        validators=[datetime_not_future, datetime_not_before_study_start], )
+        validators=[datetime_not_future, datetime_not_before_study_start],)
 
     feeding_hiv_status = models.CharField(
         verbose_name='I was aware of my HIV status when I made my infant feeding choice',
@@ -33,7 +33,7 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
         max_length=18,
         choices=HIV_STATUS_AWARE,
         blank=True,
-        null=True, )
+        null=True,)
 
     on_hiv_status_aware = models.CharField(
         verbose_name='When you became aware of your HIV status, did you change'
@@ -41,7 +41,7 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
         max_length=8,
         choices=ON_HIV_STATUS_AWARE,
         blank=True,
-        null=True, )
+        null=True,)
 
     hiv_status_during_preg = models.CharField(
         verbose_name='My HIV status during pregnancy and/or breastfeeding was:',
@@ -58,7 +58,8 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     )
 
     father_knew_hiv_status = models.CharField(
-        verbose_name='During my pregnancy or breastfeeding, my HIV status was known by the father of this baby.',
+        verbose_name=('During my pregnancy or breastfeeding, my HIV status was known by the '
+                      'father of this baby.'),
         max_length=4,
         choices=HIV_STATUS_KNOWN_BY_FATHER,
         blank=True,
@@ -66,7 +67,8 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     )
 
     delivery_advice_vl_results = models.CharField(
-        verbose_name='At delivery, I was advised not to breastfeed my infant because I did not have a recent viral load result.',
+        verbose_name=('At delivery, I was advised not to breastfeed my infant because I did '
+                      'not have a recent viral load result.'),
         max_length=16,
         choices=ADVICED,
         blank=True,
@@ -74,7 +76,8 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     )
 
     delivery_advice_on_viralload = models.CharField(
-        verbose_name='At delivery, I was advised not to breastfeed my infant because my viral load was too high.',
+        verbose_name=('At delivery, I was advised not to breastfeed my infant because my '
+                      'viral load was too high.'),
         max_length=16,
         choices=ADVICED,
         blank=True,
@@ -110,8 +113,8 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
 
     breastfeeding_duration = models.CharField(
         verbose_name='What do you think the correct duration of breastfeeding should '
-                     'be if a mother has HIV but is taking antiretroviral treatment to prevent '
-                     'mother-to-child HIV transmission throughout breastfeeding?',
+                     'be if a mother has HIV but is taking antiretroviral treatment to '
+                     'prevent mother-to-child HIV transmission throughout breastfeeding?',
         max_length=30,
         choices=BREASTFEEDING_DURATION,
         blank=True,
@@ -121,7 +124,7 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     during_preg_influencers = models.ManyToManyField(
         PregnancyInfluencersList,
         verbose_name='During pregnancy, the individuals most influential in helping me '
-                     'plan a feeding choice for this baby were (Select all that apply):', )
+                     'plan a feeding choice for this baby were (Select all that apply):',)
 
     during_preg_influencers_other = OtherCharField(
         verbose_name="if other specify...",
@@ -164,7 +167,8 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     )
 
     training_outcome = models.CharField(
-        verbose_name='The training increased my understanding of the risk and benefits of breastfeeding and formula feeding.',
+        verbose_name=('The training increased my understanding of the risk and benefits of '
+                      'breastfeeding and formula feeding.'),
         max_length=20,
         choices=TRAINEE_OUTCOME,
     )
@@ -183,8 +187,9 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     )
 
     community_exclusive_breastfeeding_bias = models.CharField(
-        verbose_name='In my community, if a woman exclusively breastfeed her infant and only '
-                     'uses infant formula/other foods, people will be suspicious she has HIV.',
+        verbose_name=('In my community, if a woman exclusively breastfeeds her infant and '
+                      'does not use infant formula/other foods, people will be suspicious '
+                      'she has HIV.'),
         max_length=20,
         choices=AGREE_DISAGREE,
     )
@@ -195,8 +200,11 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
         choices=AFTER_BIRTH_OPINION,
     )
 
+    after_birth_opinion_other = OtherCharField()
+
     return_to_work_school = models.CharField(
-        verbose_name='My need to return to work/school influenced my feeding choice for this baby.',
+        verbose_name=('My need to return to work/school influenced my feeding choice for '
+                      'this baby.'),
         max_length=3,
         choices=FEEDING_INFLUENCE,
     )
@@ -208,22 +216,23 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
     )
 
     six_months_feeding = models.CharField(
-        verbose_name='In this baby’s first 6 months of life, I have introduced formula feeds or other foods beside breastmilk.',
+        verbose_name=('In this baby’s first 6 months of life, I have introduced formula feeds '
+                      'or other foods beside breastmilk.'),
         max_length=16,
         choices=FEEDING_AFTER_SIX_MONTHS,
     )
 
     infant_feeding_reasons = models.ManyToManyField(
         ReasonsForInfantFeedingList,
-        verbose_name='I introduced infant formula or other foods besides breastmilk because (select all that apply):',
-        blank=True, )
+        verbose_name=('I introduced infant formula or other foods besides breastmilk because '
+                      '(select all that apply):'),
+        blank=True,)
 
     infant_feeding_other = OtherCharField(
         max_length=150,
         verbose_name="if other specify...",
         blank=True,
-        null=True, )
-
+        null=True,)
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
