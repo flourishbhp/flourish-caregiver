@@ -100,6 +100,7 @@ class ExportActionMixin:
             inline_objs = []
 
             for field in self.get_model_fields:
+
                 if isinstance(field, ManyToManyField):
                     m2m_values = self.get_m2m_values(obj, m2m_field=field)
                     data.extend(m2m_values)
@@ -115,7 +116,8 @@ class ExportActionMixin:
                     inline_values = key_manager.all()
                     fields = field.related_model._meta.get_fields()
                     for field in fields:
-                        if not isinstance(field, (ForeignKey, OneToOneField, ManyToManyField,)):
+                        if not isinstance(field,
+                                          (ForeignKey, OneToOneField, ManyToManyField,)):
                             inline_field_names.append(field.name)
                         if isinstance(field, ManyToManyField):
                             choices = self.m2m_list_data(field.related_model)
@@ -123,6 +125,9 @@ class ExportActionMixin:
                                 [choice for choice in choices])
                     if inline_values:
                         inline_objs.append(inline_values)
+                if (field.name == 'consent_version') and self.is_visit(obj):
+                    data.append(self.get_consent_version(obj))
+                    continue
                 field_value = getattr(obj, field.name, '')
                 data.append(field_value)
 
@@ -149,7 +154,8 @@ class ExportActionMixin:
                             if field.name in inline_field_names:
                                 inline_data.append(getattr(inline_obj, field.name, ''))
                             if isinstance(field, ManyToManyField):
-                                m2m_values = self.get_m2m_values(inline_obj, m2m_field=field)
+                                m2m_values = self.get_m2m_values(inline_obj,
+                                                                 m2m_field=field)
                                 inline_data.extend(m2m_values)
                         row_num += 1
                         self.write_rows(data=inline_data, row_num=row_num, ws=ws)
@@ -164,6 +170,20 @@ class ExportActionMixin:
         'Export selected %(verbose_name_plural)s')
 
     actions = [export_as_csv]
+
+    def get_consent_version(self, obj):
+        """
+        Returns the consent version of an object
+        """
+        version_model = django_apps.get_model('flourish_caregiver.flourishconsentversion')
+        try:
+            version = version_model.objects.get(screening_identifier=self.screening_identifier(
+                subject_identifier=obj.subject_identifier
+            ))
+        except version_model.DoesNotExist:
+            return ""
+        else:
+            return version.version
 
     def write_rows(self, data=None, row_num=None, ws=None):
         for col_num in range(len(data)):
@@ -183,7 +203,7 @@ class ExportActionMixin:
                 ws.write(row_num, col_num, data[col_num])
 
     def update_headers_inline(self, inline_fields=None, field_names=None,
-                              ws=None, row_num=None, font_style=None):
+            ws=None, row_num=None, font_style=None):
         top_num = len(field_names)
         for col_num in range(len(inline_fields)):
             ws.write(row_num, top_num, inline_fields[col_num], font_style)
@@ -236,6 +256,10 @@ class ExportActionMixin:
         consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
         return isinstance(obj, consent_cls)
 
+    def is_visit(self, obj):
+        visit_cls = django_apps.get_model('flourish_caregiver.maternalvisit')
+        return isinstance(obj, visit_cls)
+
     def on_study(self, subject_identifier):
         caregiver_offstudy_cls = django_apps.get_model('flourish_prn.caregiveroffstudy')
         is_offstudy = caregiver_offstudy_cls.objects.filter(
@@ -246,7 +270,8 @@ class ExportActionMixin:
     @property
     def get_model_fields(self):
         return [field for field in self.model._meta.get_fields()
-                if field.name not in self.exclude_fields and not isinstance(field, OneToOneRel)]
+                if field.name not in self.exclude_fields and not isinstance(field,
+                                                                            OneToOneRel)]
 
     def inline_exclude(self, field_names=[]):
         return [field_name for field_name in field_names
