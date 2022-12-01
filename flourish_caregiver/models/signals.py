@@ -1,10 +1,8 @@
-import os
 from datetime import datetime
+import os
 
-import PIL
-import pyminizip
-import pypdfium2 as pdfium
 from PIL import Image
+import PIL
 from django import forms
 from django.apps import apps as django_apps
 from django.conf import settings
@@ -19,12 +17,24 @@ from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW, NO
 from edc_constants.constants import YES
+from edc_data_manager.models import DataActionItem
+
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
-
 from flourish_caregiver.models.tb_off_study import TbOffStudy
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
+import pyminizip
+import pypdfium2 as pdfium
+
+from ..action_items import TB_OFF_STUDY_ACTION
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
+from ..models.tb_informed_consent import TbInformedConsent
+from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -39,14 +49,6 @@ from .tb_engagement import TbEngagement
 from .tb_interview import TbInterview
 from .tb_referral_outcomes import TbReferralOutcomes
 from .ultrasound import UltraSound
-from ..action_items import TB_OFF_STUDY_ACTION
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from ..models.tb_informed_consent import TbInformedConsent
-from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 
 
 class PreFlourishError(Exception):
@@ -436,20 +438,20 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             CAREGIVER_DEATH_REPORT_ACTION,
                             instance.subject_identifier)
 
-    # if instance.brain_scan and instance.brain_scan == YES:
-    #     """
-    #     If the mother is interested in brain scan, a notification will be created
-    #     so a crf can be completed on redcap
-    #     """
-    #     DataActionItem.objects.update_or_create(
-    #         subject='Complete Infant Ultrasound Component on REDCAP',
-    #         subject_identifier=instance.subject_identifier,
-    #         assigned='clinic',
-    #         comment='''\
-    #                 Caregiver is interested in ultrasound brain scan for the infant,
-    #                  please complete Infant Ultrasound Component on REDCAP
-    #                 '''
-    #     )
+    if instance.brain_scan and instance.brain_scan == YES:
+        """
+        If the mother is interested in brain scan, a notification will be created
+        so a crf can be completed on redcap
+        """
+        DataActionItem.objects.update_or_create(
+            subject='Complete Infant Ultrasound Component on REDCAP',
+            subject_identifier=instance.subject_identifier,
+            assigned='clinic',
+            comment='''\
+                    Caregiver is interested in ultrasound brain scan for the infant,
+                     please complete Infant Ultrasound Component on REDCAP
+                    '''
+        )
 
     """
     triger off schedule for participants who missed a tb visit
@@ -1035,6 +1037,7 @@ def stamp_image(instance):
     else:
         print_pdf(path)
 
+
 def add_image_stamp(base_image=None, position=(25, 25),
         resize=(100, 100)):
     """
@@ -1065,6 +1068,7 @@ def add_image_stamp(base_image=None, position=(25, 25),
     base_image.paste(stamp, position, mask=stamp)
     return base_image
 
+
 def print_pdf(filepath):
     pdf = pdfium.PdfDocument(filepath)
     page_indices = [i for i in range(len(pdf))]
@@ -1077,6 +1081,7 @@ def print_pdf(filepath):
         stamped_pdf_images.append(add_image_stamp(base_image=image))
     first_img = stamped_pdf_images[0]
     first_img.save(filepath, save_all=True, append_images=stamped_pdf_images[1:])
+
 
 def encrypt_files(instance, subject_identifier):
     base_path = settings.MEDIA_ROOT
