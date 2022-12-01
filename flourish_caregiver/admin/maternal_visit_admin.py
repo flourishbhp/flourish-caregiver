@@ -90,11 +90,11 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         'info_source': admin.VERTICAL,
         'is_present': admin.VERTICAL,
         'survival_status': admin.VERTICAL,
-        # 'brain_scan': admin.VERTICAL
+        'brain_scan': admin.VERTICAL
     }
 
     conditional_fieldlists = {
-        # 'interested_in_brain_scan': Insert('brain_scan', after='survival_status')
+        'interested_in_brain_scan': Insert('brain_scan', after='survival_status')
     }
 
     @property
@@ -113,7 +113,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             enrollment_visit = self.model.objects.get(
                     subject_identifier=subject_identifier,
                     visit_code='1000M',
-                    visit_code_sequence='1')
+                    visit_code_sequence='0')
 
         except self.model.DoesNotExist:
             """
@@ -125,22 +125,22 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             try:
                 self.appointment_model_cls.objects.get(id=appointment_id,
                                                        visit_code='1000M',
-                                                       visit_code_sequence='1')
+                                                       visit_code_sequence='0')
 
             except self.appointment_model_cls.DoesNotExist:
                 pass
             else:
                 key = 'interested_in_brain_scan'
 
-        # else:
-        #     """
-        #     If previous visit does exist, and if response is brain_scan == NO
-        #     or NOT_APPLICABLE and current visit is 2000D show brain scan option
-        #     """
-        #
-        #     if (enrollment_visit.brain_scan in [NO, NOT_APPLICABLE]
-        #             and enrollment_visit.visit_code in ['2000D', '1000M']):
-        #
-        #         key = 'interested_in_brain_scan'
+        else:
+            """
+            If previous visit does exist, and if response is brain_scan == NO
+            or NOT_APPLICABLE and current visit is 2000D show brain scan option
+            """
+
+            if (enrollment_visit.brain_scan in [NO, NOT_APPLICABLE]
+                    and enrollment_visit.visit_code in ['2000D', '1000M']):
+
+                key = 'interested_in_brain_scan'
 
         return key
