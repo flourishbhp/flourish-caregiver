@@ -2,6 +2,7 @@ from dateutil.relativedelta import relativedelta
 from edc_base.utils import get_utcnow
 from edc_constants.constants import ALIVE, YES, NO, POS, ON_STUDY, PARTICIPANT, \
     NOT_APPLICABLE, FEMALE, NEG
+from edc_appointment.models import Appointment
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
 
@@ -12,9 +13,11 @@ from flourish_caregiver.models.tb_engagement import TbEngagement
 from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
                      CaregiverEdinburghDeprScreening)
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery, \
-    TbInformedConsent, TbStudyEligibility, TbOffStudy, TbVisitScreeningWomen
+    TbInformedConsent, TbStudyEligibility, TbOffStudy, TbVisitScreeningWomen, \
+    TbInterview
+    
 from .models import CaregiverPreviouslyEnrolled
-from .models import FlourishConsentVersion
+from .models import FlourishConsentVersion, CaregiverPhqReferral
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit, RelationshipFatherInvolvement
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
@@ -182,6 +185,9 @@ caregiverphqdeprscreening = Recipe(
     restlessness='1',
     self_harm='0',)
 
+caregiverphqreferral = Recipe(
+    CaregiverPhqReferral)
+
 caregiveredinburghdeprscreening = Recipe(
     CaregiverEdinburghDeprScreening,
     able_to_laugh='0',
@@ -218,4 +224,8 @@ tbengagement = Recipe(
 
 ultrasound = Recipe(
     UltraSound
+)
+
+tbinterview = Recipe(
+    TbInterview,
 )

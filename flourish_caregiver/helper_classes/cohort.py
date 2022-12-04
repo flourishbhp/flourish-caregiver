@@ -262,7 +262,7 @@ class Cohort:
         """
         protocols = ['Tshilo Dikotla', 'Mpepu', 'Tshipidi']
 
-        if self.check_age >= 5.1 and self.check_age <= 10.5:
+        if self.check_age > 5 and self.check_age <= 10.5:
 
             if self.protocol in protocols and self.efv_regime:
                 return ('cohort_b' if self.total_efv_regime(
