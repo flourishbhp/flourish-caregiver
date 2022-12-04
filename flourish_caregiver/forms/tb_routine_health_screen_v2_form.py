@@ -10,7 +10,7 @@ from ..choices import YES_NO_UNK_DWTA, VISIT_NUMBER
 class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
     form_validator_cls = TbRoutineHealthScreenV2FormValidator
 
-    tb_routine_health_screen_model = 'flourish_caregiver.tbroutinehealthscreenversiontwo'
+    tb_routine_health_screen_model = 'flourish_caregiver.tbroutinehealthscreenv2'
 
     @property
     def tb_routine_health_screen_cls(self):
