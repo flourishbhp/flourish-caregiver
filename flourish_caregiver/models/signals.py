@@ -592,7 +592,7 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
     for visit_schedule in site_visit_schedules.visit_schedules.values():
         for schedule in visit_schedule.schedules.values():
             onschedule_model_obj = get_onschedule_model_obj(
-                schedule, instance.subject_identifier)
+                schedule, instance.subject_identifier, instance.schedule_name)
             if (onschedule_model_obj
                     and onschedule_model_obj.schedule_name == instance.schedule_name):
                 _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
@@ -885,10 +885,10 @@ def get_onschedule_model(cohort, caregiver_visit_count=None, subject_identifier=
     return schedule, onschedule_model_cls, schedule_name
 
 
-def get_onschedule_model_obj(schedule, subject_identifier):
+def get_onschedule_model_obj(schedule, subject_identifier, schedule_name):
     try:
         return schedule.onschedule_model_cls.objects.get(
-            subject_identifier=subject_identifier)
+            subject_identifier=subject_identifier, schedule_name=schedule_name)
     except ObjectDoesNotExist:
         return None
 
