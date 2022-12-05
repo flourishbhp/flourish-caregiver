@@ -1158,7 +1158,7 @@ class TestRuleGroups(TestCase):
                 visit_code_sequence='0').entry_status, REQUIRED)
         
     @tag('tb_interview')    
-    def test_tb_interview_requried(self):
+    def test_tb_translation_and_transcription_required(self):
 
         visit = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -1185,4 +1185,62 @@ class TestRuleGroups(TestCase):
         )
         
         self.assertEqual(tb_translation.entry_status, REQUIRED)
+        self.assertEqual(tb_transcription.entry_status, REQUIRED)
+    
+    @tag('tb_interview')    
+    def test_tb_translation_required(self):
+        visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2200T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+        mommy.make_recipe(
+            'flourish_caregiver.tbinterview',
+            interview_language = 'setswana',
+            visit=visit)
+        
+        
+        tb_translation = CrfMetadata.objects.get(
+            model = 'flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+        
+        tb_transcription = CrfMetadata.objects.get(
+            model = 'flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+        
+        self.assertEqual(tb_translation.entry_status, REQUIRED)
+        self.assertEqual(tb_transcription.entry_status, REQUIRED)
+        
+    @tag('tb_interview')    
+    def test_only_tb_transcription_required(self):
+        visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2200T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+        mommy.make_recipe(
+            'flourish_caregiver.tbinterview',
+            interview_language = 'english',
+            visit=visit)
+        
+        
+        tb_translation = CrfMetadata.objects.get(
+            model = 'flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+        
+        tb_transcription = CrfMetadata.objects.get(
+            model = 'flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+        
+        self.assertEqual(tb_translation.entry_status, NOT_REQUIRED)
         self.assertEqual(tb_transcription.entry_status, REQUIRED)
