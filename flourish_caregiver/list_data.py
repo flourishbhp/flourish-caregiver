@@ -106,6 +106,23 @@ list_data = {
         ('emo_trauma_therapy', 'Emotional Trauma therapy'),
         (OTHER, 'Other, specify')
     ],
+    'flourish_child.emohealthimproved': [
+        ('difficult_to_tell',
+         'Difficult to tell because I am still receiving emotional support'),
+        ('mood_has_improved', 'My mood has improved'),
+        ('not_able_to_relax', 'I am now able to relax'),
+        ('relationship_with_other_improved',
+         'My relationship with other people/family members/partner has improved'),
+        ('able_to_manage_emotions',
+         'I am now able to manage my thoughts, feelings and emotions'),
+        ('accepted_medical_condition',
+         'I have accepted my medical condition and I have learnt to stay positive'),
+        ('accepted_loved_one_loss', 'I have now accepted the loss of my loved one'),
+        ('feeling_fine', 'Emotional support received and feeling fine now'),
+        ('no_longer_suicidal', 'I am no longer suicidal'),
+        ('defaulted', 'Gave up and defaulted (No difference)'),
+        (OTHER, 'Other, specify')
+    ],
     'flourish_caregiver.phonenumtype': [
         ('cell_phone', 'Cell Phone'),
         ('cell_phone_alt', 'Cell Phone (alternative)'),

@@ -17,6 +17,10 @@ class EmoSupportType(ListModelMixin, BaseUuidModel):
     pass
 
 
+class EmoHealthImproved(ListModelMixin, BaseUuidModel):
+    pass
+
+
 class MaternalDiagnosesList(ListModelMixin, BaseUuidModel):
     pass
 

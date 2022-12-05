@@ -1,22 +1,23 @@
 from django.db import models
-from edc_base.model_fields.custom_fields import OtherCharField
 
-from ..choices import TB_SCREENING_LOCATION, YES_NO_UNK_DWTA, VISIT_NUMBER
+from ..choices import YES_NO_UNK_DWTA, VISIT_NUMBER
 from .list_models import TbVisitCareLocation
 from .model_mixins import CrfModelMixin
 
 
 class TbRoutineHealthScreenV2(CrfModelMixin):
+
     tb_health_visits = models.CharField(
-        verbose_name='How many health visits did you have in the last year since last study visit?',
+        verbose_name=('How many health visits did you have in the last year '
+                      'since last study visit?'),
         max_length=20,
         choices=VISIT_NUMBER,
-        help_text='if 0, end of CRF. If 1 or greater, embed follow up questions for each visit.'
+        help_text=('if 0, end of CRF. If 1 or greater, embed follow up questions '
+                   'for each visit.')
     )
 
     screen_location = models.ManyToManyField(
         TbVisitCareLocation,
-        null=True,
         blank=True,
         verbose_name="For visit #1, where did you receive care",
     )
@@ -45,5 +46,5 @@ class TbRoutineHealthScreenV2(CrfModelMixin):
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = 'Screen for TB at routine health encounters version 2'
-        verbose_name_plural = 'Screen for TB at routine health encounters version 2'
+        verbose_name = 'Screen for TB at routine health encounters V2'
+        verbose_name_plural = 'Screen for TB at routine health encounters V2'

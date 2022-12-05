@@ -2,9 +2,9 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
-from ...choices import EMO_HEALTH_IMPROVED, PERCEIVE_COUNSELOR
+from ...choices import PERCEIVE_COUNSELOR
 from ...choices import YES_NO_PNTA, EMO_SUPPORT_DECLINE, NO_EMO_SUPPORT_REASON
-from ..list_models import EmoSupportType
+from ..list_models import EmoSupportType, EmoHealthImproved
 
 
 class ReferralFUFormMixin(models.Model):
@@ -49,13 +49,11 @@ class ReferralFUFormMixin(models.Model):
 
     emo_support_type_other = OtherCharField()
 
-    emo_health_improved = models.CharField(
+    emo_health_improved = models.ManyToManyField(
+        EmoHealthImproved,
         verbose_name=('Since you received emotional support, how has your emotional health '
                       'improved?'),
-        max_length=50,
-        choices=EMO_HEALTH_IMPROVED,
-        blank=True,
-        null=True)
+        blank=True)
 
     emo_health_improved_other = OtherCharField()
 

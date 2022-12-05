@@ -33,7 +33,8 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
          ), audit_fieldset_tuple)
 
     radio_fields = {
-        'confirm_values': admin.VERTICAL, }
+        'confirm_values': admin.VERTICAL,
+        'all_measurements': admin.VERTICAL}
 
     conditional_fieldlists = {
         'a_antenatal1_schedule1': Remove('waist_circ', 'hip_circ'),

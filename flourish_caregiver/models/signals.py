@@ -17,6 +17,7 @@ from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
 from edc_constants.constants import OPEN, NEW, NO
 from edc_constants.constants import YES
+from edc_data_manager.models import DataActionItem
 
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
@@ -437,20 +438,20 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             CAREGIVER_DEATH_REPORT_ACTION,
                             instance.subject_identifier)
 
-    # if instance.brain_scan and instance.brain_scan == YES:
-    #     """
-    #     If the mother is interested in brain scan, a notification will be created
-    #     so a crf can be completed on redcap
-    #     """
-    #     DataActionItem.objects.update_or_create(
-    #         subject='Complete Infant Ultrasound Component on REDCAP',
-    #         subject_identifier=instance.subject_identifier,
-    #         assigned='clinic',
-    #         comment='''\
-    #                 Caregiver is interested in ultrasound brain scan for the infant,
-    #                  please complete Infant Ultrasound Component on REDCAP
-    #                 '''
-    #     )
+    if instance.brain_scan and instance.brain_scan == YES:
+        """
+        If the mother is interested in brain scan, a notification will be created
+        so a crf can be completed on redcap
+        """
+        DataActionItem.objects.update_or_create(
+            subject='Complete Infant Ultrasound Component on REDCAP',
+            subject_identifier=instance.subject_identifier,
+            assigned='clinic',
+            comment='''\
+                    Caregiver is interested in ultrasound brain scan for the infant,
+                     please complete Infant Ultrasound Component on REDCAP
+                    '''
+        )
 
     """
     triger off schedule for participants who missed a tb visit
