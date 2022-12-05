@@ -18,7 +18,10 @@ class TbReferralOutcomes(CrfModelMixin):
         verbose_name=('Did the participant go to any clinic for further TB evaluation '
                       'after they were referred?'),
         max_length=3,
-        choices=YES_NO)
+        choices=YES_NO,
+        null=True,
+        blank=True
+    )
 
     tb_eval_comments = models.TextField(
         verbose_name=('Comments'),
