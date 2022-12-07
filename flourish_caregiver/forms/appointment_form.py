@@ -95,10 +95,15 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                     appointment__subject_identifier=self.instance.subject_identifier,
                     visit_schedule_name=self.instance.visit_schedule_name,
                 ).order_by('appointment__appt_datetime').last()
+
+                next_visit = last_visit.appointment.get_next_by_appt_datetime(
+                    subject_identifier=self.instance.subject_identifier,
+                    schedule_name=self.instance.schedule_name)
+
                 if last_visit:
                     raise forms.ValidationError(
                         f'A previous visit report is required. Enter the visit report for '
-                        f'appointment {last_visit.appointment.next.visit_code} before '
+                        f'appointment {next_visit.visit_code} before '
                         'starting with this appointment.')
             except AttributeError:
                 pass
