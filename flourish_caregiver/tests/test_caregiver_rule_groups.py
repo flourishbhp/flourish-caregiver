@@ -1204,7 +1204,7 @@ class TestRuleGroups(TestCase):
                 visit_code='2000D',
                 visit_code_sequence='0').entry_status, REQUIRED)
 
-    @tag('hiv-pos_')
+    @tag('hiv-pos')
     def test_maternal_arvs_post_adherence_nonrequired(self):
 
         subject_consent = mommy.make_recipe(
