@@ -279,13 +279,17 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
 
     child_consents = get_child_consents(instance.subject_identifier)
 
+    preg_child_consents = child_consents.filter(preg_enroll=True)
+
     if instance.live_infants_to_register == 1:
+
         if not raw and created:
             put_on_schedule(
                 'cohort_a_birth', instance=instance,
                 subject_identifier=instance.subject_identifier,
-                child_subject_identifier=child_consents[0].subject_identifier,
-                base_appt_datetime=instance.delivery_datetime.replace(microsecond=0))
+                child_subject_identifier=preg_child_consents[0].subject_identifier,
+                base_appt_datetime=instance.delivery_datetime.replace(microsecond=0),
+                caregiver_visit_count=preg_child_consents[0].caregiver_visit_count)
             create_registered_infant(instance)
         try:
             tb_informed_consent_cls.objects.get(
@@ -296,7 +300,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
             put_on_schedule(
                 'cohort_a_tb_2_months', instance=instance,
                 subject_identifier=instance.subject_identifier,
-                child_subject_identifier=child_consents[0].subject_identifier,
+                child_subject_identifier=preg_child_consents[0].subject_identifier,
                 base_appt_datetime=instance.delivery_datetime.replace(
                     microsecond=0))
 
@@ -377,8 +381,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             instance.cohort = cohort
             instance.save_base(raw=True)
 
-            if created:
-                instance.caregiver_visit_count = children_count
         else:
             # TO-DO: Update child cohort
             try:
@@ -407,6 +409,10 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         if not child_dummy_consent.cohort:
                             child_dummy_consent.cohort = instance.cohort
                         child_dummy_consent.save()
+
+        if created:
+            instance.caregiver_visit_count = children_count
+            instance.save_base(raw=True)
 
         if instance.study_child_identifier:
             update_maternal_dataset_and_worklist(
@@ -586,7 +592,7 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
     for visit_schedule in site_visit_schedules.visit_schedules.values():
         for schedule in visit_schedule.schedules.values():
             onschedule_model_obj = get_onschedule_model_obj(
-                schedule, instance.subject_identifier)
+                schedule, instance.subject_identifier, instance.schedule_name)
             if (onschedule_model_obj
                     and onschedule_model_obj.schedule_name == instance.schedule_name):
                 _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
@@ -710,13 +716,13 @@ def tb_interview_post_save(sender, instance, raw, created, **kwargs):
                         opt_trigger=True)
 
 
-def screening_preg_exists(caregiver_child_consent_obj):
+def screening_preg_exists(child_consent_obj):
     preg_women_screening_cls = django_apps.get_model(
         'flourish_caregiver.screeningpregwomen')
 
     try:
         preg_women_screening_cls.objects.get(
-            screening_identifier=caregiver_child_consent_obj.subject_consent.screening_identifier)
+            screening_identifier=child_consent_obj.subject_consent.screening_identifier)
     except preg_women_screening_cls.DoesNotExist:
         return False
     else:
@@ -879,10 +885,10 @@ def get_onschedule_model(cohort, caregiver_visit_count=None, subject_identifier=
     return schedule, onschedule_model_cls, schedule_name
 
 
-def get_onschedule_model_obj(schedule, subject_identifier):
+def get_onschedule_model_obj(schedule, subject_identifier, schedule_name):
     try:
         return schedule.onschedule_model_cls.objects.get(
-            subject_identifier=subject_identifier)
+            subject_identifier=subject_identifier, schedule_name=schedule_name)
     except ObjectDoesNotExist:
         return None
 
