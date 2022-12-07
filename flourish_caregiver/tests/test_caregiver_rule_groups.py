@@ -52,12 +52,12 @@ class TestRuleGroups(TestCase):
             subject_consent=self.subject_consent,
             child_dob=None,
             first_name=None,
-            last_name=None,)
+            last_name=None, )
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=self.subject_consent.subject_identifier,
-            )
+        )
 
         self.subject_identifier = self.subject_consent.subject_identifier
 
@@ -227,8 +227,8 @@ class TestRuleGroups(TestCase):
             **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -274,8 +274,8 @@ class TestRuleGroups(TestCase):
             **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -444,8 +444,8 @@ class TestRuleGroups(TestCase):
             **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -496,8 +496,8 @@ class TestRuleGroups(TestCase):
             **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -550,8 +550,8 @@ class TestRuleGroups(TestCase):
             **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -602,8 +602,8 @@ class TestRuleGroups(TestCase):
             **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -686,15 +686,15 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **self.child_dataset_options)
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options1)
+            **self.child_dataset_options1)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **self.maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -738,11 +738,11 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **self.child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **self.maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -796,11 +796,11 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **self.child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **self.maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -854,11 +854,11 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **self.child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **self.maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -895,11 +895,11 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **self.child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **self.maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -1019,8 +1019,8 @@ class TestRuleGroups(TestCase):
             **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
-           'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+            'flourish_caregiver.maternaldataset',
+            **self.maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
@@ -1040,28 +1040,28 @@ class TestRuleGroups(TestCase):
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2001M',
-                subject_identifier=subject_identifier),
+                                                subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2002M',
-                subject_identifier=subject_identifier),
+                                                subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2003M',
-                subject_identifier=subject_identifier),
+                                                subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2004M',
-                subject_identifier=subject_identifier),
+                                                subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
@@ -1086,39 +1086,38 @@ class TestRuleGroups(TestCase):
             'flourish_caregiver.maternaldelivery',
             subject_identifier=self.subject_consent.subject_identifier,
             live_infants_to_register=1)
-
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2000D',
-            subject_identifier=self.subject_consent.subject_identifier),
+                                                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2001M',
-            subject_identifier=self.subject_consent.subject_identifier),
+                                                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2002M',
-            subject_identifier=self.subject_consent.subject_identifier),
+                                                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2003M',
-            subject_identifier=self.subject_consent.subject_identifier),
+                                                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2004M',
-            subject_identifier=self.subject_consent.subject_identifier),
+                                                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
@@ -1156,8 +1155,8 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_consent.subject_identifier,
                 visit_code='2004M',
                 visit_code_sequence='0').entry_status, REQUIRED)
-        
-    @tag('tb_interview')    
+
+    @tag('tb_interview')
     def test_tb_interview_requried(self):
 
         visit = mommy.make_recipe(
@@ -1165,24 +1164,85 @@ class TestRuleGroups(TestCase):
             appointment=Appointment.objects.get(visit_code='2200T'),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
-        
+
         mommy.make_recipe(
             'flourish_caregiver.tbinterview',
-            interview_language = 'both',
+            interview_language='both',
             visit=visit)
-        
-        
+
         tb_translation = CrfMetadata.objects.get(
-            model = 'flourish_caregiver.tbinterviewtranslation',
+            model='flourish_caregiver.tbinterviewtranslation',
             visit_code='2200T',
             subject_identifier=self.subject_identifier,
         )
-        
+
         tb_transcription = CrfMetadata.objects.get(
-            model = 'flourish_caregiver.tbinterviewtranslation',
+            model='flourish_caregiver.tbinterviewtranslation',
             visit_code='2200T',
             subject_identifier=self.subject_identifier,
         )
-        
+
         self.assertEqual(tb_translation.entry_status, REQUIRED)
         self.assertEqual(tb_transcription.entry_status, REQUIRED)
+
+    @tag('hiv-pos')
+    def test_maternal_arv_post_adherence_required(self):
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.subject_consent.subject_identifier)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.maternalarvpostadherence',
+                subject_identifier=self.subject_identifier,
+                visit_code='2000D',
+                visit_code_sequence='0').entry_status, REQUIRED)
+
+    @tag('hiv-pos_')
+    def test_maternal_arvs_post_adherence_nonrequired(self):
+
+        subject_consent = mommy.make_recipe(
+            'flourish_caregiver.subjectconsent',
+            screening_identifier='111111111',
+            **self.options)
+
+        subject_consent.save()
+
+        subject_identifier = subject_consent.subject_identifier
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            child_dob=None,
+            first_name=None,
+            last_name=None, )
+
+        mommy.make_recipe(
+            'flourish_caregiver.antenatalenrollment',
+            subject_identifier=subject_identifier,
+            current_hiv_status=NEG
+        )
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=subject_identifier)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D',
+                                                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.maternalarvpostadherence',
+                subject_identifier=subject_identifier,
+                visit_code='2000D',
+                visit_code_sequence='0').entry_status, NOT_REQUIRED)

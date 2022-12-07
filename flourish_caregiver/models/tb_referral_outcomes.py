@@ -79,3 +79,4 @@ class TbReferralOutcomes(CrfModelMixin):
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'TB Referral Outcomes'
+        verbose_name_plural = "TB Referral Outcomes"
