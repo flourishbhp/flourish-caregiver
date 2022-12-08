@@ -94,6 +94,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                 last_visit = self.appointment_model_cls.visit_model_cls().objects.filter(
                     appointment__subject_identifier=self.instance.subject_identifier,
                     visit_schedule_name=self.instance.visit_schedule_name,
+                    report_datetime__lt=self.instance.appt_datetime
                 ).order_by('appointment__appt_datetime').last()
 
                 if last_visit:
@@ -121,7 +122,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                 first_new_appt = self.appointment_model_cls.objects.filter(
                     subject_identifier=self.instance.subject_identifier,
                     visit_schedule_name=self.instance.visit_schedule_name,
-                    appt_status=NEW_APPT
+                    appt_status=NEW_APPT,
+                    appt_datetime__lt=self.instance.appt_datetime
                 ).order_by('appt_datetime').first()
 
                 if first_new_appt:
