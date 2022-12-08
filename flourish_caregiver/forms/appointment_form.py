@@ -96,15 +96,19 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                     visit_schedule_name=self.instance.visit_schedule_name,
                 ).order_by('appointment__appt_datetime').last()
 
-                next_visit = last_visit.appointment.get_next_by_appt_datetime(
-                    subject_identifier=self.instance.subject_identifier,
-                    visit_schedule_name=self.instance.visit_schedule_name)
-
                 if last_visit:
-                    raise forms.ValidationError(
-                        f'A previous visit report is required. Enter the visit report for '
-                        f'appointment {next_visit.visit_code} before '
-                        'starting with this appointment.')
+                    try:
+
+                        next_visit = last_visit.appointment.get_next_by_appt_datetime(
+                            subject_identifier=self.instance.subject_identifier,
+                            visit_schedule_name=self.instance.visit_schedule_name)
+                    except last_visit.appointment.DoesNotExist:
+                        pass
+                    else:
+                        raise forms.ValidationError(
+                            f'A previous visit report is required. Enter the visit report for '
+                            f'appointment {next_visit.visit_code} before '
+                            'starting with this appointment.')
             except AttributeError:
                 pass
 
@@ -119,6 +123,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                     visit_schedule_name=self.instance.visit_schedule_name,
                     appt_status=NEW_APPT
                 ).order_by('appt_datetime').first()
+
                 if first_new_appt:
                     raise forms.ValidationError(
                         'A previous appointment requires updating. '
