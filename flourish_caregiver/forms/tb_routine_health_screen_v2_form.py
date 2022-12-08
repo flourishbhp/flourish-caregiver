@@ -10,18 +10,18 @@ from ..choices import YES_NO_UNK_DWTA, VISIT_NUMBER
 class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
     form_validator_cls = TbRoutineHealthScreenV2FormValidator
 
-    tb_routine_health_screen_model = 'flourish_caregiver.tbroutinehealthscreenversiontwo'
+    tb_routine_health_screen_v2_model = 'flourish_caregiver.tbroutinehealthscreenv2'
 
     @property
-    def tb_routine_health_screen_cls(self):
-        return django_apps.get_model(self.tb_routine_health_screen_model)
+    def tb_routine_health_screen_v2_cls(self):
+        return django_apps.get_model(self.tb_routine_health_screen_v2_model)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         subject_identifier = self.initial.get('subject_identifier', None)
         # get previous appointment
-        prev_instance = self.tb_routine_health_screen_cls.objects.filter(
+        prev_instance = self.tb_routine_health_screen_v2_cls.objects.filter(
             maternal_visit__appointment__subject_identifier=subject_identifier).order_by(
             '-report_datetime').first()
 
