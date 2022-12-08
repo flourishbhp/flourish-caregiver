@@ -33,11 +33,23 @@ class TbRoutineHealthEncounters(BaseUuidModel):
         null=True)
 
     tb_screened = models.CharField(
-        verbose_name='Did you screen positive for TB at this visit because'
-                     ' you had cough, fever, weight loss, '
-                     'and/or night sweats?',
+        verbose_name='For this healthcare visit, were you screened for'
+                     ' TB with the four screening questions'
+                     ' (cough,fever, weight loss, night sweats)?',
         max_length=20,
-        choices=YES_NO_UNK_DWTA)
+        choices=YES_NO_UNK_DWTA,
+        help_text="If yes, continue to Q5 If no/I don’t know/prefer not to answer,"
+                  "CRF complete if no further visits, "
+                  "else repeat questions 2-6 for each healthcare visit reported in question 1 "
+    )
+    pos_screen = models.CharField(
+        verbose_name="Did you screen positive for TB at this visit"
+                     " because you had cough, fever, weight loss, "
+                     "and/or night sweats? ",
+        max_length=20,
+        choices=YES_NO_UNK_DWTA,
+        help_text="If no/I don’t know/prefer not to answer, CRF complete if no further visits"
+    )
 
     diagnostic_referral = models.CharField(
         verbose_name='Were you referred to another clinic for further evaluation'
