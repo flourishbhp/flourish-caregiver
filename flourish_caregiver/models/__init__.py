@@ -86,7 +86,7 @@ from .tb_presence_household_members import TbPresenceHouseholdMembers
 from .tb_referral import TbReferral
 from .tb_referral_outcomes import TbReferralOutcomes
 from .tb_routine_health_screen import TbRoutineHealthScreen
-from .tb_routine_health_screen_v2 import TbRoutineHealthScreenV2
+from .tb_routine_health_screen_v2 import TbRoutineHealthScreenV2, TbRoutineHealthEncounters
 from .tb_screen_preg import TbScreenPreg
 from .tb_study_screening import TbStudyEligibility
 from .tb_visit_screening_women import TbVisitScreeningWomen

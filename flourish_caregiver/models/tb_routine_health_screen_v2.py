@@ -1,4 +1,5 @@
 from django.db import models
+from edc_base.model_mixins import BaseUuidModel
 
 from ..choices import YES_NO_UNK_DWTA, VISIT_NUMBER
 from .list_models import TbVisitCareLocation
@@ -6,7 +7,6 @@ from .model_mixins import CrfModelMixin
 
 
 class TbRoutineHealthScreenV2(CrfModelMixin):
-
     tb_health_visits = models.CharField(
         verbose_name=('How many health visits did you have in the last year '
                       'since last study visit?'),
@@ -16,6 +16,10 @@ class TbRoutineHealthScreenV2(CrfModelMixin):
                    'for each visit.')
     )
 
+
+class TbRoutineHealthEncounters(BaseUuidModel):
+    routine_encounter = models.ForeignKey(TbRoutineHealthScreenV2, on_delete=models.PROTECT,
+                                          related_name='routine_encounter', )
     screen_location = models.ManyToManyField(
         TbVisitCareLocation,
         blank=True,
