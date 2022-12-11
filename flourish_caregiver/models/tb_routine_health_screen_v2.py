@@ -12,8 +12,8 @@ class TbRoutineHealthScreenV2(CrfModelMixin):
                       'since last study visit?'),
         max_length=20,
         choices=VISIT_NUMBER,
-        help_text=('if 0, end of CRF. If 1 or greater, embed follow up questions '
-                   'for each visit.')
+        help_text=('if 0, end of CRF. If 1 or greater,'
+                   ' embed follow up questions for each visit.')
     )
 
 
