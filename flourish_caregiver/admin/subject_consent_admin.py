@@ -10,8 +10,6 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from edc_consent.actions import (
-    flag_as_verified_against_paper, unflag_as_verified_against_paper)
 from edc_constants.constants import MALE, FEMALE
 from edc_model_admin import ModelAdminBasicMixin
 from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, \
@@ -19,6 +17,9 @@ from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple,
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
 import xlwt
+
+from edc_consent.actions import (
+    flag_as_verified_against_paper, unflag_as_verified_against_paper)
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
@@ -92,7 +93,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
             if obj:
                 caregiver_child_consents_pids = set(
-                    self.get_difference(caregiver_child_consents, obj))
+                    [c.subject_identifier for c in self.get_difference(
+                        caregiver_child_consents, obj)])
 
             if caregiver_child_consents_pids:
 
@@ -155,9 +157,9 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         return extra
 
     def get_difference(self, model_objs, obj=None):
-        cc_ids = obj.caregiverchildconsent_set.values_list(
-            'subject_identifier', flat=True)
-        return [x for x in model_objs if x.subject_identifier not in cc_ids]
+        cc_ids = obj.caregiverchildconsent_set.values_list('subject_identifier', 'version')
+
+        return [x for x in model_objs if [x.subject_identifier, x.version] not in cc_ids]
 
     def get_child_reconsent_extra(self, request):
         consent_version_cls = django_apps.get_model(

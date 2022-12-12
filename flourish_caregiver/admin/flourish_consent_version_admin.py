@@ -88,6 +88,7 @@ class FlourishConsentVersionAdmin(ModelAdminMixin, ModelAdminNextUrlRedirectMixi
                 'screening_identifier',
                 'report_datetime',
                 'version',
+                'child_version'
                 ]}
          ), audit_fieldset_tuple)
 
@@ -96,7 +97,8 @@ class FlourishConsentVersionAdmin(ModelAdminMixin, ModelAdminNextUrlRedirectMixi
 
     list_display = ('screening_identifier',
                     'report_datetime',
-                    'version',)
+                    'version',
+                    'child_version')
 
     conditional_fieldlists = {'is_preg': Insert('child_version', after='version')}
 
@@ -114,49 +116,49 @@ class FlourishConsentVersionAdmin(ModelAdminMixin, ModelAdminNextUrlRedirectMixi
             return ((get_utcnow().date() - maternal_delivery_obj.delivery_datetime.date()).days
                     <= 3)
 
-    def check_if_preg_enroll(self, request, obj=None):
+    # def check_if_preg_enroll(self, request, obj=None):
+    #
+    #     subject_consent_cls = django_apps.get_model(
+    #         'flourish_caregiver.subjectconsent')
+    #
+    #     child_consent_cls = django_apps.get_model(
+    #         'flourish_caregiver.caregiverchildconsent')
+    #
+    #     maternal_delivery_cls = django_apps.get_model(
+    #         'flourish_caregiver.maternaldelivery')
+    #
+    #     preg_screening_cls = django_apps.get_model(
+    #         'flourish_caregiver.screeningpregwomen')
+    #
+    #     try:
+    #         screening_preg = preg_screening_cls.objects.get(
+    #             screening_identifier=request.GET.get('screening_identifier'))
+    #     except preg_screening_cls.DoesNotExist:
+    #         latest_subject_consent = subject_consent_cls.objects.filter(
+    #             screening_identifier=request.GET.get('screening_identifier')).latest(
+    #                 'consent_datetime')
+    #     else:
+    #         latest_subject_consent = subject_consent_cls.objects.filter(
+    #             screening_identifier=screening_preg.screening_identifier).latest(
+    #             'consent_datetime')
+    #
+    #     preg_child_consents = child_consent_cls.objects.filter(
+    #             subject_identifier__startswith=latest_subject_consent.subject_identifier,
+    #             preg_enroll=True)
+    #
+    #     if latest_subject_consent and preg_child_consents:
+    #
+    #         try:
+    #             maternal_delivery_cls.objects.get(
+    #                 subject_identifier=latest_subject_consent.subject_identifier)
+    #         except maternal_delivery_cls.DoesNotExist:
+    #             return True
+    #         else:
+    #             return self.is_delivery_window(latest_subject_consent.subject_identifier)
+    #
+    #     return False
 
-        subject_consent_cls = django_apps.get_model(
-            'flourish_caregiver.subjectconsent')
-
-        child_consent_cls = django_apps.get_model(
-            'flourish_caregiver.caregiverchildconsent')
-
-        maternal_delivery_cls = django_apps.get_model(
-            'flourish_caregiver.maternaldelivery')
-
-        preg_screening_cls = django_apps.get_model(
-            'flourish_caregiver.screeningpregwomen')
-
-        try:
-            screening_preg = preg_screening_cls.objects.get(
-                screening_identifier=request.GET.get('screening_identifier'))
-        except preg_screening_cls.DoesNotExist:
-            latest_subject_consent = subject_consent_cls.objects.filter(
-                screening_identifier=request.GET.get('screening_identifier')).latest(
-                    'consent_datetime')
-        else:
-            latest_subject_consent = subject_consent_cls.objects.filter(
-                screening_identifier=screening_preg.screening_identifier).latest(
-                'consent_datetime')
-
-        preg_child_consents = child_consent_cls.objects.filter(
-                subject_identifier__startswith=latest_subject_consent.subject_identifier,
-                preg_enroll=True)
-
-        if latest_subject_consent and preg_child_consents:
-
-            try:
-                maternal_delivery_cls.objects.get(
-                    subject_identifier=latest_subject_consent.subject_identifier)
-            except maternal_delivery_cls.DoesNotExist:
-                return True
-            else:
-                return self.is_delivery_window(latest_subject_consent.subject_identifier)
-
-        return False
-
-    def get_key(self, request, obj=None):
-
-        if (obj and obj.child_version) or self.check_if_preg_enroll(request, obj):
-            return 'is_preg'
+    # def get_key(self, request, obj=None):
+    #
+    #     if (obj and obj.child_version) or self.check_if_preg_enroll(request, obj):
+    #         return 'is_preg'

@@ -1156,33 +1156,152 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_consent.subject_identifier,
                 visit_code='2004M',
                 visit_code_sequence='0').entry_status, REQUIRED)
-        
-    @tag('tb_interview')    
-    def test_tb_interview_requried(self):
+
+    @tag('tb_interview')
+    def test_tb_translation_and_transcription_required(self):
 
         visit = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2200T'),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
-        
+
         mommy.make_recipe(
             'flourish_caregiver.tbinterview',
-            interview_language = 'both',
+            interview_language='both',
             visit=visit)
-        
-        
+
+        tb_translation = CrfMetadata.objects.get(
+            model='flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+
+        tb_transcription = CrfMetadata.objects.get(
+            model='flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+
+        self.assertEqual(tb_translation.entry_status, REQUIRED)
+        self.assertEqual(tb_transcription.entry_status, REQUIRED)
+
+    @tag('tb_interview')
+    def test_tb_translation_required(self):
+        visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2200T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.tbinterview',
+            interview_language = 'setswana',
+            visit=visit)
+
+
         tb_translation = CrfMetadata.objects.get(
             model = 'flourish_caregiver.tbinterviewtranslation',
             visit_code='2200T',
             subject_identifier=self.subject_identifier,
         )
-        
+
         tb_transcription = CrfMetadata.objects.get(
             model = 'flourish_caregiver.tbinterviewtranslation',
             visit_code='2200T',
             subject_identifier=self.subject_identifier,
         )
-        
+
         self.assertEqual(tb_translation.entry_status, REQUIRED)
         self.assertEqual(tb_transcription.entry_status, REQUIRED)
+
+    @tag('tb_interview')
+    def test_only_tb_transcription_required(self):
+        visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2200T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.tbinterview',
+            interview_language = 'english',
+            visit=visit)
+
+
+        tb_translation = CrfMetadata.objects.get(
+            model = 'flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+
+        tb_transcription = CrfMetadata.objects.get(
+            model = 'flourish_caregiver.tbinterviewtranslation',
+            visit_code='2200T',
+            subject_identifier=self.subject_identifier,
+        )
+
+        self.assertEqual(tb_translation.entry_status, NOT_REQUIRED)
+        self.assertEqual(tb_transcription.entry_status, REQUIRED)
+
+    @tag('hiv-pos')
+    def test_maternal_arv_post_adherence_required(self):
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.subject_consent.subject_identifier)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.maternalarvpostadherence',
+                subject_identifier=self.subject_identifier,
+                visit_code='2000D',
+                visit_code_sequence='0').entry_status, REQUIRED)
+
+    @tag('hiv-pos')
+    def test_maternal_arvs_post_adherence_nonrequired(self):
+
+        subject_consent = mommy.make_recipe(
+            'flourish_caregiver.subjectconsent',
+            screening_identifier='111111111',
+            **self.options)
+
+        subject_consent.save()
+
+        subject_identifier = subject_consent.subject_identifier
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            child_dob=None,
+            first_name=None,
+            last_name=None, )
+
+        mommy.make_recipe(
+            'flourish_caregiver.antenatalenrollment',
+            subject_identifier=subject_identifier,
+            current_hiv_status=NEG
+        )
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=subject_identifier)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000D',
+                                                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.maternalarvpostadherence',
+                subject_identifier=subject_identifier,
+                visit_code='2000D',
+                visit_code_sequence='0').entry_status, NOT_REQUIRED)

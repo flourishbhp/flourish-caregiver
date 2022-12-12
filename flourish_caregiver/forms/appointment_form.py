@@ -1,9 +1,11 @@
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from edc_base.sites.forms import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
 import pytz
 
+from edc_appointment.constants import NEW_APPT, IN_PROGRESS_APPT
 from edc_appointment.form_validators import AppointmentFormValidator
 from edc_appointment.models import Appointment
 from flourish_child.models import ChildAssent
@@ -78,6 +80,58 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
         validation functions.
         """
         pass
+
+    def validate_sequence(self):
+        """Enforce appointment and visit entry sequence.
+        """
+        if self.cleaned_data.get('appt_status') == IN_PROGRESS_APPT:
+            # visit report sequence
+            try:
+                self.instance.get_previous_by_appt_datetime(
+                                subject_identifier=self.instance.subject_identifier,
+                                visit_schedule_name=self.instance.visit_schedule_name).maternalvisit
+            except ObjectDoesNotExist:
+                last_visit = self.appointment_model_cls.visit_model_cls().objects.filter(
+                    appointment__subject_identifier=self.instance.subject_identifier,
+                    visit_schedule_name=self.instance.visit_schedule_name,
+                    report_datetime__lt=self.instance.appt_datetime
+                ).order_by('appointment__appt_datetime').last()
+
+                if last_visit:
+                    try:
+
+                        next_visit = last_visit.appointment.get_next_by_appt_datetime(
+                            subject_identifier=self.instance.subject_identifier,
+                            visit_schedule_name=self.instance.visit_schedule_name)
+                    except last_visit.appointment.DoesNotExist:
+                        pass
+                    else:
+                        raise forms.ValidationError(
+                            f'A previous visit report is required. Enter the visit report for '
+                            f'appointment {next_visit.visit_code} before '
+                            'starting with this appointment.')
+            except AttributeError:
+                pass
+
+            # appointment sequence
+            try:
+                self.instance.get_previous_by_appt_datetime(
+                                subject_identifier=self.instance.subject_identifier,
+                                visit_schedule_name=self.instance.visit_schedule_name).maternalvisit
+            except ObjectDoesNotExist:
+                first_new_appt = self.appointment_model_cls.objects.filter(
+                    subject_identifier=self.instance.subject_identifier,
+                    visit_schedule_name=self.instance.visit_schedule_name,
+                    appt_status=NEW_APPT,
+                    appt_datetime__lt=self.instance.appt_datetime
+                ).order_by('appt_datetime').first()
+
+                if first_new_appt:
+                    raise forms.ValidationError(
+                        'A previous appointment requires updating. '
+                        f'Update appointment for {first_new_appt.visit_code} first.')
+            except AttributeError:
+                pass
 
     class Meta:
         model = Appointment

@@ -106,7 +106,7 @@ list_data = {
         ('emo_trauma_therapy', 'Emotional Trauma therapy'),
         (OTHER, 'Other, specify')
     ],
-    'flourish_child.emohealthimproved': [
+    'flourish_caregiver.emohealthimproved': [
         ('difficult_to_tell',
          'Difficult to tell because I am still receiving emotional support'),
         ('mood_has_improved', 'My mood has improved'),
