@@ -274,7 +274,6 @@ list_data = {
         ('postpartum_visit', 'Postpartum Visit'),
         ('hospital', 'Hospital'),
         ('opd', 'OPD'),
-        ('flourish_team', 'The FLOURISH study team'),
         (OTHER, 'Other, specify'),
     ],
 
