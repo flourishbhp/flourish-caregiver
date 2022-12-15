@@ -268,6 +268,17 @@ list_data = {
          'I wanted to give traditional medicines to my infant'),
         (OTHER, 'Other, specify'),
     ],
+    'flourish_caregiver.tbvisitcarelocation': [
+
+        ('idcc', 'IDCC'),
+        ('postpartum_visit', 'Postpartum Visit'),
+        ('hospital', 'Hospital'),
+        ('opd', 'OPD'),
+        ('flourish_team', 'The FLOURISH study team'),
+        (OTHER, 'Other, specify'),
+    ],
+
+
 }
 
 preload_data = PreloadData(
