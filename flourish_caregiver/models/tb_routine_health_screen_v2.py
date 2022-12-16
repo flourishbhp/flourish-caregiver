@@ -65,3 +65,7 @@ class TbRoutineHealthEncounters(BaseUuidModel):
         blank=True,
         choices=YES_NO_UNK_DWTA)
 
+    class Meta:
+        verbose_name = 'TB Routine Health Encounters Inline'
+        app_label = 'flourish_caregiver'
+
