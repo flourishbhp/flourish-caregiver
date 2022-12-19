@@ -34,26 +34,27 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
     def clean(self):
         super().clean()
 
-        total_inlines = self.data.get('tbroutinehealthencounters_set-TOTAL_FORMS')
-        tb_health_visit_number = self.cleaned_data.get('tb_health_visits')
+        total_inlines = int(self.data.get('routine_encounter-TOTAL_FORMS'))
 
-        if int(tb_health_visit_number) != 0 and tb_health_visit_number != total_inlines:
+        tb_health_visit_number = int(self.cleaned_data.get('tb_health_visits'))
+
+        if tb_health_visit_number == 0 and total_inlines != 0:
+            msg = {'tb_health_visits': 'if no health visits were made, end of CRF'}
+            raise ValidationError(msg)
+        elif tb_health_visit_number >= 1 and total_inlines == 0:
             msg = {
                 'tb_health_visits':
-                    'Complete questions 2-6 for each visit reported on question 1'
+                    'Complete follow up questions for each visit specified.'
             }
             raise ValidationError(msg)
-        # if tb_health_visits = 0 end crf else add inlines
-        if total_inlines > 0 and int(tb_health_visit_number) == 0:
-            msg = {'tb_health_visits': 'End Crf'}
-            raise ValidationError(msg)
+
 
     class Meta:
         model = TbRoutineHealthScreenV2
         fields = '__all__'
 
 
-class TbRoutineHealthEncountersForm(InlineSubjectModelFormMixin):
+class TbRoutineHealthEncountersForm(SubjectModelFormMixin,forms.ModelForm):
     form_validator_cls = TbRoutineHealthScreenV2FormValidator
 
     class Meta:

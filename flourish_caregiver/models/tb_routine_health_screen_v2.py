@@ -16,6 +16,11 @@ class TbRoutineHealthScreenV2(CrfModelMixin):
                    ' embed follow up questions for each visit.')
     )
 
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Screen for TB at routine health encounters V2'
+        verbose_name_plural = 'Screen for TB at routine health encounters V2'
+
 
 class TbRoutineHealthEncounters(BaseUuidModel):
     routine_encounter = models.ForeignKey(TbRoutineHealthScreenV2, on_delete=models.PROTECT,
@@ -61,6 +66,6 @@ class TbRoutineHealthEncounters(BaseUuidModel):
         choices=YES_NO_UNK_DWTA)
 
     class Meta:
+        verbose_name = 'TB Routine Health Encounters Inline'
         app_label = 'flourish_caregiver'
-        verbose_name = 'Screen for TB at routine health encounters V2'
-        verbose_name_plural = 'Screen for TB at routine health encounters V2'
+

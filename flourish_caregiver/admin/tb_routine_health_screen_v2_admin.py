@@ -13,12 +13,21 @@ class TbRoutineHealthScreenInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
     form = TbRoutineHealthEncountersForm
     extra = 0
 
-    fields = ['tb_screened',
-              'screen_location',
-              'screen_location_other',
-              'diagnostic_referral', ]
+    fieldsets = (
+        (None, {
+            'fields': (
+                'screen_location',
+                'screen_location_other',
+                'tb_screened',
+                'pos_screen',
+                'diagnostic_referral',
+            )
+        }),
+        audit_fieldset_tuple
+    )
     radio_fields = {'tb_screened': admin.VERTICAL,
                     'diagnostic_referral': admin.VERTICAL,
+                    'pos_screen': admin.VERTICAL,
                     }
 
     filter_horizontal = ('screen_location',)
@@ -37,4 +46,4 @@ class TbRoutineHealthScreenVersionTwoAdmin(CrfModelAdminMixin, admin.ModelAdmin)
             ]}
          ), audit_fieldset_tuple)
 
-    radio_fields = {'tb_health_visits': admin.VERTICAL,}
+    radio_fields = {'tb_health_visits': admin.VERTICAL, }
