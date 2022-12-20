@@ -697,7 +697,7 @@ def tb_referral_outcomes_post_save(sender, instance, raw, created, **kwargs):
     trigger_action_item(tb_off_study_cls,
                         TB_OFF_STUDY_ACTION,
                         instance.subject_identifier,
-                        opt_trigger=(instance.further_tb_eval == NO
+                        opt_trigger=(instance.tb_eval == NO
                                      or instance.tb_treat_start == YES))
 
 
