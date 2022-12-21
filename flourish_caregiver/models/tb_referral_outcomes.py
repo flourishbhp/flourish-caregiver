@@ -2,7 +2,7 @@ from django.db import models
 from edc_base.model_fields.custom_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
-from ..choices import YES_NO_UNABLE_DET
+from ..choices import YES_NO_UNABLE_DET, EVAL_LOCATION
 from .list_models import TbDiagnostics
 from .model_mixins import CrfModelMixin
 
