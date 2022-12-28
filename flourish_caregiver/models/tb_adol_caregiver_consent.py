@@ -148,6 +148,8 @@ class TbAdolChildConsent(BaseUuidModel):
     
     tb_adol_consent = models.ForeignKey(TbAdolConsent, on_delete=models.PROTECT)
     
+    subject_identifier = models.CharField(verbose_name='Subject Identifer', max_length=20)
+    
     adol_firstname = FirstnameField(
         verbose_name = 'Adolescent Firstname',
         blank=False,
