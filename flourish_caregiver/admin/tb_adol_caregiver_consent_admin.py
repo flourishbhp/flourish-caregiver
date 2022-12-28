@@ -15,10 +15,11 @@ from edc_model_admin import ModelAdminBasicMixin, ModelAdminReadOnlyMixin
 from simple_history.admin import SimpleHistoryAdmin
 
 from ..admin_site import flourish_caregiver_admin
-from ..forms import TbAdolConsentForm
-from ..models import TbAdolConsent
+from ..forms import TbAdolConsentForm, TbAdolChildConsentForm
+from ..models import TbAdolConsent, TbAdolChildConsent
 from .exportaction_mixin import ExportActionMixin
 from .modeladmin_mixins import VersionControlMixin
+from edc_model_admin import StackedInlineMixin
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
@@ -62,6 +63,16 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
 
         return super().change_view(
             request, object_id, form_url=form_url, extra_context=extra_context)
+        
+        
+class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
+                                  admin.StackedInline):
+    model = TbAdolChildConsent
+    form = TbAdolChildConsentForm
+
+    extra = 0
+    max_num = 3
+
 
 
 @admin.register(TbAdolConsent, site=flourish_caregiver_admin)
@@ -69,6 +80,8 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                          SimpleHistoryAdmin, admin.ModelAdmin):
 
     form = TbAdolConsentForm
+    
+    inlines = [TbAdolChildConsentInline,]
 
     fieldsets = (
         (None, {
@@ -91,13 +104,13 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'samples_future_studies',
             ),
         }),
-        ('Adolescent Consent', {
-            'fields': (
-                'adol_firstname',
-                'adol_lastname',
-                'adol_dob',
-                'adol_gender'),
-        }),
+        # ('Adolescent Consent', {
+        #     'fields': (
+        #         'adol_firstname',
+        #         'adol_lastname',
+        #         'adol_dob',
+        #         'adol_gender'),
+        # }),
         ('Review Questions', {
             'fields': (
                 'consent_reviewed',
@@ -126,7 +139,7 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'study_questions': admin.VERTICAL,
         'assessment_score': admin.VERTICAL,
         'consent_signature': admin.VERTICAL,
-        'adol_gender': admin.VERTICAL,
+        # 'adol_gender': admin.VERTICAL,
         'consent_copy': admin.VERTICAL,
     }
 

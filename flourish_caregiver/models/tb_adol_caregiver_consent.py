@@ -22,13 +22,14 @@ from ..choices import IDENTITY_TYPE
 from .model_mixins import SearchSlugModelMixin
 
 
+
+
 class TbAdolConsentManager(ConsentManager, SearchSlugManager, models.Manager):
 
     def get_by_natural_key(self, subject_identifier, version):
         return self.get(
             subject_identifier=subject_identifier, version=version)
-
-
+        
 class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
                     UpdatesOrCreatesRegistrationModelMixin,
                     NonUniqueSubjectIdentifierModelMixin, IdentityFieldsMixin,
@@ -46,24 +47,24 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
                    'only in upper case, no spaces.'),
         null=True, blank=False)
     
-    adol_firstname = FirstnameField(
-        verbose_name = 'Adolescent Firstname',
-        blank=False,
-        max_length = 50,)
+    # adol_firstname = FirstnameField(
+    #     verbose_name = 'Adolescent Firstname',
+    #     blank=False,
+    #     max_length = 50,)
     
-    adol_lastname = LastnameField(
-        verbose_name='Adolescent Lastname',
-        blank=False,
-        max_length = 50,)
+    # adol_lastname = LastnameField(
+    #     verbose_name='Adolescent Lastname',
+    #     blank=False,
+    #     max_length = 50,)
     
-    adol_gender = models.CharField(
-        verbose_name='Adolescent Gender',
-        choices=GENDER,
-        max_length=1)
+    # adol_gender = models.CharField(
+    #     verbose_name='Adolescent Gender',
+    #     choices=GENDER,
+    #     max_length=1)
     
-    adol_dob = models.DateField(
-        verbose_name='Adolescent DOB'
-    )
+    # adol_dob = models.DateField(
+    #     verbose_name='Adolescent DOB'
+    # )
 
     consent_datetime = models.DateTimeField(
         verbose_name='Consent date and time',
@@ -140,3 +141,37 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         unique_together = (
             ('subject_identifier', 'version'),
             ('first_name', 'dob', 'initials', 'version'))
+
+
+
+class TbAdolChildConsent(BaseUuidModel):
+    
+    tb_adol_consent = models.ForeignKey(TbAdolConsent, on_delete=models.PROTECT)
+    
+    adol_firstname = FirstnameField(
+        verbose_name = 'Adolescent Firstname',
+        blank=False,
+        max_length = 50,)
+    
+    adol_lastname = LastnameField(
+        verbose_name='Adolescent Lastname',
+        blank=False,
+        max_length = 50,)
+    
+    adol_gender = models.CharField(
+        verbose_name='Adolescent Gender',
+        choices=GENDER,
+        max_length=1)
+    
+    adol_dob = models.DateField(
+        verbose_name='Adolescent DOB'
+    )
+    
+    def natural_key(self):
+        return self.subject_identifier, self.version
+    
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'TB Adolescent Child Consent'
+        unique_together = (
+            ('adol_firstname', 'adol_lastname', 'adol_dob', 'adol_gender'))

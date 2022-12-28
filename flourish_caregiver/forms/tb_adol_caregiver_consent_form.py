@@ -5,7 +5,17 @@ from flourish_form_validations.form_validators import TbAdolConsentFormValidator
 
 from edc_consent.modelform_mixins import ConsentModelFormMixin
 
-from ..models import TbAdolConsent
+from ..models import TbAdolConsent, TbAdolChildConsent
+
+
+
+class TbAdolChildConsentForm(SiteModelFormMixin,
+                             FormValidatorMixin,
+                             forms.ModelForm):
+    
+    class Meta:
+        model = TbAdolChildConsent
+        fields = '__all__'
 
 
 class TbAdolConsentForm(SiteModelFormMixin, FormValidatorMixin,
