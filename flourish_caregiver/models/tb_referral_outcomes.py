@@ -2,17 +2,19 @@ from django.db import models
 from edc_base.model_fields.custom_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
-from ..choices import YES_NO_UNABLE_DET
+from ..choices import YES_NO_UNABLE_DET, EVAL_LOCATION
 from .list_models import TbDiagnostics
 from .model_mixins import CrfModelMixin
 
 
 class TbReferralOutcomes(CrfModelMixin):
-
     referral_clinic_appt = models.CharField(
         verbose_name='Did participant go to the TB clinic to which they were referred',
         max_length=3,
-        choices=YES_NO)
+        choices=YES_NO,
+        null=True,
+        blank=True
+    )
 
     further_tb_eval = models.CharField(
         verbose_name=('Did the participant go to any clinic for further TB evaluation '
@@ -22,6 +24,21 @@ class TbReferralOutcomes(CrfModelMixin):
         null=True,
         blank=True
     )
+
+    tb_eval = models.CharField(
+        verbose_name='Did participant go the clinic for TB evaluation?',
+        max_length=3,
+        choices=YES_NO)
+
+    tb_eval_location = models.CharField(
+        verbose_name='If yes, which clinic did you go to?',
+        max_length=50,
+        choices=EVAL_LOCATION,
+        null=True,
+        blank=True
+    )
+
+    tb_eval_location_other = OtherCharField()
 
     tb_eval_comments = models.TextField(
         verbose_name=('Comments'),
