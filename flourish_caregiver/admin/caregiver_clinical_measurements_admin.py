@@ -27,7 +27,11 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'diastolic_bp',
                 'confirm_values',
                 'waist_circ',
+                'waist_circ_second',
+                'waist_circ_third',
                 'hip_circ',
+                'hip_circ_second',
+                'hip_circ_third',
                 'all_measurements',
             ]}
          ), audit_fieldset_tuple)
