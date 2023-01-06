@@ -54,7 +54,7 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
     waist_circ = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        verbose_name='Caregiver\'s waist circumference',
+        verbose_name='Caregiver\'s waist circumference first measurement',
         validators=[MinValueValidator(50), MaxValueValidator(420), ],
         null=True,
         blank=True,
@@ -83,27 +83,27 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
     hip_circ = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        verbose_name='Caregiver\'s hip circumference',
+        verbose_name='Caregiver\'s hip circumference first measurement',
+        validators=[MinValueValidator(50), MaxValueValidator(420), ],
+        null=True,
+        blank=True,
+        help_text=('Only measure waist circumference for caregivers who are '
+                   'not pregnant'))
+
+    hip_circ_second = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name='Caregiver\'s hip circumference second measurement',
         validators=[MinValueValidator(50), MaxValueValidator(420), ],
         null=True,
         blank=True,
         help_text=('Second measurement : only measure waist circumference for caregivers who are '
                    'not pregnant'))
 
-    hip_circ_second = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        verbose_name='Caregiver\'s hip circumference',
-        validators=[MinValueValidator(50), MaxValueValidator(420), ],
-        null=True,
-        blank=True,
-        help_text=('only measure waist circumference for caregivers who are '
-                   'not pregnant'))
-
     hip_circ_third = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        verbose_name='Caregiver\'s hip circumference',
+        verbose_name='Caregiver\'s hip circumference third measurement',
         validators=[MinValueValidator(50), MaxValueValidator(420), ],
         null=True,
         blank=True,
