@@ -27,7 +27,7 @@ class FlourishConsentVersion(SiteModelMixin, SearchSlugModelMixin,
                       "your child with?"),
         choices=CHILD_CONSENT_VERSION,
         max_length=3,
-        default='2.1',
+        default='3',
         null=True,
         blank=True)
 

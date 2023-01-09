@@ -79,9 +79,9 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             onschedule_datetime = onschedule_obj.onschedule_datetime
             if report_datetime < onschedule_datetime:
                 msg = {'report_datetime':
-                           'Report datetime cannot be before Onschedule datetime.'
-                           f'Got Report datetime: {report_datetime}, and Onschedule '
-                           f'datetime: {onschedule_datetime}'}
+                       'Report datetime cannot be before Onschedule datetime.'
+                       f'Got Report datetime: {report_datetime}, and Onschedule '
+                       f'datetime: {onschedule_datetime}'}
                 self._errors.update(msg)
                 raise ValidationError(msg)
 
