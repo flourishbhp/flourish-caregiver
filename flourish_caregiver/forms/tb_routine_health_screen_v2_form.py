@@ -3,7 +3,7 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from flourish_form_validations.form_validators import TbRoutineHealthScreenV2FormValidator
 
-from ..models import TbRoutineHealthScreenV2, TbRoutineHealthEncounters
+from ..models import TbRoutineHealthScreenV2, TbRoutineHealthEncounters, MaternalVisit
 from .form_mixins import SubjectModelFormMixin, InlineSubjectModelFormMixin
 from ..choices import YES_NO_UNK_DWTA, VISIT_NUMBER
 
@@ -18,18 +18,21 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        subject_identifier = self.initial.get('subject_identifier', None)
-        # get previous appointment
-        prev_instance = self.tb_routine_health_screen_v2_cls.objects.filter(
-            maternal_visit__appointment__subject_identifier=subject_identifier).order_by(
+        maternal_visit = self.initial.get('maternal_visit', None)
+        # get current instance
+        current_instance = self.tb_routine_health_screen_v2_cls.objects.filter(
+            maternal_visit=maternal_visit).order_by(
             '-report_datetime').first()
 
-        # if subject on first visit change question to (since you became pregnant).
-        if not prev_instance:
-            # if the previous instance exist, change the question
-            self.fields['tb_health_visits'] = forms.CharField(
-                label='How many health visits have you had since you became pregnant?',
-                widget=forms.RadioSelect(choices=VISIT_NUMBER))
+        if current_instance:
+            # get visit code
+            vist_code = django_apps.get_model('flourish_caregiver.maternalvisit').objects.get(
+                id=current_instance.maternal_visit_id).visit_code
+            # if subject on enrollment visit change question to (since you became pregnant).
+            if vist_code == '2000D':
+                self.fields['tb_health_visits'] = forms.CharField(
+                    label='How many health visits have you had since you became pregnant?',
+                    widget=forms.RadioSelect(choices=VISIT_NUMBER))
 
     def clean(self):
         super().clean()
@@ -41,20 +44,19 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
         if tb_health_visit_number == 0 and total_inlines != 0:
             msg = {'tb_health_visits': 'if no health visits were made, end of CRF'}
             raise ValidationError(msg)
-        elif tb_health_visit_number >= 1 and total_inlines == 0:
+        elif tb_health_visit_number != total_inlines:
             msg = {
                 'tb_health_visits':
                     'Complete follow up questions for each visit specified.'
             }
             raise ValidationError(msg)
 
-
     class Meta:
         model = TbRoutineHealthScreenV2
         fields = '__all__'
 
 
-class TbRoutineHealthEncountersForm(SubjectModelFormMixin,forms.ModelForm):
+class TbRoutineHealthEncountersForm(SubjectModelFormMixin, forms.ModelForm):
     form_validator_cls = TbRoutineHealthScreenV2FormValidator
 
     class Meta:
