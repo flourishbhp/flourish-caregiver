@@ -34,9 +34,9 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
     def clean(self):
         super().clean()
 
-        total_inlines = int(self.data.get('routine_encounter-TOTAL_FORMS'))
+        total_inlines = int(self.data.get('routine_encounter-TOTAL_FORMS'), 0)
 
-        tb_health_visit_number = int(self.cleaned_data.get('tb_health_visits'))
+        tb_health_visit_number = int(self.cleaned_data.get('tb_health_visits'), 0)
 
         if tb_health_visit_number == 0 and total_inlines != 0:
             msg = {'tb_health_visits': 'if no health visits were made, end of CRF'}
