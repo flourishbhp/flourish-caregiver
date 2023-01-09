@@ -180,7 +180,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
-            self.version = '2.1'
+            self.version = '3'
 
             if self.preg_enroll:
                 self.duplicate_subject_identifier_preg()

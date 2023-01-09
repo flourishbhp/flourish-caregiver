@@ -152,7 +152,7 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
             consent_version_obj = consent_version_cls.objects.get(
                 screening_identifier=self.screening_identifier)
         except consent_version_cls.DoesNotExist:
-            self.version = '2'
+            self.version = '3'
         else:
             self.version = consent_version_obj.version
 

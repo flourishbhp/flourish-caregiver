@@ -638,7 +638,7 @@ def screening_preg_women(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=2)
+            create_consent_version(instance, version=3)
 
 
 @receiver(post_save, weak=False, sender=ScreeningPriorBhpParticipants,
@@ -650,7 +650,7 @@ def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=2)
+            create_consent_version(instance, version=3)
 
 
 @receiver(post_save, weak=False, sender=TbInformedConsent,
@@ -1017,7 +1017,7 @@ def create_consent_version(instance, version):
         consent_version = consent_version_cls(
             screening_identifier=instance.screening_identifier,
             version=version,
-            child_version=2.1,
+            child_version=3,
             user_created=instance.user_modified or instance.user_created,
             created=get_utcnow())
         consent_version.save()
@@ -1045,7 +1045,7 @@ def stamp_image(instance):
 
 
 def add_image_stamp(base_image=None, position=(25, 25),
-        resize=(100, 100)):
+                    resize=(100, 100)):
     """
     Superimpose image of a stamp over copy of the base image
     @param image_path: dir to base image
