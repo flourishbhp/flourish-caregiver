@@ -18,22 +18,6 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        maternal_visit = self.initial.get('maternal_visit', None)
-        # get current instance
-        current_instance = self.tb_routine_health_screen_v2_cls.objects.filter(
-            maternal_visit=maternal_visit).order_by(
-            '-report_datetime').first()
-
-        if current_instance:
-            # get visit code
-            vist_code = django_apps.get_model('flourish_caregiver.maternalvisit').objects.get(
-                id=current_instance.maternal_visit_id).visit_code
-            # if subject on enrollment visit change question to (since you became pregnant).
-            if vist_code == '2000D':
-                self.fields['tb_health_visits'] = forms.CharField(
-                    label='How many health visits have you had since you became pregnant?',
-                    widget=forms.RadioSelect(choices=VISIT_NUMBER))
-
     def clean(self):
         super().clean()
 

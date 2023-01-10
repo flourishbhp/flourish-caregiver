@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.core.exceptions import ObjectDoesNotExist
 from edc_model_admin import audit_fieldset_tuple, StackedInlineMixin, ModelAdminFormAutoNumberMixin
-
+from django.apps import apps as django_apps
 from ..admin_site import flourish_caregiver_admin
 from ..forms import TbRoutineHealthScreenV2Form, TbRoutineHealthEncountersForm
 from ..models import TbRoutineHealthScreenV2, TbRoutineHealthEncounters
@@ -47,3 +48,19 @@ class TbRoutineHealthScreenVersionTwoAdmin(CrfModelAdminMixin, admin.ModelAdmin)
          ), audit_fieldset_tuple)
 
     radio_fields = {'tb_health_visits': admin.VERTICAL, }
+
+    def get_form(self, request, obj=None, *args, **kwargs):
+        form = super().get_form(request, *args, **kwargs)
+
+        custom_label = 'How many health visits have you had since you became pregnant?'
+        try:
+            model_obj = self.get_instance(request)
+        except ObjectDoesNotExist:
+            return None
+        else:
+            if model_obj:
+                visit_code = model_obj.visit_code
+                if visit_code == '2000M':
+                    form.base_fields['tb_health_visits'].label = custom_label
+        form = self.auto_number(form)
+        return form
