@@ -92,8 +92,7 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
         'adol_gender': admin.VERTICAL,
     }
     
-    
-    
+        
     
     def get_formset(self, request, obj, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)

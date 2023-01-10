@@ -1,7 +1,8 @@
 from django import forms
 from edc_base.sites import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
-from flourish_form_validations.form_validators import TbAdolConsentFormValidator
+from flourish_form_validations.form_validators import TbAdolConsentFormValidator, \
+    TbChildAdolConsentFormValidator
 
 from edc_consent.modelform_mixins import ConsentModelFormMixin
 
@@ -12,6 +13,8 @@ from ..models import TbAdolConsent, TbAdolChildConsent
 class TbAdolChildConsentForm(SiteModelFormMixin,
                              FormValidatorMixin,
                              forms.ModelForm):
+    
+    form_validator_cls = TbChildAdolConsentFormValidator
     
     subject_identifier = forms.CharField(
         label='Subject Identifier',
