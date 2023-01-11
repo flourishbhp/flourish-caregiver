@@ -52,6 +52,8 @@ class TbRoutineHealthEncounters(BaseUuidModel):
                      " because you had cough, fever, weight loss, "
                      "and/or night sweats? ",
         max_length=20,
+        null=True,
+        blank=True,
         choices=YES_NO_UNK_DWTA,
         help_text="If no/I don’t know/prefer not to answer, CRF complete if no further visits"
     )
