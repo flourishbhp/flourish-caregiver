@@ -53,14 +53,8 @@ class TbRoutineHealthScreenVersionTwoAdmin(CrfModelAdminMixin, admin.ModelAdmin)
         form = super().get_form(request, *args, **kwargs)
 
         custom_label = 'How many health visits have you had since you became pregnant?'
-        try:
-            model_obj = self.get_instance(request)
-        except ObjectDoesNotExist:
-            return None
-        else:
-            if model_obj:
-                visit_code = model_obj.visit_code
-                if visit_code == '2000M':
-                    form.base_fields['tb_health_visits'].label = custom_label
+        model_obj = self.get_instance(request)
+        if model_obj and model_obj.visit_code == '2000M':
+            form.base_fields['tb_health_visits'].label = custom_label
         form = self.auto_number(form)
         return form
