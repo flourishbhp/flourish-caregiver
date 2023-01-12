@@ -28,7 +28,6 @@ class TbRoutineHealthEncounters(BaseUuidModel):
                                           related_name='routine_encounter', )
     screen_location = models.ManyToManyField(
         TbVisitCareLocation,
-        blank=True,
         verbose_name="For visit #1, where did you receive care",
     )
 
