@@ -1,5 +1,6 @@
 from django.db import models
 from edc_base.model_mixins import BaseUuidModel
+from edc_constants.constants import YES
 
 from ..choices import YES_NO_UNK_DWTA, VISIT_NUMBER
 from .list_models import TbVisitCareLocation
@@ -27,7 +28,6 @@ class TbRoutineHealthEncounters(BaseUuidModel):
                                           related_name='routine_encounter', )
     screen_location = models.ManyToManyField(
         TbVisitCareLocation,
-        blank=True,
         verbose_name="For visit #1, where did you receive care",
     )
 
@@ -43,6 +43,7 @@ class TbRoutineHealthEncounters(BaseUuidModel):
                      ' (cough,fever, weight loss, night sweats)?',
         max_length=20,
         choices=YES_NO_UNK_DWTA,
+        default=YES,
         help_text="If yes, continue to Q5 If no/I don’t know/prefer not to answer,"
                   "CRF complete if no further visits, "
                   "else repeat questions 2-6 for each healthcare visit reported in question 1 "
