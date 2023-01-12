@@ -33,6 +33,11 @@ class TbRoutineHealthScreenInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
     filter_horizontal = ('screen_location',)
 
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj=obj, **kwargs)
+        formset.form = self.auto_number(formset.form)
+        return formset
+
 
 @admin.register(TbRoutineHealthScreenV2, site=flourish_caregiver_admin)
 class TbRoutineHealthScreenVersionTwoAdmin(CrfModelAdminMixin, admin.ModelAdmin):
