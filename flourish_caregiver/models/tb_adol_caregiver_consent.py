@@ -1,6 +1,6 @@
 from django.core.validators import RegexValidator
 from django.db import models
-from django_crypto_fields.fields import EncryptedCharField
+from django_crypto_fields.fields import EncryptedCharField, FirstnameField, LastnameField
 from edc_base.model_fields import IsDateEstimatedField
 from edc_base.model_fields import OtherCharField
 from edc_base.model_managers import HistoricalRecords
@@ -16,10 +16,12 @@ from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 from edc_search.model_mixins import SearchSlugManager
-
+from edc_constants.choices import GENDER
 from ..choices import GENDER_OTHER
 from ..choices import IDENTITY_TYPE
 from .model_mixins import SearchSlugModelMixin
+
+
 
 
 class TbAdolConsentManager(ConsentManager, SearchSlugManager, models.Manager):
@@ -27,8 +29,7 @@ class TbAdolConsentManager(ConsentManager, SearchSlugManager, models.Manager):
     def get_by_natural_key(self, subject_identifier, version):
         return self.get(
             subject_identifier=subject_identifier, version=version)
-
-
+        
 class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
                     UpdatesOrCreatesRegistrationModelMixin,
                     NonUniqueSubjectIdentifierModelMixin, IdentityFieldsMixin,
@@ -45,6 +46,25 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         help_text=('Ensure initials consist of letters '
                    'only in upper case, no spaces.'),
         null=True, blank=False)
+    
+    # adol_firstname = FirstnameField(
+    #     verbose_name = 'Adolescent Firstname',
+    #     blank=False,
+    #     max_length = 50,)
+    
+    # adol_lastname = LastnameField(
+    #     verbose_name='Adolescent Lastname',
+    #     blank=False,
+    #     max_length = 50,)
+    
+    # adol_gender = models.CharField(
+    #     verbose_name='Adolescent Gender',
+    #     choices=GENDER,
+    #     max_length=1)
+    
+    # adol_dob = models.DateField(
+    #     verbose_name='Adolescent DOB'
+    # )
 
     consent_datetime = models.DateTimeField(
         verbose_name='Consent date and time',
@@ -63,13 +83,8 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         null=True,
         blank=False)
 
-    dob = models.DateField(
-        verbose_name="Adolescent date of birth",
-        null=True,
-        blank=False)
-
     is_dob_estimated = IsDateEstimatedField(
-        verbose_name="Is the adolescent date of birth estimated?",
+        verbose_name="Is the caregiver date of birth estimated?",
         null=True,
         blank=False)
 
@@ -126,3 +141,39 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         unique_together = (
             ('subject_identifier', 'version'),
             ('first_name', 'dob', 'initials', 'version'))
+
+
+
+class TbAdolChildConsent(BaseUuidModel):
+    
+    tb_adol_consent = models.ForeignKey(TbAdolConsent, on_delete=models.PROTECT)
+    
+    subject_identifier = models.CharField(verbose_name='Subject Identifer', max_length=20)
+    
+    adol_firstname = FirstnameField(
+        verbose_name = 'Adolescent Firstname',
+        blank=False,
+        max_length = 50,)
+    
+    adol_lastname = LastnameField(
+        verbose_name='Adolescent Lastname',
+        blank=False,
+        max_length = 50,)
+    
+    adol_gender = models.CharField(
+        verbose_name='Adolescent Gender',
+        choices=GENDER,
+        max_length=1)
+    
+    adol_dob = models.DateField(
+        verbose_name='Adolescent DOB'
+    )
+    
+    def natural_key(self):
+        return self.subject_identifier, self.version
+    
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'TB Adolescent Child Consent'
+        unique_together = (
+            ('adol_firstname', 'adol_lastname', 'adol_dob', 'adol_gender'))

@@ -57,7 +57,7 @@ from .socio_demographic_data_form import SocioDemographicDataForm
 from .subject_consent_form import SubjectConsentForm
 from .substance_use_during_preg_form import SubstanceUseDuringPregnancyForm
 from .substance_use_prior_preg_form import SubstanceUsePriorPregnancyForm
-from .tb_adol_caregiver_consent_form import TbAdolConsentForm
+from .tb_adol_caregiver_consent_form import TbAdolConsentForm, TbAdolChildConsentForm
 from .tb_adol_screening_form import TbAdolScreeningForm
 from .tb_engagement_form import TbEngagementForm
 from .tb_history_preg_form import TbHistoryPregForm
