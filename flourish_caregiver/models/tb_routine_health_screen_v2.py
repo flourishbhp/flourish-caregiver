@@ -43,7 +43,7 @@ class TbRoutineHealthEncounters(BaseUuidModel):
                      ' (cough,fever, weight loss, night sweats)?',
         max_length=20,
         choices=YES_NO_UNK_DWTA,
-        default=YES,
+        default=YES_NO_UNK_DWTA[0],
         help_text="If yes, continue to Q5 If no/I don’t know/prefer not to answer,"
                   "CRF complete if no further visits, "
                   "else repeat questions 2-6 for each healthcare visit reported in question 1 "
