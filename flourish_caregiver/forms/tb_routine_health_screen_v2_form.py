@@ -42,6 +42,9 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
 class TbRoutineHealthEncountersForm(SubjectModelFormMixin, forms.ModelForm):
     form_validator_cls = TbRoutineHealthScreenV2FormValidator
 
+    def has_changed(self):
+        return True
+
     class Meta:
         model = TbRoutineHealthEncounters
         fields = '__all__'
