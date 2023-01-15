@@ -117,13 +117,15 @@ COHORTS = (
 
 CONSENT_VERSION = (
     ('1', 'Consent version 1'),
-    ('2', 'Consent version 2')
+    ('2', 'Consent version 2'),
+    ('3', 'Consent version 3')
 )
 
 CHILD_CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
     ('2.1', 'Consent version 2.1'),
+    ('3', 'Consent version 3')
 )
 
 CONTACT_FAIL_REASON = (
@@ -1031,4 +1033,20 @@ CARE_TYPE = (
     ('hospital', 'Hospital'),
     ('OPD', 'OPD'),
     (OTHER, 'Other')
+)
+
+EVAL_LOCATION = (
+    ('bontleng', 'Bontleng'),
+    ('julia_molefe', 'Julia Molefe'),
+    ('phase_2', 'Phase 2'),
+    ('BH1', 'BH1'),
+    ('BH2', 'BH2'),
+    ('BH3', 'BH3'),
+    ('nkoyaphiri', 'Nkoyaphiri'),
+    ('lesirane', 'Lesirane'),
+    ('mogoditshane', 'Mogoditshane'),
+    ('old_naledi', 'Old Naledi'),
+    ('g_west', 'G-West'),
+    ('sebele', 'Sebele'),
+    (OTHER, 'Other, specify')
 )

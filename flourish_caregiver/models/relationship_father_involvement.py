@@ -78,7 +78,6 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         verbose_name="Have you disclosed your HIV status to your partner",
         choices=YES_NO_PNTA_NA,
         max_length=25,
-        
     )
     
     discussion_with_partner = models.CharField(

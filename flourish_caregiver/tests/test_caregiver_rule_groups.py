@@ -318,7 +318,7 @@ class TestRuleGroups(TestCase):
     def test_tbroutinehealthscreen_required_cohort_a(self):
         self.assertEqual(
             CrfMetadata.objects.get(
-                model='flourish_caregiver.tbroutinehealthscreen',
+                model='flourish_caregiver.tbroutinehealthscreenv2',
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)

@@ -57,7 +57,7 @@ from .socio_demographic_data_form import SocioDemographicDataForm
 from .subject_consent_form import SubjectConsentForm
 from .substance_use_during_preg_form import SubstanceUseDuringPregnancyForm
 from .substance_use_prior_preg_form import SubstanceUsePriorPregnancyForm
-from .tb_adol_caregiver_consent_form import TbAdolConsentForm
+from .tb_adol_caregiver_consent_form import TbAdolConsentForm, TbAdolChildConsentForm
 from .tb_adol_screening_form import TbAdolScreeningForm
 from .tb_engagement_form import TbEngagementForm
 from .tb_history_preg_form import TbHistoryPregForm
@@ -71,7 +71,7 @@ from .tb_presence_household_members_form import TbPresenceHouseholdMembersForm
 from .tb_referral_form import TbReferralForm
 from .tb_referral_outcomes_form import TbReferralOutcomesForm
 from .tb_routine_health_screen_form import TbRoutineHealthScreenForm
-from .tb_routine_health_screen_v2_form import TbRoutineHealthScreenV2Form
+from .tb_routine_health_screen_v2_form import TbRoutineHealthScreenV2Form, TbRoutineHealthEncountersForm
 from .tb_screen_preg_form import TbScreenPregForm
 from .tb_study_screening_form import TbStudyScreeningForm
 from .tb_visit_screening_women_form import TbVisitScreeningWomenForm
