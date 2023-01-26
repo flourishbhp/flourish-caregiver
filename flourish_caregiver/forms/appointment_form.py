@@ -50,7 +50,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
 
     def _check_child_assent(self, subject_identifier):
 
-        maternal_consent_version = None
+        consent_version_obj = None
         maternal_consent = None
         child_assents_exists = []
 
@@ -65,7 +65,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             is_eligible=True, child_age_at_enrollment__gte=7)
 
         try:
-            maternal_consent_version = FlourishConsentVersion.objects.get(
+            consent_version_obj = FlourishConsentVersion.objects.get(
                 screening_identifier=maternal_consent.screening_identifier)
         except FlourishConsentVersion.DoesNotExist:
             pass
@@ -75,7 +75,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             for child_consent in child_consents:
                 exists = ChildAssent.objects.filter(
                     subject_identifier=child_consent.subject_identifier,
-                    version=maternal_consent_version.child_version).exists()
+                    version=consent_version_obj.child_version).exists()
                 child_assents_exists.append(exists)
             child_assents_exists = all(child_assents_exists)
             if not child_assents_exists:
