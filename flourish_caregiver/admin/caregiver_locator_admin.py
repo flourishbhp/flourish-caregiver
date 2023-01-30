@@ -15,18 +15,18 @@ from django.http import HttpResponseRedirect
 class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
     form = CaregiverLocatorForm
 
-    def response_add(self, request, obj, **kwargs):
-        response = self._redirector(obj)
-        return response if response else super(CaregiverLocatorAdmin, self).response_add(request, obj)
-
-    def response_change(self, request, obj):
-        response = self._redirector(obj)
-        return response if response else super(CaregiverLocatorAdmin, self).response_change(request, obj)
-
-    def _redirector(self, obj):
-        caregiver_locator = SubjectConsent.objects.filter(subject_identifier=obj.subject_identifier)
-        if caregiver_locator:
-            return HttpResponseRedirect(f'/subject/subject_dashboard/{obj.subject_identifier}/')
+    # def response_add(self, request, obj, **kwargs):
+    #     response = self._redirector(obj)
+    #     return response if response else super(CaregiverLocatorAdmin, self).response_add(request, obj)
+    #
+    # def response_change(self, request, obj):
+    #     response = self._redirector(obj)
+    #     return response if response else super(CaregiverLocatorAdmin, self).response_change(request, obj)
+    #
+    # def _redirector(self, obj):
+    #     caregiver_locator = SubjectConsent.objects.filter(subject_identifier=obj.subject_identifier)
+    #     if caregiver_locator:
+    #         return HttpResponseRedirect(f'/subject/subject_dashboard/{obj.subject_identifier}/')
 
     fieldsets = (
         (None, {
