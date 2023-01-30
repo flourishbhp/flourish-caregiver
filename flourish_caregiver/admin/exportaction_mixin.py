@@ -39,7 +39,9 @@ class ExportActionMixin:
                     field_names.append(choice)
                 continue
             field_names.append(field.name)
-
+            
+        field_names.append('caregiver_dob') #append last dob
+            
         if queryset and self.is_consent(queryset[0]):
             field_names.insert(0, 'previous_study')
             field_names.insert(1, 'hiv_status')
@@ -162,6 +164,15 @@ class ExportActionMixin:
                 obj_count += 1
             else:
                 row_num += 1
+                try:
+                    subject_identifier = data[0] #pid is always there for crf and prns
+                except IndexError:
+                    pass #ostrich algorithm
+                else:
+                    caregiver_dob = self.consent_obj(subject_identifier=subject_identifier).dob
+                    
+                    data.append(str(caregiver_dob)) # dob iso format hence str
+                
                 self.write_rows(data=data, row_num=row_num, ws=ws)
         wb.save(response)
         return response
@@ -246,10 +257,19 @@ class ExportActionMixin:
     def screening_identifier(self, subject_identifier=None):
         """Returns a screening identifier.
         """
+        consent = self.consent_obj(subject_identifier=subject_identifier)
+        
+        if consent:
+            return consent.screening_identifier
+        return None
+    
+    
+    def consent_obj(self, subject_identifier: str):
         consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
         consent = consent_cls.objects.filter(subject_identifier=subject_identifier)
-        if consent:
-            return consent.last().screening_identifier
+        
+        if consent.exists():
+            return consent.last()
         return None
 
     def is_consent(self, obj):
