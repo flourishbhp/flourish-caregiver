@@ -178,8 +178,7 @@ class ExportActionMixin:
                     pass #ostrich algorithm
                 else:
                     caregiver_dob = self.consent_obj(subject_identifier=subject_identifier).dob
-                    
-                    data.append(str(caregiver_dob).replace('-', '/')) # dob iso format hence str
+                    data.append( datetime.date.strftime(caregiver_dob, 'YYYY/MM/DD')) # dob iso format hence str
                 
                 self.write_rows(data=data, row_num=row_num, ws=ws)
         wb.save(response)
