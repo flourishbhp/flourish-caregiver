@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 import xlwt
-
+import re
 from ..helper_classes import MaternalStatusHelper
 
 
@@ -164,9 +164,17 @@ class ExportActionMixin:
                 obj_count += 1
             else:
                 row_num += 1
+                
+                subject_identifier_regex = '[B|C]142\-[0-9A-Z\-]+' #pattern for the caregiver
+                
+                regex = re.compile(subject_identifier_regex) # faster matching
+                
+                subject_identifiers = filter(regex.match, data) #lazy loading
+                
+            
                 try:
-                    subject_identifier = data[0] #pid is always there for crf and prns
-                except IndexError:
+                    subject_identifier = next(subject_identifiers) #pid is always there for crf and prns
+                except StopIteration:
                     pass #ostrich algorithm
                 else:
                     caregiver_dob = self.consent_obj(subject_identifier=subject_identifier).dob
