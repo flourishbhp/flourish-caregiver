@@ -167,9 +167,9 @@ class ExportActionMixin:
                 
                 subject_identifier_regex = '[B|C]142\-[0-9A-Z\-]+' #pattern for the caregiver
                 
-                regex = re.compile(subject_identifier_regex) # faster matching
+                pattern = re.compile(subject_identifier_regex) # faster matching
                 
-                subject_identifiers = filter(regex.match, data) #lazy loading
+                subject_identifiers = filter(pattern.match, data) #lazy loading
                 
             
                 try:
@@ -179,7 +179,7 @@ class ExportActionMixin:
                 else:
                     caregiver_dob = self.consent_obj(subject_identifier=subject_identifier).dob
                     
-                    data.append(str(caregiver_dob)) # dob iso format hence str
+                    data.append(str(caregiver_dob).replace('-', '/')) # dob iso format hence str
                 
                 self.write_rows(data=data, row_num=row_num, ws=ws)
         wb.save(response)
