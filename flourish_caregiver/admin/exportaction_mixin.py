@@ -1,5 +1,6 @@
 import datetime
 import uuid
+import itertools
 
 from django.apps import apps as django_apps
 from django.db.models import ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel
@@ -165,21 +166,6 @@ class ExportActionMixin:
             else:
                 row_num += 1
                 
-                subject_identifier_regex = '[B|C]142\-[0-9A-Z\-]+' #pattern for the caregiver
-                
-                pattern = re.compile(subject_identifier_regex) # faster matching
-                
-                subject_identifiers = filter(pattern.match, data) #lazy loading
-                
-            
-                try:
-                    subject_identifier = next(subject_identifiers) #pid is always there for crf and prns
-                except StopIteration:
-                    pass #ostrich algorithm
-                else:
-                    caregiver_dob = self.consent_obj(subject_identifier=subject_identifier).dob
-                    data.append(caregiver_dob.strftime("%Y/%m/%d")) # dob iso format hence str
-                
                 self.write_rows(data=data, row_num=row_num, ws=ws)
         wb.save(response)
         return response
@@ -204,6 +190,21 @@ class ExportActionMixin:
             return version.version
 
     def write_rows(self, data=None, row_num=None, ws=None):
+        subject_identifier_regex = '[B|C]142\-[0-9A-Z\-]+' #pattern for the caregiver
+        
+        pattern = re.compile(subject_identifier_regex) # faster matching
+        
+        subject_identifiers = filter(pattern.match, map(lambda element: str(element), data)) #lazy loading
+        
+    
+        try:
+            subject_identifier = next(subject_identifiers) #pid is always there for crf and prns
+        except StopIteration:
+            pass #ostrich algorithm
+        else:
+            caregiver_dob = self.consent_obj(subject_identifier=subject_identifier).dob
+            data.append(caregiver_dob.strftime("%Y/%m/%d")) # dob iso format hence str
+            
         for col_num in range(len(data)):
             if isinstance(data[col_num], uuid.UUID):
                 ws.write(row_num, col_num, str(data[col_num]))
