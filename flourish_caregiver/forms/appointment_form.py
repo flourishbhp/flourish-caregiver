@@ -24,7 +24,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
 
         cleaned_data = self.cleaned_data
 
-        if "quarterly" not in self.instance.schedule_name:
+        if "quart" not in self.instance.schedule_name:
             self._check_child_assent(self.instance.subject_identifier)
 
         if cleaned_data.get('appt_datetime'):
