@@ -1,5 +1,6 @@
 import datetime
 import uuid
+import itertools
 
 from django.apps import apps as django_apps
 from django.db.models import ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel
@@ -193,7 +194,7 @@ class ExportActionMixin:
         
         pattern = re.compile(subject_identifier_regex) # faster matching
         
-        subject_identifiers = filter(pattern.match, data) #lazy loading
+        subject_identifiers = filter(pattern.match, map(lambda element: str(element), data)) #lazy loading
         
     
         try:
