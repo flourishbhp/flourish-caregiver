@@ -1,7 +1,7 @@
 from django.contrib import admin
 from edc_model_admin import TabularInlineMixin, audit_fields
 from edc_model_admin import TabularInlineMixin
-from edc_odk.admin import ODKActionMixin
+from edc_odk.admin import StampImageActionMixin
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import ClinicianNotesForm, ClinicianNotesImageForm
@@ -10,6 +10,7 @@ from .modeladmin_mixins import CrfModelAdminMixin
 
 
 class ClinicianNotesImageInline(TabularInlineMixin, admin.TabularInline):
+
     model = ClinicianNotesImage
     form = ClinicianNotesImageForm
     extra = 0
@@ -26,7 +27,8 @@ class ClinicianNotesImageInline(TabularInlineMixin, admin.TabularInline):
 
 
 @admin.register(ClinicianNotes, site=flourish_caregiver_admin)
-class ClinicianNotesAdmin(ODKActionMixin, CrfModelAdminMixin, admin.ModelAdmin):
+class ClinicianNotesAdmin(
+    StampImageActionMixin, CrfModelAdminMixin, admin.ModelAdmin):
     form = ClinicianNotesForm
 
     fieldsets = (
@@ -35,8 +37,5 @@ class ClinicianNotesAdmin(ODKActionMixin, CrfModelAdminMixin, admin.ModelAdmin):
                 'maternal_visit',
             ]}
          ),)
-
-    list_display = ('maternal_visit', 'created', 'verified_by', 'is_verified',)
-
 
     inlines = [ClinicianNotesImageInline]
