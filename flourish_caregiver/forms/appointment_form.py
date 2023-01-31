@@ -10,7 +10,7 @@ from edc_appointment.form_validators import AppointmentFormValidator
 from edc_appointment.models import Appointment
 from flourish_child.models import ChildAssent
 
-from ..models import CaregiverChildConsent, SubjectConsent
+from ..models import CaregiverChildConsent, SubjectConsent, FlourishConsentVersion
 
 
 class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormValidator,
@@ -24,7 +24,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
 
         cleaned_data = self.cleaned_data
 
-        self._check_child_assent(self.instance.subject_identifier)
+        if "quart" not in self.instance.schedule_name:
+            self._check_child_assent(self.instance.subject_identifier)
 
         if cleaned_data.get('appt_datetime'):
 
@@ -40,15 +41,17 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             if self.instance.visit_code_sequence == 0 and self.instance.visit_code != '2200T':
                 if (cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
                         microsecond=0)
-                    or (self.instance.visit_code not in ['1000M', '2000M']
-                        and cleaned_data.get('appt_datetime') > latest_appt_date.replace(
-                                microsecond=0))):
+                        or (self.instance.visit_code not in ['1000M', '2000M']
+                            and cleaned_data.get('appt_datetime') > latest_appt_date.replace(
+                                    microsecond=0))):
                     raise forms.ValidationError(
                         'The appointment datetime cannot be outside the window period, '
                         'please correct. See earliest, ideal and latest datetimes below.')
 
     def _check_child_assent(self, subject_identifier):
 
+        consent_version_obj = None
+        maternal_consent = None
         child_assents_exists = []
 
         maternal_consents = SubjectConsent.objects.filter(
@@ -61,16 +64,20 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             subject_consent__subject_identifier=subject_identifier,
             is_eligible=True, child_age_at_enrollment__gte=7)
 
+        try:
+            consent_version_obj = FlourishConsentVersion.objects.get(
+                screening_identifier=maternal_consent.screening_identifier)
+        except FlourishConsentVersion.DoesNotExist:
+            pass
+
         if child_consents.exists():
 
             for child_consent in child_consents:
                 exists = ChildAssent.objects.filter(
                     subject_identifier=child_consent.subject_identifier,
-                    version=maternal_consent.version).exists()
+                    version=getattr(consent_version_obj, "child_version", child_consent.version)).exists()
                 child_assents_exists.append(exists)
-
             child_assents_exists = all(child_assents_exists)
-
             if not child_assents_exists:
                 raise ValidationError('Please fill the child assent(s) form(s) first')
 
@@ -88,8 +95,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             # visit report sequence
             try:
                 self.instance.get_previous_by_appt_datetime(
-                                subject_identifier=self.instance.subject_identifier,
-                                visit_schedule_name=self.instance.visit_schedule_name).maternalvisit
+                    subject_identifier=self.instance.subject_identifier,
+                    visit_schedule_name=self.instance.visit_schedule_name).maternalvisit
             except ObjectDoesNotExist:
                 last_visit = self.appointment_model_cls.visit_model_cls().objects.filter(
                     appointment__subject_identifier=self.instance.subject_identifier,
@@ -116,8 +123,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             # appointment sequence
             try:
                 self.instance.get_previous_by_appt_datetime(
-                                subject_identifier=self.instance.subject_identifier,
-                                visit_schedule_name=self.instance.visit_schedule_name).maternalvisit
+                    subject_identifier=self.instance.subject_identifier,
+                    visit_schedule_name=self.instance.visit_schedule_name).maternalvisit
             except ObjectDoesNotExist:
                 first_new_appt = self.appointment_model_cls.objects.filter(
                     subject_identifier=self.instance.subject_identifier,
