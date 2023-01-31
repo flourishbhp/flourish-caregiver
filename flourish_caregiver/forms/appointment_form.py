@@ -75,7 +75,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             for child_consent in child_consents:
                 exists = ChildAssent.objects.filter(
                     subject_identifier=child_consent.subject_identifier,
-                    version=consent_version_obj.child_version).exists()
+                    version=getattr(consent_version_obj, "child_version", child_consent.version)).exists()
                 child_assents_exists.append(exists)
             child_assents_exists = all(child_assents_exists)
             if not child_assents_exists:
