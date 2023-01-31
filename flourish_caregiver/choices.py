@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN, \
-    FAILED_ELIGIBILITY, PARTICIPANT, DWTA, POS, NEG, ON_STUDY, OFF_STUDY, MALE, FEMALE
+    FAILED_ELIGIBILITY, PARTICIPANT, DWTA, POS, NEG, ON_STUDY, OFF_STUDY, MALE, FEMALE, \
+    NEVER
 from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
@@ -993,6 +994,7 @@ FATHER_VISITS = (
     ('every_week_weekend', "Every week/weekend"),
     ('every_couple_of_months', 'Every couple of months'),
     ('every_year', 'Every year'),
+    (NEVER, 'Never'),
     ('do_not_know', 'I don’t know'),
     (PNTA, 'Prefer not to answer'),
     (NOT_APPLICABLE, 'Not Applicable')
