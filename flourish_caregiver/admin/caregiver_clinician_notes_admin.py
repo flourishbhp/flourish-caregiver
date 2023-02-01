@@ -1,12 +1,11 @@
 from django.contrib import admin
-from edc_model_admin import TabularInlineMixin, audit_fields
 from edc_model_admin import TabularInlineMixin
-from edc_odk.admin import StampImageActionMixin
+from edc_odk.admin import ODKActionMixin
 
+from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import ClinicianNotesForm, ClinicianNotesImageForm
 from ..models import ClinicianNotes, ClinicianNotesImage
-from .modeladmin_mixins import CrfModelAdminMixin
 
 
 class ClinicianNotesImageInline(TabularInlineMixin, admin.TabularInline):
@@ -27,8 +26,7 @@ class ClinicianNotesImageInline(TabularInlineMixin, admin.TabularInline):
 
 
 @admin.register(ClinicianNotes, site=flourish_caregiver_admin)
-class ClinicianNotesAdmin(
-    StampImageActionMixin, CrfModelAdminMixin, admin.ModelAdmin):
+class ClinicianNotesAdmin(ODKActionMixin, CrfModelAdminMixin, admin.ModelAdmin):
     form = ClinicianNotesForm
 
     fieldsets = (
