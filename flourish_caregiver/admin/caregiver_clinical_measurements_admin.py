@@ -3,10 +3,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from edc_fieldsets.fieldlist import Remove
 from edc_model_admin import audit_fieldset_tuple
 
+from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverClinicalMeasurementsForm
 from ..models import CaregiverClinicalMeasurements
-from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(CaregiverClinicalMeasurements, site=flourish_caregiver_admin)
@@ -27,11 +27,7 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'diastolic_bp',
                 'confirm_values',
                 'waist_circ',
-                'waist_circ_second',
-                'waist_circ_third',
                 'hip_circ',
-                'hip_circ_second',
-                'hip_circ_third',
                 'all_measurements',
             ]}
          ), audit_fieldset_tuple)
@@ -41,12 +37,9 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'all_measurements': admin.VERTICAL}
 
     conditional_fieldlists = {
-        'a_antenatal1_schedule1': Remove('waist_circ', 'waist_circ_second', 'waist_circ_third',
-                                         'hip_circ', 'hip_circ_second', 'hip_circ_third'),
-        'a_birth1_schedule1': Remove('height', 'waist_circ', 'waist_circ_second', 'waist_circ_third',
-                                     'hip_circ', 'hip_circ_second', 'hip_circ_third'),
-        'tb_2_months_schedule': Remove('height', 'waist_circ', 'waist_circ_second', 'waist_circ_third',
-                                       'hip_circ', 'hip_circ_second', 'hip_circ_third'),
+        'a_antenatal1_schedule1': Remove('waist_circ', 'hip_circ'),
+        'a_birth1_schedule1': Remove('height', 'waist_circ', 'hip_circ'),
+        'tb_2_months_schedule': Remove('height', 'waist_circ', 'hip_circ'),
     }
 
     def get_key(self, request, obj=None):
