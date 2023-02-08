@@ -24,8 +24,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
         super().clean()
 
         cleaned_data = self.cleaned_data
-
-        if 'quart' not in self.instance.schedule_name:
+        visit = getattr(self.instance, 'visit', None)
+        if 'quart' not in self.instance.schedule_name and not visit:
             self._check_child_assent(self.instance.subject_identifier)
 
         if cleaned_data.get('appt_datetime'):
