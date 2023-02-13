@@ -1,9 +1,10 @@
+import pytz
 from django import forms
+from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from edc_base.sites.forms import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
-import pytz
 
 from edc_appointment.constants import NEW_APPT, IN_PROGRESS_APPT
 from edc_appointment.form_validators import AppointmentFormValidator
@@ -23,8 +24,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
         super().clean()
 
         cleaned_data = self.cleaned_data
-
-        if "quart" not in self.instance.schedule_name:
+        visit = getattr(self.instance, 'visit', None)
+        if 'quart' not in self.instance.schedule_name and not visit:
             self._check_child_assent(self.instance.subject_identifier)
 
         if cleaned_data.get('appt_datetime'):
@@ -51,31 +52,36 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
     def _check_child_assent(self, subject_identifier):
 
         consent_version_obj = None
-        maternal_consent = None
         child_assents_exists = []
 
         maternal_consents = SubjectConsent.objects.filter(
             subject_identifier=subject_identifier)
 
         if maternal_consents:
-            maternal_consent = maternal_consents.latest('consent_datetime')
+            consent_version_obj = FlourishConsentVersion.objects.filter(
+                screening_identifier=maternal_consents[0].screening_identifier)
 
-        child_consents = CaregiverChildConsent.objects.filter(
-            subject_consent__subject_identifier=subject_identifier,
-            is_eligible=True, child_age_at_enrollment__gte=7)
+        onschedule_model = getattr(self.instance.schedule, 'onschedule_model', '')
 
+        onschedule_model_cls = django_apps.get_model(onschedule_model)
         try:
-            consent_version_obj = FlourishConsentVersion.objects.get(
-                screening_identifier=maternal_consent.screening_identifier)
-        except FlourishConsentVersion.DoesNotExist:
-            pass
-
-        if child_consents.exists():
+            onschedule_obj = onschedule_model_cls.objects.get(
+                subject_identifier=subject_identifier,
+                schedule_name=self.instance.schedule_name, )
+        except onschedule_model_cls.DoesNotExist:
+            raise ValidationError(
+                f'Onschedule obj for appointment {self.instance.visit_code}.{self.instance.visit_code_sequence}'
+                ', does not exist.')
+        else:
+            child_consents = CaregiverChildConsent.objects.filter(
+                subject_identifier=onschedule_obj.child_subject_identifier,
+                is_eligible=True, child_age_at_enrollment__gte=7)
 
             for child_consent in child_consents:
+                child_version = getattr(consent_version_obj, 'child_version', '') or child_consent.version
                 exists = ChildAssent.objects.filter(
                     subject_identifier=child_consent.subject_identifier,
-                    version=getattr(consent_version_obj, "child_version", child_consent.version)).exists()
+                    version=child_version).exists()
                 child_assents_exists.append(exists)
             child_assents_exists = all(child_assents_exists)
             if not child_assents_exists:
