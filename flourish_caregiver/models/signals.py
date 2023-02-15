@@ -1045,7 +1045,7 @@ def stamp_image(instance):
 
 
 def add_image_stamp(base_image=None, position=(25, 25),
-                    resize=(100, 100)):
+                    resize=(500, 500)):
     """
     Superimpose image of a stamp over copy of the base image
     @param image_path: dir to base image
@@ -1085,7 +1085,7 @@ def print_pdf(filepath):
     )
     stamped_pdf_images = []
     for image, index in zip(renderer, page_indices):
-        stamped_pdf_images.append(add_image_stamp(base_image=image, resize=(300, 300)))
+        stamped_pdf_images.append(add_image_stamp(base_image=image))
     first_img = stamped_pdf_images[0]
     first_img.save(filepath, save_all=True, append_images=stamped_pdf_images[1:])
 
