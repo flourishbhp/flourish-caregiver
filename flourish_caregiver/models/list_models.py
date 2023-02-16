@@ -75,3 +75,7 @@ class TbDiagnostics(ListModelMixin, BaseUuidModel):
 
 class TbVisitCareLocation(ListModelMixin, BaseUuidModel):
     pass
+
+
+class HouseholdMember(ListModelMixin, BaseUuidModel):
+    pass

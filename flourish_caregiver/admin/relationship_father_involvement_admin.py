@@ -96,12 +96,10 @@ class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'future_relationship': admin.VERTICAL,
                     'father_child_contact': admin.VERTICAL,
                     'fathers_financial_support': admin.VERTICAL,
-                    'read_books': admin.VERTICAL,
-                    'told_stories': admin.VERTICAL,
-                    'sang_songs': admin.VERTICAL,
-                    'took_child_outside': admin.VERTICAL,
-                    'played_with_child': admin.VERTICAL,
-                    'named_with_child': admin.VERTICAL,
                     'interview_participation': admin.VERTICAL,
                     'contact_info': admin.VERTICAL,
-                    'conunselling_referral': admin.VERTICAL,}
+                    'conunselling_referral': admin.VERTICAL, }
+
+    filter_horizontal = (
+        'read_books', 'told_stories', 'sang_songs', 'took_child_outside',
+        'played_with_child', 'named_with_child')

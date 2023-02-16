@@ -1,5 +1,6 @@
 from edc_constants.constants import NONE, OTHER
 from edc_list_data import PreloadData
+from flourish_caregiver.constants import PNTA
 
 list_data = {
     'flourish_caregiver.chronicconditions': [
@@ -269,13 +270,19 @@ list_data = {
         (OTHER, 'Other, specify'),
     ],
     'flourish_caregiver.tbvisitcarelocation': [
-
         ('idcc', 'IDCC'),
         ('postpartum_visit', 'Postpartum Visit'),
         ('hospital', 'Hospital'),
         ('opd', 'OPD'),
         (OTHER, 'Other, specify'),
     ],
+    'flourish_caregiver.householdmember': [
+        ('mother', 'Mother'),
+        ('father', 'Father'),
+        ('other', 'Other'),
+        ('no_one', 'No-one'),
+        (PNTA, 'Prefer not to answer'),
+    ]
 
 
 }
