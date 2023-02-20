@@ -4,6 +4,7 @@ from edc_base.model_validators import CellNumber
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
+from edc_base.model_fields.custom_fields import OtherCharField
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from edc_constants.choices import YES_NO
@@ -193,7 +194,7 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         max_length=4,)
 
     father_child_contact = models.CharField(
-        verbose_name='How often does the biologic father have contact '
+        verbose_name='How often does the biological father have contact '
         '(home visits, phone calls, meeting up at another place) with your child? ',
         choices=FATHER_VISITS,
         max_length=30,)
@@ -215,30 +216,42 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         related_name='read_books',
         verbose_name='Read books or looked at picture books with your child', )
 
+    read_books_other = OtherCharField()
+
     told_stories = models.ManyToManyField(
         HouseholdMember,
         related_name='told_stories',
         verbose_name='Told stories to your child', )
+
+    told_stories_other = OtherCharField()
 
     sang_songs = models.ManyToManyField(
         HouseholdMember,
         related_name='sang_songs',
         verbose_name='Sang songs to or with your child, including lullabies', )
 
+    sang_songs_other = OtherCharField()
+
     took_child_outside = models.ManyToManyField(
         HouseholdMember,
         related_name='took_child_outside',
         verbose_name='Took your child outside the home', )
+
+    took_child_outside_other = OtherCharField()
 
     played_with_child = models.ManyToManyField(
         HouseholdMember,
         related_name='played_with_child',
         verbose_name='Played with your child', )
 
+    played_with_child_other = OtherCharField()
+
     named_with_child = models.ManyToManyField(
         HouseholdMember,
         related_name='named_with_child',
         verbose_name='Named, counted, or drew things with or for your child', )
+
+    named_with_child_other = OtherCharField()
 
     interview_participation = models.CharField(
         verbose_name='Would you be willing to participate in an interview'
@@ -249,7 +262,7 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     contact_info = models.CharField(
         verbose_name=('Would you be willing to provide us contact information so we'
                       ' can invite your partner or ex-partner (who is supporting '
-                      'the caregiver of the FLOURISH child) to an interview about caregiving?'),
+                      'the caregiving of the FLOURISH child) to an interview about caregiving?'),
         choices=YES_NO,
         max_length=3,
         blank=True,
