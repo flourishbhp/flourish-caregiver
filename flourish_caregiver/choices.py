@@ -992,6 +992,7 @@ FUTURE_OF_RELATIONSHIP = (
 FATHER_VISITS = (
     ('every_day', 'Every day'),
     ('every_week_weekend', "Every week/weekend"),
+    ('every_month', "Every month"),
     ('every_couple_of_months', 'Every couple of months'),
     ('every_year', 'Every year'),
     (NEVER, 'Never'),

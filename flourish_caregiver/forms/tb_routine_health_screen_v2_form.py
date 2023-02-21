@@ -13,26 +13,28 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
     @property
     def tb_routine_health_screen_v2_cls(self):
         return django_apps.get_model(self.tb_routine_health_screen_v2_model)
+    
+    def has_changed(self):
+        return True
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def clean(self):
-        super().clean()
+        clean_data = super().clean()
+        
+        
+        tb_healthvisit_inlines =  int(self.data.get('tbroutinehealthencounters_set-TOTAL_FORMS', 0))
 
-        total_inlines = int(self.data.get('routine_encounter-TOTAL_FORMS', 0))
-
-        tb_health_visit_number = int(self.cleaned_data.get('tb_health_visits', 0))
-
-        if tb_health_visit_number == 0 and total_inlines != 0:
-            msg = {'tb_health_visits': 'if no health visits were made, end of CRF'}
-            raise ValidationError(msg)
-        elif tb_health_visit_number != total_inlines:
-            msg = {
-                'tb_health_visits':
-                    'Complete follow up questions for each visit specified.'
-            }
-            raise ValidationError(msg)
+        try:
+            tb_health_visits_counter = int(clean_data.get('tb_health_visits'))
+        except ValueError:
+            pass
+        else:
+            if tb_healthvisit_inlines != tb_health_visits_counter:
+                raise ValidationError({'tb_health_visits': 'Not equal to the provided number of visits'})
+            
+        return clean_data
 
     class Meta:
         model = TbRoutineHealthScreenV2
