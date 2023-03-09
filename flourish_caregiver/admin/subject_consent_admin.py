@@ -92,6 +92,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 caregiver_child_consents.values_list('subject_identifier', flat=True))
 
             if obj:
+                caregiver_child_consents = caregiver_child_consents.filter(
+                    subject_consent__version=getattr(obj, 'version', None))
                 caregiver_child_consents_pids = set(
                     [c.subject_identifier for c in self.get_difference(
                         caregiver_child_consents, obj)])
@@ -111,6 +113,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                     for option in exclude_options:
                         del caregiver_child_consents_dict[option]
                     initial.append(caregiver_child_consents_dict)
+
         elif study_maternal_id:
             child_datasets = self.child_dataset_cls.objects.filter(
                 study_maternal_identifier=study_maternal_id)
@@ -159,7 +162,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
     def get_difference(self, model_objs, obj=None):
         cc_ids = obj.caregiverchildconsent_set.values_list('subject_identifier', 'version')
 
-        return [x for x in model_objs if [x.subject_identifier, x.version] not in cc_ids]
+        return [x for x in model_objs if (x.subject_identifier, x.version) not in cc_ids]
 
     def get_child_reconsent_extra(self, request):
         consent_version_cls = django_apps.get_model(
