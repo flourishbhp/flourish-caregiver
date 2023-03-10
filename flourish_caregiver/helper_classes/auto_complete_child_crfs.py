@@ -2,10 +2,9 @@ from copy import deepcopy
 
 from django.apps import apps as django_apps
 from django.forms import model_to_dict
-from django.db import IntegrityError, models
+from django.db import models
 from edc_metadata import REQUIRED, KEYED
 from edc_metadata.models import CrfMetadata
-from django.db.transaction import TransactionManagementError
 from flourish_caregiver.models import MaternalVisit
 
 
@@ -14,25 +13,24 @@ class AutoCompleteChildCrfs:
     def __init__(self, instance):
         self.subject_identifier = instance.subject_identifier
         self.visit_code = instance.visit_code
+        self.visit_code_sequence = instance.visit_code_sequence
         self.schedule_name = instance.schedule_name
         self.id = instance.id
         self.instance = instance
 
     def pre_fill_crfs(self):
-        # check clone the copleted crfs into the current visit
-        for crf in self.completed_crfs:
-            if crf.model in self.visit_crfs:
-                model_cls = django_apps.get_model(crf.model)
-                try:
-                    model_obj = model_cls.objects.filter(
-                        maternal_visit__subject_identifier=self.subject_identifier,
-                        maternal_visit__visit_code=self.visit_code,).latest('report_datetime')
-                except model_cls.DoesNotExist:
-                    pass
-                else:
-                    self.save_model(model_obj=model_obj, model_cls=model_cls)
-                    
-    @property               
+        # check clone the completed crfs into the current visit
+        for crf in self.visit_crfs:
+            model_cls = django_apps.get_model(crf)
+            try:
+                model_obj = model_cls.objects.filter(
+                    maternal_visit=self.first_visit).latest('report_datetime')
+            except model_cls.DoesNotExist:
+                continue
+            else:
+                self.save_model(model_obj=model_obj, model_cls=model_cls)
+
+    @property
     def exclude_models(self):
         """
         Gives models names that should not be cloned
@@ -41,12 +39,11 @@ class AutoCompleteChildCrfs:
             list: models that should not be cloned
         """
         models = [
-            'flourish_caregiver.ClinicianNotesImage',
-            'flourish_caregiver.ClinicianNotes'
+            'flourish_caregiver.cliniciannotesimage',
+            'flourish_caregiver.cliniciannotes'
         ]
-        
-        return models
 
+        return models
 
     @property
     def maternal_inlines_crfs(self):
@@ -64,6 +61,7 @@ class AutoCompleteChildCrfs:
             return CrfMetadata.objects.filter(
                 subject_identifier=self.subject_identifier,
                 visit_code=self.visit_code,
+                visit_code_sequence=self.visit_code_sequence,
                 schedule_name=self.first_visit.schedule_name,
                 entry_status=KEYED)
         else:
@@ -75,6 +73,7 @@ class AutoCompleteChildCrfs:
         return CrfMetadata.objects.filter(
             subject_identifier=self.subject_identifier,
             visit_code=self.visit_code,
+            visit_code_sequence=self.visit_code_sequence,
             schedule_name=self.schedule_name,
             entry_status=REQUIRED).values_list('model', flat=True)
 
@@ -86,7 +85,9 @@ class AutoCompleteChildCrfs:
         blank get the visit of the first child"""
         return MaternalVisit.objects.filter(
             subject_identifier=self.subject_identifier,
-            visit_code=self.visit_code).earliest('report_datetime')
+            visit_code=self.visit_code,
+            visit_code_sequence=self.visit_code_sequence).exclude(
+                schedule_name=self.schedule_name).earliest('created')
 
     def inline_cls(self, inline):
         return django_apps.get_model(f'flourish_caregiver.{inline}')
@@ -127,28 +128,25 @@ class AutoCompleteChildCrfs:
         Get an existing model object as params and copy and save the model copy to create
         copy of the existing object
         """
-        
+
         for model_name in self.exclude_models:
             # Function is returned when model_obj is too be excluded
             if isinstance(model_obj, django_apps.get_model(model_name)):
-                return 
-        
+                return
+
         try:
-        
             kwargs = model_to_dict(model_obj,
-                                fields=[field.name for field in
-                                        model_obj._meta.fields],
-                                exclude=['id', 'maternal_visit_id',
-                                            'maternal_visit'])
-            new_obj = model_cls.objects.create(**kwargs,
-                                            maternal_visit_id=self.id,
-                                            maternal_visit=self.instance)
-        
-            for key in self.get_many_to_many_fields(model_obj):
-                getattr(new_obj, key).set(self.get_many_to_many_fields(model_obj).get(key))
-            new_obj.save()
-            self.save_inlines(new_obj, model_obj)
-        
+                                   fields=[field.name for field in model_obj._meta.fields],
+                                   exclude=['id', 'maternal_visit_id', 'maternal_visit'])
+            new_obj, created = model_cls.objects.get_or_create(
+                maternal_visit_id=self.id, maternal_visit=self.instance, defaults=kwargs, )
+
+            if created:
+                for key in self.get_many_to_many_fields(model_obj):
+                    getattr(new_obj, key).set(self.get_many_to_many_fields(model_obj).get(key))
+                new_obj.save()
+                self.save_inlines(new_obj, model_obj)
+
         except Exception:
             """
             Ignore the all errors and do not create any objects (Ostrich algorithm).

@@ -517,7 +517,7 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             microsecond=0),
                         caregiver_visit_count=caregiver_visit_count)
     """
-    For parents with tow kids, crfs collected on a visit of one kid are being
+    For parents with two kids, crfs collected on a visit of one kid are being
       when opening such crf
     """
     complete_child_crfs = AutoCompleteChildCrfs(instance=instance)
