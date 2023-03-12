@@ -117,17 +117,15 @@ def update_maternal_dataset_and_worklist(subject_identifier,
 @receiver(post_save, weak=False, sender=SubjectConsent,
           dispatch_uid='subject_consent_on_post_save')
 def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
-    """
-    - Create locator log entry
+    """ Update subject identifier after consent.
     """
     if not raw:
         update_maternal_dataset_and_worklist(
             instance.subject_identifier,
             screening_identifier=instance.screening_identifier)
 
-        """
-        - Update subject identifier on the screening obj when created
-        """
+        #Update subject identifier on the screening obj when created
+
         screening_obj = None
         try:
             screening_obj = ScreeningPregWomen.objects.get(
