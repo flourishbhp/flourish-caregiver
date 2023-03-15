@@ -19,7 +19,12 @@ class AutoCompleteChildCrfs:
         self.instance = instance
 
     def pre_fill_crfs(self):
-        # check clone the completed crfs into the current visit
+        """ check clone the completed crfs into the current visit
+            run metadata create and rules to update metadata for current visit.
+        """
+        if not self.visit_crfs:
+            self.instance.metadata_create()
+            self.instance.run_metadata_rules()
         for crf in self.visit_crfs:
             model_cls = django_apps.get_model(crf)
             try:
