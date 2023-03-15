@@ -88,11 +88,16 @@ class AutoCompleteChildCrfs:
         two children, the first child is the one whose visit was done first and the
         parent's crf were captured on that visit, the second child the forms are still
         blank get the visit of the first child"""
-        return MaternalVisit.objects.filter(
-            subject_identifier=self.subject_identifier,
-            visit_code=self.visit_code,
-            visit_code_sequence=self.visit_code_sequence).exclude(
-                schedule_name=self.schedule_name).earliest('created')
+        try:
+            first_visit = MaternalVisit.objects.filter(
+                subject_identifier=self.subject_identifier,
+                visit_code=self.visit_code,
+                visit_code_sequence=self.visit_code_sequence).exclude(
+                    schedule_name=self.schedule_name).earliest('created')
+        except MaternalVisit.DoesNotExist:
+            return None
+        else:
+            return first_visit
 
     def inline_cls(self, inline):
         return django_apps.get_model(f'flourish_caregiver.{inline}')
