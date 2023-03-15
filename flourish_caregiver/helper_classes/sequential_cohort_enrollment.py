@@ -1,12 +1,10 @@
-from datetime import date
-from dateutil.relativedelta import relativedelta
-
 from django.apps import apps as django_apps
+from edc_constants.date_constants import timezone
 
+from .cohort import Cohort
 from ..models import (
     AntenatalEnrollment, CaregiverPreviouslyEnrolled,
     CaregiverChildConsent)
-from .cohort import Cohort
 
 
 class SequentialCohortEnrollmentError(Exception):
