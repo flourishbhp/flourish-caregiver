@@ -139,7 +139,7 @@ class AutoCompleteChildCrfs:
                                    fields=[field.name for field in model_obj._meta.fields],
                                    exclude=['id', 'maternal_visit_id', 'maternal_visit'])
             new_obj, created = model_cls.objects.get_or_create(
-                maternal_visit_id=self.id, maternal_visit=self.instance, defaults=kwargs, )
+                maternal_visit=self.instance, defaults=kwargs, )
 
             if created:
                 for key in self.get_many_to_many_fields(model_obj):
