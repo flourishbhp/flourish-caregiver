@@ -19,7 +19,12 @@ class AutoCompleteChildCrfs:
         self.instance = instance
 
     def pre_fill_crfs(self):
-        # check clone the completed crfs into the current visit
+        """ check clone the completed crfs into the current visit
+            run metadata create and rules to update metadata for current visit.
+        """
+        if not self.visit_crfs:
+            self.instance.metadata_create()
+            self.instance.run_metadata_rules()
         for crf in self.visit_crfs:
             model_cls = django_apps.get_model(crf)
             try:
@@ -83,11 +88,16 @@ class AutoCompleteChildCrfs:
         two children, the first child is the one whose visit was done first and the
         parent's crf were captured on that visit, the second child the forms are still
         blank get the visit of the first child"""
-        return MaternalVisit.objects.filter(
-            subject_identifier=self.subject_identifier,
-            visit_code=self.visit_code,
-            visit_code_sequence=self.visit_code_sequence).exclude(
-                schedule_name=self.schedule_name).earliest('created')
+        try:
+            first_visit = MaternalVisit.objects.filter(
+                subject_identifier=self.subject_identifier,
+                visit_code=self.visit_code,
+                visit_code_sequence=self.visit_code_sequence).exclude(
+                    schedule_name=self.schedule_name).earliest('created')
+        except MaternalVisit.DoesNotExist:
+            return None
+        else:
+            return first_visit
 
     def inline_cls(self, inline):
         return django_apps.get_model(f'flourish_caregiver.{inline}')
@@ -139,7 +149,7 @@ class AutoCompleteChildCrfs:
                                    fields=[field.name for field in model_obj._meta.fields],
                                    exclude=['id', 'maternal_visit_id', 'maternal_visit'])
             new_obj, created = model_cls.objects.get_or_create(
-                maternal_visit_id=self.id, maternal_visit=self.instance, defaults=kwargs, )
+                maternal_visit=self.instance, defaults=kwargs, )
 
             if created:
                 for key in self.get_many_to_many_fields(model_obj):

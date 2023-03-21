@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN, \
     FAILED_ELIGIBILITY, PARTICIPANT, DWTA, POS, NEG, ON_STUDY, OFF_STUDY, MALE, FEMALE, \
-    NEVER
+    NEVER, DONT_KNOW
 from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
@@ -915,6 +915,13 @@ YES_NO_PNTA = (
     (YES, YES),
     (NO, NO),
     (PNTA, _('Prefer not to answer')),
+)
+
+YES_NO_PNTA_DNK = (
+    (YES, YES),
+    (NO, NO),
+    (PNTA, _('Prefer not to answer')),
+    (DONT_KNOW, 'Do not know')
 )
 
 YES_NO_PNTA_NA = (

@@ -9,8 +9,8 @@ from edc_base.model_fields.custom_fields import OtherCharField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from edc_constants.choices import YES_NO
 
-from ..choices import (YES_NO_PNTA, YES_NO_PNTA_NA, YES_NO_PNTA_UNKNOWN,
-                       HIV_STATUS_DISCUSSION, PARTNERS_SUPPORT,
+from ..choices import (YES_NO_PNTA_DNK, YES_NO_PNTA, YES_NO_PNTA_NA,
+                       YES_NO_PNTA_UNKNOWN, HIV_STATUS_DISCUSSION, PARTNERS_SUPPORT,
                        CHOICE_FREQUENCY, HAPPINESS_CHOICES, FATHER_VISITS,
                        FUTURE_OF_RELATIONSHIP, FATHERS_FINANCIAL_SUPPORT, HOUSEHOLD_MEMBER)
 from .list_models import HouseholdMember
@@ -190,8 +190,8 @@ class RelationshipFatherInvolvement(CrfModelMixin):
 
     biological_father_alive = models.CharField(
         verbose_name='Is the biological father of this child alive',
-        choices=YES_NO_PNTA,
-        max_length=4,)
+        choices=YES_NO_PNTA_DNK,
+        max_length=9,)
 
     father_child_contact = models.CharField(
         verbose_name='How often does the biological father have contact '
