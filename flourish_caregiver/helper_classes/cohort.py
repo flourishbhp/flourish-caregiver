@@ -293,3 +293,6 @@ class Cohort:
                         and self.total_pi_regime(cohort='cohort_c') < 100 else 'cohort_c_sec')
             return 'cohort_c_sec'
 
+    @property
+    def cohort_variable(self):
+        return self.cohort_a() or self.cohort_b() or self.cohort_c()
