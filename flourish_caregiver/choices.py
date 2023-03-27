@@ -160,7 +160,7 @@ COWS_MILK = (
 
 CRYING = (
     ('3', 'Yes, most of the time'),
-    ('2, quite often', 'Yes, quite often'),
+    ('2', 'Yes, quite often'),
     ('1', 'Only occasionally'),
     ('0', 'No, never')
 )
