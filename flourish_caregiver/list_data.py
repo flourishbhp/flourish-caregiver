@@ -270,6 +270,7 @@ list_data = {
         (OTHER, 'Other, specify'),
     ],
     'flourish_caregiver.tbvisitcarelocation': [
+        ('antenatal_visit', 'Antenatal Visit'),
         ('idcc', 'IDCC'),
         ('postpartum_visit', 'Postpartum Visit'),
         ('hospital', 'Hospital'),
