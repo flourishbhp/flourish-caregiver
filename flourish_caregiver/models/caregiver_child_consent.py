@@ -1,4 +1,3 @@
-from django import forms
 from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -180,7 +179,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
-            self.version = '3'
+            self.version = self.child_consent_version or '3'
 
             if self.preg_enroll:
                 self.duplicate_subject_identifier_preg()
@@ -238,7 +237,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             consent_version_obj = consent_version_cls.objects.get(
                 screening_identifier=self.subject_consent.screening_identifier)
         except consent_version_cls.DoesNotExist:
-            pass
+            return None
         else:
             return consent_version_obj.child_version
 
