@@ -25,8 +25,6 @@ from .caregiver_phq_referral import CaregiverPhqReferral
 from .caregiver_phq_referral_fu import CaregiverPhqReferralFU
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .caregiver_requisition import CaregiverRequisition
-from .caregiver_requisition_result import CaregiverRequisitionResult
-from .caregiver_requisition_result import CaregiverResultValue
 from .caregiver_social_work_referral import CaregiverSocialWorkReferral
 from .covid_19 import Covid19
 from .enrollment import Enrollment
