@@ -1075,3 +1075,9 @@ HIV_GROUP_CHOICES = (
     ('no_preference', 'I have no preference'),
     ('unsure', 'Unsure'),
 )
+
+YES_NO_TBD = (
+    (YES, YES),
+    (NO, NO),
+    ('TBD', 'I will think about it'),
+)

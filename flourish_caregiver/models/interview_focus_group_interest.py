@@ -1,6 +1,6 @@
 from django.db import models
 from .model_mixins import CrfModelMixin
-from ..choices import PREFERENCE_CHOICES, HIV_GROUP_CHOICES
+from ..choices import PREFERENCE_CHOICES, HIV_GROUP_CHOICES, YES_NO_TBD
 from edc_constants.choices import YES_NO_UNSURE
 
 
@@ -79,9 +79,9 @@ class InterviewFocusGroupInterest(CrfModelMixin):
 
     infant_feeding_group_interest = models.CharField(
         verbose_name='Would you be interested in participating in a group discussion'
-                     ' about how you made your decision '
-                     'on how to feed your baby and how satisfied you are with that decision?',
-        choices=YES_NO_UNSURE,
+                     ' about how you made your decision on how to feed your baby and how'
+                     ' satisfied you are with that decision?',
+        choices=YES_NO_TBD,
         max_length=20,
         null=True,
         blank=True)
