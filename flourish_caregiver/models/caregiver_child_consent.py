@@ -243,10 +243,20 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     @property
     def is_preg(self):
+        caregiver_child_consent_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverchildconsent')
 
-        if not self.study_child_identifier:
-            return (self.child_dob and self.child_dob > self.consent_datetime.date()
-                    or self.child_dob is None)
+        caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
+            subject_identifier=self.subject_identifier)
+
+        if not caregiver_child_consent_objs.exists():
+            if not self.study_child_identifier:
+                return (self.child_dob and self.child_dob > self.consent_datetime.date()
+                        or self.child_dob is None)
+        else:
+            earliest_caregiver_child_consent = caregiver_child_consent_objs.order_by("consent_datetime").first()
+            return earliest_caregiver_child_consent.preg_enroll
+
         return False
 
     @property
