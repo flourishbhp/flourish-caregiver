@@ -36,6 +36,7 @@ from .hiv_disclosure_status_admin import HIVDisclosureStatusAdminC
 from .hiv_rapid_test_counseling_admin import HIVRapidTestCounselingAdmin
 from .hiv_viralload_cd4_admin import HivViralLoadCd4Admin
 from .locator_logs_admin import LocatorLogEntryAdmin
+from .maternal_arv_adherence_admin import MaternalArvAdherenceAdmin
 from .maternal_arv_admin import MaternalArvAtDeliveryAdmin, \
     MaternalArvTableAtDeliveryAdmin, MaternalArvTableAtDeliveryInlineAdmin
 from .maternal_arv_during_preg_admin import MaternalArvDuringPregAdmin, \

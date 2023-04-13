@@ -39,6 +39,7 @@ from .locator_logs_form import LocatorLogForm, LocatorLogEntryForm
 from .maternal_arv_during_preg_form import MaternalArvDuringPregForm, \
     MaternalArvTableDuringPregForm
 from .maternal_arv_form import MaternalArvTableAtDeliveryForm, MaternalArvAtDeliveryForm
+from .maternal_arv_adherence_form import MaternalArvAdherenceForm
 from .maternal_arv_post_adherence_form import MaternalArvPostAdherenceForm
 from .maternal_dataset_form import MaternalDatasetForm
 from .maternal_delivery_form import MaternalDeliveryForm
