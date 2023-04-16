@@ -79,3 +79,7 @@ class TbVisitCareLocation(ListModelMixin, BaseUuidModel):
 
 class HouseholdMember(ListModelMixin, BaseUuidModel):
     pass
+
+
+class ArvInterruptionReasons(ListModelMixin, BaseUuidModel):
+    pass

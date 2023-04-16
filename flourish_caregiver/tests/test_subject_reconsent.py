@@ -84,6 +84,10 @@ class TestSubjectReConsent(TestCase):
 
         self.assertEqual(SubjectConsent.objects.filter(
             subject_identifier=self.subject_identifier).count(), 2)
+        self.assertTrue(SubjectConsent.objects.filter(
+            subject_identifier=self.subject_identifier, version='2').exists())
+        self.assertTrue(SubjectConsent.objects.filter(
+            subject_identifier=self.subject_identifier, version='3').exists())
 
         self.assertEqual(Appointment.objects.filter(
             subject_identifier=self.subject_identifier).count(), 1)
@@ -137,3 +141,5 @@ class TestSubjectReConsent(TestCase):
 
         self.assertEqual(SubjectConsent.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 1)
+        self.assertTrue(SubjectConsent.objects.filter(
+            subject_identifier=self.subject_identifier, version='3').exists())

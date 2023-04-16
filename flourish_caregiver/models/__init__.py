@@ -38,6 +38,7 @@ from .hiv_viralload_cd4 import HivViralLoadAndCd4
 from .list_models import *
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_arv import MaternalArvTableAtDelivery, MaternalArvAtDelivery
+from .maternal_arv_adherence import MaternalArvAdherence
 from .maternal_arv_during_preg import MaternalArvDuringPreg, MaternalArvTableDuringPreg
 from .maternal_arv_post_adherence import MaternalArvPostAdherence
 from .maternal_dataset import MaternalDataset
