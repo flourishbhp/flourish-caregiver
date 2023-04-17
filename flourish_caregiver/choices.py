@@ -1060,3 +1060,24 @@ EVAL_LOCATION = (
     ('sebele', 'Sebele'),
     (OTHER, 'Other, specify')
 )
+
+PREFERENCE_CHOICES = (
+    ('one_on_one', 'One-on-one interview'),
+    ('group', 'Group discussion'),
+    ('either', 'Either one-one or group discussion'),
+    ('unsure', 'Unsure'),
+    ('not_participate', 'Prefer not to participate'),
+)
+
+HIV_GROUP_CHOICES = (
+    ('same_status', 'Members who have the same HIV status as you'),
+    ('mixed_status', 'A group where some persons are living with HIV and some are not'),
+    ('no_preference', 'I have no preference'),
+    ('unsure', 'Unsure'),
+)
+
+YES_NO_TBD = (
+    (YES, YES),
+    (NO, NO),
+    ('TBD', 'I will think about it'),
+)
