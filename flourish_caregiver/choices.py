@@ -1014,6 +1014,7 @@ FATHERS_FINANCIAL_SUPPORT = (
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very supportive'),
     (PNTA, 'Prefer not to answer'),
+    (DONT_KNOW, 'I don’t know'),
     (NOT_APPLICABLE, 'Not Applicable')
 
 )
