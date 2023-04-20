@@ -6,12 +6,13 @@ from edc_constants.choices import YES_NO_UNSURE
 
 class InterviewFocusGroupInterest(CrfModelMixin):
     discussion_pref = models.CharField(
-        verbose_name='Preference for discussion format',
+        verbose_name='Would you prefer to participate in a',
         choices=PREFERENCE_CHOICES,
         max_length=20)
 
     hiv_group_pref = models.CharField(
-        verbose_name='Preference for HIV status group',
+        verbose_name='Since you said you would participate in a group discussion,'
+                     ' would you prefer the group to be',
         choices=HIV_GROUP_CHOICES,
         max_length=20,
         null=True,
@@ -84,7 +85,9 @@ class InterviewFocusGroupInterest(CrfModelMixin):
         choices=YES_NO_TBD,
         max_length=20,
         null=True,
-        blank=True)
+        blank=True,
+        help_text="Only required for newly enrolled pregnant women (pregnant or postpartum)"
+    )
 
     same_status_comfort = models.CharField(
         verbose_name='Would you be comfortable discussing your HIV status in a group'
@@ -93,7 +96,11 @@ class InterviewFocusGroupInterest(CrfModelMixin):
         choices=YES_NO_UNSURE,
         max_length=20,
         null=True,
-        blank=True)
+        blank=True,
+        help_text="only required for newly enrolled pregnant women (pregnant or postpartum)"
+                  " who answered either "
+                  "“group discussion” or “either” in Q1 "
+    )
 
     diff_status_comfort = models.CharField(
         verbose_name='Would you be comfortable discussing your HIV status in'
@@ -102,7 +109,11 @@ class InterviewFocusGroupInterest(CrfModelMixin):
         choices=YES_NO_UNSURE,
         max_length=20,
         null=True,
-        blank=True)
+        blank=True,
+        help_text="only required for newly enrolled pregnant women (pregnant or postpartum)"
+                  " who answered either "
+                  "“group discussion” or “either” in Q1 "
+    )
 
     women_discussion_topics = models.TextField(
         verbose_name='Suggested topics for women in FLOURISH study',

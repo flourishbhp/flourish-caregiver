@@ -13,7 +13,10 @@ class InterviewFocusGroupInterestAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = InterviewFocusGroupInterestForm
 
     fieldsets = (
-        (None, {
+        ("In the future, we may conduct smaller studies within FLOURISH that involve discussions. Discussions could "
+         "either be one-on-one with a study staff member or in a group with other study participants. We would like "
+         "to understand whether you would be interested in participating in discussions, and if so, whether you would "
+         "prefer a one-on-one or group discussion. ", {
             "fields": (
                 'maternal_visit',
                 'report_datetime',
