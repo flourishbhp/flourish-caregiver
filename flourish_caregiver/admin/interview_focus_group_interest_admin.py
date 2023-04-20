@@ -37,11 +37,6 @@ class InterviewFocusGroupInterestAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'sexual_health',
                 'hiv_topics',
                 'food_insecurity',
-            ), }
-         ),
-        ("Which of the following topics would you be interested in discussing in a group?",
-         {
-            "fields": (
                 'wellness',
                 'non_comm_diseases',
                 'social_issues',
@@ -52,6 +47,7 @@ class InterviewFocusGroupInterestAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'diff_status_comfort',
             ), }
          ),
+
         ("Additional Topics",
          {
             "fields": (
