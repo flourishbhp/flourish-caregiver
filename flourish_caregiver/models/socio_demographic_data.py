@@ -1,8 +1,9 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from edc_base.model_fields import OtherCharField
+from edc_base.model_mixins import BaseUuidModel
 from edc_constants.choices import YES_NO, YES_NO_NA
-from edc_base.model_validators import MinConsentAgeValidator, MaxConsentAgeValidator
+from edc_visit_tracking.model_mixins import CrfInlineModelMixin
 
 from ..maternal_choices import CURRENT_OCCUPATION, MONEY_PROVIDER, MONEY_EARNED
 from ..maternal_choices import MARITAL_STATUS, ETHNICITY, HIGHEST_EDUCATION
@@ -106,3 +107,32 @@ class SocioDemographicData(CrfModelMixin):
         app_label = 'flourish_caregiver'
         verbose_name = "Socio Demographic Data"
         verbose_name_plural = "Socio Demographic Data"
+
+
+class HouseHoldDetails(CrfInlineModelMixin, BaseUuidModel):
+    """ Applicable for twins living in different households.
+    """
+
+    parent_model_attr = 'socio_demographics_data'
+
+    socio_demographics_data = models.ForeignKey(
+        SocioDemographicData, on_delete=models.CASCADE)
+
+    child_identifier = models.CharField(
+        verbose_name='Child Identifier',
+        max_length=50,
+        unique=True)
+
+    stay_with_child = models.CharField(
+        verbose_name=(
+            'Are you currently living in the same household as child '
+            'who is also participating in the FLOURISH study?'),
+        max_length=3,
+        choices=YES_NO_NA)
+
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Household Details'
+        verbose_name_plural = 'Household Details'
+        unique_together = (
+            'socio_demographics_data', 'child_identifier', )
