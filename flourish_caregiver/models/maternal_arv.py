@@ -39,7 +39,6 @@ class MaternalArvAtDelivery(CrfModelMixin):
         default=NOT_APPLICABLE
     )
 
-
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'Maternal ARV At Delivery'
@@ -56,7 +55,6 @@ class MaternalArvTableAtDelivery(MaternalArvTableMixin):
         validators=[date_not_future],
         null=True,
         blank=True)
-
 
     class Meta:
         app_label = 'flourish_caregiver'
