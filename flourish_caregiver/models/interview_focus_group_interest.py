@@ -97,9 +97,9 @@ class InterviewFocusGroupInterest(CrfModelMixin):
         max_length=20,
         null=True,
         blank=True,
-        help_text="only required for newly enrolled pregnant women (pregnant or postpartum)"
+        help_text="Only required for newly enrolled pregnant women (pregnant or postpartum)"
                   " who answered either "
-                  "“group discussion” or “either” in Q1 "
+                  "“group discussion” or “either” in Q3 "
     )
 
     diff_status_comfort = models.CharField(
@@ -110,9 +110,9 @@ class InterviewFocusGroupInterest(CrfModelMixin):
         max_length=20,
         null=True,
         blank=True,
-        help_text="only required for newly enrolled pregnant women (pregnant or postpartum)"
+        help_text="Only required for newly enrolled pregnant women (pregnant or postpartum)"
                   " who answered either "
-                  "“group discussion” or “either” in Q1 "
+                  "“group discussion” or “either” in Q3 "
     )
 
     women_discussion_topics = models.TextField(
