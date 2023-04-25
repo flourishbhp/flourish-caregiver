@@ -1014,6 +1014,7 @@ FATHERS_FINANCIAL_SUPPORT = (
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very supportive'),
     (PNTA, 'Prefer not to answer'),
+    (DONT_KNOW, 'I don’t know'),
     (NOT_APPLICABLE, 'Not Applicable')
 
 )
@@ -1059,4 +1060,25 @@ EVAL_LOCATION = (
     ('g_west', 'G-West'),
     ('sebele', 'Sebele'),
     (OTHER, 'Other, specify')
+)
+
+PREFERENCE_CHOICES = (
+    ('one_on_one', 'One-on-one interview'),
+    ('group', 'Group discussion'),
+    ('either', 'Either one-one or group discussion'),
+    ('unsure', 'Unsure'),
+    ('not_participate', 'Prefer not to participate'),
+)
+
+HIV_GROUP_CHOICES = (
+    ('same_status', 'Members who have the same HIV status as you'),
+    ('mixed_status', 'A group where some persons are living with HIV and some are not'),
+    ('no_preference', 'I have no preference'),
+    ('unsure', 'Unsure'),
+)
+
+YES_NO_TBD = (
+    (YES, YES),
+    (NO, NO),
+    ('TBD', 'I will think about it'),
 )
