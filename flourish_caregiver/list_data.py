@@ -270,6 +270,7 @@ list_data = {
         (OTHER, 'Other, specify'),
     ],
     'flourish_caregiver.tbvisitcarelocation': [
+        ('antenatal_visit', 'Antenatal Visit'),
         ('idcc', 'IDCC'),
         ('postpartum_visit', 'Postpartum Visit'),
         ('hospital', 'Hospital'),
@@ -289,9 +290,17 @@ list_data = {
         ('no_one', 'No-one'),
         (PNTA, 'Prefer not to answer'),
         (NOT_APPLICABLE, NOT_APPLICABLE),
+    ],
+    'flourish_caregiver.arvinterruptionreasons': [
+        ('toxicity_self', 'Toxicity, discontinued by self'),
+        ('toxicity_healthcare_provider', 'Toxicity, discontinued by healthcare provider'),
+        ('no_drugs', 'No drugs available'),
+        ('no_refill', 'Didn\'t get to clinic for refill'),
+        ('forgot', 'Participant forgot'),
+        ('traveling', 'Participant was traveling'),
+        (OTHER, 'Other'),
+        (NOT_APPLICABLE, 'Not Applicable'),
     ]
-
-
 }
 
 preload_data = PreloadData(

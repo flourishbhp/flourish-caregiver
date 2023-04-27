@@ -60,6 +60,10 @@ class SubjectHelperMixin:
             **self.options)
 
         mommy.make_recipe(
+                'flourish_caregiver.caregiverchildconsent',
+                subject_consent=subject_consent, )
+
+        mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=subject_consent.subject_identifier,)
 

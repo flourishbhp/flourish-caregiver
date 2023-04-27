@@ -103,7 +103,7 @@ if settings.APP_NAME == 'flourish_caregiver':
             'flourish_child': (
                 'child_visit', 'flourish_child.childvisit'),
             'pre_flourish': (
-                'maternal_visit', 'pre_flourish.preflourishcaregivervisit')}
+                'pre_flourish_caregiver_visit', 'pre_flourish.preflourishcaregivervisit')}
 
     class EdcFacilityAppConfig(BaseEdcFacilityAppConfig):
         country = 'botswana'
