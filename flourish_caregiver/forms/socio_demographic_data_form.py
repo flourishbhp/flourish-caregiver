@@ -3,7 +3,7 @@ from django.db.models import ManyToManyField
 from edc_constants.constants import YES, NO, NOT_APPLICABLE
 from flourish_form_validations.form_validators import SocioDemographicDataFormValidator
 from itertools import chain
-from ..models import SocioDemographicData
+from ..models import SocioDemographicData, HouseHoldDetails
 from .form_mixins import SubjectModelFormMixin
 
 
@@ -74,4 +74,20 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
 
     class Meta:
         model = SocioDemographicData
+        fields = '__all__'
+
+
+class HouseHoldDetailsForm(SubjectModelFormMixin, forms.ModelForm):
+
+    form_validator_cls = None
+
+    child_identifier = forms.CharField(
+        label='Child Identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}), )
+
+    def has_changed(self):
+        return True
+
+    class Meta:
+        model = HouseHoldDetails
         fields = '__all__'

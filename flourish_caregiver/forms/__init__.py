@@ -55,6 +55,7 @@ from .relationship_father_involvement_form import RelationshipFatherInvolvementF
 from .screening_preg_women_form import ScreeningPregWomenForm
 from .screening_prior_bhp_participants_form import ScreeningPriorBhpParticipantsForm
 from .socio_demographic_data_form import SocioDemographicDataForm
+from .socio_demographic_data_form import HouseHoldDetailsForm
 from .subject_consent_form import SubjectConsentForm
 from .substance_use_during_preg_form import SubstanceUseDuringPregnancyForm
 from .substance_use_prior_preg_form import SubstanceUsePriorPregnancyForm
