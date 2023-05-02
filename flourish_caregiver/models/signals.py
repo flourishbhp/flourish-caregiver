@@ -872,9 +872,9 @@ def get_onschedule_model(cohort, caregiver_visit_count=None, subject_identifier=
     schedule_name = cohort + '_schedule1'
 
     if 'tb_2_months' in cohort:
-        schedule_name = f'tb_two{children_count}_months_schedule1'
+        schedule_name = f'a_tb{children_count}_2_months_schedule1'
     if 'tb_6_months' in cohort:
-        schedule_name = f'tb_six{children_count}_months_schedule1'
+        schedule_name = f'a_tb{children_count}_6_months_schedule1'
 
     _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
         onschedule_model=onschedule_model, name=schedule_name)

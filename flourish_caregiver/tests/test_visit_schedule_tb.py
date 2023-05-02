@@ -95,7 +95,7 @@ class TestVisitScheduleTb(TestCase):
         )
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 0)
+            schedule_name='a_tb1_2_months_schedule1').count(), 0)
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
@@ -103,7 +103,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 1)
+            schedule_name='a_tb1_2_months_schedule1').count(), 1)
 
     @tag('tb_off')
     def test_tb_referral_required(self):
@@ -117,7 +117,7 @@ class TestVisitScheduleTb(TestCase):
         )
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 0)
+            schedule_name='a_tb1_2_months_schedule1').count(), 0)
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
@@ -140,7 +140,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 1)
+            schedule_name='a_tb1_2_months_schedule1').count(), 1)
 
         tb_visit = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -253,7 +253,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 0)
+            schedule_name='a_tb1_2_months_schedule1').count(), 0)
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
@@ -294,7 +294,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.assertEqual(OnScheduleCohortATb6Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_six1_months_schedule1').count(), 0)
+            schedule_name='a_tb1_6_months_schedule1').count(), 0)
 
     @tag('tb6')
     def test_6_month_visit_valid(self):
@@ -306,7 +306,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 0)
+            schedule_name='a_tb1_2_months_schedule1').count(), 0)
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
@@ -341,7 +341,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.assertEqual(OnScheduleCohortATb6Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_six1_months_schedule1').count(), 1)
+            schedule_name='a_tb1_6_months_schedule1').count(), 1)
 
     @tag('tbeng')
     def test_6_month_interview_valid(self):
@@ -353,7 +353,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 0)
+            schedule_name='a_tb1_2_months_schedule1').count(), 0)
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
@@ -415,7 +415,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 0)
+            schedule_name='a_tb1_2_months_schedule1').count(), 0)
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
@@ -448,7 +448,7 @@ class TestVisitScheduleTb(TestCase):
                           have_cough=YES,
                           maternal_visit=tb_visit)
         schedule_history = SubjectScheduleHistory.objects.get(
-            schedule_name='tb_six1_months_schedule1',
+            schedule_name='a_tb1_6_months_schedule1',
             onschedule_model='flourish_caregiver.onschedulecohortatb6months',
             subject_identifier=self.consent.subject_identifier
         )
@@ -456,7 +456,7 @@ class TestVisitScheduleTb(TestCase):
         mommy.make_recipe('flourish_caregiver.tboffstudy',
                           subject_identifier=self.consent.subject_identifier, )
         schedule_history = SubjectScheduleHistory.objects.get(
-            schedule_name='tb_six1_months_schedule1',
+            schedule_name='a_tb1_6_months_schedule1',
             onschedule_model='flourish_caregiver.onschedulecohortatb6months',
             subject_identifier=self.consent.subject_identifier
         )
@@ -470,7 +470,7 @@ class TestVisitScheduleTb(TestCase):
         )
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 0)
+            schedule_name='a_tb1_2_months_schedule1').count(), 0)
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
@@ -493,7 +493,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
             subject_identifier=self.consent.subject_identifier,
-            schedule_name='tb_two1_months_schedule1').count(), 1)
+            schedule_name='a_tb1_2_months_schedule1').count(), 1)
 
         tb_visit = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
