@@ -104,9 +104,15 @@ def update_maternal_dataset_and_worklist(subject_identifier,
                 worklist.date_assigned = None
                 worklist.save()
 
+            screening_query_id = None
+            if screening_identifier:
+                screening_query_id = Q(screening_identifier=screening_identifier)
+            else:
+                screening_query_id = Q(study_maternal_identifier=study_maternal_identifier)
+
             try:
                 screening_obj = ScreeningPriorBhpParticipants.objects.get(
-                    study_maternal_identifier=study_maternal_identifier)
+                    screening_query_id)
             except ScreeningPriorBhpParticipants.DoesNotExist:
                 pass
             else:
