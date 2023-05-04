@@ -57,13 +57,14 @@ if settings.APP_NAME == 'flourish_caregiver':
             AppointmentConfig(
                 model='flourish_child.appointment',
                 related_visit_model='flourish_child.childvisit',
-                appt_type='clinic')
+                appt_type='clinic'),
         ]
 
-
     class EdcMetadataAppConfig(BaseEdcMetadataAppConfig):
-
-        reason_field = {'flourish_caregiver.maternalvisit': 'reason'}
+        reason_field = {
+            'pre_flourish.preflourishvisit': 'reason',
+            'flourish_caregiver.maternalvisit': 'reason',
+            'flourish_child.childvisit': 'reason', }
         create_on_reasons = [SCHEDULED, UNSCHEDULED, COMPLETED_PROTOCOL_VISIT]
         delete_on_reasons = [LOST_VISIT, MISSED_VISIT, FAILED_ELIGIBILITY]
 
@@ -100,6 +101,11 @@ if settings.APP_NAME == 'flourish_caregiver':
                     datetime_field='appt_datetime',
                     status_field='appt_status',
                     closed_status=COMPLETE_APPT),
+                Timepoint(
+                    model='pre_flourish.appointment',
+                    datetime_field='appt_datetime',
+                    status_field='appt_status',
+                    closed_status=COMPLETE_APPT),
             ])
 
     class EdcVisitTrackingAppConfig(BaseEdcVisitTrackingAppConfig):
@@ -109,7 +115,8 @@ if settings.APP_NAME == 'flourish_caregiver':
             'flourish_child': (
                 'child_visit', 'flourish_child.childvisit'),
             'pre_flourish': (
-                'pre_flourish_caregiver_visit', 'pre_flourish.preflourishcaregivervisit')}
+                'pre_flourish_visit', 'pre_flourish.preflourishvisit'),
+        }
 
     class EdcFacilityAppConfig(BaseEdcFacilityAppConfig):
         country = 'botswana'
