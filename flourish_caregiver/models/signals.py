@@ -424,6 +424,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if instance.study_child_identifier:
             update_maternal_dataset_and_worklist(
                 instance.subject_consent.subject_identifier,
+                screening_identifier=instance.subject_consent.screening_identifier,
                 study_child_identifier=instance.study_child_identifier)
 
 
