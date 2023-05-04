@@ -51,13 +51,14 @@ if settings.APP_NAME == 'flourish_caregiver':
                 related_visit_model='flourish_caregiver.maternalvisit',
                 appt_type='clinic'),
             AppointmentConfig(
+                model='pre_flourish.appointment',
+                related_visit_model='pre_flourish.preflourishvisit',
+                appt_type='clinic'),
+            AppointmentConfig(
                 model='flourish_child.appointment',
                 related_visit_model='flourish_child.childvisit',
                 appt_type='clinic'),
-            AppointmentConfig(
-                model='pre_flourish.appointment',
-                related_visit_model='pre_flourish.preflourishvisit',
-                appt_type='clinic'), ]
+        ]
 
     class EdcMetadataAppConfig(BaseEdcMetadataAppConfig):
         reason_field = {
