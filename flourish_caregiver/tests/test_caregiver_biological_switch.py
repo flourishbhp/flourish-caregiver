@@ -179,7 +179,12 @@ class TestCaregiverBiologicalSwitch(TestCase):
             dataset[0].screening_identifier, self.switch_cls.screening_identifier)
 
         # Create an instance of the BHP prior screening for the mother
-        mother_screening = self.switch_cls.create_bio_screening(report_dt=get_utcnow())
+        screening_options = {
+            'child_alive': YES,
+            'mother_alive': YES,
+            'flourish_participation': 'interested'}
+        mother_screening = self.switch_cls.create_bio_screening(
+            report_dt=get_utcnow(), **screening_options)
         self.assertIsNotNone(mother_screening)
         self.assertEqual(
             mother_screening.study_maternal_identifier, dataset[0].study_maternal_identifier)
@@ -242,7 +247,9 @@ class TestCaregiverBiologicalSwitch(TestCase):
             RegisteredSubject.objects.filter(relative_identifier=biological_sid).count(), 1)
 
         # Create instance of the biological mother's previous enrollment information
-        self.switch_cls.create_bio_previous_enrol_info(report_dt=get_utcnow())
+        prev_enrol_defaults = {'maternal_prev_enroll': 'YES'}
+        self.switch_cls.create_bio_previous_enrol_info(
+            report_dt=get_utcnow(), **prev_enrol_defaults)
 
         # Put mother on the enrolment schedule
         self.switch_cls.put_on_enrol_schedule(onschedule_dt=get_utcnow())

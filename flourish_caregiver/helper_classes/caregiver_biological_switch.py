@@ -113,15 +113,17 @@ class CaregiverBiologicalSwitch:
         dataset_obj.screening_identifier = self.screening_identifier
         dataset_obj.save()
 
-    def create_bio_mother_locator(self, report_dt=None, signed_dt=None, ):
+    def create_bio_mother_locator(self, report_dt=None, signed_dt=None, **kwargs):
         dataset_obj = self.maternal_dataset_obj
+        first_name = kwargs.get('first_name', dataset_obj.first_name)
+        last_name = kwargs.get('last_name', dataset_obj.last_name)
 
         locator_defaults = {'screening_identifier': self.screening_identifier,
                             'study_maternal_identifier': dataset_obj.study_maternal_identifier,
                             'report_datetime': report_dt,
                             'locator_date': signed_dt,
-                            'first_name': dataset_obj.first_name,
-                            'last_name': dataset_obj.last_name, }
+                            'first_name': first_name,
+                            'last_name': last_name}
 
         self.update_dataset_screening_identifier(dataset_obj)
 
@@ -132,15 +134,14 @@ class CaregiverBiologicalSwitch:
         else:
             self.biological_mother_locator = locator
 
-    def create_bio_screening(self, report_dt=None):
+    def create_bio_screening(self, report_dt=None, **kwargs):
         dataset_obj = self.maternal_dataset_obj
 
         prior_screening_defaults = {
             'study_maternal_identifier': dataset_obj.study_maternal_identifier,
             'report_datetime': report_dt,
-            'child_alive': YES,
-            'mother_alive': YES,
-            'flourish_participation': 'interested', }
+            **kwargs, }
+
         obj, created = self.screening_prior_cls.objects.get_or_create(
             screening_identifier=self.screening_identifier,
             defaults=prior_screening_defaults)
@@ -149,11 +150,16 @@ class CaregiverBiologicalSwitch:
             print('This screening already exists, check it before proceeding')
         return obj
 
-    def create_bio_consent(self, **kwargs):
-        first_name = self.biological_mother_locator.first_name
-        last_name = self.biological_mother_locator.last_name
+    def create_bio_consent(self, sid_swap=('C', 'B'), **kwargs):
+        """ Create an instance of the subject consent for the participant.
+            @param subject_type: whether bioloigical mother or caregiver to determine sID. 
+            @param sid_swap: tuple to determine the pid replacement pattern.
+        """
+        first_name = kwargs.pop('first_name', self.biological_mother_locator.first_name)
+        last_name = kwargs.pop('last_name', self.biological_mother_locator.last_name)
         initials = self.set_initials(first_name, last_name)
-        subject_identifier = self.caregiver_sid.replace('C', 'B')
+
+        subject_identifier = self.caregiver_sid.replace(sid_swap[0], sid_swap[1])
 
         consent_defaults = {
             'subject_identifier': subject_identifier,
@@ -195,7 +201,7 @@ class CaregiverBiologicalSwitch:
             registered_obj.relative_identifier = self.biological_mother_consent.subject_identifier
             registered_obj.save()
 
-    def create_bio_previous_enrol_info(self, report_dt=None):
+    def create_bio_previous_enrol_info(self, report_dt=None, **kwargs):
         """ Create an instance of the caregiver previously enrolled form for the
             biological mother.
             @param report_dt: Date and time form captured.
@@ -205,7 +211,7 @@ class CaregiverBiologicalSwitch:
             prev_enrol = self.caregiver_prev_enrolled_cls.objects.create(
                 subject_identifier=self.biological_mother_consent.subject_identifier,
                 report_datetime=report_dt,
-                maternal_prev_enroll=YES)
+                **kwargs)
         except IntegrityError:
             raise Exception
         else:
