@@ -110,7 +110,7 @@ class InterviewFocusGroupInterest(CrfModelMixin):
         max_length=20,
         null=True,
         blank=True,
-        help_text="Required for those who responded either “group discussion” or “either”"
+        help_text="Only required for those who responded either “group discussion” or “either”"
     )
 
     women_discussion_topics = models.TextField(
