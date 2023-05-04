@@ -298,11 +298,12 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
             pass
         else:
             put_on_schedule(
-                'cohort_a_tb_2_months', instance=instance,
-                subject_identifier=instance.subject_identifier,
-                child_subject_identifier=preg_child_consents[0].subject_identifier,
-                base_appt_datetime=instance.delivery_datetime.replace(
-                    microsecond=0))
+            'cohort_a_tb_2_months', instance=instance,
+            subject_identifier=instance.subject_identifier,
+            child_subject_identifier=preg_child_consents[0].subject_identifier,
+            base_appt_datetime=instance.delivery_datetime.replace(
+                microsecond=0),
+            caregiver_visit_count=preg_child_consents[0].caregiver_visit_count)
 
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
@@ -809,7 +810,7 @@ def get_schedule_sequence(subject_identifier, instance,
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
                     child_subject_identifier=None, base_appt_datetime=None,
                     caregiver_visit_count=None):
-
+    
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
         schedule, onschedule_model_cls, schedule_name = get_onschedule_model(
@@ -871,11 +872,9 @@ def get_onschedule_model(cohort, caregiver_visit_count=None, subject_identifier=
     schedule_name = cohort + '_schedule1'
 
     if 'tb_2_months' in cohort:
-        onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
-        schedule_name = 'tb_2_months_schedule'
+        schedule_name = f'a_tb{children_count}_2_months_schedule1'
     if 'tb_6_months' in cohort:
-        onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
-        schedule_name = 'tb_6_months_schedule'
+        schedule_name = f'a_tb{children_count}_6_months_schedule1'
 
     _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
         onschedule_model=onschedule_model, name=schedule_name)
