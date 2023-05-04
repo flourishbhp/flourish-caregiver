@@ -29,6 +29,12 @@ class OnScheduleHelper(object):
                                      caregiver_visit_count=instance.caregiver_visit_count)
 
     def put_quarterly_onschedule(self, instance, base_appt_datetime=None):
+        """ Determine the `cohort` and child count for multiple enrollments to
+            enroll subject and call the put_on_schedule function to put the subject
+            on a particular schedule.
+            @param instance: object instance to determine cohort and count.
+            @param base_appt_datetime: base datetime to start the appointment.
+        """
         cohort = None
         if 'sec' in instance.schedule_name:
             cohort = '_'.join([self.cohort.rstrip('_sec'), 'sec_quart'])
@@ -99,7 +105,11 @@ class OnScheduleHelper(object):
                     onschedule_obj.save()
 
     def get_onschedule_model(self, cohort, caregiver_visit_count=None, instance=None):
-
+        """ Retrieve the onschedule model, class and schedule name to enroll subject on.
+            @param cohort: participant cohort name
+            @param caregiver_visit_count: child count, for multi enrollment
+            @param instance: `consent/appointment` instance
+        """
         cohort_label_lower = ''.join(cohort.split('_'))
 
         if 'enrol' in cohort:
@@ -134,6 +144,9 @@ class OnScheduleHelper(object):
 
     @property
     def get_assent_onschedule_datetime(self):
+        """ Get child assent object creation date to use as an onschedule datetime.
+            @return: datetime created
+        """
         child_assent_cls = django_apps.get_model('flourish_child.childassent')
 
         try:
