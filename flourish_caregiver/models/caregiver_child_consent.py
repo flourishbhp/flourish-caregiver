@@ -1,4 +1,3 @@
-from django import forms
 from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -186,7 +185,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
-            self.version = '3'
+            self.version = self.child_consent_version or '3'
 
             if self.preg_enroll:
                 self.duplicate_subject_identifier_preg()
@@ -244,16 +243,26 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             consent_version_obj = consent_version_cls.objects.get(
                 screening_identifier=self.subject_consent.screening_identifier)
         except consent_version_cls.DoesNotExist:
-            pass
+            return None
         else:
             return consent_version_obj.child_version
 
     @property
     def is_preg(self):
+        caregiver_child_consent_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverchildconsent')
 
-        if not self.study_child_identifier:
-            return (self.child_dob and self.child_dob > self.consent_datetime.date()
-                    or self.child_dob is None)
+        caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
+            subject_identifier=self.subject_identifier)
+
+        if not caregiver_child_consent_objs.exists():
+            if not self.study_child_identifier:
+                return (self.child_dob and self.child_dob > self.consent_datetime.date()
+                        or self.child_dob is None)
+        else:
+            earliest_caregiver_child_consent = caregiver_child_consent_objs.order_by("consent_datetime").first()
+            return earliest_caregiver_child_consent.preg_enroll
+
         return False
 
     @property

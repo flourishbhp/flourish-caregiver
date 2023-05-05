@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'flourish_caregiver.apps.EdcTimepointAppConfig',
     'flourish_caregiver.apps.EdcVisitTrackingAppConfig',
     'flourish_visit_schedule.apps.AppConfig',
+    'flourish_calendar.apps.AppConfig',
     'flourish_caregiver.apps.AppConfig',
 ]
 
@@ -159,6 +160,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+BASE_FORMAT = 'https://%(host)s/v1/projects/2/forms/%(form_id)s/%(api)s'
 
 COUNTRY = 'botswana'
 HOLIDAY_FILE = os.path.join(BASE_DIR, 'holidays.csv')

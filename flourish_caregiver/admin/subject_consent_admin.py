@@ -1,3 +1,4 @@
+import xlwt
 from _collections import OrderedDict
 import datetime
 from functools import partialmethod
@@ -16,7 +17,6 @@ from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple,
     audit_fields
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
-import xlwt
 
 from edc_consent.actions import (
     flag_as_verified_against_paper, unflag_as_verified_against_paper)
@@ -161,30 +161,32 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
     def get_difference(self, model_objs, obj=None):
         cc_ids = obj.caregiverchildconsent_set.values_list('subject_identifier', 'version')
-
-        return [x for x in model_objs if (x.subject_identifier, x.version) not in cc_ids]
+        consent_version_obj = self.consent_version_obj(obj.screening_identifier)
+        child_version = getattr(consent_version_obj, 'child_version', None)
+        return [x for x in model_objs if (x.subject_identifier, x.version) not in cc_ids or x.version != child_version]
 
     def get_child_reconsent_extra(self, request):
-        consent_version_cls = django_apps.get_model(
-            'flourish_caregiver.flourishconsentversion')
         screening_identifier = request.GET.get('screening_identifier')
         subject_identifier = request.GET.get('subject_identifier')
 
-        if screening_identifier:
-            try:
-                consent_version_obj = consent_version_cls.objects.get(
-                    screening_identifier=screening_identifier)
-            except consent_version_cls.DoesNotExist:
-                pass
-            else:
-                if consent_version_obj.child_version:
-
-                    child_consent_objs = self.consent_cls.objects.filter(
-                            subject_consent__subject_identifier=subject_identifier,
-                            version=consent_version_obj.child_version)
-                    if not child_consent_objs:
-                        return 1
+        consent_version_obj = self.consent_version_obj(screening_identifier)
+        if consent_version_obj and getattr(consent_version_obj, 'child_version', None):
+            child_consent_objs = self.consent_cls.objects.filter(
+                subject_consent__subject_identifier=subject_identifier,
+                version=consent_version_obj.child_version)
+            if not child_consent_objs:
+                return 1
         return 0
+
+    def consent_version_obj(self, screening_identifier=None):
+        consent_version_cls = django_apps.get_model('flourish_caregiver.flourishconsentversion')
+        try:
+            consent_version_obj = consent_version_cls.objects.get(
+                screening_identifier=screening_identifier)
+        except consent_version_cls.DoesNotExist:
+            return None
+        else:
+            return consent_version_obj
 
 
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)

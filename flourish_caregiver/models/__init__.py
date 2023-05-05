@@ -38,6 +38,7 @@ from .hiv_viralload_cd4 import HivViralLoadAndCd4
 from .list_models import *
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_arv import MaternalArvTableAtDelivery, MaternalArvAtDelivery
+from .maternal_arv_adherence import MaternalArvAdherence
 from .maternal_arv_during_preg import MaternalArvDuringPreg, MaternalArvTableDuringPreg
 from .maternal_arv_post_adherence import MaternalArvPostAdherence
 from .maternal_dataset import MaternalDataset
@@ -69,6 +70,7 @@ from .signals import caregiver_child_consent_on_post_save
 from .signals import maternal_dataset_on_post_save
 from .signals import subject_consent_on_post_save
 from .socio_demographic_data import SocioDemographicData
+from .socio_demographic_data import HouseHoldDetails
 from .subject_consent import SubjectConsent
 from .substance_use_during_preg import SubstanceUseDuringPregnancy
 from .substance_use_prior_preg import SubstanceUsePriorPregnancy
@@ -92,3 +94,5 @@ from .tb_study_screening import TbStudyEligibility
 from .tb_visit_screening_women import TbVisitScreeningWomen
 from .ultrasound import UltraSound
 from .tb_adol_caregiver_consent import TbAdolChildConsent
+from .interview_focus_group_interest import InterviewFocusGroupInterest
+

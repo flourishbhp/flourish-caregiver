@@ -39,7 +39,7 @@ class CaregiverRequisition(
         SenaiteRequisitionModelMixin,
         BaseUuidModel):
 
-    lab_profile_name = 'td_maternal'
+    lab_profile_name = 'flourish_caregiver'
 
     maternal_visit = models.ForeignKey(MaternalVisit, on_delete=PROTECT)
 

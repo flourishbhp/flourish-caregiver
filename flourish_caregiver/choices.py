@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN, \
     FAILED_ELIGIBILITY, PARTICIPANT, DWTA, POS, NEG, ON_STUDY, OFF_STUDY, MALE, FEMALE, \
-    NEVER
+    NEVER, DONT_KNOW
 from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
@@ -160,7 +160,7 @@ COWS_MILK = (
 
 CRYING = (
     ('3', 'Yes, most of the time'),
-    ('2, quite often', 'Yes, quite often'),
+    ('2', 'Yes, quite often'),
     ('1', 'Only occasionally'),
     ('0', 'No, never')
 )
@@ -917,6 +917,13 @@ YES_NO_PNTA = (
     (PNTA, _('Prefer not to answer')),
 )
 
+YES_NO_PNTA_DNK = (
+    (YES, YES),
+    (NO, NO),
+    (PNTA, _('Prefer not to answer')),
+    (DONT_KNOW, 'Do not know')
+)
+
 YES_NO_PNTA_NA = (
     (YES, YES),
     (NO, NO),
@@ -1007,6 +1014,7 @@ FATHERS_FINANCIAL_SUPPORT = (
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very supportive'),
     (PNTA, 'Prefer not to answer'),
+    (DONT_KNOW, 'I don’t know'),
     (NOT_APPLICABLE, 'Not Applicable')
 
 )
@@ -1052,4 +1060,25 @@ EVAL_LOCATION = (
     ('g_west', 'G-West'),
     ('sebele', 'Sebele'),
     (OTHER, 'Other, specify')
+)
+
+PREFERENCE_CHOICES = (
+    ('one_on_one', 'One-on-one interview'),
+    ('group', 'Group discussion'),
+    ('either', 'Either one-one or group discussion'),
+    ('unsure', 'Unsure'),
+    ('not_participate', 'Prefer not to participate'),
+)
+
+HIV_GROUP_CHOICES = (
+    ('same_status', 'Members who have the same HIV status as you'),
+    ('mixed_status', 'A group where some persons are living with HIV and some are not'),
+    ('no_preference', 'I have no preference'),
+    ('unsure', 'Unsure'),
+)
+
+YES_NO_TBD = (
+    (YES, YES),
+    (NO, NO),
+    ('TBD', 'I will think about it'),
 )

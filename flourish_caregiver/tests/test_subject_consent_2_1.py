@@ -12,6 +12,7 @@ from flourish_caregiver.models.caregiver_child_consent import CaregiverChildCons
 from ..models import OnScheduleCohortBSec, OnScheduleCohortBSecQuart
 
 
+@tag('t1')
 class TestVisitScheduleSetupA(TestCase):
 
     def setUp(self):
@@ -36,7 +37,6 @@ class TestVisitScheduleSetupA(TestCase):
             'study_maternal_identifier': self.study_maternal_identifier,
             'study_child_identifier': '1234'}
 
-    @tag('t1')
     def test_cohort_a_onschedule_antenatal_valid(self):
         """Assert that a pregnant woman is put on cohort a schedule.
         """
