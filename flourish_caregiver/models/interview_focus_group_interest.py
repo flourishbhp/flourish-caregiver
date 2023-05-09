@@ -1,13 +1,13 @@
 from django.db import models
 from .model_mixins import CrfModelMixin
-from ..choices import PREFERENCE_CHOICES, HIV_GROUP_CHOICES, YES_NO_TBD
+from ..choices import PREFERENCE_CHOICES, HIV_GROUP_CHOICES, YES_NO_TBD, DISCUSSION_PREF_CHOICES
 from edc_constants.choices import YES_NO_UNSURE
 
 
 class InterviewFocusGroupInterest(CrfModelMixin):
     discussion_pref = models.CharField(
         verbose_name='Would you prefer to participate in a',
-        choices=PREFERENCE_CHOICES,
+        choices=DISCUSSION_PREF_CHOICES,
         max_length=20)
 
     hiv_group_pref = models.CharField(
@@ -86,7 +86,7 @@ class InterviewFocusGroupInterest(CrfModelMixin):
         max_length=20,
         null=True,
         blank=True,
-        help_text="Only required for newly enrolled pregnant women (pregnant or postpartum)"
+        help_text="Only required for newly enrolled pregnant women"
     )
 
     same_status_comfort = models.CharField(
@@ -97,7 +97,7 @@ class InterviewFocusGroupInterest(CrfModelMixin):
         max_length=20,
         null=True,
         blank=True,
-        help_text="Only required for newly enrolled pregnant women (pregnant or postpartum)"
+        help_text="women who enrolled in pregnancy and are currently in the 1st year postpartum and"
                   " who answered either "
                   "“group discussion” or “either” in Q3 "
     )
@@ -110,9 +110,7 @@ class InterviewFocusGroupInterest(CrfModelMixin):
         max_length=20,
         null=True,
         blank=True,
-        help_text="Only required for newly enrolled pregnant women (pregnant or postpartum)"
-                  " who answered either "
-                  "“group discussion” or “either” in Q3 "
+        help_text="Only required for those who responded either “group discussion” or “either”"
     )
 
     women_discussion_topics = models.TextField(
