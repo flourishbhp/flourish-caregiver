@@ -1,3 +1,4 @@
+import xlwt
 from _collections import OrderedDict
 import datetime
 from functools import partialmethod
@@ -16,7 +17,6 @@ from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple,
     audit_fields
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
-import xlwt
 
 from edc_consent.actions import (
     flag_as_verified_against_paper, unflag_as_verified_against_paper)

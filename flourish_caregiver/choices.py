@@ -1014,6 +1014,7 @@ FATHERS_FINANCIAL_SUPPORT = (
     ('supportive', 'Supportive'),
     ('very_supportive', 'Very supportive'),
     (PNTA, 'Prefer not to answer'),
+    (DONT_KNOW, 'I don’t know'),
     (NOT_APPLICABLE, 'Not Applicable')
 
 )
@@ -1067,6 +1068,13 @@ PREFERENCE_CHOICES = (
     ('either', 'Either one-one or group discussion'),
     ('unsure', 'Unsure'),
     ('not_participate', 'Prefer not to participate'),
+)
+
+DISCUSSION_PREF_CHOICES = (
+    ('one_on_one', 'One-on-one interview'),
+    ('group', 'Group discussion'),
+    ('either', 'Either one-one or group discussion'),
+    ('unsure', 'Unsure'),
 )
 
 HIV_GROUP_CHOICES = (
