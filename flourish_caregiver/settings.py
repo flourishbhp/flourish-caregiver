@@ -186,4 +186,5 @@ if 'test' in sys.argv:
     PASSWORD_HASHERS = ('django.contrib.auth.hashers.MD5PasswordHasher',)
     DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'
 
-BASE_FORMAT=''
+BASE_FORMAT = 'Y-m-d'
+

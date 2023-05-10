@@ -1070,6 +1070,13 @@ PREFERENCE_CHOICES = (
     ('not_participate', 'Prefer not to participate'),
 )
 
+DISCUSSION_PREF_CHOICES = (
+    ('one_on_one', 'One-on-one interview'),
+    ('group', 'Group discussion'),
+    ('either', 'Either one-one or group discussion'),
+    ('unsure', 'Unsure'),
+)
+
 HIV_GROUP_CHOICES = (
     ('same_status', 'Members who have the same HIV status as you'),
     ('mixed_status', 'A group where some persons are living with HIV and some are not'),

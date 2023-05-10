@@ -15,7 +15,7 @@ from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery, \
     TbInformedConsent, TbStudyEligibility, TbOffStudy, TbVisitScreeningWomen, \
     TbInterview
-    
+
 from .models import CaregiverPreviouslyEnrolled
 from .models import FlourishConsentVersion, CaregiverPhqReferral
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
