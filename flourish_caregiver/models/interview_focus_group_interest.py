@@ -90,9 +90,9 @@ class InterviewFocusGroupInterest(CrfModelMixin):
     )
 
     same_status_comfort = models.CharField(
-        verbose_name='Would you be comfortable discussing your HIV status in a group'
-                     ' of women who have the same HIV '
-                     'status as you?',
+        verbose_name='You indicated that you would be interested in group discussions. If we are talking about infant '
+                     'feeding, a factor that may affect these choices is a mother’s HIV status. Would you be '
+                     'comfortable discussing your HIV status in a group of women who have the same HIV status as you?',
         choices=YES_NO_UNSURE,
         max_length=20,
         null=True,
@@ -103,9 +103,9 @@ class InterviewFocusGroupInterest(CrfModelMixin):
     )
 
     diff_status_comfort = models.CharField(
-        verbose_name='You indicated that you would be interested in group discussions. If we are talking about infant '
-                     'feeding, a factor that may affect these choices is a mother’s HIV status. Would you be '
-                     'comfortable discussing your HIV status in a group of women who have the same HIV status as you?',
+        verbose_name='Would you be comfortable discussing your HIV status in'
+                     ' a group of women where some may have a '
+                     'different HIV status than you?',
         choices=YES_NO_UNSURE,
         max_length=20,
         null=True,
