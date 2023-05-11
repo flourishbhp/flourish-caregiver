@@ -1,5 +1,7 @@
 from django.apps import apps as django_apps
 from django.db.models import Q
+from django.db.utils import IntegrityError
+from edc_appointment.constants import NEW_APPT
 from edc_constants.constants import OTHER, YES, FEMALE
 
 from .onschedule_helper import OnScheduleHelper
@@ -71,6 +73,10 @@ class CaregiverBiologicalSwitch:
     @property
     def child_appointment_cls(self):
         return django_apps.get_model('flourish_child.appointment')
+
+    @property
+    def child_visit_cls(self):
+        return django_apps.get_model('flourish_child.childvisit')
 
     @property
     def caregiver_locator_obj(self):
@@ -231,6 +237,44 @@ class CaregiverBiologicalSwitch:
                                              base_appt_datetime=base_appt_dt or onschedule_dt)
 
     def put_on_quart_schedule(self, onschedule_dt=None, base_appt_dt=None):
+        instance = self.child_consent_model_obj
+        subject_identifier = self.biological_mother_consent.subject_identifier
+        helper_cls = self.instantiate_helper(
+            subject_identifier, onschedule_dt, instance.cohort)
+        helper_cls.put_cohort_onschedule(instance,
+                                         base_appt_datetime=base_appt_dt or onschedule_dt)
+
+    def put_on_quart_schedule(self, onschedule_dt=None, base_appt_dt=None):
+        instance = self.child_consent_model_obj
+        subject_identifier = self.biological_mother_consent.subject_identifier
+        enrol_appt = self.appointment_model_cls.objects.filter(
+            subject_identifier=subject_identifier).first()
+
+        child_enrol_visit = self.child_visit_cls.objects.get(
+            subject_identifier=instance.subject_identifier, visit_code='2000', visit_code_sequence=0)
+
+        helper_cls = self.instantiate_helper(
+            subject_identifier, onschedule_dt, instance.cohort)
+        helper_cls.put_quarterly_onschedule(
+            enrol_appt, base_appt_datetime=base_appt_dt or child_enrol_visit.report_datetime)
+
+    def align_with_child_appts(self):
+        instance = self.child_consent_model_obj
+        complete_appts = self.child_appointment_cls.objects.filter(
+            Q(schedule_name__icontains='quart') | Q(schedule_name__icontains='qt'),
+            subject_identifier=instance.subject_identifier, ).exclude(
+                appt_status=NEW_APPT).values_list('visit_code', flat=True).distinct()
+
+        maternal_appts = [appt+'M' for appt in complete_appts]
+        caregiver_appts = self.appointment_model_cls.objects.filter(
+            subject_identifier=self.biological_mother_consent.subject_identifier,
+            visit_code__in=maternal_appts)
+
+        if caregiver_appts.exists():
+            caregiver_appts.delete()
+
+    @property
+    def child_consent_model_obj(self):
         try:
             instance = self.biological_mother_consent.caregiverchildconsent_set.latest('consent_datetime')
         except self.caregiverchild_consent_cls.DoesNotExist:
@@ -250,6 +294,7 @@ class CaregiverBiologicalSwitch:
                 subject_identifier, onschedule_dt, instance.cohort)
             helper_cls.put_quarterly_onschedule(
                 enrol_appt, base_appt_datetime=base_appt_dt or child_quart_appt.timepoint_datetime)
+            return instance
 
     def instantiate_helper(self, subject_identifier, onschedule_dt, cohort):
         onschedule_helper = OnScheduleHelper(

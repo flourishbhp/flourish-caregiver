@@ -163,7 +163,6 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
         ReceivedTrainingOnFeedingList,
         verbose_name='I have received training about the risks and benefits of breast '
                      'and formula feeding from (select all that apply):',
-        blank=True,
     )
 
     training_outcome = models.CharField(
@@ -171,6 +170,8 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
                       'breastfeeding and formula feeding.'),
         max_length=20,
         choices=TRAINEE_OUTCOME,
+        blank=True,
+        null=True,
     )
 
     feeding_advice = models.CharField(

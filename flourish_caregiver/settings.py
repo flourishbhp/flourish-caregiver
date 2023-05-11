@@ -187,4 +187,3 @@ if 'test' in sys.argv:
     DEFAULT_FILE_STORAGE = 'inmemorystorage.InMemoryStorage'
 
 BASE_FORMAT = 'Y-m-d'
-
