@@ -300,6 +300,16 @@ list_data = {
         ('traveling', 'Participant was traveling'),
         (OTHER, 'Other'),
         (NOT_APPLICABLE, 'Not Applicable'),
+    ],
+    'flourish_caregiver.expensecontributors': [
+        ('partner', 'Partner/husband'), ('mother', 'Mother'),
+        ('father', 'Father'),
+        ('sister', 'Sister'), ('brother', 'Brother'), ('aunt', 'Aunt'),
+        ('uncle', 'Uncle'),
+        ('grandmother', 'Grandmother'), ('grandfather', 'Grandfather'),
+        ('mother_in_law', 'Mother-in-law or Father-in-law'),
+        ('friend', 'Friend'),
+        ('unsure', 'Unsure'), (OTHER, 'Other, specify')
     ]
 }
 
