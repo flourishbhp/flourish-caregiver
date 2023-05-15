@@ -3,12 +3,11 @@ from django.db.models import ManyToManyField
 from edc_constants.constants import YES, NO, NOT_APPLICABLE
 from flourish_form_validations.form_validators import SocioDemographicDataFormValidator
 from itertools import chain
-from ..models import SocioDemographicData
+from ..models import SocioDemographicData, HouseHoldDetails
 from .form_mixins import SubjectModelFormMixin
 
 
 class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
-
     form_validator_cls = SocioDemographicDataFormValidator
 
     def __init__(self, *args, **kwargs):
@@ -20,6 +19,13 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
             for key in self.base_fields.keys():
                 if key not in ['maternal_visit', 'report_datetime']:
                     initial[key] = getattr(previous_instance, key)
+
+            # Initialize expense_contributors field
+            contributors = getattr(previous_instance, 'expense_contributors',
+                                   None)
+            if contributors:
+                contributor_ids = contributors.values_list('id', flat=True)
+                initial['expense_contributors'] = contributor_ids
         kwargs['initial'] = initial
         super().__init__(*args, **kwargs)
 
@@ -31,13 +37,16 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
             self.validate_med_history_changed(socio_demo_changed)
             if socio_demo_changed == YES and not has_changed:
                 message = {'socio_demo_changed':
-                           'Participant\'s Socio-demographic information has changed since '
-                           'last visit. Please update the information on this form.'}
+                               'Participant\'s Socio-demographic information has '
+                               'changed since '
+                               'last visit. Please update the information on this form.'}
                 raise forms.ValidationError(message)
             elif socio_demo_changed == NO and has_changed:
                 message = {'socio_demo_changed':
-                           'Participant\'s Socio-demographic information has not changed '
-                           'since last visit. Please don\'t make any changes to this form.'}
+                               'Participant\'s Socio-demographic information has not '
+                               'changed '
+                               'since last visit. Please don\'t make any changes to '
+                               'this form.'}
                 raise forms.ValidationError(message)
         cleaned_data = super().clean()
         return cleaned_data
@@ -74,4 +83,19 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
 
     class Meta:
         model = SocioDemographicData
+        fields = '__all__'
+
+
+class HouseHoldDetailsForm(SubjectModelFormMixin, forms.ModelForm):
+    form_validator_cls = None
+
+    child_identifier = forms.CharField(
+        label='Child Identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}), )
+
+    def has_changed(self):
+        return True
+
+    class Meta:
+        model = HouseHoldDetails
         fields = '__all__'

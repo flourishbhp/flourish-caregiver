@@ -831,8 +831,7 @@ TRAINEE_OUTCOME = (
     ('disagree', 'Disagree'),
     ('neutral', 'Neither agree or disagree'),
     ('agree', 'Agree'),
-    ('strongly_agree', 'Strongly agree'),
-    (NOT_APPLICABLE, 'Not Applicable'),)
+    ('strongly_agree', 'Strongly agree'),)
 
 REASONS_NOT_PARTICIPATING = (
     ('still_thinking ', 'Still thinking '),
@@ -1068,6 +1067,13 @@ PREFERENCE_CHOICES = (
     ('either', 'Either one-one or group discussion'),
     ('unsure', 'Unsure'),
     ('not_participate', 'Prefer not to participate'),
+)
+
+DISCUSSION_PREF_CHOICES = (
+    ('one_on_one', 'One-on-one interview'),
+    ('group', 'Group discussion'),
+    ('either', 'Either one-one or group discussion'),
+    ('unsure', 'Unsure'),
 )
 
 HIV_GROUP_CHOICES = (
