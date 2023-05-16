@@ -196,10 +196,16 @@ class SubjectHelperMixin:
                 'version': '1'
                 }
 
+            screening_options = {
+                'child_alive': YES,
+                'mother_alive': YES,
+                'flourish_participation': 'interested'}
+
             mommy.make_recipe(
                 'flourish_caregiver.screeningpriorbhpparticipants',
                 screening_identifier=maternal_dataset_obj.screening_identifier,
-                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier)
+                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
+                **screening_options)
 
             subject_consent = mommy.make_recipe(
                 'flourish_caregiver.subjectconsent',
@@ -225,10 +231,8 @@ class SubjectHelperMixin:
                     subject_identifier=subject_consent.subject_identifier)
             return subject_consent.subject_identifier
 
-    def enroll_prior_participant_assent(self, screening_identifier,
-            study_child_identifier,
-            consent_datetime=None, hiv_status=None
-            ):
+    def enroll_prior_participant_assent(self, screening_identifier, study_child_identifier,
+                                        consent_datetime=None, hiv_status=None):
 
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(

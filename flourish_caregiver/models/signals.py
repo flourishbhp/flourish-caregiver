@@ -359,11 +359,10 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
         child_age = None
         children_count = instance.caregiver_visit_count
-
         if not children_count:
             children_count = 1 + registered_subject_cls.objects.filter(
                 relative_identifier=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob,).count()
+            ).exclude(subject_identifier=instance.subject_identifier,).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())

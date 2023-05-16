@@ -56,9 +56,12 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
-            subject_identifier=self.subject_consent.subject_identifier,
-            )
+            subject_identifier=self.subject_consent.subject_identifier, )
 
+        mommy.make_recipe(
+            'flourish_caregiver.tbinformedconsent',
+            consent_datetime=get_utcnow(),
+            subject_identifier=self.subject_consent.subject_identifier, )
         self.subject_identifier = self.subject_consent.subject_identifier
 
         self.mv = mommy.make_recipe(
@@ -66,6 +69,10 @@ class TestRuleGroups(TestCase):
             appointment=Appointment.objects.get(visit_code='1000M'),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.subject_consent.subject_identifier)
 
     @tag('rgy')
     def test_hiv_viralload_cd4_not_required_cohort_a(self):
@@ -205,7 +212,7 @@ class TestRuleGroups(TestCase):
                 model='flourish_caregiver.caregiverphqdeprscreening',
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
-                visit_code_sequence='0').entry_status, NOT_REQUIRED)
+                visit_code_sequence='0').entry_status, REQUIRED)
 
     @tag('phq')
     def test_phq_required_cohort_a(self):
@@ -586,14 +593,14 @@ class TestRuleGroups(TestCase):
             'delivdt': get_utcnow() - relativedelta(years=14),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
-            'study_maternal_identifier': '11123',
+            'study_maternal_identifier': '11223',
             'protocol': 'Mpepu',
             'preg_pi': 1}
 
         child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
-            'study_maternal_identifier': '11123',
+            'study_maternal_identifier': '11223',
             'study_child_identifier': '1234',
             'dob': get_utcnow() - relativedelta(years=14)}
 
@@ -660,48 +667,48 @@ class TestRuleGroups(TestCase):
 
     @tag('hdsc1')
     def test_hiv_disclosure_ab_metadata_required(self):
-        self.maternal_dataset_options = {
+        maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=11),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
-            'study_maternal_identifier': '11123',
+            'study_maternal_identifier': '21123',
             'protocol': 'Mpepu',
             'preg_pi': 1}
 
-        self.child_dataset_options = {
+        child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
             'twin_triplet': 1,
-            'study_maternal_identifier': '11123',
+            'study_maternal_identifier': '21123',
             'study_child_identifier': '1234',
             'dob': get_utcnow() - relativedelta(years=11)}
 
-        self.child_dataset_options1 = {
+        child_dataset_options1 = {
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
             'twin_triplet': 1,
-            'study_maternal_identifier': '11123',
+            'study_maternal_identifier': '21123',
             'study_child_identifier': '1236',
             'dob': get_utcnow() - relativedelta(years=11)}
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **child_dataset_options)
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options1)
+            **child_dataset_options1)
 
         maternal_dataset_obj = mommy.make_recipe(
            'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+           **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
         subject_identifier = sh.enroll_prior_participant_twins_assent(
             maternal_dataset_obj.screening_identifier,
-            self.child_dataset_options.get('study_child_identifier'),
-            self.child_dataset_options1.get('study_child_identifier'),
+            child_dataset_options.get('study_child_identifier'),
+            child_dataset_options1.get('study_child_identifier'),
             hiv_status=POS)
 
         mommy.make_recipe(
@@ -721,34 +728,34 @@ class TestRuleGroups(TestCase):
     @tag('hdsc')
     def test_hiv_disclosure_metadata_not_required(self):
 
-        self.maternal_dataset_options = {
+        maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=8),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
-            'study_maternal_identifier': '11123',
+            'study_maternal_identifier': '12123',
             'protocol': 'Mpepu',
             'preg_pi': 1}
 
-        self.child_dataset_options = {
+        child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
             'infant_enrolldate': get_utcnow(),
-            'study_maternal_identifier': '11123',
+            'study_maternal_identifier': '12123',
             'study_child_identifier': '1234',
             'dob': get_utcnow() - relativedelta(years=8)}
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            ** self.child_dataset_options)
+            **child_dataset_options)
 
         maternal_dataset_obj = mommy.make_recipe(
            'flourish_caregiver.maternaldataset',
-           **self.maternal_dataset_options)
+           **maternal_dataset_options)
 
         sh = SubjectHelperMixin()
 
         subject_identifier = sh.enroll_prior_participant_assent(
             maternal_dataset_obj.screening_identifier,
-            self.child_dataset_options.get('study_child_identifier'),
+            child_dataset_options.get('study_child_identifier'),
             hiv_status=POS)
 
         mommy.make_recipe(
@@ -910,12 +917,6 @@ class TestRuleGroups(TestCase):
 
         history_model = 'edc_visit_schedule.subjectschedulehistory'
 
-        history_obj = django_apps.get_model(history_model).objects.get(
-            subject_identifier=subject_identifier)
-
-        history_obj.offschedule_datetime = get_utcnow().date() + relativedelta(days=100)
-        history_obj.save()
-
         visit = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             report_datetime=get_utcnow(),
@@ -936,18 +937,26 @@ class TestRuleGroups(TestCase):
             appointment=Appointment.objects.get(
                 visit_code='2001M',
                 subject_identifier=subject_identifier),
-            report_datetime=get_utcnow() + relativedelta(days=91),
+            report_datetime=get_utcnow() + relativedelta(months=4),
             reason=SCHEDULED)
+
+        history_obj = django_apps.get_model(history_model).objects.get(
+            subject_identifier=subject_identifier, schedule_name='b_quarterly1_schedule1')
+
+        print('onschedule_datetime', history_obj.onschedule_datetime)
+        print('offschedule_datetime', history_obj.offschedule_datetime)
+        print('visit', visit2.report_datetime)
 
         self.assertEqual(
             CrfMetadata.objects.get(
                 model='flourish_caregiver.hivrapidtestcounseling',
                 subject_identifier=subject_identifier,
-                visit_code='2001M').entry_status, REQUIRED)
+                visit_code='2001M').entry_status, NOT_REQUIRED)
 
         mommy.make_recipe(
             'flourish_caregiver.hivrapidtestcounseling',
             maternal_visit=visit2,
+            report_datetime=visit2.report_datetime,
             rapid_test_done=YES,
             result_date=get_utcnow().date() + relativedelta(days=91),
             result=NEG)
@@ -967,12 +976,7 @@ class TestRuleGroups(TestCase):
                 visit_code='2002M').entry_status, NOT_REQUIRED)
 
     @tag('bf')
-    def test_b_freeding_required(self):
-
-        mommy.make_recipe(
-            'flourish_caregiver.maternaldelivery',
-            subject_identifier=self.subject_consent.subject_identifier,
-            live_infants_to_register=1)
+    def test_b_feeding_required(self):
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -1000,7 +1004,9 @@ class TestRuleGroups(TestCase):
 
     @tag('firx')
     def test_father_involvement_required_2000(self):
-
+        """ Test father involvement crf required for Biological mother's at every
+            forth quarterly visit.
+        """
         self.maternal_dataset_options = {
             'delivdt': get_utcnow() - relativedelta(years=2, months=5),
             'mom_enrolldate': get_utcnow(),
@@ -1039,28 +1045,32 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2001M',
+            appointment=Appointment.objects.get(
+                visit_code='2001M',
                 subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2002M',
+            appointment=Appointment.objects.get(
+                visit_code='2002M',
                 subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2003M',
+            appointment=Appointment.objects.get(
+                visit_code='2003M',
                 subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2004M',
+            appointment=Appointment.objects.get(
+                visit_code='2004M',
                 subject_identifier=subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
@@ -1081,44 +1091,43 @@ class TestRuleGroups(TestCase):
 
     @tag('firx')
     def test_father_involvement_required(self):
-
-        mommy.make_recipe(
-            'flourish_caregiver.maternaldelivery',
-            subject_identifier=self.subject_consent.subject_identifier,
-            live_infants_to_register=1)
-
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2000D',
-            subject_identifier=self.subject_consent.subject_identifier),
+            appointment=Appointment.objects.get(
+                visit_code='2000D',
+                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2001M',
-            subject_identifier=self.subject_consent.subject_identifier),
+            appointment=Appointment.objects.get(
+                visit_code='2001M',
+                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2002M',
-            subject_identifier=self.subject_consent.subject_identifier),
+            appointment=Appointment.objects.get(
+                visit_code='2002M',
+                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2003M',
-            subject_identifier=self.subject_consent.subject_identifier),
+            appointment=Appointment.objects.get(
+                visit_code='2003M',
+                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(visit_code='2004M',
-            subject_identifier=self.subject_consent.subject_identifier),
+            appointment=Appointment.objects.get(
+                visit_code='2004M',
+                subject_identifier=self.subject_consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
@@ -1159,7 +1168,6 @@ class TestRuleGroups(TestCase):
 
     @tag('tb_interview')
     def test_tb_translation_and_transcription_required(self):
-
         visit = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2200T'),
@@ -1196,18 +1204,17 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.tbinterview',
-            interview_language = 'setswana',
+            interview_language='setswana',
             visit=visit)
 
-
         tb_translation = CrfMetadata.objects.get(
-            model = 'flourish_caregiver.tbinterviewtranslation',
+            model='flourish_caregiver.tbinterviewtranslation',
             visit_code='2200T',
             subject_identifier=self.subject_identifier,
         )
 
         tb_transcription = CrfMetadata.objects.get(
-            model = 'flourish_caregiver.tbinterviewtranslation',
+            model='flourish_caregiver.tbinterviewtranslation',
             visit_code='2200T',
             subject_identifier=self.subject_identifier,
         )
@@ -1225,18 +1232,17 @@ class TestRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.tbinterview',
-            interview_language = 'english',
+            interview_language='english',
             visit=visit)
 
-
         tb_translation = CrfMetadata.objects.get(
-            model = 'flourish_caregiver.tbinterviewtranslation',
+            model='flourish_caregiver.tbinterviewtranslation',
             visit_code='2200T',
             subject_identifier=self.subject_identifier,
         )
 
         tb_transcription = CrfMetadata.objects.get(
-            model = 'flourish_caregiver.tbinterviewtranslation',
+            model='flourish_caregiver.tbinterviewtranslation',
             visit_code='2200T',
             subject_identifier=self.subject_identifier,
         )
@@ -1246,10 +1252,6 @@ class TestRuleGroups(TestCase):
 
     @tag('hiv-pos')
     def test_maternal_arv_post_adherence_required(self):
-        mommy.make_recipe(
-            'flourish_caregiver.maternaldelivery',
-            subject_identifier=self.subject_consent.subject_identifier)
-
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(visit_code='2000D'),
