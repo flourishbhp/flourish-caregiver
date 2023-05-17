@@ -26,6 +26,9 @@ class Covid19Form(SubjectModelFormMixin, forms.ModelForm):
             self.initial['other_vaccination_type'] = prev_instance.other_vaccination_type
             self.initial['first_dose'] = prev_instance.first_dose
             self.initial['second_dose'] = prev_instance.second_dose
+            self.initial['received_booster'] = prev_instance.received_booster
+            self.initial['booster_vac_type'] = prev_instance.booster_vac_type
+            self.initial['booster_vac_date'] = prev_instance.booster_vac_date
 
     class Meta:
         model = Covid19
