@@ -148,13 +148,15 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
 
         consent_version_cls = django_apps.get_model(
             'flourish_caregiver.flourishconsentversion')
-        try:
-            consent_version_obj = consent_version_cls.objects.get(
-                screening_identifier=self.screening_identifier)
-        except consent_version_cls.DoesNotExist:
-            self.version = '3'
-        else:
-            self.version = consent_version_obj.version
+
+        if not self.version:
+            try:
+                consent_version_obj = consent_version_cls.objects.get(
+                    screening_identifier=self.screening_identifier)
+            except consent_version_cls.DoesNotExist:
+                self.version = '3'
+            else:
+                self.version = consent_version_obj.version
 
         self.biological_caregiver = self.is_biological_mother()
         eligibility_criteria = ConsentEligibility(
