@@ -41,11 +41,13 @@ from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
+from .cohort import Cohort
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
+# from ..helper_classes import SequentialCohortEnrollment
 from .tb_engagement import TbEngagement
 from .tb_interview import TbInterview
 from .tb_referral_outcomes import TbReferralOutcomes
@@ -366,8 +368,12 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
 
-        if not instance.cohort:
-
+        # Check if the participant has been put into an enrolment cohort
+        try:
+            Cohort.objects.get(
+                subject_identifier=instance.study_child_identifier,
+                enrollment_cohort=True)
+        except Cohort.DoesNotExist:
             cohort = cohort_assigned(instance.study_child_identifier,
                                      instance.child_dob,
                                      instance.subject_consent.created.date())
@@ -391,11 +397,17 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         relative_identifier=instance.relative_identifier,
                         cohort=cohort)
 
-            instance.cohort = cohort
-            instance.save_base(raw=True)
+            Cohort.objects.create(
+                subject_identifier=instance.study_child_identifier,
+                enrollment_cohort=True)
 
         else:
             # TO-DO: Update child cohort
+            sequential_cohort = SequentialCohortEnrollment(
+                child_subject_identifier=instance.study_child_identifier)
+            
+
+
             try:
                 prev_enrolled_obj = CaregiverPreviouslyEnrolled.objects.get(
                     subject_identifier=instance.subject_consent.subject_identifier)
