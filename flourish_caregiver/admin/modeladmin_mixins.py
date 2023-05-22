@@ -85,7 +85,7 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
                     }
                 try:
                     obj = self.model.objects.get(**options)
-                except ObjectDoesNotExist:
+                except ObjectDoesNotExist: 
                     pass
                 else:
                     break
