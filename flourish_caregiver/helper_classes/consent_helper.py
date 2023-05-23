@@ -23,11 +23,11 @@ class ConsentHelper:
                 f'{instance.report_datetime}.')
 
     @staticmethod
-    def get_requires_consent(instance, consent_model, visit_schedule=None):
+    def get_requires_consent(instance, consent_model, schedule=None):
         """Returns a RequiresConsent object for a given instance."""
         report_datetime = instance.report_datetime
         subject_identifier = instance.subject_identifier
-        consent_model = visit_schedule.consent_model if visit_schedule else consent_model
+        consent_model = schedule.consent_model if schedule else consent_model
         return RequiresConsent(
             model=instance._meta.label_lower,
             subject_identifier=subject_identifier,

@@ -742,7 +742,7 @@ def validate_requires_consent_on_pre_save(instance, raw, **kwargs):
                 schedule = visit_schedule.schedules.get(instance.visit.schedule_name)
                 if schedule:
                     requires_consent = consent_helper.get_requires_consent(
-                        instance, consent_model, visit_schedule=schedule)
+                        instance, consent_model, schedule=schedule)
                     instance.consent_version = requires_consent.version
             elif consent_model:
                 requires_consent = consent_helper.get_requires_consent(
