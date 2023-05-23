@@ -15,7 +15,7 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         max_digits=5,
         decimal_places=2,
         verbose_name='Caregiver\'s height? ',
-        validators=[MinValueValidator(114), MaxValueValidator(195), ],
+        validators=[MinValueValidator(130), MaxValueValidator(210), ],
         null=True,
         blank=True,
         help_text='Measured in Centimeters (cm)')
@@ -26,7 +26,7 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         blank=True,
         null=True,
         verbose_name='Caregiver\'s weight? ',
-        validators=[MinValueValidator(30), MaxValueValidator(200), ],
+        validators=[MinValueValidator(40), MaxValueValidator(140), ],
         help_text='Measured in Kilograms (kg)')
 
     systolic_bp = models.IntegerField(
