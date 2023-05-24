@@ -360,7 +360,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
-
         if not instance.cohort:
 
             cohort = cohort_assigned(instance.study_child_identifier,
