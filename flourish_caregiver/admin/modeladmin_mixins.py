@@ -93,13 +93,17 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
         return obj
 
     def get_previous_appt_instance(self, appointment):
-
-        return appointment.__class__.objects.filter(
-            subject_identifier=appointment.subject_identifier,
-            visit_schedule_name=appointment.visit_schedule_name,
-            schedule_name__endswith=appointment.schedule_name[-11:],
-            timepoint__lt=appointment.timepoint,
-            visit_code_sequence=0).order_by('timepoint').last()
+        try:
+            appointment = appointment.__class__.objects.filter(
+                subject_identifier=appointment.subject_identifier,
+                visit_schedule_name=appointment.visit_schedule_name,
+                schedule_name__endswith=appointment.schedule_name[-11:],
+                timepoint_datetime__lt=appointment.timepoint_datetime,
+                visit_code_sequence=0).latest('timepoint_datetime')
+        except appointment.__class__.DoesNotExist:
+            return None
+        else:
+            return appointment
 
     def get_instance(self, request):
         try:

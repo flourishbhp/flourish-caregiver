@@ -104,9 +104,15 @@ def update_maternal_dataset_and_worklist(subject_identifier,
                 worklist.date_assigned = None
                 worklist.save()
 
+            screening_query_id = None
+            if screening_identifier:
+                screening_query_id = Q(screening_identifier=screening_identifier)
+            else:
+                screening_query_id = Q(study_maternal_identifier=study_maternal_identifier)
+
             try:
                 screening_obj = ScreeningPriorBhpParticipants.objects.get(
-                    study_maternal_identifier=study_maternal_identifier)
+                    screening_query_id)
             except ScreeningPriorBhpParticipants.DoesNotExist:
                 pass
             else:
@@ -298,12 +304,12 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
             pass
         else:
             put_on_schedule(
-            'cohort_a_tb_2_months', instance=instance,
-            subject_identifier=instance.subject_identifier,
-            child_subject_identifier=preg_child_consents[0].subject_identifier,
-            base_appt_datetime=instance.delivery_datetime.replace(
-                microsecond=0),
-            caregiver_visit_count=preg_child_consents[0].caregiver_visit_count)
+                'cohort_a_tb_2_months', instance=instance,
+                subject_identifier=instance.subject_identifier,
+                child_subject_identifier=preg_child_consents[0].subject_identifier,
+                base_appt_datetime=instance.delivery_datetime.replace(
+                    microsecond=0),
+                caregiver_visit_count=preg_child_consents[0].caregiver_visit_count)
 
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
@@ -418,6 +424,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if instance.study_child_identifier:
             update_maternal_dataset_and_worklist(
                 instance.subject_consent.subject_identifier,
+                screening_identifier=instance.subject_consent.screening_identifier,
                 study_child_identifier=instance.study_child_identifier)
 
 
