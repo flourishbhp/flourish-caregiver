@@ -15,12 +15,13 @@ from .models import (CaregiverGadAnxietyScreening, CaregiverPhqDeprScreening,
 from .models import AntenatalEnrollment, SubjectConsent, MaternalDelivery, \
     TbInformedConsent, TbStudyEligibility, TbOffStudy, TbVisitScreeningWomen, \
     TbInterview
-    
+
 from .models import CaregiverPreviouslyEnrolled
 from .models import FlourishConsentVersion, CaregiverPhqReferral
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit, RelationshipFatherInvolvement
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
+from .models import MaternalInterimIdccVersion2
 
 fake = Faker()
 
@@ -228,4 +229,8 @@ ultrasound = Recipe(
 
 tbinterview = Recipe(
     TbInterview,
+)
+
+maternalinterimidccversion2 = Recipe(
+    MaternalInterimIdccVersion2,
 )
