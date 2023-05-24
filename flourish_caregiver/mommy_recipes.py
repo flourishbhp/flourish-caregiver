@@ -21,6 +21,7 @@ from .models import FlourishConsentVersion, CaregiverPhqReferral
 from .models import HIVRapidTestCounseling, LocatorLogEntry, CaregiverChildConsent
 from .models import MaternalDataset, CaregiverLocator, MaternalVisit, RelationshipFatherInvolvement
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
+from .models import MaternalInterimIdccVersion2
 
 fake = Faker()
 
@@ -228,4 +229,8 @@ ultrasound = Recipe(
 
 tbinterview = Recipe(
     TbInterview,
+)
+
+maternalinterimidccversion2 = Recipe(
+    MaternalInterimIdccVersion2,
 )
