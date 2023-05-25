@@ -396,18 +396,14 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         version=instance.version,
                         relative_identifier=instance.relative_identifier,
                         cohort=cohort)
-
+            # Put participant into a cohort
             Cohort.objects.create(
                 subject_identifier=instance.study_child_identifier,
+                name=cohort,
                 enrollment_cohort=True)
 
         else:
             # TO-DO: Update child cohort
-            sequential_cohort = SequentialCohortEnrollment(
-                child_subject_identifier=instance.study_child_identifier)
-            
-
-
             try:
                 prev_enrolled_obj = CaregiverPreviouslyEnrolled.objects.get(
                     subject_identifier=instance.subject_consent.subject_identifier)

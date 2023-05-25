@@ -1,10 +1,17 @@
 from django.apps import apps as django_apps
 from edc_constants.date_constants import timezone
+from edc_base.utils import get_utcnow
+from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 from .cohort import Cohort
 from ..models import (
     AntenatalEnrollment, CaregiverPreviouslyEnrolled,
-    CaregiverChildConsent)
+    CaregiverChildConsent, OnScheduleCohortBFU, OnScheduleCohortAFU,
+    OnScheduleCohortAFUQuarterly, OnScheduleCohortAQuarterly,
+    OnScheduleCohortBFUQuarterly, OnScheduleCohortBQuarterly,
+    OnScheduleCohortCFUQuarterly, OnScheduleCohortCQuarterly,
+    OnScheduleCohortASecQuart, OnScheduleCohortBSecQuart,
+    CaregiverOffSchedule)
 
 
 class SequentialCohortEnrollmentError(Exception):
@@ -119,10 +126,181 @@ class SequentialCohortEnrollment:
     def enroll_on_age_up_cohort(self):
         """Enroll a participant on new aged up cohort.
         """
-        pass
+        if self.current_cohort == 'cohort_a' and self.aged_up:
+            # put them on a new aged up cohort
+            # Put them offschedule
+            helper_cls = onschedule_helper_cls(
+                subject_identifier=self.caregiver_subject_identifier,)
+
+
+            if instance.visit_code in ['2000M', '2000D', '3000M']:
+                base_appt_datetime = instance.report_datetime.replace(microsecond=0)
+                helper_cls = onschedule_helper_cls(instance.subject_identifier, )
+                helper_cls.add_on_schedule()
+                helper_cls.put_quarterly_onschedule(
+                    instance, base_appt_datetime=base_appt_datetime)
+                
+            subject_identifier = self.subject_identifier or instance.subject_consent.subject_identifier
+        if instance:
+            schedule, onschedule_model_cls, schedule_name = self.get_onschedule_model(
+                cohort=cohort,
+                caregiver_visit_count=caregiver_visit_count,
+                instance=instance)
+
+            assent_onschedule_datetime = self.get_assent_onschedule_datetime
+            self.add_on_schedule(
+                schedule=schedule, subject_identifier=subject_identifier, instance=instance,
+                schedule_name=schedule_name, base_appt_datetime=base_appt_datetime,
+                child_subject_identifier=child_subject_identifier, onschedule_model_cls=onschedule_model_cls, 
+                assent_onschedule_datetime=assent_onschedule_datetime,
+                
+            )
+            # put them on the new cohort schedule
+            pass
+        elif self.current_cohort == 'cohort_b' and self.aged_up:
+            pass
+        elif self.current_cohort == 'cohort_sec_a' and self.aged_up:
+            pass
+        elif self.current_cohort == 'cohort_sec_b' and self.aged_up:
+            pass
 
     @property
     def take_off_schedule(self):
         """Take participant off schedule from previous age cohort.
         """
-        pass
+        a_onschedule_models = [
+            OnScheduleCohortAFUQuarterly,
+            OnScheduleCohortAQuarterly,
+        ]
+        b_onschedule_models = [
+            OnScheduleCohortBFUQuarterly,
+            OnScheduleCohortBQuarterly,
+        ]
+        if self.enrollment_cohort == 'cohort_a' and self.aged_up:
+            for onschedule_model in a_onschedule_models:
+                if onschedule_model == OnScheduleCohortAFUQuarterly:
+                    try:
+                        OnScheduleCohortAFU.objects.get(
+                         subject_identifier=self.caregiver_subject_identifier,
+                         child_subject_identifier=self.child_subject_identifier
+                        )
+                    except OnScheduleCohortAFU.DoesNotExist:
+                        pass
+                    else:
+                        try:
+                            onschedule_obj = onschedule_model.objects.get(
+                                subject_identifier=self.caregiver_subject_identifier,
+                         child_subject_identifier=self.child_subject_identifier)
+                        except onschedule_model.DoesNotExist:
+                            pass
+                        else:
+                            #put offschedule
+                            _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                                onschedule_model=onschedule_model._meta.label_lower,
+                                name=onschedule_obj.schedule_name)
+                            if schedule.is_onschedule(subject_identifier=self.caregiver_subject_identifier,
+                                  report_datetime=get_utcnow()):
+                                CaregiverOffSchedule.objects.create(
+                                    schedule_name=onschedule_obj.schedule_name,
+                                    subject_identifier=self.caregiver_subject_identifier
+                                )
+                else:
+                    try:
+                        onschedule_obj = onschedule_model.objects.get(
+                            subject_identifier=self.caregiver_subject_identifier,
+                         child_subject_identifier=self.child_subject_identifier)
+                    except onschedule_model.DoesNotExist:
+                        pass
+                    else:
+                        #put offschedule
+                        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                            onschedule_model=onschedule_model._meta.label_lower,
+                            name=onschedule_obj.schedule_name)
+                        if schedule.is_onschedule(subject_identifier=self.caregiver_subject_identifier,
+                                report_datetime=get_utcnow()):
+                            CaregiverOffSchedule.objects.create(
+                                schedule_name=onschedule_obj.schedule_name,
+                                subject_identifier=self.caregiver_subject_identifier
+                            )
+        elif self.enrollment_cohort == 'cohort_b' and self.aged_up:
+            for onschedule_model in b_onschedule_models:
+                if onschedule_model == OnScheduleCohortBFUQuarterly:
+                    try:
+                        OnScheduleCohortBFU.objects.get(
+                         subject_identifier=self.caregiver_subject_identifier,
+                         child_subject_identifier=self.child_subject_identifier   
+                        )
+                    except OnScheduleCohortBFU.DoesNotExist:
+                        pass
+                    else:
+                        try:
+                            onschedule_obj = onschedule_model.objects.get(
+                                subject_identifier=self.caregiver_subject_identifier,
+                         child_subject_identifier=self.child_subject_identifier)
+                        except onschedule_model.DoesNotExist:
+                            pass
+                        else:
+                            #put offschedule
+                            _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                                onschedule_model=onschedule_model._meta.label_lower,
+                                name=onschedule_obj.schedule_name)
+                            if schedule.is_onschedule(subject_identifier=self.caregiver_subject_identifier,
+                                  report_datetime=get_utcnow()):
+                                CaregiverOffSchedule.objects.create(
+                                    schedule_name=onschedule_obj.schedule_name,
+                                    subject_identifier=self.caregiver_subject_identifier
+                                )
+                else:
+                    try:
+                        onschedule_obj = onschedule_model.objects.get(
+                            subject_identifier=self.caregiver_subject_identifier,
+                         child_subject_identifier=self.child_subject_identifier)
+                    except onschedule_model.DoesNotExist:
+                        pass
+                    else:
+                        #put offschedule
+                        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                            onschedule_model=onschedule_model._meta.label_lower,
+                            name=onschedule_obj.schedule_name)
+                        if schedule.is_onschedule(subject_identifier=self.caregiver_subject_identifier,
+                                report_datetime=get_utcnow()):
+                            CaregiverOffSchedule.objects.create(
+                                schedule_name=onschedule_obj.schedule_name,
+                                subject_identifier=self.caregiver_subject_identifier
+                            )
+        elif self.enrollment_cohort == 'cohort_sec_a' and self.aged_up:
+            try:
+                onschedule_obj = OnScheduleCohortASecQuart.objects.get(
+                    subject_identifier=self.caregiver_subject_identifier,
+                         child_subject_identifier=self.child_subject_identifier)
+            except OnScheduleCohortASecQuart.DoesNotExist:
+                pass
+            else:
+                #put offschedule
+                _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                    onschedule_model=onschedule_model._meta.label_lower,
+                    name=onschedule_obj.schedule_name)
+                if schedule.is_onschedule(subject_identifier=self.caregiver_subject_identifier,
+                        report_datetime=get_utcnow()):
+                    CaregiverOffSchedule.objects.create(
+                        schedule_name=onschedule_obj.schedule_name,
+                        subject_identifier=self.caregiver_subject_identifier
+                    )
+        elif self.enrollment_cohort == 'cohort_sec_b' and self.aged_up:
+            try:
+                onschedule_obj = OnScheduleCohortBSecQuart.objects.get(
+                    subject_identifier=self.caregiver_subject_identifier,
+                         child_subject_identifier=self.child_subject_identifier)
+            except OnScheduleCohortBSecQuart.DoesNotExist:
+                pass
+            else:
+                #put offschedule
+                _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                    onschedule_model=onschedule_model._meta.label_lower,
+                    name=onschedule_obj.schedule_name)
+                if schedule.is_onschedule(subject_identifier=self.caregiver_subject_identifier,
+                        report_datetime=get_utcnow()):
+                    CaregiverOffSchedule.objects.create(
+                        schedule_name=onschedule_obj.schedule_name,
+                        subject_identifier=self.caregiver_subject_identifier
+                    )
