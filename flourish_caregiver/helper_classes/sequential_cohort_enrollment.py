@@ -128,30 +128,62 @@ class SequentialCohortEnrollment:
         """
         return None
 
+    def schedule_name(self, cohort):
+        """ Build and return schedule name to enroll subject on.
+            @param cohort: participant cohort name
+            @param caregiver_visit_count: child count, for multi enrollment
+        """
+        child_count = ''
+        caregiver_child_consent =  CaregiverChildConsent.objects.filter(
+            study_child_identifier=self.child_subject_identifier).last()
+        if caregiver_child_consent:
+            child_count = caregiver_child_consent.caregiver_visit_count
+
+        cohort_label_lower = ''.join(cohort.split('_'))
+
+        if 'enrol' in cohort:
+            cohort_label_lower = cohort_label_lower.replace('enrol', 'enrollment')
+
+        onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
+
+        cohort = cohort + str(caregiver_visit_count)
+
+        if 'pool' not in cohort:
+            cohort = cohort.replace('cohort_', '')
+
+        schedule_name = cohort + '_schedule1'
+
+        if 'tb_2_months' in cohort:
+            schedule_name = f'a_tb{child_count}_2_months_schedule1'
+        if 'tb_6_months' in cohort:
+            schedule_name = f'a_tb{child_count}_6_months_schedule1'
+        
+        return schedule_name, onschedule_model
+
     @property
     def enroll_on_age_up_cohort(self):
         """Enroll a participant on new aged up cohort.
         """
         if self.aged_up and self.current_cohort != self.evaluated_cohort:
-            pass
-        # put them on a new aged up cohort
+            # put them on a new aged up cohort
+            try:
+                Cohort.objects.get(
+                    name=self.evaluated_cohort,
+                    subject_identifier=self.child_subject_identifier)
+            except Cohort.DoesNotExist:
+                pass
+            else:
+                Cohort.objects.create(
+                    subject_identifier=instance.study_child_identifier,
+                    name=self.evaluated_cohort,
+                    enrollment_cohort=False)
         # Put them offschedule
         # put them on the new cohort schedule
-        schedule_type = ''
-        child_count = ''
-        try:
-            cohort_schedules = CohortSchedules.objects.get(
-                cohort_name=self.evaluated_cohort,
-                schedule_type=schedule_type,
-                child_count=child_count
-            )
-        except CohortSchedules.DoesNotExist:
-            raise ValidationError(
-                f'Missing cohort schedule for variables {cohort_name}, {schedule_type}, {child_count}')
+        schedule_name, onschedule_model = self.schedule_name(cohort=self.evaluated_cohort)
         else:
             _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
-                onschedule_model=cohort_schedules.onschedule_model,
-                name=cohort_schedules.schedule_name)
+                onschedule_model=onschedule_model,
+                name=schedule_name)
             schedule.put_on_schedule(
             subject_identifier=self.caregiver_subject_identifier,
             onschedule_datetime= get_utcnow(),
