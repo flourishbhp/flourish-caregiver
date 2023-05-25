@@ -49,3 +49,4 @@ class CohortSchedules(SiteModelMixin,
         app_label = 'flourish_caregiver'
         verbose_name = "Cohort Schedule"
         verbose_name_plural = "Cohort Schedules"
+        unique_together = ['cohort_name', 'schedule_type', 'child_count']

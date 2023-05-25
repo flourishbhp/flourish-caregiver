@@ -123,46 +123,58 @@ class SequentialCohortEnrollment:
         return None
 
     @property
+    def evaluated_cohort(self):
+        """Return cohort name evaluated now.
+        """
+        return None
+
+    @property
     def enroll_on_age_up_cohort(self):
         """Enroll a participant on new aged up cohort.
         """
-        if self.current_cohort == 'cohort_a' and self.aged_up:
-            # put them on a new aged up cohort
-            # Put them offschedule
-            helper_cls = onschedule_helper_cls(
-                subject_identifier=self.caregiver_subject_identifier,)
-
-
-            if instance.visit_code in ['2000M', '2000D', '3000M']:
-                base_appt_datetime = instance.report_datetime.replace(microsecond=0)
-                helper_cls = onschedule_helper_cls(instance.subject_identifier, )
-                helper_cls.add_on_schedule()
-                helper_cls.put_quarterly_onschedule(
-                    instance, base_appt_datetime=base_appt_datetime)
-                
-            subject_identifier = self.subject_identifier or instance.subject_consent.subject_identifier
-        if instance:
-            schedule, onschedule_model_cls, schedule_name = self.get_onschedule_model(
-                cohort=cohort,
-                caregiver_visit_count=caregiver_visit_count,
-                instance=instance)
-
-            assent_onschedule_datetime = self.get_assent_onschedule_datetime
-            self.add_on_schedule(
-                schedule=schedule, subject_identifier=subject_identifier, instance=instance,
-                schedule_name=schedule_name, base_appt_datetime=base_appt_datetime,
-                child_subject_identifier=child_subject_identifier, onschedule_model_cls=onschedule_model_cls, 
-                assent_onschedule_datetime=assent_onschedule_datetime,
-                
+        if self.aged_up and self.current_cohort != self.evaluated_cohort:
+            pass
+        # put them on a new aged up cohort
+        # Put them offschedule
+        # put them on the new cohort schedule
+        schedule_type = ''
+        child_count = ''
+        try:
+            cohort_schedules = CohortSchedules.objects.get(
+                cohort_name=self.evaluated_cohort,
+                schedule_type=schedule_type,
+                child_count=child_count
             )
-            # put them on the new cohort schedule
-            pass
-        elif self.current_cohort == 'cohort_b' and self.aged_up:
-            pass
-        elif self.current_cohort == 'cohort_sec_a' and self.aged_up:
-            pass
-        elif self.current_cohort == 'cohort_sec_b' and self.aged_up:
-            pass
+        except CohortSchedules.DoesNotExist:
+            raise ValidationError(
+                f'Missing cohort schedule for variables {cohort_name}, {schedule_type}, {child_count}')
+        else:
+            _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                onschedule_model=cohort_schedules.onschedule_model,
+                name=cohort_schedules.schedule_name)
+            schedule.put_on_schedule(
+            subject_identifier=self.caregiver_subject_identifier,
+            onschedule_datetime= get_utcnow(),
+            schedule_name=schedule_name,
+            base_appt_datetime=base_appt_datetime)
+
+            # Update onschedule child identifier
+            try:
+                onschedule_model_cls.objects.get(
+                    subject_identifier=self.caregiver_subject_identifier,
+                    schedule_name=schedule_name,
+                    child_subject_identifier=self.child_subject_identifier)
+            except onschedule_model_cls.DoesNotExist:
+                try:
+                    onschedule_obj = schedule.onschedule_model_cls.objects.get(
+                        subject_identifier=self.caregiver_subject_identifier,
+                        schedule_name=schedule_name,
+                        child_subject_identifier='')
+                except schedule.onschedule_model_cls.DoesNotExist:
+                    pass
+                else:
+                    onschedule_obj.child_subject_identifier = self.child_subject_identifier
+                    onschedule_obj.save()
 
     @property
     def take_off_schedule(self):

@@ -509,6 +509,4 @@ cohort_c_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortcsecquart',
         'child_count': '3',
     },
-
-
 ]
