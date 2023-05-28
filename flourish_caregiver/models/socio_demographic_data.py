@@ -5,10 +5,11 @@ from edc_base.model_mixins import BaseUuidModel
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_visit_tracking.model_mixins import CrfInlineModelMixin
 
-from ..maternal_choices import CURRENT_OCCUPATION, MONEY_PROVIDER, MONEY_EARNED
-from ..maternal_choices import MARITAL_STATUS, ETHNICITY, HIGHEST_EDUCATION
-from .model_mixins import CrfModelMixin
 from .antenatal_enrollment import AntenatalEnrollment
+from .list_models import ExpenseContributors
+from .model_mixins import CrfModelMixin
+from ..maternal_choices import CURRENT_OCCUPATION, MONEY_EARNED, MONEY_PROVIDER
+from ..maternal_choices import ETHNICITY, HIGHEST_EDUCATION, MARITAL_STATUS
 
 
 class SocioDemographicData(CrfModelMixin):
@@ -83,14 +84,37 @@ class SocioDemographicData(CrfModelMixin):
         choices=YES_NO_NA)
 
     number_of_household_members = models.PositiveSmallIntegerField(
-        verbose_name='How many household members live in the your primary home/ compound?',
-        help_text='A household member is considered someone who spends more nights on average in your household than '
+        verbose_name='How many household members live in the your primary home/ '
+                     'compound?',
+        help_text='A household member is considered someone who spends more nights on '
+                  'average in your household than '
                   'in any other household in the same community over the last 12 months ',
         validators=[MinValueValidator(1), MaxValueValidator(25)],
         null=True,
         blank=True
 
     )
+
+    contributes_to_expenses = models.CharField(
+        verbose_name=(
+            'Is there anyone else in the household who contributes to supporting the '
+            'family expenses?'),
+        max_length=3,
+        null=True,
+        choices=YES_NO)
+
+    expense_contributors = models.ManyToManyField(
+        ExpenseContributors,
+        verbose_name='Who in the household contributes to supporting the family '
+                     'expenses:',
+        blank=True
+    )
+
+    expense_contributors_other = OtherCharField(
+        max_length=35,
+        verbose_name="if other specify...",
+        blank=True,
+        null=True)
 
     """Quartely phone calls stem question"""
     socio_demo_changed = models.CharField(
@@ -101,7 +125,8 @@ class SocioDemographicData(CrfModelMixin):
 
     @property
     def is_pregnant(self):
-        return AntenatalEnrollment.objects.filter(subject_identifier=self.subject_identifier)
+        return AntenatalEnrollment.objects.filter(
+            subject_identifier=self.subject_identifier)
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
@@ -135,4 +160,4 @@ class HouseHoldDetails(CrfInlineModelMixin, BaseUuidModel):
         verbose_name = 'Household Details'
         verbose_name_plural = 'Household Details'
         unique_together = (
-            'socio_demographics_data', 'child_identifier', )
+            'socio_demographics_data', 'child_identifier',)

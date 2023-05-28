@@ -151,8 +151,11 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'provides_money_other',
                 'money_earned',
                 'money_earned_other',
+                'contributes_to_expenses',
+                'expense_contributors',
+                'expense_contributors_other',
                 'stay_with_child',
-                'number_of_household_members'
+                'number_of_household_members',
             ]}
          ), audit_fieldset_tuple)
 
@@ -162,10 +165,13 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'current_occupation': admin.VERTICAL,
                     'provides_money': admin.VERTICAL,
                     'money_earned': admin.VERTICAL,
+                    'contributes_to_expenses': admin.VERTICAL,
                     'stay_with_child': admin.VERTICAL,
                     'socio_demo_changed': admin.VERTICAL}
 
     conditional_fieldlists = {}
+
+    filter_horizontal = ('expense_contributors',)
 
     custom_form_labels = [
         FormLabel(

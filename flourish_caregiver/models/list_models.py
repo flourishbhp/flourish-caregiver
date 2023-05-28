@@ -83,3 +83,7 @@ class HouseholdMember(ListModelMixin, BaseUuidModel):
 
 class ArvInterruptionReasons(ListModelMixin, BaseUuidModel):
     pass
+
+
+class ExpenseContributors(ListModelMixin, BaseUuidModel):
+    pass
