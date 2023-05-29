@@ -31,6 +31,7 @@ from ..action_items import TB_OFF_STUDY_ACTION
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.cohort import Cohort
+from ..helper_classes.cohort_assignment import CohortAssignment
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
@@ -761,6 +762,7 @@ def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
     """Calculates participant's cohort based on the maternal and child dataset
     """
     infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+    infant_dataset_obj = None
 
     try:
         infant_dataset_obj = infant_dataset_cls.objects.get(
@@ -772,24 +774,22 @@ def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
         infant_dataset_obj = infant_dataset_cls.objects.filter(
             study_child_identifier=study_child_identifier,
             dob=child_dob)[0]
-    else:
+    finally:
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(
-                study_maternal_identifier=infant_dataset_obj.study_maternal_identifier)
+                study_maternal_identifier=getattr(
+                    infant_dataset_obj, 'study_maternal_identifier', None))
         except MaternalDataset.DoesNotExist:
             return None
         else:
-            if infant_dataset_obj:
-                cohort = Cohort(
-                    child_dob=child_dob,
-                    enrollment_date=enrollment_date,
-                    infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
-                    protocol=maternal_dataset_obj.protocol,
-                    mum_hiv_status=maternal_dataset_obj.mom_hivstatus,
-                    dtg=maternal_dataset_obj.preg_dtg,
-                    efv=maternal_dataset_obj.preg_efv,
-                    pi=maternal_dataset_obj.preg_pi).cohort_variable
-                return cohort
+            cohort = CohortAssignment(
+                child_dob=child_dob,
+                enrolment_dt=enrollment_date,
+                child_hiv_exposure=getattr(
+                    infant_dataset_obj, 'infant_hiv_exposed', None),
+                arv_regimen=getattr(
+                    maternal_dataset_obj, 'mom_pregarv_strat', None), )
+            return cohort.cohort_variable or None
 
 
 def get_assent_onschedule_datetime(subject_identifier):
@@ -816,7 +816,7 @@ def get_schedule_sequence(subject_identifier, instance,
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
                     child_subject_identifier=None, base_appt_datetime=None,
                     caregiver_visit_count=None):
-    
+
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
         schedule, onschedule_model_cls, schedule_name = get_onschedule_model(
