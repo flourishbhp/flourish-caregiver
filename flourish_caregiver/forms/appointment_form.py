@@ -58,8 +58,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             subject_identifier=subject_identifier)
 
         if maternal_consents:
-            consent_version_obj = FlourishConsentVersion.objects.filter(
-                screening_identifier=maternal_consents[0].screening_identifier)
+            consent_version_obj = self.flourish_consent_version(
+                maternal_consents[0].screening_identifier)
 
         onschedule_model = getattr(self.instance.schedule, 'onschedule_model', '')
 
@@ -76,7 +76,6 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             child_consents = CaregiverChildConsent.objects.filter(
                 subject_identifier=onschedule_obj.child_subject_identifier,
                 is_eligible=True, child_age_at_enrollment__gte=7)
-
             for child_consent in child_consents:
                 child_version = getattr(consent_version_obj, 'child_version', '') or child_consent.version
                 exists = ChildAssent.objects.filter(
@@ -86,6 +85,15 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             child_assents_exists = all(child_assents_exists)
             if not child_assents_exists:
                 raise ValidationError('Please fill the child assent(s) form(s) first')
+
+    def flourish_consent_version(self, screening_identifier=None):
+        try:
+            consent_version_obj = FlourishConsentVersion.objects.get(
+                screening_identifier=screening_identifier)
+        except FlourishConsentVersion.DoesNotExist:
+            return None
+        else:
+            return consent_version_obj
 
     def validate_appt_new_or_complete(self):
         """
