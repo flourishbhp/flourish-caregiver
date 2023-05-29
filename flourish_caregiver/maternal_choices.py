@@ -511,6 +511,7 @@ REASONS_FOR_RESCHEDULING = (
     ('undisclosed_personal_reasons', 'Participant has undisclosed personal reasons'),
     ('another_appointment',
      'Participant has another appointment at local clinic/hospital scheduled on the same day'),
+    (OTHER, 'Other, specify')
 
 )
 
