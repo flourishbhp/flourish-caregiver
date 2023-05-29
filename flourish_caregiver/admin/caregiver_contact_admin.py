@@ -27,6 +27,7 @@ class CaregiverContactAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'contact_comment',
                 'call_rescheduled',
                 'reason_rescheduled',
+                'reason_rescheduled_other',
             )}
          ), audit_fieldset_tuple)
 
