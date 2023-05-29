@@ -3,17 +3,39 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO
 
-from ..maternal_choices import SIZE_CHECK
+from ..maternal_choices import SIZE_CHECK, REASON_CD4_NOT_COLLECTED
 from .model_mixins import CrfModelMixin
+from ..constants import BREASTFEED_ONLY, MISSED, NO_SAMPLE_COLLECTED,\
+    NO_SAMPLE_TUBES, MACHINE_NOT_WORKING
 
 
 class MaternalInterimIdccVersion2(CrfModelMixin):
 
     info_since_lastvisit = models.CharField(
-        max_length=25,
-        verbose_name="Is there new laboratory information available on the "
-        "mother since last visit",
+        max_length=3,
+        verbose_name="Since the last visit (VISIT DATE) did you go for IDCC review?",
         choices=YES_NO)
+
+    laboratory_information_available = models.CharField(
+        max_length=3,
+        blank=True,
+        null=True,
+        verbose_name="Is there new laboratory information available? ",
+        choices=YES_NO)
+
+    last_visit_result = models.CharField(
+        max_length=3,
+        blank=True,
+        null=True,
+        verbose_name="Is there a CD4 result since last visit (visit date)?",
+        choices=YES_NO)
+
+    reason_cd4_not_collected = models.CharField(
+        max_length=25,
+        blank=True,
+        null=True,
+        verbose_name="What is the reason a CD4 result is not available?",
+        choices=REASON_CD4_NOT_COLLECTED)
 
     recent_cd4 = models.DecimalField(
         max_digits=8,
