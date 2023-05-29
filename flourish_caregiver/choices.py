@@ -6,8 +6,8 @@ from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
 
-from flourish_caregiver.constants import NONE, PNTA
-from .constants import BREASTFEED_ONLY
+from flourish_caregiver.constants import NONE, PNTA, BREASTFEED_ONLY
+
 
 ABLE_TO_LAUGH = (
     ('0', 'As much as I always could'),
@@ -400,7 +400,8 @@ REASONS_NOT_DISCLOSED = (
     ('hurt_by_reactions_of_others',
      'Does not want the child to be hurt by reactions of others'),
     ('feel_the_child_needs_to_know', 'Does not feel the child needs to know'),
-    ('does_not_know_how_to_explain', 'Does not know how to explain this to their child'),
+    ('does_not_know_how_to_explain',
+     'Does not know how to explain this to their child'),
     (OTHER, 'Other')
 )
 
@@ -701,13 +702,15 @@ VACCINATION_TYPE = (
 REASONS_NOT_PARTICIPATE = (
     ('not_interested_in_participating', 'Not interested in participating'),
     ('busy_during_the_suggested_times ', 'Busy during the suggested times'),
-    ('out_of_town_during_the_suggested_times', 'Out of town during the suggested times'),
+    ('out_of_town_during_the_suggested_times',
+     'Out of town during the suggested times'),
     ('not_available_during_the_suggested_times',
      'Not available during the suggested times'),
     ('prefers_not_to_say_why_unwilling', 'Prefers not to say why unwilling'),
     ('caregiver_is_busy_and_does_not_want_to_participate ',
      'Caregiver is busy and does not want to participate '),
-    ('caregiver_does_not_live_in_study_area', 'Caregiver does not live in study area'),
+    ('caregiver_does_not_live_in_study_area',
+     'Caregiver does not live in study area'),
     ('caregiver_is_not_willing_to_disclose_status_to_their_child',
      'Caregiver is not willing to disclose status to their child'),
     ('caregiver_does_not_want_to_join_another_study',
@@ -845,7 +848,8 @@ REASONS_NOT_PARTICIPATING = (
 REASONS_UNWILLING_ADOL = (
     ('unable_to_provide_consent ', 'Caregiver unavailable to provide consent'),
     ('refuses_to_provide_consent', 'Caregiver refuses to provide consent'),
-    ('unwilling_to_blood_draw_adolescent', 'Unwilling for adolescent to do blood draw'),
+    ('unwilling_to_blood_draw_adolescent',
+     'Unwilling for adolescent to do blood draw'),
     ('cannot_come_to_clinic', 'Cannot physically come to clinic'),
     ('not_interested', 'Not Interested in participating'),
     (OTHER, 'Other (Specify'),)
@@ -890,7 +894,8 @@ EMO_HEALTH_IMPROVED = (
     ('not_able_to_relax', 'I am now able to relax'),
     ('relationship_with_other_improved',
      'My relationship with other people/family members/partner has improved'),
-    ('able_to_manage_emotions', 'I am now able to manage my thoughts, feelings and emotions'),
+    ('able_to_manage_emotions',
+     'I am now able to manage my thoughts, feelings and emotions'),
     ('accepted_medical_condition',
      'I have accepted my medical condition and I have learnt to stay positive'),
     ('accepted_loved_one_loss', 'I have now accepted the loss of my loved one'),
