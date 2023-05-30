@@ -790,7 +790,6 @@ def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
     """
     infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
     infant_dataset_obj = None
-
     try:
         infant_dataset_obj = infant_dataset_cls.objects.get(
             study_child_identifier=study_child_identifier,
