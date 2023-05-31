@@ -105,6 +105,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
     def validate_sequence(self):
         """Enforce appointment and visit entry sequence.
         """
+        visit_model_cls = self.appointment_model_cls.visit_model_cls()
         if self.cleaned_data.get('appt_status') == IN_PROGRESS_APPT:
             # visit report sequence
             try:
@@ -112,7 +113,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                     subject_identifier=self.instance.subject_identifier,
                     visit_schedule_name=self.instance.visit_schedule_name).maternalvisit
             except ObjectDoesNotExist:
-                last_visit = self.appointment_model_cls.visit_model_cls().objects.filter(
+                last_visit = visit_model_cls.objects.filter(
                     appointment__subject_identifier=self.instance.subject_identifier,
                     visit_schedule_name=self.instance.visit_schedule_name,
                     report_datetime__lt=self.instance.appt_datetime
@@ -120,17 +121,20 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
 
                 if last_visit:
                     try:
-
-                        next_visit = last_visit.appointment.get_next_by_appt_datetime(
+                        next_appt = last_visit.appointment.get_next_by_appt_datetime(
                             subject_identifier=self.instance.subject_identifier,
                             visit_schedule_name=self.instance.visit_schedule_name)
                     except last_visit.appointment.DoesNotExist:
                         pass
                     else:
-                        raise forms.ValidationError(
-                            f'A previous visit report is required. Enter the visit report for '
-                            f'appointment {next_visit.visit_code} before '
-                            'starting with this appointment.')
+                        try:
+                            visit_model_cls.objects.get(appointment=next_appt)
+                        except visit_model_cls.DoesNotExist:
+                            raise forms.ValidationError(
+                                f'A previous visit report is required. Enter '
+                                'the visit report for appointment '
+                                f'{next_appt.visit_code} before starting '
+                                'with this appointment.')
             except AttributeError:
                 pass
 
