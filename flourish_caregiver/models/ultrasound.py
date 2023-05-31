@@ -35,10 +35,14 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
     ga_by_ultrasound_wks = models.IntegerField(
         verbose_name="GA by ultrasound in weeks",
         validators=[validate_ga_by_ultrasound, ],
+        blank=True,
+        null=True,
         help_text='Units in weeks.')
 
     ga_by_ultrasound_days = models.IntegerField(
         verbose_name="GA by ultrasound days offset",
+        blank=True,
+        null=True,
         help_text='must be less than 7days.')
 
     est_fetal_weight = models.DecimalField(
@@ -46,24 +50,34 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         validators=[validate_fetal_weight, ],
         max_digits=8,
         decimal_places=2,
+        blank=True,
+        null=True,
         help_text='Units in grams.')
 
     est_edd_ultrasound = models.DateField(
         verbose_name="Estimated date of delivery by ultrasound",
+        blank=True,
+        null=True,
         help_text='EDD')
 
     edd_confirmed = models.DateField(
         verbose_name="EDD Confirmed.",
+        blank=True,
+        null=True,
         help_text='EDD Confirmed. Derived variable, see AntenatalEnrollment.')
 
     ga_confirmed = models.IntegerField(
         verbose_name="GA Confirmed.",
+        blank=True,
+        null=True,
         help_text='Derived variable.')
 
     ga_confrimation_method = models.CharField(
         verbose_name="The method used to derive edd_confirmed.",
         max_length=3,
         choices=ZERO_ONE,
+        blank=True,
+        null=True,
         help_text='0=EDD Confirmed by edd_by_lmp, 1=EDD Confirmed by'
         ' edd_by_ultrasound.')
 
