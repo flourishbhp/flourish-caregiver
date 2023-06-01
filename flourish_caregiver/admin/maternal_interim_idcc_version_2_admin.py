@@ -33,20 +33,31 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
                 'info_since_lastvisit',
                 'laboratory_information_available',
                 'last_visit_result',
-                'reason_cd4_not_collected',
+                'cd4_value_and_date_availiable',
+                'cd4_result_avalibility',
                 'recent_cd4',
                 'recent_cd4_date',
+                'vl_result_availiable',
+                'reason_vl_not_availiable',
+                'vl_value_and_date_availiable',
                 'value_vl_size',
                 'value_vl',
                 'recent_vl_date',
-                'other_diagnoses']}
+                'any_new_diagnoses',
+                'new_other_diagnoses']}
          ), audit_fieldset_tuple)
 
     radio_fields = {'info_since_lastvisit': admin.VERTICAL,
-                    'value_vl_size': admin.VERTICAL,
                     'laboratory_information_available': admin.VERTICAL,
                     'last_visit_result': admin.VERTICAL,
-                    'reason_cd4_not_collected': admin.VERTICAL, }
+                    'reason_cd4_not_availiable': admin.VERTICAL,
+                    'cd4_value_and_date_availiable': admin.VERTICAL,
+                    'cd4_result_avalibility': admin.VERTICAL,
+                    'vl_result_availiable': admin.VERTICAL,
+                    'reason_vl_not_availiable': admin.VERTICAL,
+                    'vl_value_and_date_availiable': admin.VERTICAL,
+                    'value_vl_size': admin.VERTICAL,
+                    'any_new_diagnoses': admin.VERTICAL, }
 
     def get_model_data(self, request, object_id=None):
 
