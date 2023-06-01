@@ -3,7 +3,7 @@ from edc_constants.constants import (CONTINUOUS, RESTARTED, OTHER, STOPPED,
                                      NOT_APPLICABLE, NEW, NEG, POS, IND, PENDING)
 
 from .constants import (LIVE, STILL_BIRTH, MISSED, NO_SAMPLE_COLLECTED,
-                        NO_SAMPLE_TUBES, MACHINE_NOT_WORKING,)
+                        NO_SAMPLE_TUBES, MACHINE_NOT_WORKING, FORGOT)
 
 LIVE_STILL_BIRTH = (
     (LIVE, 'live birth'),
@@ -466,6 +466,12 @@ SIZE_CHECK = (
     ('greater_than', '>'),
 )
 
+
+SIZE_CHECK_WITHOUT_EQUAL = (
+    ('less_than', '<'),
+    ('greater_than', '>'),
+)
+
 POS_NEG_IND = (
     (POS, 'Positive'),
     (NEG, 'Negative'),
@@ -532,10 +538,20 @@ GC_DHMT_CLINICS = (
 )
 
 
-REASON_CD4_NOT_COLLECTED = (
+REASON_CD4_RESULT_UNAVAILABLE = (
+    (FORGOT, 'Participant forgot and did not go for sample draw'),
     (PENDING, 'Result pending'),
     (MISSED, 'Participant missed IDCC appoitment'),
     (NO_SAMPLE_COLLECTED, 'No CD4 sample requested at last IDCC review'),
+    (NO_SAMPLE_TUBES, 'No sample collection tubes at local IDCC'),
+    (MACHINE_NOT_WORKING, 'Diagnostic machines not working'),
+)
+
+REASON_VL_RESULT_UNAVAILABLE = (
+    (FORGOT, 'Participant forgot and did not go for sample draw'),
+    (PENDING, 'Result pending'),
+    (MISSED, 'Participant missed IDCC appoitment'),
+    (NO_SAMPLE_COLLECTED, 'No VL sample requested at last IDCC review'),
     (NO_SAMPLE_TUBES, 'No sample collection tubes at local IDCC'),
     (MACHINE_NOT_WORKING, 'Diagnostic machines not working'),
 )

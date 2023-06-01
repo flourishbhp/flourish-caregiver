@@ -23,8 +23,9 @@ MAX_GA_LMP_ENROL_WEEKS = 30
 MIN_GA_LMP_ENROL_WEEKS = 16
 
 
-# Reasons for not collecting CD4
+# Reasons for not collecting CD4/VL
 MISSED = 'missed_idcc_appointment'
 NO_SAMPLE_COLLECTED = "no_sample_collected"
 NO_SAMPLE_TUBES = "no_collection_tubes"
 MACHINE_NOT_WORKING = "machines_not_working"
+FORGOT = "forgot"
