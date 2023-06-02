@@ -33,8 +33,8 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
                 'info_since_lastvisit',
                 'laboratory_information_available',
                 'last_visit_result',
+                'reason_cd4_not_availiable',
                 'cd4_value_and_date_availiable',
-                'cd4_result_avalibility',
                 'recent_cd4',
                 'recent_cd4_date',
                 'vl_result_availiable',
@@ -52,16 +52,38 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
                     'last_visit_result': admin.VERTICAL,
                     'reason_cd4_not_availiable': admin.VERTICAL,
                     'cd4_value_and_date_availiable': admin.VERTICAL,
-                    'cd4_result_avalibility': admin.VERTICAL,
                     'vl_result_availiable': admin.VERTICAL,
                     'reason_vl_not_availiable': admin.VERTICAL,
                     'vl_value_and_date_availiable': admin.VERTICAL,
                     'value_vl_size': admin.VERTICAL,
                     'any_new_diagnoses': admin.VERTICAL, }
 
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+
+        temp_obj = self.get_previous_instance(
+            request=request) or self.maternal_hiv_interimhx_obj
+
+        placeholder = 'N/A'
+
+        if temp_obj:
+            if hasattr(temp_obj, 'cd4_date'):
+                placeholder = temp_obj.cd4_date
+            else:
+                placeholder = temp_obj.report_datetime.date()
+
+        form.base_fields['info_since_lastvisit'].label = '3. Since the last visit {} did you go for IDCC review?'.format(
+            placeholder)
+        form.base_fields['last_visit_result'].label = '10. Is there a VL result since last visit {}?'.format(
+            placeholder)
+
+        return form
+
     def get_model_data(self, request, object_id=None):
 
         subject_identifier = None
+
+        self.request = request
 
         if self.get_instance(request):
             subject_identifier = self.get_instance(request).subject_identifier
@@ -69,10 +91,24 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
             subject_identifier = self.get_object(
                 request, object_id).maternal_visit.subject_identifier
 
-        if subject_identifier:
+        return self.maternal_hiv_interimhx_obj
+
+    @property
+    def subject_identifier(self):
+        subject_identifier = None
+        if self.get_instance(self.request):
+            subject_identifier = self.get_instance(
+                self.request).subject_identifier
+
+        return subject_identifier
+
+    @property
+    def maternal_hiv_interimhx_obj(self):
+
+        if self.subject_identifier:
             try:
                 return MaternalHivInterimHx.objects.get(
-                    maternal_visit__appointment__subject_identifier=subject_identifier)
+                    maternal_visit__appointment__subject_identifier=self.subject_identifier)
             except MaternalHivInterimHx.DoesNotExist:
                 pass
 

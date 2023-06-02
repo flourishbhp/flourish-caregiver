@@ -45,13 +45,6 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
         verbose_name="Do you have the value and date of CD4 result?",
         choices=YES_NO)
 
-    cd4_result_avalibility = models.CharField(
-        max_length=3,
-        blank=True,
-        null=True,
-        verbose_name="Do you have the value and date of CD4 result?",
-        choices=YES_NO)
-
     recent_cd4 = models.DecimalField(
         max_digits=8,
         decimal_places=2,
