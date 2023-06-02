@@ -72,10 +72,14 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
             else:
                 placeholder = temp_obj.report_datetime.date()
 
-        form.base_fields['info_since_lastvisit'].label = '3. Since the last visit {} did you go for IDCC review?'.format(
-            placeholder)
-        form.base_fields['last_visit_result'].label = '10. Is there a VL result since last visit {}?'.format(
-            placeholder)
+        form.base_fields['info_since_lastvisit'].label = \
+            '3. Since the last visit {} did you go for IDCC review?'.format(
+                placeholder)
+        form.base_fields['last_visit_result'].label = \
+            '5. Is there a CD4 result since last visit {}?'.format(placeholder)
+
+        form.base_fields['vl_result_availiable'].label = \
+            '10. Is there a VL result since last visit {}?'.format(placeholder)
 
         return form
 
