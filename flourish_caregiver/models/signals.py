@@ -608,7 +608,9 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
                 _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=instance.schedule_name)
-                if schedule.is_onschedule:
+                if schedule.is_onschedule(
+                    subject_identifier=instance.subject_identifier,
+                        report_datetime=get_utcnow()):
                     schedule.take_off_schedule(
                         subject_identifier=instance.subject_identifier,
                         offschedule_datetime=instance.offschedule_datetime,
