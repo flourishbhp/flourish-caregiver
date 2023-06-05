@@ -9,6 +9,7 @@ from ..models import MaternalInterimIdccVersion2
 from .modeladmin_mixins import CrfModelAdminMixin
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ObjectDoesNotExist
+from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 
 
 @admin.register(MaternalInterimIdccVersion2, site=flourish_caregiver_admin)
@@ -58,30 +59,38 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
                     'value_vl_size': admin.VERTICAL,
                     'any_new_diagnoses': admin.VERTICAL, }
 
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
+    custom_form_labels = {
+        FormLabel(
+            field='info_since_lastvisit',
+            label='Since the last visit ({previous}) did you go for IDCC review?',
+            previous_appointment=True
+        ),
+        FormLabel(
+            field='last_visit_result',
+            label='Is there a CD4 result since last visit ({previous}) ?',
+            previous_appointment=True
+        ),
+        FormLabel(
+            field='vl_result_availiable',
+            label='Is there a VL result since last visit ({previous}) ?',
+            previous_appointment=True
+        ),
+    }
 
-        temp_obj = self.get_previous_instance(
-            request=request) or self.maternal_hiv_interimhx_obj
+    def format_form_label(self, label=None, instance=None, appointment=None, **kwargs):
 
-        placeholder = 'N/A'
+        previous_instance = self.get_previous_instance(request=self.request)
 
-        if temp_obj:
-            if hasattr(temp_obj, 'cd4_date'):
-                placeholder = temp_obj.cd4_date
-            else:
-                placeholder = temp_obj.report_datetime.date()
+        previous = None
 
-        form.base_fields['info_since_lastvisit'].label = \
-            '3. Since the last visit {} did you go for IDCC review?'.format(
-                placeholder)
-        form.base_fields['last_visit_result'].label = \
-            '5. Is there a CD4 result since last visit {}?'.format(placeholder)
+        if previous_instance:
+            previous = previous_instance.report_datetime.date()
+        elif self.maternal_delivery_obj:
+            previous = self.maternal_hiv_interimhx_obj.cd4_date
 
-        form.base_fields['vl_result_availiable'].label = \
-            '10. Is there a VL result since last visit {}?'.format(placeholder)
+        label = label.format(previous=previous or 'Unknown')
 
-        return form
+        return label
 
     def get_model_data(self, request, object_id=None):
 
