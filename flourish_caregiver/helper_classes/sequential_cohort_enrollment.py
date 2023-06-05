@@ -178,6 +178,7 @@ class SequentialCohortEnrollment:
                     name=self.evaluated_cohort,
                     enrollment_cohort=False)
         # Put them offschedule
+
         # put them on the new cohort schedule
         schedule_name, onschedule_model = self.schedule_name(cohort=self.evaluated_cohort)
         else:
@@ -190,7 +191,7 @@ class SequentialCohortEnrollment:
             schedule_name=schedule_name,
             base_appt_datetime=base_appt_datetime)
 
-            # Update onschedule child identifier
+            # Update onschedule caregiver identifier
             try:
                 onschedule_model_cls.objects.get(
                     subject_identifier=self.caregiver_subject_identifier,
