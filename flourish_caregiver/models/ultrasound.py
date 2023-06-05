@@ -109,17 +109,17 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
             return (self.est_edd_ultrasound, 1)
         error_clss = error_clss or ValidationError
         if ga_by_lmp > 16 and ga_by_lmp < 22:
-            if abs((edd_by_lmp - self.est_edd_ultrasound).days) > 10:
+            if edd_by_lmp and self.est_edd_ultrasound and abs((edd_by_lmp - self.est_edd_ultrasound).days) > 10:
                 return (self.est_edd_ultrasound, 1)
             else:
                 return (edd_by_lmp, 0)
         elif ga_by_lmp > 22 and ga_by_lmp < 28:
-            if abs((edd_by_lmp - self.est_edd_ultrasound).days) > 14:
+            if edd_by_lmp and self.est_edd_ultrasound and abs((edd_by_lmp - self.est_edd_ultrasound).days) > 14:
                 return (self.est_edd_ultrasound, 1)
             else:
                 return (edd_by_lmp, 0)
         elif ga_by_lmp > 28:
-            if abs((edd_by_lmp - self.est_edd_ultrasound).days) > 21:
+            if edd_by_lmp and self.est_edd_ultrasound and abs((edd_by_lmp - self.est_edd_ultrasound).days) > 21:
                 return (self.est_edd_ultrasound, 1)
             else:
                 return (edd_by_lmp, 0)
