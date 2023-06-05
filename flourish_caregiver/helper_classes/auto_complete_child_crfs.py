@@ -10,13 +10,14 @@ from flourish_caregiver.models import MaternalVisit
 
 class AutoCompleteChildCrfs:
 
-    def __init__(self, instance):
+    def __init__(self, instance, complete_visit=None):
         self.subject_identifier = instance.subject_identifier
         self.visit_code = instance.visit_code
         self.visit_code_sequence = instance.visit_code_sequence
         self.schedule_name = instance.schedule_name
         self.id = instance.id
         self.instance = instance
+        self.complete_visit = complete_visit
 
     def pre_fill_crfs(self):
         """ check clone the completed crfs into the current visit
@@ -87,17 +88,21 @@ class AutoCompleteChildCrfs:
         """
         two children, the first child is the one whose visit was done first and the
         parent's crf were captured on that visit, the second child the forms are still
-        blank get the visit of the first child"""
-        try:
-            first_visit = MaternalVisit.objects.filter(
-                subject_identifier=self.subject_identifier,
-                visit_code=self.visit_code,
-                visit_code_sequence=self.visit_code_sequence).exclude(
-                    schedule_name=self.schedule_name).earliest('created')
-        except MaternalVisit.DoesNotExist:
-            return None
-        else:
-            return first_visit
+        blank get the visit of the first child,
+        NB: Query visit for first child taking into consideration the window
+            period for the appointment. The pre-fill is not per visit code. """
+        if not self.complete_visit:
+            try:
+                first_visit = MaternalVisit.objects.filter(
+                    subject_identifier=self.subject_identifier,
+                    visit_code=self.visit_code,
+                    visit_code_sequence=self.visit_code_sequence).exclude(
+                        schedule_name=self.schedule_name).earliest('created')
+            except MaternalVisit.DoesNotExist:
+                return None
+            else:
+                return first_visit
+        return self.complete_visit
 
     def inline_cls(self, inline):
         return django_apps.get_model(f'flourish_caregiver.{inline}')
