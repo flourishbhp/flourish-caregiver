@@ -69,6 +69,7 @@ from .signals import antenatal_enrollment_on_post_save
 from .signals import caregiver_child_consent_on_post_save
 from .signals import maternal_dataset_on_post_save
 from .signals import subject_consent_on_post_save
+from .signals import cohort_assigned
 from .socio_demographic_data import SocioDemographicData
 from .subject_consent import SubjectConsent
 from .substance_use_during_preg import SubstanceUseDuringPregnancy

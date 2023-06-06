@@ -11,7 +11,7 @@ from ..models import (
     OnScheduleCohortBFUQuarterly, OnScheduleCohortBQuarterly,
     OnScheduleCohortCFUQuarterly, OnScheduleCohortCQuarterly,
     OnScheduleCohortASecQuart, OnScheduleCohortBSecQuart,
-    CaregiverOffSchedule)
+    CaregiverOffSchedule, cohort_assigned)
 
 
 class SequentialCohortEnrollmentError(Exception):
@@ -98,6 +98,22 @@ class SequentialCohortEnrollment:
         return None
 
     @property
+    def child_dob(self):
+        """Return child dob.
+        """
+        dob = None
+        try:
+            caregiver_child_consent =  CaregiverChildConsent.objects.get(
+                study_child_identifier=self.child_subject_identifier)
+        except CaregiverChildConsent.DoesNotExist:
+            raise SequentialCohortEnrollmentError(
+                f"The subject: {self.child_subject_identifier} does not "
+                "have a caregiver child consent")
+        else:
+            dob = caregiver_child_consent.child_dob
+        return dob
+
+    @property
     def aged_up(self):
         """Return true if the child has aged up on the cohort
         they are currently enrolled on
@@ -126,7 +142,11 @@ class SequentialCohortEnrollment:
     def evaluated_cohort(self):
         """Return cohort name evaluated now.
         """
-        return None
+        cohort = cohort_assigned(
+            self.child_subject_identifier,
+            self.child_dob,
+            get_utcnow())
+        return cohort
 
     def schedule_name(self, cohort):
         """ Build and return schedule name to enroll subject on.
@@ -178,8 +198,15 @@ class SequentialCohortEnrollment:
                     name=self.evaluated_cohort,
                     enrollment_cohort=False)
         # Put them offschedule
-
+        self.take_caregiver_off_schedule
         # put them on the new cohort schedule
+        self.put_caregiver_onschedule
+        
+
+    @property
+    def put_caregiver_onschedule(self):
+        """Put a caregiver on schedule.
+        """
         schedule_name, onschedule_model = self.schedule_name(cohort=self.evaluated_cohort)
         else:
             _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
@@ -187,7 +214,7 @@ class SequentialCohortEnrollment:
                 name=schedule_name)
             schedule.put_on_schedule(
             subject_identifier=self.caregiver_subject_identifier,
-            onschedule_datetime= get_utcnow(),
+            onschedule_datetime=get_utcnow(),
             schedule_name=schedule_name,
             base_appt_datetime=base_appt_datetime)
 
@@ -210,7 +237,7 @@ class SequentialCohortEnrollment:
                     onschedule_obj.save()
 
     @property
-    def take_off_schedule(self):
+    def take_caregiver_off_schedule(self):
         """Take participant off schedule from previous age cohort.
         """
         a_onschedule_models = [
