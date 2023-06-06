@@ -125,12 +125,12 @@ class SequentialCohortEnrollment:
         """Return true if the child has aged up on the cohort
         they are currently enrolled on
         """
-        if self.current_cohort == 'cohort_a':
+        if self.current_cohort in ['cohort_a', 'cohort_a_sec']:
             if self.child_current_age >= 5:
                 return True
-        elif self.current_cohort == 'cohort_b':
+        elif self.current_cohort in ['cohort_b', 'cohort_b_sec']:
             if self.child_current_age > 10:
-                True
+                return True
         return False
     
     @property
@@ -224,7 +224,7 @@ class SequentialCohortEnrollment:
         onschedule_datetime=get_utcnow(),
         schedule_name=schedule_name)
 
-        # Update onschedule caregiver identifier
+        # Update onschedule child identifier
         onschedule_model_cls = django_apps.get_model(onschedule_model)
         try:
             onschedule_model_cls.objects.get(
