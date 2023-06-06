@@ -6,6 +6,7 @@ from edc_constants.constants import OTHER, YES, FEMALE
 
 from .onschedule_helper import OnScheduleHelper
 from ..identifiers import ScreeningIdentifier
+from django.db.utils import IntegrityError
 
 
 class CaregiverBiologicalSwitch:
@@ -223,6 +224,19 @@ class CaregiverBiologicalSwitch:
             return prev_enrol
 
     def put_on_enrol_schedule(self, onschedule_dt=None, base_appt_dt=None):
+        try:
+            instance = self.biological_mother_consent.caregiverchildconsent_set.latest('consent_datetime')
+        except self.caregiverchild_consent_cls.DoesNotExist:
+            print('Child consent was not moved correctly')
+            raise Exception
+        else:
+            subject_identifier = self.biological_mother_consent.subject_identifier
+            helper_cls = self.instantiate_helper(
+                subject_identifier, onschedule_dt, instance.cohort)
+            helper_cls.put_cohort_onschedule(instance,
+                                             base_appt_datetime=base_appt_dt or onschedule_dt)
+
+    def put_on_quart_schedule(self, onschedule_dt=None, base_appt_dt=None):
         instance = self.child_consent_model_obj
         subject_identifier = self.biological_mother_consent.subject_identifier
         helper_cls = self.instantiate_helper(
@@ -267,6 +281,19 @@ class CaregiverBiologicalSwitch:
             print('Child consent was not moved correctly')
             raise Exception
         else:
+            subject_identifier = self.biological_mother_consent.subject_identifier
+            enrol_appt = self.appointment_model_cls.objects.filter(
+                subject_identifier=subject_identifier).first()
+
+            child_quart_appt = self.child_appointment_cls.objects.filter(
+                Q(schedule_name__icontains='quart') | Q(schedule_name__icontains='qt'),
+                subject_identifier=instance.subject_identifier,
+                timepoint_datetime__gte=onschedule_dt).first()
+
+            helper_cls = self.instantiate_helper(
+                subject_identifier, onschedule_dt, instance.cohort)
+            helper_cls.put_quarterly_onschedule(
+                enrol_appt, base_appt_datetime=base_appt_dt or child_quart_appt.timepoint_datetime)
             return instance
 
     def instantiate_helper(self, subject_identifier, onschedule_dt, cohort):
