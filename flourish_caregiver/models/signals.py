@@ -45,6 +45,7 @@ from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.cohort import Cohort
 from ..helper_classes.consent_helper import consent_helper
+from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
@@ -607,9 +608,20 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
                 _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=instance.schedule_name)
-                schedule.take_off_schedule(
+                if schedule.is_onschedule(
                     subject_identifier=instance.subject_identifier,
-                    offschedule_datetime=instance.offschedule_datetime,
+                        report_datetime=get_utcnow()):
+                    schedule.take_off_schedule(
+                        subject_identifier=instance.subject_identifier,
+                        offschedule_datetime=instance.offschedule_datetime,
+                        schedule_name=instance.schedule_name)
+                # Remove remaining last appointment, future by upper window
+                # period datetime.
+                helper_cls = FollowUpEnrolmentHelper(
+                    subject_identifier=instance.subject_identifier)
+                helper_cls.delete_new_appt_window_after_date(
+                    instance.offschedule_datetime,
+                    visit_schedule_name=schedule._subject.visit_schedule_name,
                     schedule_name=instance.schedule_name)
 
 
