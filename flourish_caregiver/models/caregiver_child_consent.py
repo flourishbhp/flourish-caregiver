@@ -182,6 +182,10 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         if not self.relative_identifier:
             self.relative_identifier = self.get_parent_identifier
 
+        if self.subject_identifier and not self.cohort:
+            self.cohort = self.assign_enrol_instance_cohort
+
+
         self.preg_enroll = self.is_preg
 
         eligibility_criteria = CaregiverChildConsentEligibility(
@@ -372,8 +376,18 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     def get_parent_identifier(self):
         return self.subject_consent.subject_identifier
 
+    def assign_enrol_instance_cohort(self):
+        try:
+            enrol_consent = self._meta.model.objects.filter(
+                subject_identifier=self.subject_identifier).earliest('consent_datetime')
+        except self._meta.model.DoesNotExist:
+            return None
+        else:
+            return getattr(enrol_consent, 'cohort', None)
+
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'Caregiver Consent On Behalf Of Child'
         verbose_name_plural = 'Caregiver Consent On Behalf Of Child'
-        # unique_together = ('subject_consent', 'subject_identifier', 'version')
+        unique_together = (('subject_identifier', 'version'),
+                           ('subject_consent', 'subject_identifier', 'version'))

@@ -35,7 +35,7 @@ class TestVisitScheduleTb(TestCase):
 
         self.options = {
             'consent_datetime': get_utcnow(),
-            'version': '1'
+            'version': '3'
         }
 
         self.subject_screening = mommy.make_recipe(
@@ -51,7 +51,8 @@ class TestVisitScheduleTb(TestCase):
             'study_questions': YES,
             'assessment_score': YES,
             'consent_signature': YES,
-            'consent_copy': YES
+            'consent_copy': YES,
+            'version': '3'
         }
         self.consent = mommy.make_recipe('flourish_caregiver.subjectconsent',
                                          **self.eligible_options)
@@ -108,7 +109,7 @@ class TestVisitScheduleTb(TestCase):
     @tag('tb_off')
     def test_tb_referral_required(self):
         """
-        Test if the off study crf succesfully removes an individul from the Tb schedule
+        Test if the off study crf successfully removes an individul from the Tb schedule
         """
         mommy.make_recipe(
             'flourish_caregiver.tbinformedconsent',
@@ -461,6 +462,40 @@ class TestVisitScheduleTb(TestCase):
             subject_identifier=self.consent.subject_identifier
         )
         self.assertIsNotNone(schedule_history.offschedule_datetime)
+
+    def test_flourish_crfs(self):
+        tb_crf = mommy.make_recipe('flourish_caregiver.tbroutinehealthscreenv2',
+                                   maternal_visit=self.enrol_visit, )
+        tb_crf.save()
+
+    def test_tb_consent_on_flourish_crfs(self):
+        mommy.make_recipe(
+            'flourish_caregiver.tbinformedconsent',
+            subject_identifier=self.consent.subject_identifier,
+            consent_datetime=get_utcnow()
+        )
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=self.consent.subject_identifier, )
+
+        self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
+            subject_identifier=self.consent.subject_identifier,
+            schedule_name='a_tb1_2_months_schedule1').count(), 1)
+
+        tb_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2100T'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe('flourish_caregiver.tbroutinehealthscreenv2',
+                          maternal_visit=tb_visit, )
+
+        mommy.make_recipe('flourish_caregiver.tbroutinehealthscreenv2',
+                          maternal_visit=self.enrol_visit, )
 
     def prepare_off_study_2_months_visit(self):
         mommy.make_recipe(
