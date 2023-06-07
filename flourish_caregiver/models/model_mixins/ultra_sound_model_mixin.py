@@ -14,6 +14,8 @@ class UltraSoundModelMixin(models.Model):
         validators=[validate_bpd, ],
         max_digits=6,
         decimal_places=2,
+        blank=True,
+        null=True,
         help_text='Units in cm.')
 
     hc = models.DecimalField(
@@ -21,6 +23,8 @@ class UltraSoundModelMixin(models.Model):
         validators=[validate_hc, ],
         max_digits=6,
         decimal_places=2,
+        blank=True,
+        null=True,
         help_text='Units in cm.')
 
     ac = models.DecimalField(
@@ -28,6 +32,8 @@ class UltraSoundModelMixin(models.Model):
         validators=[validate_ac, ],
         max_digits=6,
         decimal_places=2,
+        blank=True,
+        null=True,
         help_text='Units in cm.')
 
     fl = models.DecimalField(
@@ -35,12 +41,16 @@ class UltraSoundModelMixin(models.Model):
         validators=[validate_fl, ],
         max_digits=6,
         decimal_places=2,
+        blank=True,
+        null=True,
         help_text='Units in cm.')
 
     amniotic_fluid_volume = models.CharField(
         verbose_name="Amniotic fluid volume?",
         max_length=10,
         choices=AMNIOTIC_FLUID,
+        blank=True,
+        null=True,
         help_text='')
 
     @property
