@@ -108,30 +108,24 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             return consent_obj
 
     @property
-    def child_current_age(self):
-        """Age in years, years currently are not being rounded off 
-        Returns:
-            int: age in years
-        """
-        return age(self.child_dob, get_utcnow().date()).years
+    def child_count(self):
+        return self.child_consent_obj.caregiver_visit_count
 
     @property
     def child_dob(self):
         return self.child_consent_obj.child_dob
 
     @property
-    def current_cohort(self):
-        # TODO
-        """Returns the cohort the child was enrolled on the first time.
-        """
-        schedule_name = self.latest_quartarly_schedule.schedule_name
+    def schedule_name(self):
+        return self.cohort_obj.schedule_name
 
-        cohort_name = f"cohort_{schedule_name[0]}"
+    @property
+    def onschedule_model(self):
+        return self.cohort_obj.onschedule_model
 
-        if 'sec' in schedule_name:
-            cohort_name += '_sec'
-
-        return cohort_name
+    @property
+    def schedule_type(self):
+        return self.cohort_obj.name
 
     @property
     def current_quartarly_schedule_type(self):
