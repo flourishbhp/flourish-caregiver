@@ -11,7 +11,8 @@ class SeqEnrolOnScheduleMixin:
         """
         # TODO evaluate cohort
         cohort = self.evaluated_cohort
-        schedule_type = schedule_type or self.current_quartarly_schedule_type
+        schedule_type = schedule_type or self.schedule_type
+        child_count = child_count or self.child_count
         onschedule_model = caregiver_schedule_dict[cohort][schedule_type]['onschedule_model']
         schedule_name = caregiver_schedule_dict[cohort][schedule_type][child_count]
 
@@ -22,7 +23,7 @@ class SeqEnrolOnScheduleMixin:
     def put_child_onschedule(self, schedule_type):
         # TODO evaluate cohort
         cohort = self.evaluated_cohort
-        schedule_type = schedule_type or self.current_quartarly_schedule_type
+        schedule_type = schedule_type or self.schedule_type
         onschedule_model = child_schedule_dict[cohort][schedule_type]['onschedule_model']
         schedule_name = child_schedule_dict[cohort][schedule_type]['name']
 
