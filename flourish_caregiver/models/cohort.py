@@ -12,14 +12,13 @@ from .model_mixins import SearchSlugModelMixin
 
 
 class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
-                 SearchSlugModelMixin, BaseUuidModel):
+             SearchSlugModelMixin, BaseUuidModel):
     """ A model completed by the system for cohort assignment.
     """
 
     name = models.CharField(
-        max_length=3,
-        choices=YES_NO,
-        verbose_name="Cohort name",
+        max_length=10,
+        verbose_name="Cohort Name",
     )
 
     assign_datetime = models.DateTimeField(
