@@ -15,19 +15,43 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
              SearchSlugModelMixin, BaseUuidModel):
     """ A model completed by the system for cohort assignment.
     """
-
-    name = models.CharField(
+    # For example cohort_a, cohort_b etc
+    cohort = models.CharField(
         max_length=10,
-        verbose_name="Cohort Name",
+        verbose_name="Cohort",
     )
 
+    # For example followup, quartly, enrollment
+    name = models.CharField(
+        max_length=10,
+        verbose_name="Name",
+    )
+
+    # For example a_enrol1_schedule1, etc
+    schedule_name = models.CharField(
+        max_length=20,
+        verbose_name="Schedule Name",
+    )
+
+    # onschedule model used
+    onschedule_model = models.CharField(
+        max_length=20,
+        verbose_name="On Schedule Model",
+    )
+
+    # date put on schedule
     assign_datetime = models.DateTimeField(
-        verbose_name='Report Date and Time',
+        verbose_name='Date put Onschedule',
         default=get_utcnow,
         validators=[
             datetime_not_before_study_start,
             datetime_not_future],
         help_text='Date and time for cohort assignment')
+
+    onschedule_model = models.BooleanField(
+        verbose_name="Currently on schedule",
+        default=True,
+        editable=False)
 
     enrollment_cohort = models.BooleanField(
         verbose_name="Study enrolment cohort",
