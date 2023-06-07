@@ -6,6 +6,7 @@ from edc_base.model_validators import datetime_not_future
 from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
+from edc_base.model_fields import OtherCharField
 
 from ..maternal_choices import CALL_REASON, CONTACT_TYPE, REASONS_FOR_RESCHEDULING
 from .subject_consent import SubjectConsent
@@ -82,6 +83,7 @@ class CaregiverContact(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
         null=True,
         blank=True
     )
+    reason_rescheduled_other = OtherCharField()
 
     history = HistoricalRecords()
 

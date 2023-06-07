@@ -58,8 +58,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             subject_identifier=subject_identifier)
 
         if maternal_consents:
-            consent_version_obj = FlourishConsentVersion.objects.filter(
-                screening_identifier=maternal_consents[0].screening_identifier)
+            consent_version_obj = self.flourish_consent_version(
+                maternal_consents[0].screening_identifier)
 
         onschedule_model = getattr(self.instance.schedule, 'onschedule_model', '')
 
@@ -76,7 +76,6 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             child_consents = CaregiverChildConsent.objects.filter(
                 subject_identifier=onschedule_obj.child_subject_identifier,
                 is_eligible=True, child_age_at_enrollment__gte=7)
-
             for child_consent in child_consents:
                 child_version = getattr(consent_version_obj, 'child_version', '') or child_consent.version
                 exists = ChildAssent.objects.filter(
@@ -86,6 +85,15 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             child_assents_exists = all(child_assents_exists)
             if not child_assents_exists:
                 raise ValidationError('Please fill the child assent(s) form(s) first')
+
+    def flourish_consent_version(self, screening_identifier=None):
+        try:
+            consent_version_obj = FlourishConsentVersion.objects.get(
+                screening_identifier=screening_identifier)
+        except FlourishConsentVersion.DoesNotExist:
+            return None
+        else:
+            return consent_version_obj
 
     def validate_appt_new_or_complete(self):
         """
@@ -97,6 +105,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
     def validate_sequence(self):
         """Enforce appointment and visit entry sequence.
         """
+        visit_model_cls = self.appointment_model_cls.visit_model_cls()
         if self.cleaned_data.get('appt_status') == IN_PROGRESS_APPT:
             # visit report sequence
             try:
@@ -104,7 +113,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                     subject_identifier=self.instance.subject_identifier,
                     visit_schedule_name=self.instance.visit_schedule_name).maternalvisit
             except ObjectDoesNotExist:
-                last_visit = self.appointment_model_cls.visit_model_cls().objects.filter(
+                last_visit = visit_model_cls.objects.filter(
                     appointment__subject_identifier=self.instance.subject_identifier,
                     visit_schedule_name=self.instance.visit_schedule_name,
                     report_datetime__lt=self.instance.appt_datetime
@@ -112,17 +121,20 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
 
                 if last_visit:
                     try:
-
-                        next_visit = last_visit.appointment.get_next_by_appt_datetime(
+                        next_appt = last_visit.appointment.get_next_by_appt_datetime(
                             subject_identifier=self.instance.subject_identifier,
                             visit_schedule_name=self.instance.visit_schedule_name)
                     except last_visit.appointment.DoesNotExist:
                         pass
                     else:
-                        raise forms.ValidationError(
-                            f'A previous visit report is required. Enter the visit report for '
-                            f'appointment {next_visit.visit_code} before '
-                            'starting with this appointment.')
+                        try:
+                            visit_model_cls.objects.get(appointment=next_appt)
+                        except visit_model_cls.DoesNotExist:
+                            raise forms.ValidationError(
+                                f'A previous visit report is required. Enter '
+                                'the visit report for appointment '
+                                f'{next_appt.visit_code} before starting '
+                                'with this appointment.')
             except AttributeError:
                 pass
 

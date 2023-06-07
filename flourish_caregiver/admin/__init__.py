@@ -48,6 +48,7 @@ from .maternal_delivery_admin import MaternalDeliveryAdmin
 from .maternal_diagnoses_admin import MaternalDiagnosesAdmin
 from .maternal_hiv_interim_hx import MaternalHivInterimHxAdmin
 from .maternal_interim_idcc_admin import MaternalInterimIdccAdmin
+from .maternal_interim_idcc_version_2_admin import MaternalInterimIdccVersion2Admin
 from .maternal_visit_admin import MaternalVisitAdmin
 from .medical_history_admin import MedicalHistoryAdmin
 from .modeladmin_mixins import VersionControlMixin

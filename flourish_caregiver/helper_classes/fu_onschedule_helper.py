@@ -1,5 +1,7 @@
+import pytz
 from django.apps import apps as django_apps
 from django.db.models import Q
+from django.db.models.deletion import ProtectedError
 from edc_base.utils import get_utcnow
 from edc_registration.models import RegisteredSubject
 
@@ -42,8 +44,8 @@ class FollowUpEnrolmentHelper(object):
     def get_latest_completed_appointment(self, subject_identifier, cohort, schedule_number):
 
         appts = Appointment.objects.filter(~Q(appt_status=NEW_APPT) & ~Q(
-            schedule_name__icontains='sec'), subject_identifier=subject_identifier).exclude(
-                schedule_name__icontains='tb')
+            schedule_name__icontains='sec') & Q(schedule_name__icontains=f'{cohort}_'),
+            subject_identifier=subject_identifier).exclude(schedule_name__icontains='tb')
 
         if appts:
             latest = appts.order_by('timepoint').last()
@@ -143,7 +145,6 @@ class FollowUpEnrolmentHelper(object):
         return related_children.values_list('subject_identifier', flat=True)
 
     def activate_fu_schedule(self):
-
         latest_appt = self.get_latest_completed_appointment(
             self.subject_identifier, self.cohort, self.schedule_number)
 
@@ -153,3 +154,48 @@ class FollowUpEnrolmentHelper(object):
             self.caregiver_off_current_schedule(latest_appt)
 
             print("Done!")
+
+    def delete_new_appt_window_after_date(self, offschedule_dt,
+                                          visit_schedule_name=None,
+                                          schedule_name=None):
+        """ Deletes remaining caregiver appointments based on the window periods
+            when a participant is taken offschedule.
+            NOTE: Implemented on the offschedule to avoid overriding the manager
+            on the base EDC appointment model class, since study is already in progress.
+            Next time override appointment model class manager before study start.
+        """
+        future_by_upper = []
+        options = {'subject_identifier': self.subject_identifier,
+                   'appt_status': NEW_APPT}
+        if schedule_name and not visit_schedule_name:
+            raise TypeError(
+                f'Expected visit_schedule_name for schedule_name '
+                f'\'{schedule_name}\'. Got {visit_schedule_name}')
+        if visit_schedule_name:
+            try:
+                visit_schedule_name, schedule_name = visit_schedule_name.split(
+                    '.')
+            except ValueError:
+                if schedule_name:
+                    options.update(dict(schedule_name=schedule_name))
+            options.update(dict(visit_schedule_name=visit_schedule_name))
+        appointments = Appointment.objects.filter(**options).order_by('-timepoint')
+        for appt in appointments:
+            visit_definition = appt.visits.get(appt.visit_code)
+            latest_appt_date = (
+                appt.timepoint_datetime + visit_definition.rupper).astimezone(
+                    pytz.timezone('Africa/Gaborone'))
+            if latest_appt_date >= offschedule_dt:
+                future_by_upper.append(appt)
+        deleted = self.delete_appointment(appointments=future_by_upper, )
+        return deleted
+
+    def delete_appointment(self, appointments=[], ):
+        deleted = 0
+        for appointment in appointments:
+            try:
+                appointment.delete()
+                deleted += 1
+            except ProtectedError:
+                break
+        return deleted

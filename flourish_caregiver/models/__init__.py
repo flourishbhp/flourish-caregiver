@@ -147,6 +147,7 @@ from .maternal_delivery import MaternalDelivery
 from .maternal_diagnoses import MaternalDiagnoses
 from .maternal_hiv_interim_hx import MaternalHivInterimHx
 from .maternal_interim_idcc_data import MaternalInterimIdcc
+from .maternal_interim_idcc_data_version_2 import MaternalInterimIdccVersion2
 from .maternal_visit import MaternalVisit
 from .medical_history import MedicalHistory
 from .obsterical_history import ObstericalHistory
@@ -196,3 +197,4 @@ from .tb_screen_preg import TbScreenPreg
 from .tb_study_screening import TbStudyEligibility
 from .tb_visit_screening_women import TbVisitScreeningWomen
 from .ultrasound import UltraSound
+

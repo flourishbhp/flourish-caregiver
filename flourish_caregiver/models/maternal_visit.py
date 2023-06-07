@@ -80,6 +80,13 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
         default=NOT_APPLICABLE
     )
 
+    comments = models.TextField(
+        verbose_name=(
+            'Comment if any additional pertinent information '
+            'about the participant'),
+        blank=True,
+        null=True)
+
     on_site = CurrentSiteManager()
 
     objects = VisitModelManager()
