@@ -2,29 +2,15 @@ from django.apps import apps as django_apps
 from edc_base.utils import get_utcnow, age
 from .cohort_assignment import CohortAssignment
 from ..models import MaternalDataset
+from .seq_enrol_onschedule_mixin import SeqEnrolOnScheduleMixin
+from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
 
 
 class SequentialCohortEnrollmentError(Exception):
     pass
 
 
-class OffScheduleSequentialCohortEnrollmentMixin:
-    def put_caregiver_offschedule(self):
-        pass
-
-    def put_child_offschedule(self):
-        pass
-
-
-class OnScheduleSequentialCohortEnrollmentMixin:
-    def put_caregiver_onschedule(self):
-        pass
-
-    def put_child_onschedule(self):
-        pass
-
-
-class SequentialCohortEnrollment(OnScheduleSequentialCohortEnrollmentMixin,
+class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
                                  OffScheduleSequentialCohortEnrollmentMixin):
     """Class that checks and enrols participants to the next
     the next cohort when they age up.
@@ -36,11 +22,29 @@ class SequentialCohortEnrollment(OnScheduleSequentialCohortEnrollmentMixin,
 
     infant_dataset_model = 'flourish_child.childdataset'
 
+    cohort_model = 'flourish_caregiver.cohort'
+
     def __init__(self, child_subject_identifier=None):
         self.child_subject_identifier = child_subject_identifier
         self.cohort_assignment = CohortAssignment(
             child_dob=self.child_dob,
             enrolment_dt=get_utcnow())
+
+    @property
+    def child_consent_cls(self):
+        return django_apps.get_model(self.child_consent_model)
+
+    @property
+    def infant_dataset_cls(self):
+        return django_apps.get_model(self.infant_dataset_model)
+
+    @property
+    def subject_schedule_cls(self):
+        return django_apps.get_model(self.subject_schedule_model)
+
+    @property
+    def cohort_cls(self):
+        return django_apps.get_model(self.cohort_model)
 
     def cohort_assigned(self, study_child_identifier, child_dob, enrollment_date):
         """Calculates participant's cohort based on the maternal and child dataset
@@ -74,36 +78,15 @@ class SequentialCohortEnrollment(OnScheduleSequentialCohortEnrollmentMixin,
                 return cohort.cohort_variable or None
 
     @property
-    def child_consent_cls(self):
-        return django_apps.get_model(self.child_consent_model)
-
-    @property
-    def infant_dataset_cls(self):
-        return django_apps.get_model(self.infant_dataset_model)
-
-    @property
-    def subject_schedule_cls(self):
-        return django_apps.get_model(self.subject_schedule_model)
-
-    @property
-    def latest_quartarly_schedule(self):
-        """Returns latest quartly call only
-
-        Returns:
-            subject_schedule_cls | None: returns latest quartarly call or None if the child is not
-            any quarterly schedule
-        """
+    def cohort_obj(self):
         try:
-            schedule_history = self.subject_schedule_cls.objects.filter(
-                subject_identifier=self.subject_identifier,
-                schedule_name__icontains='quart'
-            ).only('onschedule_datetime', 'schedule_name').latest('onschedule_datetime')
-
-        except self.subject_schedule_cls.DoesNotExist:
+            cohort_obj = self.cohort_cls.objects.filter(
+                subject_identifier=self.child_subject_identifier).latest('assign_datetime')
+        except self.cohort_cls.DoesNotExist:
             raise SequentialCohortEnrollmentError(
-                f"The subject: {self.child_subject_identifier} was not enrolled")
+                f'{self.child_subject_identifier} : cohort instance does not exist')
         else:
-            return schedule_history
+            return cohort_obj
 
     @property
     def caregiver_subject_identifier(self):
@@ -126,7 +109,11 @@ class SequentialCohortEnrollment(OnScheduleSequentialCohortEnrollmentMixin,
 
     @property
     def child_current_age(self):
-        return age(self.child_dob, get_utcnow()).years
+        """Age in years, years currently are not being rounded off 
+        Returns:
+            int: age in years
+        """
+        return age(self.child_dob, get_utcnow().date()).years
 
     @property
     def child_dob(self):
@@ -134,6 +121,7 @@ class SequentialCohortEnrollment(OnScheduleSequentialCohortEnrollmentMixin,
 
     @property
     def current_cohort(self):
+        # TODO
         """Returns the cohort the child was enrolled on the first time.
         """
         schedule_name = self.latest_quartarly_schedule.schedule_name
@@ -147,14 +135,7 @@ class SequentialCohortEnrollment(OnScheduleSequentialCohortEnrollmentMixin,
 
     @property
     def current_quartarly_schedule_type(self):
-        schedule_name = self.latest_quartarly_schedule.schedule_name
-
-        if 'fu' in schedule_name:
-            return 'followup_quartarly'
-        elif 'sec' in schedule_name:
-            return 'sec_aims_quart'
-        else:
-            return 'quarterly'
+        return self.cohort_obj.name if 'quart' in self.cohort_obj.name else None
 
     @property
     def evaluated_cohort(self):
@@ -165,11 +146,3 @@ class SequentialCohortEnrollment(OnScheduleSequentialCohortEnrollmentMixin,
             study_child_identifier=self.child_consent_obj.study_child_identifier,
             enrollment_date=get_utcnow().date(),
         )
-
-    def put_caregiver_and_child_onschedule(self):
-        self.put_child_onschedule()
-        self.put_caregiver_onschedule()
-
-    def put_caregiver_and_child_offschedule(self):
-        self.put_child_offschedule()
-        self.put_caregiver_offschedule()
