@@ -86,7 +86,8 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
         if previous_instance:
             previous = previous_instance.report_datetime.date()
         elif self.maternal_delivery_obj:
-            previous = self.maternal_hiv_interimhx_obj.cd4_date
+            previous = getattr(
+                self.maternal_hiv_interimhx_obj, 'cd4_date', None)
 
         label = label.format(previous=previous or 'Unknown')
 
