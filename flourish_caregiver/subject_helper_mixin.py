@@ -82,6 +82,12 @@ class SubjectHelperMixin:
         except MaternalDataset.DoesNotExist:
             pass
         else:
+            mommy.make_recipe(
+                'flourish_caregiver.flourishconsentversion',
+                screening_identifier=maternal_dataset_obj.screening_identifier,
+                version='1',
+                child_version='1')
+
             prior_screening = mommy.make_recipe(
                 'flourish_caregiver.screeningpriorbhpparticipants',
                 screening_identifier=maternal_dataset_obj.screening_identifier)
@@ -119,6 +125,12 @@ class SubjectHelperMixin:
         except MaternalDataset.DoesNotExist:
             pass
         else:
+            mommy.make_recipe(
+                'flourish_caregiver.flourishconsentversion',
+                screening_identifier=maternal_dataset_obj.screening_identifier,
+                version='1',
+                child_version='1')
+
             prior_screening = mommy.make_recipe(
                 'flourish_caregiver.screeningpriorbhpparticipants',
                 screening_identifier=maternal_dataset_obj.screening_identifier)
@@ -202,6 +214,12 @@ class SubjectHelperMixin:
                 'flourish_participation': 'interested'}
 
             mommy.make_recipe(
+                'flourish_caregiver.flourishconsentversion',
+                screening_identifier=maternal_dataset_obj.screening_identifier,
+                version='1',
+                child_version='1')
+
+            mommy.make_recipe(
                 'flourish_caregiver.screeningpriorbhpparticipants',
                 screening_identifier=maternal_dataset_obj.screening_identifier,
                 study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
@@ -244,6 +262,12 @@ class SubjectHelperMixin:
                 'consent_datetime': consent_datetime or get_utcnow(),
                 'version': '1'
                 }
+
+            mommy.make_recipe(
+                'flourish_caregiver.flourishconsentversion',
+                screening_identifier=maternal_dataset_obj.screening_identifier,
+                version='1',
+                child_version='1')
 
             mommy.make_recipe(
                 'flourish_caregiver.screeningpriorbhpparticipants',
@@ -302,6 +326,12 @@ class SubjectHelperMixin:
                 'consent_datetime': consent_datetime or get_utcnow(),
                 'version': '1'
                 }
+            
+            mommy.make_recipe(
+                'flourish_caregiver.flourishconsentversion',
+                screening_identifier=maternal_dataset_obj.screening_identifier,
+                version='1',
+                child_version='1')
 
             mommy.make_recipe(
                 'flourish_caregiver.screeningpriorbhpparticipants',

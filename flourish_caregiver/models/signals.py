@@ -290,7 +290,6 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     child_consents = get_child_consents(instance.subject_identifier)
 
     preg_child_consents = child_consents.filter(preg_enroll=True)
-
     if instance.live_infants_to_register == 1:
         helper_cls = onschedule_helper_cls(instance.subject_identifier, )
         if not raw and created:
