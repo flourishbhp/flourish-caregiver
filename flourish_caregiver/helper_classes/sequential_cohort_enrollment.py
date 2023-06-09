@@ -1,9 +1,11 @@
 from django.apps import apps as django_apps
+from django.db.models import Q
 from edc_base.utils import get_utcnow, age
 from .cohort_assignment import CohortAssignment
 from ..models import MaternalDataset
-from .seq_enrol_onschedule_mixin import SeqEnrolOnScheduleMixin
+from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
 from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
+from ..models.signals import cohort_assigned
 
 
 class SequentialCohortEnrollmentError(Exception):
@@ -43,39 +45,23 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         return django_apps.get_model(self.subject_schedule_model)
 
     @property
-    def cohort_cls(self):
-        return django_apps.get_model(self.cohort_model)
+    def subject_schedule_cls(self):
+        return django_apps.get_model(self.subject_schedule_model)
 
-    def cohort_assigned(self, study_child_identifier, child_dob, enrollment_date):
-        """Calculates participant's cohort based on the maternal and child dataset
-        """
-        infant_dataset_obj = None
+    @property
+    def child_last_qt_subject_schedule_obj(self):
         try:
-            infant_dataset_obj = self.infant_dataset_cls.objects.get(
-                study_child_identifier=study_child_identifier,
-                dob=child_dob)
-        except self.infant_dataset_cls.DoesNotExist:
-            pass
-        except self.infant_dataset_cls.MultipleObjectsReturned:
-            infant_dataset_obj = self.infant_dataset_cls.objects.filter(
-                study_child_identifier=study_child_identifier,
-                dob=child_dob)[0]
-        finally:
-            try:
-                maternal_dataset_obj = MaternalDataset.objects.get(
-                    study_maternal_identifier=getattr(
-                        infant_dataset_obj, 'study_maternal_identifier', None))
-            except MaternalDataset.DoesNotExist:
-                return None
-            else:
-                cohort = CohortAssignment(
-                    child_dob=child_dob,
-                    enrolment_dt=enrollment_date,
-                    child_hiv_exposure=getattr(
-                        infant_dataset_obj, 'infant_hiv_exposed', None),
-                    arv_regimen=getattr(
-                        maternal_dataset_obj, 'mom_pregarv_strat', None), )
-                return cohort.cohort_variable or None
+            schedule_obj = self.subject_schedule_cls.objects.filter(
+                Q(schedule_name__icontains='qt') | Q(
+                    schedule_name__icontains='quart'),
+                subject_identifier=self.child_consent_obj.subject_identifier,
+
+            ).latest('onschedule_datetime')
+        except self.subject_schedule_cls.DoesNotExist:
+            raise SequentialCohortEnrollmentError(
+                f'{self.child_consent_obj.subject_identifier} : was never been on quartarly schedule')
+        else:
+            return schedule_obj
 
     @property
     def cohort_obj(self):
@@ -116,26 +102,22 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         return self.child_consent_obj.child_dob
 
     @property
-    def schedule_name(self):
-        return self.cohort_obj.schedule_name
-
-    @property
-    def onschedule_model(self):
-        return self.cohort_obj.onschedule_model
-
-    @property
     def schedule_type(self):
-        return self.cohort_obj.name
 
-    @property
-    def current_quartarly_schedule_type(self):
-        return self.cohort_obj.name if 'quart' in self.cohort_obj.name else None
+        schedule_name = self.child_last_qt_subject_schedule_obj.schedule_name
+
+        if 'fu' in schedule_name:
+            return 'followup_quartaly'
+        elif 'sec' in schedule_name:
+            return 'sec_aims_quart'
+        else:
+            return 'quarterly'
 
     @property
     def evaluated_cohort(self):
         """Return cohort name evaluated now.
         """
-        return self.cohort_assigned(
+        return cohort_assigned(
             child_dob=self.child_consent_obj.child_dob,
             study_child_identifier=self.child_consent_obj.study_child_identifier,
             enrollment_date=get_utcnow().date(),
