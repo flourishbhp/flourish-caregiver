@@ -80,7 +80,8 @@ class CaregiverBiologicalSwitch:
     @property
     def caregiver_locator_obj(self):
         try:
-            locator = self.caregiver_locator_cls.objects.get(subject_identifier=self.caregiver_sid)
+            locator = self.caregiver_locator_cls.objects.get(
+                subject_identifier=self.caregiver_sid)
         except self.caregiver_locator_cls.DoesNotExist:
             return None
         else:

@@ -1,55 +1,78 @@
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
-from edc_constants.constants import NEG, POS
+from edc_constants.constants import NEG, POS, YES
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 
 from ..helper_classes import MaternalStatusHelper
 from ..subject_helper_mixin import SubjectHelperMixin
+from ..identifiers import ScreeningIdentifier
 
 
 @tag('msh')
 class TestMaternalStatusHelper(TestCase):
-    databases = '__all__'
 
     def setUp(self):
         import_holidays()
+        self.options = {
+            'consent_datetime': get_utcnow(),
+            'breastfeed_intent': YES,
+            'version': '1'}
+
+        screening_identifier = ScreeningIdentifier().identifier
+
+        mommy.make_recipe(
+            'flourish_caregiver.flourishconsentversion',
+            screening_identifier=screening_identifier,
+            version='1',
+            child_version='1')
+
+        self.screening_preg = mommy.make_recipe(
+            'flourish_caregiver.screeningpregwomen',
+            screening_identifier=screening_identifier)
+        self.screening_preg.save()
+
+        self.subject_consent = mommy.make_recipe(
+            'flourish_caregiver.subjectconsent',
+            screening_identifier=self.screening_preg.screening_identifier,
+            **self.options)
+
+        self.subject_consent.save()
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=self.subject_consent,
+            child_dob=None,
+            first_name=None,
+            last_name=None,)
 
     def test_enrollment_hiv_status_pregnant_pos_valid(self):
-        screening_obj = mommy.make_recipe(
-            'flourish_caregiver.screeningpregwomen', )
-
-        subject_consent = mommy.make_recipe(
-            'flourish_caregiver.subjectconsent',
-            screening_identifier=screening_obj.screening_identifier)
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
-            subject_identifier=subject_consent.subject_identifier)
+            enrollment_hiv_status=POS,
+            subject_identifier=self.subject_consent.subject_identifier, )
 
         status_helper = MaternalStatusHelper(
-            subject_identifier=subject_consent.subject_identifier)
+            subject_identifier=self.subject_consent.subject_identifier)
 
         self.assertEqual(status_helper.hiv_status, POS)
 
     def test_enrollment_hiv_status_pregnant_neg_valid(self):
-        screening_obj = mommy.make_recipe(
-            'flourish_caregiver.screeningpregwomen', )
-
-        subject_consent = mommy.make_recipe(
-            'flourish_caregiver.subjectconsent',
-            screening_identifier=screening_obj.screening_identifier)
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
             enrollment_hiv_status=NEG,
-            subject_identifier=subject_consent.subject_identifier)
+            week32_test=YES,
+            week32_test_date=get_utcnow().date(),
+            current_hiv_status=NEG,
+            subject_identifier=self.subject_consent.subject_identifier)
 
         status_helper = MaternalStatusHelper(
-            subject_identifier=subject_consent.subject_identifier)
+            subject_identifier=self.subject_consent.subject_identifier)
 
-        self.assertEqual(status_helper.hiv_status, POS)
+        self.assertEqual(status_helper.hiv_status, NEG)
 
     def test_enrollment_prior_participant_valid(self):
         maternal_dataset_options = {
@@ -79,9 +102,6 @@ class TestMaternalStatusHelper(TestCase):
 
         subject_identifier = sh.create_TD_efv_enrollment(
             maternal_dataset_options.get('screening_identifier'))
-
-        # subject_identifier = sh.enroll_prior_participant(
-        # maternal_dataset.screening_identifier)
 
         status_helper = MaternalStatusHelper(
             subject_identifier=subject_identifier)

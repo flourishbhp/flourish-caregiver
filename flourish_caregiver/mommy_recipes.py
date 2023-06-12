@@ -18,7 +18,7 @@ from .models import CaregiverLocator, MaternalDataset, MaternalVisit, \
 from .models import CaregiverPhqReferral, FlourishConsentVersion
 from .models import CaregiverPreviouslyEnrolled
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
-from .models import MaternalInterimIdccVersion2
+from .models import MaternalInterimIdccVersion2, MedicalHistory
 
 fake = Faker()
 
@@ -233,3 +233,5 @@ maternalinterimidccversion2 = Recipe(
 
 tbroutinehealthscreenv2 = Recipe(
     TbRoutineHealthScreenV2, )
+
+medicalhistory = Recipe(MedicalHistory, )
