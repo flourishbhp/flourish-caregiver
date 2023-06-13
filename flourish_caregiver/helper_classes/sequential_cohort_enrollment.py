@@ -1,8 +1,9 @@
 from django.apps import apps as django_apps
 from django.db.models import Q
+from edc_constants.date_constants import timezone
 from edc_base.utils import get_utcnow, age
-from .cohort_assignment import CohortAssignment
-from ..models import MaternalDataset
+
+from ..models import MaternalDataset, Cohort
 from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
 from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
 from ..models.signals import cohort_assigned
@@ -28,9 +29,6 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
 
     def __init__(self, child_subject_identifier=None):
         self.child_subject_identifier = child_subject_identifier
-        self.cohort_assignment = CohortAssignment(
-            child_dob=self.child_dob,
-            enrolment_dt=get_utcnow())
 
     @property
     def child_consent_cls(self):
@@ -122,3 +120,71 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             study_child_identifier=self.child_consent_obj.study_child_identifier,
             enrollment_date=get_utcnow().date(),
         )
+
+    def put_onschedule(self):
+        self.take_off_child_offschedule()
+        self.take_off_caregiver_offschedule()
+        self.put_child_onschedule()
+        self.put_caregiver_onschedule()
+
+    @property
+    def child_current_age(self):
+        try:
+            caregiver_child_consent =  self.child_consent_cls.objects.get(
+                study_child_identifier=self.child_subject_identifier)
+        except self.child_consent_cls.DoesNotExist:
+            raise SequentialCohortEnrollmentError(
+                f"The subject: {self.child_subject_identifier} does not "
+                "have a caregiver child consent")
+        else:
+            dob = caregiver_child_consent.child_dob
+            age = Cohort(
+                child_dob=dob,
+                enrollment_date=timezone.now().date())
+            return age
+        return None
+
+    @property
+    def current_cohort(self):
+        """Returns the cohort the child was enrolled on the first time.
+        """
+        cohort = Cohort.objects.objects(
+            suject_identifier=self.child_subject_identifier).order_by(
+                'assign_datetime'
+            )
+        if cohort:
+            return cohort.name
+        return None
+
+    @property
+    def aged_up(self):
+        """Return true if the child has aged up on the cohort
+        they are currently enrolled on
+        """
+        if self.current_cohort in ['cohort_a', 'cohort_a_sec']:
+            if self.child_current_age >= 5:
+                return True
+        elif self.current_cohort in ['cohort_b', 'cohort_b_sec']:
+            if self.child_current_age > 10:
+                return True
+        return False
+
+    def age_up_enrollment(self):
+        """Checks if a child has aged up and put the on a new cohort and schedule.
+        """
+        # Check if a child has aged up
+        if self.aged_up and self.current_cohort != self.evaluated_cohort:
+            # put them on a new aged up cohort
+            try:
+                Cohort.objects.get(
+                    name=self.evaluated_cohort,
+                    subject_identifier=self.child_subject_identifier)
+            except Cohort.DoesNotExist:
+                pass
+            else:
+                Cohort.objects.create(
+                    subject_identifier=self.child_subject_identifier,
+                    name=self.evaluated_cohort,
+                    enrollment_cohort=False)
+                # Put caregiver and child off and on schedule
+                self.put_onschedule()
