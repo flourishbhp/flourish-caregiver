@@ -17,7 +17,7 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
     """
 
     name = models.CharField(
-        max_length=3,
+        max_length=150,
         choices=YES_NO,
         verbose_name="Cohort name",
     )
