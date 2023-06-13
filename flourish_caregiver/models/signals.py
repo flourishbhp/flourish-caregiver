@@ -1,5 +1,11 @@
+from datetime import datetime
+import os
+
+from PIL import Image
+import PIL
 from django import forms
 from django.apps import apps as django_apps
+from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
@@ -9,16 +15,26 @@ from django.db.transaction import TransactionManagementError
 from django.dispatch import receiver
 from edc_action_item import site_action_items
 from edc_base.utils import age, get_utcnow
-from edc_constants.constants import NEW, NO, OPEN
+from edc_constants.constants import OPEN, NEW, NO
 from edc_constants.constants import YES
 from edc_data_manager.models import DataActionItem
+
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
-
 from flourish_caregiver.models.tb_off_study import TbOffStudy
-from flourish_child.models.signals import stamp_image
-from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
+from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
+import pyminizip
+import pypdfium2 as pdfium
+
+from ..action_items import TB_OFF_STUDY_ACTION
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from ..helper_classes.cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
+from ..models.tb_informed_consent import TbInformedConsent
+from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -33,14 +49,6 @@ from .tb_engagement import TbEngagement
 from .tb_interview import TbInterview
 from .tb_referral_outcomes import TbReferralOutcomes
 from .ultrasound import UltraSound
-from ..action_items import TB_OFF_STUDY_ACTION
-from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
-from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from ..models.tb_informed_consent import TbInformedConsent
-from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 
 
 class PreFlourishError(Exception):
@@ -57,7 +65,8 @@ class SubjectConsentError(Exception):
 
 def update_maternal_dataset_and_worklist(subject_identifier,
                                          screening_identifier=None,
-                                         study_child_identifier=None, ):
+                                         study_child_identifier=None,):
+
     study_maternal_identifier = None
 
     if study_child_identifier:
@@ -99,8 +108,7 @@ def update_maternal_dataset_and_worklist(subject_identifier,
             if screening_identifier:
                 screening_query_id = Q(screening_identifier=screening_identifier)
             else:
-                screening_query_id = Q(
-                    study_maternal_identifier=study_maternal_identifier)
+                screening_query_id = Q(study_maternal_identifier=study_maternal_identifier)
 
             try:
                 screening_obj = ScreeningPriorBhpParticipants.objects.get(
@@ -214,8 +222,7 @@ def caregiver_locator_on_post_save(sender, instance, raw, created, **kwargs):
                 if maternal_dataset.protocol == 'Tshilo Dikotla':
                     try:
                         child_dataset = child_dataset_cls.objects.get(
-                            study_maternal_identifier=maternal_dataset
-                            .study_maternal_identifier)
+                            study_maternal_identifier=maternal_dataset.study_maternal_identifier)
                     except child_dataset_cls.DoesNotExist:
                         raise
                     else:
@@ -264,8 +271,7 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
                             subject_identifier=instance.subject_identifier,
                             child_subject_identifier=child_subject_identifier,
                             caregiver_visit_count=children_count,
-                            base_appt_datetime=instance.report_datetime.replace(
-                                microsecond=0))
+                            base_appt_datetime=instance.report_datetime.replace(microsecond=0))
 
 
 @receiver(post_save, weak=False, sender=MaternalDelivery,
@@ -350,7 +356,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob, ).count()
+            ).exclude(dob=instance.child_dob,).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
@@ -368,7 +374,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 try:
                     child_dummy_consent_cls.objects.get(
                         subject_identifier=instance.subject_identifier,
-                        version=instance.version, )
+                        version=instance.version,)
                 except child_dummy_consent_cls.DoesNotExist:
 
                     child_dummy_consent_cls.objects.create(
@@ -572,14 +578,15 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
 @receiver(post_save, weak=False, sender=TbOffStudy,
           dispatch_uid='tb_offstudy_post_save')
 def tb_offstudy_post_save(sender, instance, raw, created, **kwargs):
+
     tb_schedules = ['tb_2_months_schedule', 'tb_6_months_schedule']
     tb_onschedules = ['flourish_caregiver.onschedulecohortatb2months',
                       'flourish_caregiver.onschedulecohortatb6months']
 
     for tb_schedule, tb_onschedule in zip(tb_schedules, tb_onschedules):
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
-            onschedule_model=tb_onschedule,
-            name=tb_schedule)
+                        onschedule_model=tb_onschedule,
+                        name=tb_schedule)
         if schedule.is_onschedule(subject_identifier=instance.subject_identifier,
                                   report_datetime=instance.report_datetime):
             schedule.take_off_schedule(
@@ -646,6 +653,7 @@ def screening_preg_women(sender, instance, raw, created, **kwargs):
           dispatch_uid='screening_prior_bhp_participants_on_post_save')
 def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
     if not raw:
+
         subject_consents = SubjectConsent.objects.filter(
             screening_identifier=instance.screening_identifier)
 
@@ -801,14 +809,15 @@ def get_schedule_sequence(subject_identifier, instance,
                           onschedule_cls, caregiver_visit_count=None):
     children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
-                subject_identifier=subject_identifier).exclude(
-                child_subject_identifier=instance.subject_identifier).count())
+                          subject_identifier=subject_identifier).exclude(
+                              child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
                     child_subject_identifier=None, base_appt_datetime=None,
                     caregiver_visit_count=None):
+    
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
         schedule, onschedule_model_cls, schedule_name = get_onschedule_model(
@@ -849,6 +858,7 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
 
 def get_onschedule_model(cohort, caregiver_visit_count=None, subject_identifier=None,
                          instance=None):
+
     cohort_label_lower = ''.join(cohort.split('_'))
 
     if 'enrol' in cohort:
@@ -899,7 +909,7 @@ def get_registration_date(subject_identifier):
     '''
     unborn_baby_consents = list(filter(
         lambda child: child.is_preg, child_consents.filter(
-            first_name='', last_name='', )))
+            first_name='', last_name='',)))
 
     if (child_consents and child_consents.values_list(
             'subject_identifier', flat=True).distinct().count() == 1):
@@ -938,10 +948,9 @@ def create_registered_infant(instance):
                         'flourish_caregiver.caregiverchildconsent')
 
                     # Create caregiver child consent
-                    caregiver_child_consent_objs = \
-                        caregiver_child_consent_cls.objects.filter(
-                            subject_identifier__startswith=instance.subject_identifier,
-                            preg_enroll=True)
+                    caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
+                        subject_identifier__startswith=instance.subject_identifier,
+                        preg_enroll=True)
 
                     if not caregiver_child_consent_objs:
                         caregiver_child_consent_cls.objects.create(
@@ -1021,7 +1030,85 @@ def create_consent_version(instance, version):
 
 
 def get_child_consents(subject_identifier):
+
     child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
 
     return child_consent_cls.objects.filter(
         subject_identifier__startswith=subject_identifier).order_by('-consent_datetime')
+
+
+def stamp_image(instance):
+    filefield = instance.image
+    filename = filefield.name  # gets the "normal" file name as it was uploaded
+    storage = filefield.storage
+    path = storage.path(filename)
+    if '.pdf' not in path:
+        base_image = Image.open(path)
+        stamped_img = add_image_stamp(base_image=base_image)
+        stamped_img.save(path)
+    else:
+        print_pdf(path)
+
+
+def add_image_stamp(base_image=None, position=(25, 25),
+                    resize=(500, 500)):
+    """
+    Superimpose image of a stamp over copy of the base image
+    @param image_path: dir to base image
+    @param dont_save: boolean for not saving the image just converting
+    @param position: pixels(w,h) to superimpose stamp at
+    """
+    stamp = Image.open('media/stamp/true-copy.png')
+    if resize:
+        stamp = stamp.resize(resize, PIL.Image.ANTIALIAS)
+
+    width, height = base_image.size
+    stamp_width, stamp_height = stamp.size
+
+    # Determine orientation of the base image before pasting stamp
+    if width < height:
+        pos_width = round(width / 2) - round(stamp_width / 2)
+        pos_height = height - stamp_height
+        position = (pos_width, pos_height)
+    elif width > height:
+        stamp = stamp.rotate(90)
+        pos_width = width - stamp_width
+        pos_height = round(height / 2) - round(stamp_height / 2)
+        position = (pos_width, pos_height)
+
+    # paste stamp over image
+    base_image.paste(stamp, position, mask=stamp)
+    return base_image
+
+
+def print_pdf(filepath):
+    pdf = pdfium.PdfDocument(filepath)
+    page_indices = [i for i in range(len(pdf))]
+    renderer = pdf.render_to(
+        pdfium.BitmapConv.pil_image,
+        page_indices=page_indices,
+        scale=300 / 72
+    )
+    stamped_pdf_images = []
+    for image, index in zip(renderer, page_indices):
+        stamped_pdf_images.append(add_image_stamp(base_image=image))
+    first_img = stamped_pdf_images[0]
+    first_img.save(filepath, save_all=True, append_images=stamped_pdf_images[1:])
+
+
+def encrypt_files(instance, subject_identifier):
+    base_path = settings.MEDIA_ROOT
+    if instance.image:
+        upload_to = f'{instance.image.field.upload_to}'
+        timestamp = datetime.timestamp(get_utcnow())
+        zip_filename = f'{subject_identifier}_{timestamp}.zip'
+        with open('filekey.key', 'r') as filekey:
+            key = filekey.read().rstrip()
+        com_lvl = 8
+        pyminizip.compress(f'{instance.image.path}', None,
+                           f'{base_path}/{upload_to}{zip_filename}', key, com_lvl)
+    # remove unencrypted file
+    if os.path.exists(f'{instance.image.path}'):
+        os.remove(f'{instance.image.path}')
+    instance.image = f'{upload_to}{zip_filename}'
+    instance.save()
