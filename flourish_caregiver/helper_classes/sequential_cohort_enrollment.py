@@ -122,3 +122,9 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             study_child_identifier=self.child_consent_obj.study_child_identifier,
             enrollment_date=get_utcnow().date(),
         )
+
+    def put_onschedule(self):
+        self.take_off_child_offschedule()
+        self.take_off_caregiver_offschedule()
+        self.put_child_onschedule()
+        self.put_caregiver_onschedule()
