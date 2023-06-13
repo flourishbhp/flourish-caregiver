@@ -128,3 +128,12 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         self.take_off_caregiver_offschedule()
         self.put_child_onschedule()
         self.put_caregiver_onschedule()
+
+    def age_up_enrollment(self):
+        """Checks if a child has aged up and put the on a new cohort and schedule.
+        """
+
+        # TODO: Check if a child has aged up
+        # TODO: if a child has aged up put them on a new cohort
+        # TODO: Put the child off schedule
+        # TODO: Put the child on a new schedule
