@@ -12,7 +12,7 @@ from .model_mixins import SearchSlugModelMixin
 
 
 class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
-                 SearchSlugModelMixin, BaseUuidModel):
+             SearchSlugModelMixin, BaseUuidModel):
     """ A model completed by the system for cohort assignment.
     """
 
