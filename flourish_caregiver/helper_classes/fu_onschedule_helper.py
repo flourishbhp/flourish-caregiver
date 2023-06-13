@@ -44,8 +44,8 @@ class FollowUpEnrolmentHelper(object):
     def get_latest_completed_appointment(self, subject_identifier, cohort, schedule_number):
 
         appts = Appointment.objects.filter(~Q(appt_status=NEW_APPT) & ~Q(
-            schedule_name__icontains='sec'), subject_identifier=subject_identifier).exclude(
-                schedule_name__icontains='tb')
+            schedule_name__icontains='sec') & Q(schedule_name__icontains=f'{cohort}_'),
+            subject_identifier=subject_identifier).exclude(schedule_name__icontains='tb')
 
         if appts:
             latest = appts.order_by('timepoint').last()
@@ -145,7 +145,6 @@ class FollowUpEnrolmentHelper(object):
         return related_children.values_list('subject_identifier', flat=True)
 
     def activate_fu_schedule(self):
-
         latest_appt = self.get_latest_completed_appointment(
             self.subject_identifier, self.cohort, self.schedule_number)
 
