@@ -60,7 +60,7 @@ from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
 from ..models.tb_visit_screening_women import TbVisitScreeningWomen
-from ..models.tb_off_study import TbOffStudy  # was supposed to be in the prns
+from ..models.tb_off_study import TbOffStudy
 
 
 class PreFlourishError(Exception):
