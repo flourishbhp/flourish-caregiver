@@ -62,6 +62,21 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             return schedule_obj
 
     @property
+    def caregiver_last_qt_subject_schedule_obj(self):
+        try:
+            schedule_obj = self.subject_schedule_cls.objects.filter(
+                Q(schedule_name__icontains='qt') | Q(
+                    schedule_name__icontains='quart'),
+                subject_identifier=self.caregiver_subject_identifier,
+
+            ).latest('onschedule_datetime')
+        except self.subject_schedule_cls.DoesNotExist:
+            raise SequentialCohortEnrollmentError(
+                f'{self.caregiver_subject_identifier} : was never been on quartarly schedule')
+        else:
+            return schedule_obj
+
+    @property
     def cohort_obj(self):
         try:
             cohort_obj = self.cohort_cls.objects.filter(
@@ -76,7 +91,11 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def caregiver_subject_identifier(self):
         """Return child caregiver subject identifier.
         """
-        return self.child_consent_obj.subject_consent.subject_identifier
+        return self.caregiver_consent_obj.subject_identifier
+
+    @property
+    def caregiver_consent_obj(self):
+        return self.child_consent_obj.subject_consent
 
     @property
     def child_consent_obj(self):
