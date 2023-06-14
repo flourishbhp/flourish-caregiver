@@ -38,6 +38,8 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
         verbose_name="What is the reason a CD4 result is not available?",
         choices=REASON_CD4_RESULT_UNAVAILABLE)
 
+    reason_cd4_not_availiable_other = OtherCharField()
+
     cd4_value_and_date_availiable = models.CharField(
         max_length=3,
         blank=True,
@@ -72,6 +74,8 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
         verbose_name="What is the reason VL result is not available?",
         choices=REASON_VL_RESULT_UNAVAILABLE)
 
+    reason_vl_not_availiable_other = OtherCharField()
+
     vl_value_and_date_availiable = models.CharField(
         max_length=3,
         blank=True,
@@ -101,8 +105,6 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
 
     any_new_diagnoses = models.CharField(
         max_length=3,
-        blank=True,
-        null=True,
         verbose_name="Is there any other new diagnoses in your last IDCC review?",
         choices=YES_NO)
 
