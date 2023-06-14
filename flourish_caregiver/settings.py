@@ -80,7 +80,6 @@ INSTALLED_APPS = [
     'flourish_caregiver.apps.EdcTimepointAppConfig',
     'flourish_caregiver.apps.EdcVisitTrackingAppConfig',
     'flourish_visit_schedule.apps.AppConfig',
-    'flourish_calendar.apps.AppConfig',
     'flourish_caregiver.apps.AppConfig',
 ]
 
@@ -123,12 +122,8 @@ WSGI_APPLICATION = 'flourish_caregiver.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': ':memory:',
     },
-    'pre_flourish': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'pre_flourish_db.sqlite3',
-    }
 }
 
 # Password validation
