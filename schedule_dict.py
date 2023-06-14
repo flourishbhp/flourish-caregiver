@@ -183,6 +183,8 @@ child_schedule_dict = {
             'onschedule_model': 'flourish_child.onschedulechildcohortaquarterly',
             'name': 'child_a_quart_schedule1',
         },
+    },
+    'cohort_a_sec': {
         'sec_aims_enrol': {
             'onschedule_model': 'flourish_child.onschedulechildcohortasec',
             'name': 'child_a_sec_schedule1',
@@ -209,11 +211,13 @@ child_schedule_dict = {
             'onschedule_model': 'flourish_child.onschedulechildcohortbquarterly',
             'name': 'child_b_quart_schedule1',
         },
-        'sec_aims_enrol': {
+    },
+    'cohort_b_sec': {
+        'enrollment': {
             'onschedule_model': 'flourish_child.onschedulechildcohortbsec',
             'name': 'child_b_sec_schedule1',
         },
-        'sec_aims_quart': {
+        'quarterly': {
             'onschedule_model': 'flourish_child.onschedulechildcohortbsecquart',
             'name': 'child_b_sec_qt_schedule1',
         },
@@ -235,11 +239,13 @@ child_schedule_dict = {
             'onschedule_model': 'flourish_child.onschedulechildcohortcquarterly',
             'name': 'child_c_quart_schedule1',
         },
-        'sec_aims_enrol': {
+    },
+    'cohort_c_sec': {
+        'enrollment': {
             'onschedule_model': 'flourish_child.onschedulechildcohortcsec',
             'name': 'child_c_sec_schedule1',
         },
-        'sec_aims_quart': {
+        'quarterly': {
             'onschedule_model': 'flourish_child.onschedulechildcohortcsecquart',
             'name': 'child_c_sec_qt_schedule1',
         },
