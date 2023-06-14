@@ -88,7 +88,8 @@ class TestOffStudyAction(TestCase):
             'flourish_caregiver.ultrasound',
             maternal_visit=maternal_visit_1000M,
             report_datetime=get_utcnow(),
-            est_edd_ultrasound=(get_utcnow() + relativedelta(months=4)).date())
+            number_of_gestations=1,
+            est_edd_ultrasound=(get_utcnow() + relativedelta(months=7)).date())
 
         self.assertEqual(ActionItem.objects.filter(
             Q(status=OPEN) | Q(status=NEW),

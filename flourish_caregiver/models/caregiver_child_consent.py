@@ -183,7 +183,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             self.relative_identifier = self.get_parent_identifier
 
         if self.subject_identifier and not self.cohort:
-            self.cohort = self.assign_enrol_instance_cohort
+            self.cohort = self.assign_enrol_instance_cohort()
 
 
         self.preg_enroll = self.is_preg
@@ -284,15 +284,14 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     @property
     def live_infants(self):
-        child_dummy_consent_cls = django_apps.get_model(
-            'flourish_child.childdummysubjectconsent')
-        return child_dummy_consent_cls.objects.filter(
+        registered_subject_cls = django_apps.get_model(
+            'edc_registration.registeredsubject')
+        return registered_subject_cls.objects.filter(
             relative_identifier=self.subject_consent.subject_identifier).exclude(
                 identity=self.identity).count() + 1
 
     @property
     def subject_identifier_sufix(self):
-
         caregiver_child_consent_cls = django_apps.get_model(self._meta.label_lower)
         child_identifier_postfix = ''
         if self.child_dataset:

@@ -364,7 +364,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 relative_identifier=instance.subject_consent.subject_identifier
             ).exclude(subject_identifier=instance.subject_identifier,).count()
 
-
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
 
