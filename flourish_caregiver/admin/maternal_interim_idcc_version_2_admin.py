@@ -9,6 +9,7 @@ from ..models import MaternalInterimIdccVersion2
 from .modeladmin_mixins import CrfModelAdminMixin
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ObjectDoesNotExist
+from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 
 
 @admin.register(MaternalInterimIdccVersion2, site=flourish_caregiver_admin)
@@ -33,24 +34,70 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
                 'info_since_lastvisit',
                 'laboratory_information_available',
                 'last_visit_result',
-                'reason_cd4_not_collected',
+                'reason_cd4_not_availiable',
+                'cd4_value_and_date_availiable',
                 'recent_cd4',
                 'recent_cd4_date',
+                'vl_result_availiable',
+                'reason_vl_not_availiable',
+                'vl_value_and_date_availiable',
                 'value_vl_size',
                 'value_vl',
                 'recent_vl_date',
-                'other_diagnoses']}
+                'any_new_diagnoses',
+                'new_other_diagnoses']}
          ), audit_fieldset_tuple)
 
     radio_fields = {'info_since_lastvisit': admin.VERTICAL,
-                    'value_vl_size': admin.VERTICAL,
                     'laboratory_information_available': admin.VERTICAL,
                     'last_visit_result': admin.VERTICAL,
-                    'reason_cd4_not_collected': admin.VERTICAL, }
+                    'reason_cd4_not_availiable': admin.VERTICAL,
+                    'cd4_value_and_date_availiable': admin.VERTICAL,
+                    'vl_result_availiable': admin.VERTICAL,
+                    'reason_vl_not_availiable': admin.VERTICAL,
+                    'vl_value_and_date_availiable': admin.VERTICAL,
+                    'value_vl_size': admin.VERTICAL,
+                    'any_new_diagnoses': admin.VERTICAL, }
+
+    custom_form_labels = {
+        FormLabel(
+            field='info_since_lastvisit',
+            label='Since the last visit ({previous}) did you go for IDCC review?',
+            previous_appointment=True
+        ),
+        FormLabel(
+            field='last_visit_result',
+            label='Is there a CD4 result since last visit ({previous}) ?',
+            previous_appointment=True
+        ),
+        FormLabel(
+            field='vl_result_availiable',
+            label='Is there a VL result since last visit ({previous}) ?',
+            previous_appointment=True
+        ),
+    }
+
+    def format_form_label(self, label=None, instance=None, appointment=None, **kwargs):
+
+        previous_instance = self.get_previous_instance(request=self.request)
+
+        previous = None
+
+        if previous_instance:
+            previous = previous_instance.report_datetime.date()
+        elif self.maternal_delivery_obj:
+            previous = getattr(
+                self.maternal_hiv_interimhx_obj, 'cd4_date', None)
+
+        label = label.format(previous=previous or 'Unknown')
+
+        return label
 
     def get_model_data(self, request, object_id=None):
 
         subject_identifier = None
+
+        self.request = request
 
         if self.get_instance(request):
             subject_identifier = self.get_instance(request).subject_identifier
@@ -58,10 +105,24 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
             subject_identifier = self.get_object(
                 request, object_id).maternal_visit.subject_identifier
 
-        if subject_identifier:
+        return self.maternal_hiv_interimhx_obj
+
+    @property
+    def subject_identifier(self):
+        subject_identifier = None
+        if self.get_instance(self.request):
+            subject_identifier = self.get_instance(
+                self.request).subject_identifier
+
+        return subject_identifier
+
+    @property
+    def maternal_hiv_interimhx_obj(self):
+
+        if self.subject_identifier:
             try:
                 return MaternalHivInterimHx.objects.get(
-                    maternal_visit__appointment__subject_identifier=subject_identifier)
+                    maternal_visit__appointment__subject_identifier=self.subject_identifier)
             except MaternalHivInterimHx.DoesNotExist:
                 pass
 
