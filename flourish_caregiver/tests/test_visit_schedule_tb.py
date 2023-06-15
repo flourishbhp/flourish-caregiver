@@ -173,6 +173,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe('flourish_caregiver.ultrasound',
                           maternal_visit=self.enrol_visit,
+                          est_edd_ultrasound=get_utcnow().date(),
                           ga_confirmed=22)
 
         self.assertEqual(CrfMetadata.objects.get(
@@ -184,6 +185,7 @@ class TestVisitScheduleTb(TestCase):
     def test_tb_screening_form_devlivery_visit(self):
         mommy.make_recipe('flourish_caregiver.ultrasound',
                           maternal_visit=self.enrol_visit,
+                          est_edd_ultrasound=get_utcnow().date(),
                           ga_confirmed=22)
 
         self.assertEqual(CrfMetadata.objects.get(
