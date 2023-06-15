@@ -183,7 +183,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             self.relative_identifier = self.get_parent_identifier
 
         if self.subject_identifier and not self.cohort:
-            self.cohort = self.assign_enrol_instance_cohort()
+            self.cohort = self.assign_enrol_instance_cohort
 
 
         self.preg_enroll = self.is_preg
@@ -375,6 +375,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     def get_parent_identifier(self):
         return self.subject_consent.subject_identifier
 
+    @property
     def assign_enrol_instance_cohort(self):
         try:
             enrol_consent = self._meta.model.objects.filter(
