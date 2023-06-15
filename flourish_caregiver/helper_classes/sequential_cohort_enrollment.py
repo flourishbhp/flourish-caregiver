@@ -125,8 +125,6 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
 
         if 'fu' in schedule_name:
             return 'followup_quartaly'
-        elif 'sec' in schedule_name:
-            return 'sec_aims_quart'
         else:
             return 'quarterly'
 
@@ -169,8 +167,8 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         """
         try:
 
-            cohort = Cohort.objects.get(
-                suject_identifier=self.child_subject_identifier).order_by(
+            cohort = Cohort.objects.filter(
+                suject_identifier=self.child_subject_identifier).latest(
                     'assign_datetime'
             )
         except Cohort.DoesNotExist:
