@@ -76,6 +76,9 @@ class TestSequentialEnrollmentCohort(TestCase):
             mommy.make_recipe('flourish_caregiver.registeredsubject',
                               subject_identifier=self.subject_identifier)
 
+        self.sq_erollment = SequentialCohortEnrollment(
+            child_subject_identifier=self.child_subject_identifier)
+
         self.options = {
             'consent_datetime': get_utcnow(),
             'version': '1'}
@@ -167,10 +170,7 @@ class TestSequentialEnrollmentCohort(TestCase):
             onschedule_datetime=get_utcnow(),
             schedule_name='child_a_quart_schedule1')
 
-        sq_erollment = SequentialCohortEnrollment(
-            child_subject_identifier=self.child_subject_identifier)
-
-        sq_erollment.put_caregiver_onschedule()
+        self.sq_erollment.put_caregiver_onschedule()
 
         self.assertTrue(OnScheduleCohortBSecQuart.objects.filter(
             subject_identifier=self.subject_identifier).exists())
@@ -220,10 +220,7 @@ class TestSequentialEnrollmentCohort(TestCase):
             onschedule_datetime=get_utcnow(),
             schedule_name='child_b_quart_schedule1')
 
-        sq_erollment = SequentialCohortEnrollment(
-            child_subject_identifier=self.child_subject_identifier)
-
-        sq_erollment.put_caregiver_onschedule()
+        self.sq_erollment.put_caregiver_onschedule()
 
         self.assertTrue(OnScheduleCohortCQuarterly.objects.filter(
             subject_identifier=self.subject_identifier).exists())
@@ -258,15 +255,11 @@ class TestSequentialEnrollmentCohort(TestCase):
             onschedule_datetime=get_utcnow(),
             schedule_name='child_a_quart_schedule1')
 
-        sq_erollment = SequentialCohortEnrollment(
-            child_subject_identifier=self.child_subject_identifier)
-
-        sq_erollment.put_child_onschedule()
+        self.sq_erollment.put_child_onschedule()
 
         self.assertTrue(self.child_cohort_b_sec_quartely_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).exists())
 
-    @tag('child_sq')
     def test_child_cohort_b_to_cohort_c(self):
         self.child_dob = (
             get_utcnow() - relativedelta(years=11)).date()
@@ -304,10 +297,7 @@ class TestSequentialEnrollmentCohort(TestCase):
             onschedule_datetime=get_utcnow(),
             schedule_name='child_b_quart_schedule1')
 
-        sq_erollment = SequentialCohortEnrollment(
-            child_subject_identifier=self.child_subject_identifier)
-
-        sq_erollment.put_child_onschedule()
+        self.sq_erollment.put_child_onschedule()
 
         self.assertTrue(self.child_cohort_c_quartely_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).exists())
@@ -354,12 +344,9 @@ class TestSequentialEnrollmentCohort(TestCase):
             onschedule_datetime=get_utcnow(),
             schedule_name='child_a_quart_schedule1')
 
-        sq_erollment = SequentialCohortEnrollment(
-            child_subject_identifier=self.child_subject_identifier)
+        self.sq_erollment.take_off_caregiver_offschedule()
 
-        sq_erollment.take_off_caregiver_offschedule()
-
-        sq_erollment.put_caregiver_onschedule()
+        self.sq_erollment.put_caregiver_onschedule()
 
         self.assertTrue(self.subject_schedule_history_cls.objects.filter(
             subject_identifier=self.subject_identifier,
@@ -400,15 +387,72 @@ class TestSequentialEnrollmentCohort(TestCase):
             onschedule_datetime=get_utcnow(),
             schedule_name='child_a_quart_schedule1')
 
-        sq_erollment = SequentialCohortEnrollment(
-            child_subject_identifier=self.child_subject_identifier)
-
-        sq_erollment.take_off_child_offschedule()
-        sq_erollment.put_child_onschedule()
+        self.sq_erollment.take_off_child_offschedule()
+        self.sq_erollment.put_child_onschedule()
 
         self.assertTrue(self.subject_schedule_history_cls.objects.filter(
             subject_identifier=self.child_subject_identifier,
             schedule_name='child_a_quart_schedule1',
             schedule_status='offschedule').exists())
+        self.assertTrue(self.child_cohort_b_sec_quartely_cls.objects.filter(
+            subject_identifier=self.child_subject_identifier).exists())
+
+    def test_both_caregiver_and_child_cohort_a_to_cohort_b(self):
+
+        self.child_dataset = mommy.make_recipe('flourish_child.childdataset',
+                                               dob=self.child_dob,
+                                               infant_hiv_exposed='Unexposed',
+                                               study_maternal_identifier=self.study_maternal_identifier,
+                                               study_child_identifier=self.study_child_identifier)
+
+        self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
+                                                         subject_identifier=self.child_subject_identifier,
+                                                         subject_consent=self.subject_consent,
+                                                         study_child_identifier=self.study_child_identifier,
+                                                         child_dob=self.child_dob)
+
+        mommy.make_recipe('flourish_caregiver.maternaldataset',
+                          subject_identifier=self.subject_identifier,
+                          study_maternal_identifier=self.study_maternal_identifier,
+                          protocol='Tshipidi')
+
+        mommy.make_recipe('flourish_child.childdummysubjectconsent',
+                          subject_identifier=self.child_subject_identifier,
+                          dob=self.caregiver_child_consent.child_dob)
+
+        _, caregiver_schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+            onschedule_model='flourish_caregiver.onschedulecohortaquarterly',
+            name='a_quarterly1_schedule1'
+        )
+
+        _, child_schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+            onschedule_model=self.child_cohort_a_quartely_model,
+            name='child_a_quart_schedule1'
+        )
+
+        caregiver_schedule.put_on_schedule(
+            subject_identifier=self.subject_identifier,
+            onschedule_datetime=get_utcnow(),
+            schedule_name='a_quarterly1_schedule1')
+
+        child_schedule.put_on_schedule(
+            subject_identifier=self.child_subject_identifier,
+            onschedule_datetime=get_utcnow(),
+            schedule_name='child_a_quart_schedule1')
+
+        self.sq_erollment.put_onschedule()
+
+        self.assertTrue(self.subject_schedule_history_cls.objects.filter(
+            subject_identifier=self.subject_identifier,
+            schedule_name='a_quarterly1_schedule1',
+            schedule_status='offschedule').exists())
+
+        self.assertTrue(self.subject_schedule_history_cls.objects.filter(
+            subject_identifier=self.child_subject_identifier,
+            schedule_name='child_a_quart_schedule1',
+            schedule_status='offschedule').exists())
+
+        self.assertTrue(OnScheduleCohortBSecQuart.objects.filter(
+            subject_identifier=self.subject_identifier).exists())
         self.assertTrue(self.child_cohort_b_sec_quartely_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).exists())
