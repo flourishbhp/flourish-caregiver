@@ -38,7 +38,7 @@ from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
-from .cohort import Cohort
+from .cohort import Cohort as CohortModel
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
@@ -61,6 +61,7 @@ from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
 from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 from ..models.tb_off_study import TbOffStudy  # was supposed to be in the prns
+# from ..models import Cohort as CohortModel
 
 
 class PreFlourishError(Exception):
@@ -384,10 +385,10 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
         # Check if the participant has been put into an enrolment cohort
         try:
-            Cohort.objects.get(
+            CohortModel.objects.get(
                 subject_identifier=instance.subject_identifier,
                 enrollment_cohort=True)
-        except Cohort.DoesNotExist:
+        except CohortModel.DoesNotExist:
             cohort = cohort_assigned(instance.subject_identifier,
                                      instance.child_dob,
                                      instance.subject_consent.created.date())
@@ -411,7 +412,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         relative_identifier=instance.relative_identifier,
                         cohort=cohort)
             # Put participant into a cohort
-            Cohort.objects.create(
+            CohortModel.objects.create(
                 subject_identifier=instance.subject_identifier,
                 name=cohort,
                 enrollment_cohort=True)
