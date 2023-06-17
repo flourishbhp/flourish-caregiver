@@ -112,7 +112,7 @@ caregiverchildconsent = Recipe(
     child_knows_status=YES,
     identity=seq('234513187'),
     identity_type='birth_cert',
-    confirm_identity=seq('234513187'),
+    confirm_identity=seq('234513187')
 )
 
 antenatalenrollment = Recipe(
