@@ -254,8 +254,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                 return (self.child_dob and self.child_dob > self.consent_datetime.date()
                         or self.child_dob is None)
         else:
-            earliest_caregiver_child_consent = caregiver_child_consent_objs.order_by(
-                "consent_datetime").first()
+            earliest_caregiver_child_consent = caregiver_child_consent_objs.order_by("consent_datetime").first()
             return earliest_caregiver_child_consent.preg_enroll
 
         return False
@@ -271,8 +270,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     @property
     def subject_identifier_sufix(self):
 
-        caregiver_child_consent_cls = django_apps.get_model(
-            self._meta.label_lower)
+        caregiver_child_consent_cls = django_apps.get_model(self._meta.label_lower)
         child_identifier_postfix = ''
         if self.child_dataset:
             if self.subject_consent.multiple_birth:
@@ -325,8 +323,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     @property
     def child_dataset(self):
-        child_dataset_cls = django_apps.get_model(
-            'flourish_child.childdataset')
+        child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
         try:
             child_dataset = child_dataset_cls.objects.get(
                 study_child_identifier=self.study_child_identifier)
@@ -342,8 +339,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     @property
     def birth_order(self):
-        caregiver_child_consent_cls = django_apps.get_model(
-            self._meta.label_lower)
+        caregiver_child_consent_cls = django_apps.get_model(self._meta.label_lower)
         return caregiver_child_consent_cls.objects.filter(
             subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
                 identity=self.identity).count() + 1
@@ -357,5 +353,4 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         app_label = 'flourish_caregiver'
         verbose_name = 'Caregiver Consent On Behalf Of Child'
         verbose_name_plural = 'Caregiver Consent On Behalf Of Child'
-        unique_together = (('subject_identifier', 'version'),
-                           ('subject_consent', 'subject_identifier', 'version'))
+        # unique_together = ('subject_consent', 'subject_identifier', 'version')

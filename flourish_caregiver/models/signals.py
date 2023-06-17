@@ -24,7 +24,7 @@ from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 import pyminizip
 import pypdfium2 as pdfium
 
-from ..action_items import TB_OFF_STUDY_ACTION
+from ..action_items import CAREGIVEROFF_STUDY_ACTION, TB_OFF_STUDY_ACTION
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.cohort import Cohort
