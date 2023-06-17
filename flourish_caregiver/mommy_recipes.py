@@ -5,7 +5,7 @@ from edc_constants.constants import ALIVE, FEMALE, NEG, NO, NOT_APPLICABLE, ON_S
 from edc_visit_tracking.constants import SCHEDULED
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
-
+from django.apps import apps as django_apps
 from flourish_caregiver.models.hiv_disclosure_status import HIVDisclosureStatusA
 from flourish_caregiver.models.tb_engagement import TbEngagement
 from .models import AntenatalEnrollment, MaternalDelivery, SubjectConsent, \
@@ -233,3 +233,8 @@ maternalinterimidccversion2 = Recipe(
 
 tbroutinehealthscreenv2 = Recipe(
     TbRoutineHealthScreenV2, )
+
+
+registeredsubject = Recipe(
+    django_apps.get_model('edc_registration.registeredsubject'),
+)
