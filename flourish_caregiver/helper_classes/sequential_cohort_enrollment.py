@@ -157,7 +157,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             dob = caregiver_child_consent.child_dob
             age = Cohort(
                 child_dob=dob,
-                enrollment_date=timezone.now().date())
+                enrollment_date=get_utcnow().date())
             return age
         return None
 
