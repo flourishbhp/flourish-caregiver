@@ -251,7 +251,7 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     - Put subject on cohort a schedule.
     """
     child_consent = CaregiverChildConsent.objects.filter(
-        preg_enroll=True, relative_identifier=instance.subject_identifier)
+        preg_enroll=True, subject_consent__subject_identifier=instance.subject_identifier)
 
     child_subject_identifier = None
 
@@ -324,7 +324,7 @@ def caregiver_previously_enrolled_on_post_save(sender, instance, raw, created, *
         child_assent_cls = django_apps.get_model('flourish_child.childassent')
 
         child_identifiers = CaregiverChildConsent.objects.filter(
-            relative_identifier=instance.subject_identifier).values_list(
+            subject_consent__subject_identifier=instance.subject_identifier).values_list(
             'subject_identifier', flat=True).distinct()
 
         child_assents = child_assent_cls.objects.filter(
@@ -389,7 +389,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         identity=instance.identity,
                         dob=instance.child_dob,
                         version=instance.version,
-                        relative_identifier=instance.relative_identifier,
+                        relative_identifier=instance.subject_consent.subject_identifier,
                         cohort=cohort)
 
             instance.cohort = cohort
@@ -530,7 +530,7 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
         else:
             try:
                 child_consent = CaregiverChildConsent.objects.filter(
-                    relative_identifier=instance.subject_identifier,
+                    subject_consent__subject_identifier=instance.subject_identifier,
                     preg_enroll=True).latest('consent_datetime')
             except CaregiverChildConsent.DoesNotExist:
                 pass
@@ -851,7 +851,7 @@ def create_registered_infant(instance):
 
                     # Create caregiver child consent
                     caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
-                        relative_identifier=instance.subject_identifier,
+                        subject_consent__subject_identifier=instance.subject_identifier,
                         preg_enroll=True)
 
                     if not caregiver_child_consent_objs:
@@ -859,7 +859,6 @@ def create_registered_infant(instance):
                             subject_consent=maternal_consent,
                             child_dob=instance.delivery_datetime.date(),
                             consent_datetime=get_utcnow(),
-                            relative_identifier=maternal_consent.subject_identifier,
                             is_eligible=True)
                     else:
                         caregiver_child_consent_obj = caregiver_child_consent_objs.latest(
@@ -877,7 +876,7 @@ def create_registered_infant(instance):
                                 dob=caregiver_child_consent_obj.dob,
                                 cohort=caregiver_child_consent_obj.cohort,
                                 version=caregiver_child_consent_obj.version,
-                                relative_identifier=caregiver_child_consent_obj.relative_identifier)
+                                relative_identifier=caregiver_child_consent_obj.subject_consent.subject_identifier)
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
@@ -937,7 +936,7 @@ def get_child_consents(subject_identifier):
     child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
 
     return child_consent_cls.objects.filter(
-        relative_identifier=subject_identifier).order_by('-consent_datetime')
+        subject_consent__subject_identifier=subject_identifier).order_by('-consent_datetime')
 
 
 def stamp_image(instance):

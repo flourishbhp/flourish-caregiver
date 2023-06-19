@@ -22,14 +22,6 @@ from .subject_consent import SubjectConsent
 INFANT = 'infant'
 
 
-class CaregiverChildConsentManager(models.Manager):
-
-    def update_relative_identifier(self):
-        for obj in self.all():
-            setattr(obj, 'relative_identifier', obj.get_parent_identifier)
-            obj.save_base(raw=True, update_fields=['relative_identifier'])
-
-
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin,
                             IdentityFieldsMixin, ReviewFieldsMixin,
                             PersonalFieldsMixin, VerificationFieldsMixin, BaseUuidModel):
@@ -150,13 +142,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         blank=True,
         null=True)
 
-    relative_identifier = models.CharField(
-        verbose_name="Identifier of immediate relation",
-        max_length=36,
-        null=True,
-        blank=True,
-        help_text="For example, mother's identifier, if available / appropriate")
-
     caregiver_visit_count = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(3)],
         blank=True,
@@ -176,12 +161,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         null=True,
         editable=False)
 
-    objects = CaregiverChildConsentManager()
-
     def save(self, *args, **kwargs):
-        if not self.relative_identifier:
-            self.relative_identifier = self.get_parent_identifier
-
         if self.subject_identifier and not self.cohort:
             self.cohort = self.assign_enrol_instance_cohort
 
@@ -245,7 +225,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         try:
             child_consent = self._meta.model.objects.get(
                 preg_enroll=True,
-                relative_identifier=self.subject_consent.subject_identifier)
+                subject_consent__subject_identifier=self.subject_consent.subject_identifier)
         except self._meta.model.DoesNotExist:
             pass
         else:
@@ -325,7 +305,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                             child_identifier_postfix = '56'
             else:
                 children_count = len(set(caregiver_child_consent_cls.objects.filter(
-                    relative_identifier=self.subject_consent.subject_identifier).exclude(
+                    subject_consent__subject_identifier=self.subject_consent.subject_identifier).exclude(
                         child_dob=self.child_dob,
                         first_name=self.first_name).values_list('subject_identifier', flat=True)))
                 if children_count:
@@ -334,7 +314,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                     child_identifier_postfix = 10
         else:
             children_count = len(set(caregiver_child_consent_cls.objects.filter(
-                    relative_identifier=self.subject_consent.subject_identifier).exclude(
+                    subject_consent__subject_identifier=self.subject_consent.subject_identifier).exclude(
                         child_dob=self.child_dob,
                         first_name=self.first_name).values_list('subject_identifier', flat=True)))
             if children_count:
@@ -363,7 +343,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     def birth_order(self):
         caregiver_child_consent_cls = django_apps.get_model(self._meta.label_lower)
         return caregiver_child_consent_cls.objects.filter(
-            relative_identifier=self.subject_consent.subject_identifier).exclude(
+            subject_consent__subject_identifier=self.subject_consent.subject_identifier).exclude(
                 identity=self.identity).count() + 1
 
     def get_child_age_at_enrollment(self):
@@ -372,7 +352,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             check_date=self.created.date())
 
     @property
-    def get_parent_identifier(self):
+    def relative_identifier(self):
         return self.subject_consent.subject_identifier
 
     @property
