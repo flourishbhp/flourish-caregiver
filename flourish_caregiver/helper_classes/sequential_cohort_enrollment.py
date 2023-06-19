@@ -148,7 +148,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def child_current_age(self):
         try:
             caregiver_child_consent = self.child_consent_cls.objects.get(
-                study_child_identifier=self.child_subject_identifier)
+                subject_identifier=self.child_subject_identifier)
         except self.child_consent_cls.DoesNotExist:
             raise SequentialCohortEnrollmentError(
                 f"The subject: {self.child_subject_identifier} does not "
