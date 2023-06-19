@@ -4,7 +4,6 @@ from edc_constants.date_constants import timezone
 from edc_base.utils import get_utcnow, age
 
 from ..models import MaternalDataset, Cohort
-from ..helper_classes.cohort import Cohort as CohortClass
 from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
 from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
 from ..models.signals import cohort_assigned
