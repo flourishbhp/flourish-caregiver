@@ -165,15 +165,10 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def current_cohort(self):
         """Returns the cohort the child was enrolled on the first time.
         """
-        try:
-
-            cohort = Cohort.objects.filter(
-                suject_identifier=self.child_subject_identifier).latest(
-                    'assign_datetime'
-            )
-        except Cohort.DoesNotExist:
-            pass
-        else:
+        
+        cohort = Cohort.objects.filter(
+            suject_identifier=self.child_subject_identifier).order_by('assign_datetime').last()
+        if cohort:
             return cohort.name
         return None
 
