@@ -181,12 +181,13 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         """Return true if the child has aged up on the cohort
         they are currently enrolled on
         """
-        if self.current_cohort in ['cohort_a', 'cohort_a_sec']:
-            if self.child_current_age >= 5:
-                return True
-        elif self.current_cohort in ['cohort_b', 'cohort_b_sec']:
-            if self.child_current_age > 10:
-                return True
+        if self.child_current_age:
+            if self.current_cohort in ['cohort_a', 'cohort_a_sec']:
+                if self.child_current_age >= 5:
+                    return True
+            elif self.current_cohort in ['cohort_b', 'cohort_b_sec']:
+                if self.child_current_age > 10:
+                    return True
         return False
 
     def age_up_enrollment(self):
