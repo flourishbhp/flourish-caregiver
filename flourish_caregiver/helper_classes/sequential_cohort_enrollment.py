@@ -4,6 +4,7 @@ from edc_constants.date_constants import timezone
 from edc_base.utils import get_utcnow, age
 
 from ..models import MaternalDataset, Cohort
+from ..helper_classes.cohort import Cohort as CohortClass
 from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
 from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
 from ..models.signals import cohort_assigned
@@ -146,14 +147,19 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
 
     @property
     def child_current_age(self):
+        """Returns age months as decimals.
+        """
+        check_date = get_utcnow().date()
         caregiver_child_consent = self.child_consent_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).last()
         dob = caregiver_child_consent.child_dob
         if dob:
-            age = Cohort(
-                child_dob=dob,
-                enrollment_date=get_utcnow().date())
-            return age
+            if check_date > dob:
+                child_age = age(dob, check_date)
+                child_age = str(child_age.years) + '.' + str(child_age.months)
+            else:
+                child_age = 0
+            return float(child_age)
         return None
 
     @property
