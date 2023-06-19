@@ -7,7 +7,7 @@ class OnScheduleHelper(object):
     """A helper class that puts a participant into a particular schedule
     """
 
-    def __init__(self, subject_identifier=None, onschedule_datetime=None, cohort=None, ):
+    def __init__(self, subject_identifier, onschedule_datetime=None, cohort=None, ):
 
         self.subject_identifier = subject_identifier
         self.onschedule_datetime = onschedule_datetime or get_utcnow()
@@ -36,15 +36,14 @@ class OnScheduleHelper(object):
             @param base_appt_datetime: base datetime to start the appointment.
         """
         cohort = None
-        cohort_list = instance.schedule_name.split('_')
-
         if 'sec' in instance.schedule_name:
-            cohort = '_'.join(['cohort', cohort_list[0], 'sec_quart'])
+            cohort = '_'.join([self.cohort.rstrip('_sec'), 'sec_quart'])
         elif 'fu' in instance.schedule_name:
-            cohort = '_'.join(['cohort', cohort_list[0], 'fu_quarterly'])
+            cohort = '_'.join([self.cohort, 'fu_quarterly'])
         else:
-            cohort = '_'.join(['cohort', cohort_list[0], 'quarterly'])
+            cohort = '_'.join([self.cohort, 'quarterly'])
 
+        cohort_list = instance.schedule_name.split('_')
         caregiver_visit_count = cohort_list[1][-1:]
 
         onschedule_model = django_apps.get_model(instance.schedule.onschedule_model)
@@ -142,9 +141,11 @@ class OnScheduleHelper(object):
         schedule_name = cohort + '_schedule1'
 
         if 'tb_2_months' in cohort:
-            schedule_name = f'a_tb{children_count}_2_months_schedule1'
+            onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
+            schedule_name = 'tb_2_months_schedule'
         if 'tb_6_months' in cohort:
-            schedule_name = f'a_tb{children_count}_6_months_schedule1'
+            onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
+            schedule_name = 'tb_6_months_schedule'
 
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model, name=schedule_name)
