@@ -173,12 +173,8 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             )
         except Cohort.DoesNotExist:
             pass
-        except Cohort.MultipleObjectsReturned:
-            raise SequentialCohortEnrollmentError(
-                f'{self.child_subject_identifier} : MultipleObjectsReturned')
         else:
-            if cohort:
-                return cohort.name
+            return cohort.name
         return None
 
     @property
