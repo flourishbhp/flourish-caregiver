@@ -993,6 +993,7 @@ FUTURE_OF_RELATIONSHIP = (
      'It would be nice if my partnership succeeded, but I refuse to do more'),
     ('nothing_more',
      'My partnership can never succeed and there is nothing more I can do'),
+    (PNTA, 'Prefer not to answer')
 )
 
 FATHER_VISITS = (
