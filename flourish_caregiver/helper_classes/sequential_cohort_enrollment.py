@@ -149,10 +149,12 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         caregiver_child_consent = self.child_consent_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).last()
         dob = caregiver_child_consent.child_dob
-        age = Cohort(
-            child_dob=dob,
-            enrollment_date=get_utcnow().date())
-        return age
+        if dob:
+            age = Cohort(
+                child_dob=dob,
+                enrollment_date=get_utcnow().date())
+            return age
+        return None
 
     @property
     def current_cohort(self):
