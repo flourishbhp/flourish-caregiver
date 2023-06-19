@@ -140,9 +140,9 @@ caregiver_schedule_dict = {
         },
         'followup_quarterly': {
 
-            '1': 'c_fu1_schedule1',
-            '2': 'c_fu2_schedule1',
-            '3': 'c_fu3_schedule1',
+            '1': 'c_fu_quarterly1_schedule1',
+            '2': 'c_fu_quarterly2_schedule1',
+            '3': 'c_fu_quarterly3_schedule1',
             'onschedule_model': 'flourish_caregiver.onschedulecohortcfuquarterly'
         },
         'quarterly': {
