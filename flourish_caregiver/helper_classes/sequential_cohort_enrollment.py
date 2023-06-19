@@ -146,39 +146,30 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
 
     @property
     def child_current_age(self):
-        try:
-            caregiver_child_consent = self.child_consent_cls.objects.get(
-                study_child_identifier=self.child_subject_identifier)
-        except self.child_consent_cls.DoesNotExist:
-            raise SequentialCohortEnrollmentError(
-                f"The subject: {self.child_subject_identifier} does not "
-                "have a caregiver child consent")
-        else:
-            dob = caregiver_child_consent.child_dob
-            age = Cohort(
-                child_dob=dob,
-                enrollment_date=timezone.now().date())
-            return age
+        """Returns age months as decimals.
+        """
+        check_date = get_utcnow().date()
+        caregiver_child_consent = self.child_consent_cls.objects.filter(
+            subject_identifier=self.child_subject_identifier).last()
+        dob = caregiver_child_consent.child_dob
+        if dob:
+            if check_date > dob:
+                child_age = age(dob, check_date)
+                child_age = str(child_age.years) + '.' + str(child_age.months)
+            else:
+                child_age = 0
+            return float(child_age)
         return None
 
     @property
     def current_cohort(self):
         """Returns the cohort the child was enrolled on the first time.
         """
-        try:
-
-            cohort = Cohort.objects.filter(
-                suject_identifier=self.child_subject_identifier).latest(
-                    'assign_datetime'
-            )
-        except Cohort.DoesNotExist:
-            pass
-        except Cohort.MultipleObjectsReturned:
-            raise SequentialCohortEnrollmentError(
-                f'{self.child_subject_identifier} : MultipleObjectsReturned')
-        else:
-            if cohort:
-                return cohort.name
+        
+        cohort = Cohort.objects.filter(
+            subject_identifier=self.child_subject_identifier).order_by('assign_datetime').last()
+        if cohort:
+            return cohort.name
         return None
 
     @property
@@ -186,12 +177,13 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         """Return true if the child has aged up on the cohort
         they are currently enrolled on
         """
-        if self.current_cohort in ['cohort_a', 'cohort_a_sec']:
-            if self.child_current_age >= 5:
-                return True
-        elif self.current_cohort in ['cohort_b', 'cohort_b_sec']:
-            if self.child_current_age > 10:
-                return True
+        if self.child_current_age:
+            if self.current_cohort in ['cohort_a', 'cohort_a_sec']:
+                if self.child_current_age >= 5:
+                    return True
+            elif self.current_cohort in ['cohort_b', 'cohort_b_sec']:
+                if self.child_current_age > 10:
+                    return True
         return False
 
     def age_up_enrollment(self):
