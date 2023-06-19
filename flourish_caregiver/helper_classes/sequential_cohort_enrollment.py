@@ -124,7 +124,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         schedule_name = self.child_last_qt_subject_schedule_obj.schedule_name
 
         if 'fu' in schedule_name:
-            return 'followup_quartaly'
+            return 'followup_quarterly'
         else:
             return 'quarterly'
 
