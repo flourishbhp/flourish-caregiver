@@ -3,10 +3,10 @@ from django.db.models import Q
 from edc_constants.date_constants import timezone
 from edc_base.utils import get_utcnow, age
 
-from ..models import MaternalDataset, Cohort
+from .utills import cohort_assigned
+from ..models.cohort import Cohort
 from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
 from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
-from ..models.signals import cohort_assigned
 
 
 class SequentialCohortEnrollmentError(Exception):
@@ -200,16 +200,14 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         # Check if a child has aged up
         if self.aged_up and self.current_cohort != self.evaluated_cohort:
             # put them on a new aged up cohort
-            try:
-                Cohort.objects.get(
-                    name=self.evaluated_cohort,
-                    subject_identifier=self.child_subject_identifier)
-            except Cohort.DoesNotExist:
-                pass
-            else:
-                Cohort.objects.create(
-                    subject_identifier=self.child_subject_identifier,
-                    name=self.evaluated_cohort,
-                    enrollment_cohort=False)
-                # Put caregiver and child off and on schedule
+
+            defaults = {
+                'assign_datetime': get_utcnow(),
+                'enrollment_cohort': False
+            }
+            cohort_obj, _ = Cohort.objects.get_or_create(
+                defaults=defaults, subject_identifier=self.child_subject_identifier,
+                name=self.evaluated_cohort, )
+            # Put caregiver and child off and on schedule
+            if cohort_obj:
                 self.put_onschedule()
