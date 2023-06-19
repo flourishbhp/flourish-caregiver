@@ -3,7 +3,7 @@ from django.db.models import Q
 from edc_constants.date_constants import timezone
 from edc_base.utils import get_utcnow, age
 
-from .utills import cohort_assigned
+from .utils import cohort_assigned
 from ..models.cohort import Cohort
 from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
 from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
@@ -165,7 +165,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def current_cohort(self):
         """Returns the cohort the child was enrolled on the first time.
         """
-        
+
         cohort = Cohort.objects.filter(
             subject_identifier=self.child_subject_identifier).order_by('assign_datetime').last()
         if cohort:

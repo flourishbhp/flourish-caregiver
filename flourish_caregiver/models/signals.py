@@ -27,7 +27,7 @@ import pypdfium2 as pdfium
 from ..action_items import CAREGIVEROFF_STUDY_ACTION, TB_OFF_STUDY_ACTION
 from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort import Cohort
+from .cohort import Cohort
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
@@ -37,13 +37,11 @@ from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
-from .cohort import Cohort as CohortModel
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
-# from ..helper_classes import SequentialCohortEnrollment
 from .tb_engagement import TbEngagement
 from .tb_interview import TbInterview
 from .tb_referral_outcomes import TbReferralOutcomes
@@ -51,17 +49,15 @@ from .ultrasound import UltraSound
 from ..action_items import TB_OFF_STUDY_ACTION
 from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort import Cohort
 from ..helper_classes.cohort_assignment import CohortAssignment
 from ..helper_classes.consent_helper import consent_helper
 from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
-from ..helper_classes.utills import cohort_assigned
+from ..helper_classes.utils import cohort_assigned
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
 from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 from ..models.tb_off_study import TbOffStudy  # was supposed to be in the prns
-# from ..models import Cohort as CohortModel
 
 
 class PreFlourishError(Exception):
@@ -381,7 +377,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             Cohort.objects.get(
                 subject_identifier=instance.subject_identifier,
                 enrollment_cohort=True)
-        except CohortModel.DoesNotExist:
+        except Cohort.DoesNotExist:
             cohort = cohort_assigned(instance.subject_identifier,
                                      instance.child_dob,
                                      instance.subject_consent.created.date())

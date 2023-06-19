@@ -16,7 +16,7 @@ from edc_visit_schedule import site_visit_schedules
 from flourish_caregiver.helper_classes.sequential_cohort_enrollment import SequentialCohortEnrollment
 
 
-@tag('sq')
+@tag('sqq')
 class TestSequentialEnrollmentCohort(TestCase):
     databases = '__all__'
     utc = pytz.UTC
@@ -135,6 +135,11 @@ class TestSequentialEnrollmentCohort(TestCase):
                                                study_maternal_identifier=self.study_maternal_identifier,
                                                study_child_identifier=self.study_child_identifier)
 
+        mommy.make_recipe('flourish_caregiver.cohort',
+                          subject_identifier=self.child_subject_identifier,
+                          name='cohort_a',
+                          enrollment_cohort=True)
+
         self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                                          subject_identifier=self.child_subject_identifier,
                                                          subject_consent=self.subject_consent,
@@ -186,11 +191,20 @@ class TestSequentialEnrollmentCohort(TestCase):
                                                study_maternal_identifier=self.study_maternal_identifier,
                                                study_child_identifier=self.study_child_identifier)
 
+        mommy.make_recipe('flourish_caregiver.cohort',
+                          subject_identifier=self.child_subject_identifier,
+                          name='cohort_b',
+                          enrollment_cohort=True)
+
         self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                                          subject_identifier=self.child_subject_identifier,
                                                          subject_consent=self.subject_consent,
                                                          study_child_identifier=self.study_child_identifier,
                                                          child_dob=self.child_dob)
+        mommy.make_recipe('flourish_caregiver.cohort',
+                          subject_identifier=self.child_subject_identifier,
+                          name='cohort_b',
+                          enrollment_cohort=True)
 
         mommy.make_recipe('flourish_caregiver.maternaldataset',
                           subject_identifier=self.subject_identifier,
@@ -231,6 +245,11 @@ class TestSequentialEnrollmentCohort(TestCase):
                                                study_maternal_identifier=self.study_maternal_identifier,
                                                study_child_identifier=self.study_child_identifier)
 
+        mommy.make_recipe('flourish_caregiver.cohort',
+                          subject_identifier=self.child_subject_identifier,
+                          name='cohort_a',
+                          enrollment_cohort=True)
+
         self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                                          subject_identifier=self.child_subject_identifier,
                                                          subject_consent=self.subject_consent,
@@ -269,8 +288,10 @@ class TestSequentialEnrollmentCohort(TestCase):
                                                study_child_identifier=self.study_child_identifier,
                                                infant_hiv_exposed='Unexposed')
 
-        # self.subject_consent = mommy.make_recipe('flourish_caregiver.subjectconsent',
-        #                                          subject_identifier=self.subject_identifier,)
+        mommy.make_recipe('flourish_caregiver.cohort',
+                          subject_identifier=self.child_subject_identifier,
+                          name='cohort_b',
+                          enrollment_cohort=True)
 
         self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                                          subject_identifier=self.child_subject_identifier,
@@ -308,6 +329,10 @@ class TestSequentialEnrollmentCohort(TestCase):
                                                infant_hiv_exposed='Unexposed',
                                                study_maternal_identifier=self.study_maternal_identifier,
                                                study_child_identifier=self.study_child_identifier)
+        mommy.make_recipe('flourish_caregiver.cohort',
+                          subject_identifier=self.child_subject_identifier,
+                          name='cohort_a',
+                          enrollment_cohort=True)
 
         self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                                          subject_identifier=self.child_subject_identifier,
@@ -362,6 +387,10 @@ class TestSequentialEnrollmentCohort(TestCase):
                                                dob=self.child_dob,
                                                study_maternal_identifier=self.study_maternal_identifier,
                                                study_child_identifier=self.study_child_identifier)
+        mommy.make_recipe('flourish_caregiver.cohort',
+                          subject_identifier=self.child_subject_identifier,
+                          name='cohort_a',
+                          enrollment_cohort=True)
 
         self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                                          subject_identifier=self.child_subject_identifier,
@@ -404,6 +433,10 @@ class TestSequentialEnrollmentCohort(TestCase):
                                                infant_hiv_exposed='Unexposed',
                                                study_maternal_identifier=self.study_maternal_identifier,
                                                study_child_identifier=self.study_child_identifier)
+        mommy.make_recipe('flourish_caregiver.cohort',
+                          subject_identifier=self.child_subject_identifier,
+                          name='cohort_a',
+                          enrollment_cohort=True)
 
         self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                                          subject_identifier=self.child_subject_identifier,
@@ -441,6 +474,70 @@ class TestSequentialEnrollmentCohort(TestCase):
             schedule_name='child_a_quart_schedule1')
 
         self.sq_erollment.put_onschedule()
+
+        self.assertTrue(self.subject_schedule_history_cls.objects.filter(
+            subject_identifier=self.subject_identifier,
+            schedule_name='a_quarterly1_schedule1',
+            schedule_status='offschedule').exists())
+
+        self.assertTrue(self.subject_schedule_history_cls.objects.filter(
+            subject_identifier=self.child_subject_identifier,
+            schedule_name='child_a_quart_schedule1',
+            schedule_status='offschedule').exists())
+
+        self.assertTrue(OnScheduleCohortBSecQuart.objects.filter(
+            subject_identifier=self.subject_identifier).exists())
+        self.assertTrue(self.child_cohort_b_sec_quartely_cls.objects.filter(
+            subject_identifier=self.child_subject_identifier).exists())
+
+    def test_age_up_enrollment_put_onschedule(self):
+
+        self.child_dataset = mommy.make_recipe('flourish_child.childdataset',
+                                               dob=self.child_dob,
+                                               infant_hiv_exposed='Unexposed',
+                                               study_maternal_identifier=self.study_maternal_identifier,
+                                               study_child_identifier=self.study_child_identifier)
+        mommy.make_recipe('flourish_caregiver.cohort',
+                          subject_identifier=self.child_subject_identifier,
+                          name='cohort_a',
+                          enrollment_cohort=True)
+
+        self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
+                                                         subject_identifier=self.child_subject_identifier,
+                                                         subject_consent=self.subject_consent,
+                                                         study_child_identifier=self.study_child_identifier,
+                                                         child_dob=self.child_dob)
+
+        mommy.make_recipe('flourish_caregiver.maternaldataset',
+                          subject_identifier=self.subject_identifier,
+                          study_maternal_identifier=self.study_maternal_identifier,
+                          protocol='Tshipidi')
+
+        mommy.make_recipe('flourish_child.childdummysubjectconsent',
+                          subject_identifier=self.child_subject_identifier,
+                          dob=self.caregiver_child_consent.child_dob)
+
+        _, caregiver_schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+            onschedule_model='flourish_caregiver.onschedulecohortaquarterly',
+            name='a_quarterly1_schedule1'
+        )
+
+        _, child_schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+            onschedule_model=self.child_cohort_a_quartely_model,
+            name='child_a_quart_schedule1'
+        )
+
+        caregiver_schedule.put_on_schedule(
+            subject_identifier=self.subject_identifier,
+            onschedule_datetime=get_utcnow(),
+            schedule_name='a_quarterly1_schedule1')
+
+        child_schedule.put_on_schedule(
+            subject_identifier=self.child_subject_identifier,
+            onschedule_datetime=get_utcnow(),
+            schedule_name='child_a_quart_schedule1')
+
+        self.sq_erollment.age_up_enrollment()
 
         self.assertTrue(self.subject_schedule_history_cls.objects.filter(
             subject_identifier=self.subject_identifier,
