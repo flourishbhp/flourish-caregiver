@@ -167,7 +167,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         """
         
         cohort = Cohort.objects.filter(
-            suject_identifier=self.child_subject_identifier).order_by('assign_datetime').last()
+            subject_identifier=self.child_subject_identifier).order_by('assign_datetime').last()
         if cohort:
             return cohort.name
         return None
