@@ -40,13 +40,6 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
 
     reason_cd4_not_availiable_other = OtherCharField()
 
-    cd4_value_and_date_availiable = models.CharField(
-        max_length=3,
-        blank=True,
-        null=True,
-        verbose_name="Do you have the value and date of CD4 result?",
-        choices=YES_NO)
-
     recent_cd4 = models.DecimalField(
         max_digits=8,
         decimal_places=2,
@@ -76,12 +69,6 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
 
     reason_vl_not_availiable_other = OtherCharField()
 
-    vl_value_and_date_availiable = models.CharField(
-        max_length=3,
-        blank=True,
-        null=True,
-        verbose_name="Do you have the value and date of VL result?",
-        choices=YES_NO)
 
     value_vl_size = models.CharField(
         max_length=25,
