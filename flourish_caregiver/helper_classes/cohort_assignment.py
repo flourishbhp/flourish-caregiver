@@ -1,7 +1,7 @@
 from django.apps import apps as django_apps
 from edc_base.utils import age
 
-from ..models import CaregiverChildConsent
+from ..models.caregiver_child_consent import CaregiverChildConsent
 
 
 class CohortAssignment:
