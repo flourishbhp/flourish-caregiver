@@ -3,10 +3,10 @@ from django.db.models import Q
 from edc_constants.date_constants import timezone
 from edc_base.utils import get_utcnow, age
 
-from ..models import MaternalDataset, Cohort
+from .utils import cohort_assigned
+from ..models.cohort import Cohort
 from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
 from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
-from ..models.signals import cohort_assigned
 
 
 class SequentialCohortEnrollmentError(Exception):
@@ -124,7 +124,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         schedule_name = self.child_last_qt_subject_schedule_obj.schedule_name
 
         if 'fu' in schedule_name:
-            return 'followup_quartaly'
+            return 'followup_quarterly'
         else:
             return 'quarterly'
 
@@ -139,6 +139,11 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         )
 
     def put_onschedule(self):
+
+        if 'followup_quarterly' == self.schedule_type and\
+            'sec' in self.evaluated_cohort:
+            return
+
         self.take_off_child_offschedule()
         self.take_off_caregiver_offschedule()
         self.put_child_onschedule()
@@ -165,7 +170,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def current_cohort(self):
         """Returns the cohort the child was enrolled on the first time.
         """
-        
+
         cohort = Cohort.objects.filter(
             subject_identifier=self.child_subject_identifier).order_by('assign_datetime').last()
         if cohort:
@@ -192,16 +197,14 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         # Check if a child has aged up
         if self.aged_up and self.current_cohort != self.evaluated_cohort:
             # put them on a new aged up cohort
-            try:
-                Cohort.objects.get(
-                    name=self.evaluated_cohort,
-                    subject_identifier=self.child_subject_identifier)
-            except Cohort.DoesNotExist:
-                pass
-            else:
-                Cohort.objects.create(
-                    subject_identifier=self.child_subject_identifier,
-                    name=self.evaluated_cohort,
-                    enrollment_cohort=False)
-                # Put caregiver and child off and on schedule
+
+            defaults = {
+                'assign_datetime': get_utcnow(),
+                'enrollment_cohort': False
+            }
+            cohort_obj, _ = Cohort.objects.get_or_create(
+                defaults=defaults, subject_identifier=self.child_subject_identifier,
+                name=self.evaluated_cohort, )
+            # Put caregiver and child off and on schedule
+            if cohort_obj:
                 self.put_onschedule()
