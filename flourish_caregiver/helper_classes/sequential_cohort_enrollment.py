@@ -1,12 +1,11 @@
 from django.apps import apps as django_apps
 from django.db.models import Q
-from edc_constants.date_constants import timezone
-from edc_base.utils import get_utcnow, age
+from edc_base.utils import age, get_utcnow
 
-from .utills import cohort_assigned
-from ..models.cohort import Cohort
-from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
 from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
+from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
+from .utils import cohort_assigned
+from ..models.cohort import Cohort
 
 
 class SequentialCohortEnrollmentError(Exception):
@@ -57,7 +56,8 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             ).latest('onschedule_datetime')
         except self.subject_schedule_cls.DoesNotExist:
             raise SequentialCohortEnrollmentError(
-                f'{self.child_consent_obj.subject_identifier} : was never been on quartarly schedule')
+                f'{self.child_consent_obj.subject_identifier} : was never been on '
+                f'quartarly schedule')
         else:
             return schedule_obj
 
@@ -72,7 +72,8 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             ).latest('onschedule_datetime')
         except self.subject_schedule_cls.DoesNotExist:
             raise SequentialCohortEnrollmentError(
-                f'{self.caregiver_subject_identifier} : was never been on quartarly schedule')
+                f'{self.caregiver_subject_identifier} : was never been on quartarly '
+                f'schedule')
         else:
             return schedule_obj
 
@@ -80,7 +81,8 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def cohort_obj(self):
         try:
             cohort_obj = self.cohort_cls.objects.filter(
-                subject_identifier=self.child_subject_identifier).latest('assign_datetime')
+                subject_identifier=self.child_subject_identifier).latest(
+                'assign_datetime')
         except self.cohort_cls.DoesNotExist:
             raise SequentialCohortEnrollmentError(
                 f'{self.child_subject_identifier} : cohort instance does not exist')
@@ -124,7 +126,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         schedule_name = self.child_last_qt_subject_schedule_obj.schedule_name
 
         if 'fu' in schedule_name:
-            return 'followup_quartaly'
+            return 'followup_quarterly'
         else:
             return 'quarterly'
 
@@ -139,6 +141,10 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         )
 
     def put_onschedule(self):
+        if 'followup_quarterly' == self.schedule_type and \
+                'sec' in self.evaluated_cohort:
+            return
+
         self.take_off_child_offschedule()
         self.take_off_caregiver_offschedule()
         self.put_child_onschedule()
@@ -165,9 +171,10 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def current_cohort(self):
         """Returns the cohort the child was enrolled on the first time.
         """
-        
+
         cohort = Cohort.objects.filter(
-            subject_identifier=self.child_subject_identifier).order_by('assign_datetime').last()
+            subject_identifier=self.child_subject_identifier).order_by(
+            'assign_datetime').last()
         if cohort:
             return cohort.name
         return None

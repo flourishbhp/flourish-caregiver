@@ -41,9 +41,8 @@ class CohortAssignment:
             objects.
             @param subject_identifier: child subject_identifier.
         """
-        onschedules = self.subject_schedule_history_cls.objects.onschedules(
-            subject_identifier=subject_identifier)
-        return bool(onschedules)
+        return self.subject_schedule_history_cls.objects.filter(
+            subject_identifier=subject_identifier).exists()
 
     def total_enrolled_HUU(self, cohort):
         """ Return total HIV unexposed uninfected children already enrolled on
