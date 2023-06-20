@@ -19,6 +19,7 @@ from .models import CaregiverPhqReferral, FlourishConsentVersion
 from .models import CaregiverPreviouslyEnrolled
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
 from .models import MaternalInterimIdccVersion2
+from .models import Cohort
 
 fake = Faker()
 
@@ -237,4 +238,8 @@ tbroutinehealthscreenv2 = Recipe(
 
 registeredsubject = Recipe(
     django_apps.get_model('edc_registration.registeredsubject'),
+)
+
+cohort = Recipe(
+    Cohort,
 )
