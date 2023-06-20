@@ -1,4 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
+from tqdm import tqdm
+
 from ...models import Cohort, CaregiverChildConsent
 from ...helper_classes import SequentialCohortEnrollment
 
@@ -13,7 +15,7 @@ class Command(BaseCommand):
         child_identifiers = list(set(child_identifiers))
 
         # Loop through all of them and sequentially enrol those who have aged up.
-        for child_id in child_identifiers:
+        for child_id in tqdm(child_identifiers):
             sequential_cohort_enrol = SequentialCohortEnrollment(
                 child_subject_identifier=child_id)
             sequential_cohort_enrol.age_up_enrollment()

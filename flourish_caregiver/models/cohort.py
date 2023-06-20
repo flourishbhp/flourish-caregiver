@@ -41,3 +41,4 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         app_label = 'flourish_caregiver'
         verbose_name = "Cohort"
         verbose_name_plural = "Cohort"
+        unique_together = ('subject_identifier', 'name')

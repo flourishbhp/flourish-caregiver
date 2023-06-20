@@ -1,6 +1,7 @@
 from django.apps import apps as django_apps
 from edc_base import get_utcnow
 from edc_visit_schedule import site_visit_schedules
+from ..models import OnScheduleCohortBSecQuart
 from schedule_dict import child_schedule_dict, caregiver_schedule_dict
 
 
