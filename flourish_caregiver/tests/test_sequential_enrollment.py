@@ -90,53 +90,7 @@ class TestSequentialEnrollmentCohort(TestCase):
         self.sq_erollment = SequentialCohortEnrollment(
             child_subject_identifier=self.child_subject_identifier)
 
-        self.options = {
-            'consent_datetime': get_utcnow(),
-            'version': '1'}
 
-        self.maternal_dataset_options = {
-            'mom_enrolldate': get_utcnow(),
-            'mom_hivstatus': 'HIV-infected',
-            'study_maternal_identifier': self.study_maternal_identifier,
-            'protocol': 'Tshilo Dikotla'}
-
-        self.child_dataset_options = {
-            'infant_hiv_exposed': 'Exposed',
-            'infant_enrolldate': get_utcnow(),
-            'study_maternal_identifier': self.study_maternal_identifier,
-            'study_child_identifier': '1234'}
-
-        self.child_dummy_consent_cls = django_apps.get_model(
-            'flourish_child.childdummysubjectconsent')
-
-        self.sequential_helper = SequentialSubjectHelper(
-            child_dataset_options=self.child_dataset_options,
-            maternal_dataset_options=self.maternal_dataset_options
-        )
-
-    @skip('zlz')
-    def test_cohort_a_onschedule(self):
-        subject_identifier = self.sequential_helper.get_cohort_a_subj()
-        self.assertNotEqual(subject_identifier, None)
-        self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
-            subject_identifier=subject_identifier,
-            schedule_name='a_enrol1_schedule1').count(), 1)
-
-    @skip('zlz')
-    def test_cohort_b_onschedule(self):
-        subject_identifier = self.sequential_helper.get_cohort_b_subj()
-        self.assertNotEqual(subject_identifier, None)
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
-            subject_identifier=subject_identifier,
-            schedule_name='b_enrol1_schedule1').count(), 1)
-
-    @skip('zlz')
-    def test_cohort_c_onschedule(self):
-        subject_identifier = self.sequential_helper.get_cohort_c_subj()
-        self.assertNotEqual(subject_identifier, None)
-        self.assertEqual(OnScheduleCohortCSec.objects.filter(
-            subject_identifier=subject_identifier,
-            schedule_name='c_sec1_schedule1').count(), 1)
 
     def test_caregiver_cohort_a_to_cohort_b(self):
 
@@ -212,10 +166,6 @@ class TestSequentialEnrollmentCohort(TestCase):
                                                          subject_consent=self.subject_consent,
                                                          study_child_identifier=self.study_child_identifier,
                                                          child_dob=self.child_dob)
-        mommy.make_recipe('flourish_caregiver.cohort',
-                          subject_identifier=self.child_subject_identifier,
-                          name='cohort_b',
-                          enrollment_cohort=True)
 
         mommy.make_recipe('flourish_caregiver.maternaldataset',
                           subject_identifier=self.subject_identifier,
@@ -623,3 +573,4 @@ class TestSequentialEnrollmentCohort(TestCase):
             subject_identifier=self.subject_identifier).exists())
         self.assertTrue(self.child_cohort_c_fu_quartely_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).exists())
+        
