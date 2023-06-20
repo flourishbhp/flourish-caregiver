@@ -126,7 +126,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         schedule_name = self.child_last_qt_subject_schedule_obj.schedule_name
 
         if 'fu' in schedule_name:
-            return 'followup_quarterly'
+            return 'followup_quartaly'
         else:
             return 'quarterly'
 
@@ -141,10 +141,11 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         )
 
     def put_onschedule(self):
+      
         if 'followup_quarterly' == self.schedule_type and \
                 'sec' in self.evaluated_cohort:
             return
-
+          
         self.take_off_child_offschedule()
         self.take_off_caregiver_offschedule()
         self.put_child_onschedule()
@@ -171,7 +172,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def current_cohort(self):
         """Returns the cohort the child was enrolled on the first time.
         """
-
+        
         cohort = Cohort.objects.filter(
             subject_identifier=self.child_subject_identifier).order_by(
             'assign_datetime').last()

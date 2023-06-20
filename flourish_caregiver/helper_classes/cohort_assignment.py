@@ -1,7 +1,7 @@
 from django.apps import apps as django_apps
 from edc_base.utils import age
 
-from ..models.caregiver_child_consent import CaregiverChildConsent
+from ..models import CaregiverChildConsent
 
 
 class CohortAssignment:
@@ -41,8 +41,9 @@ class CohortAssignment:
             objects.
             @param subject_identifier: child subject_identifier.
         """
-        return self.subject_schedule_history_cls.objects.filter(
-            subject_identifier=subject_identifier).exists()
+        onschedules = self.subject_schedule_history_cls.objects.onschedules(
+            subject_identifier=subject_identifier)
+        return bool(onschedules)
 
     def total_enrolled_HUU(self, cohort):
         """ Return total HIV unexposed uninfected children already enrolled on
