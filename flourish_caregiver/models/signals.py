@@ -23,19 +23,25 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
 from PIL import Image
 
+from ..action_items import CAREGIVEROFF_STUDY_ACTION, TB_OFF_STUDY_ACTION
+from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
+from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from .cohort import Cohort
+from ..models import CaregiverOffSchedule, ScreeningPregWomen
+from ..models import ScreeningPriorBhpParticipants
+from ..models.tb_informed_consent import TbInformedConsent
+from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
-from .cohort import Cohort
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
 from .maternal_visit import MaternalVisit
 from .subject_consent import SubjectConsent
-# from ..helper_classes import SequentialCohortEnrollment
 from .tb_engagement import TbEngagement
 from .tb_interview import TbInterview
 from .tb_referral_outcomes import TbReferralOutcomes
@@ -44,9 +50,10 @@ from ..action_items import CAREGIVEROFF_STUDY_ACTION
 from ..action_items import TB_OFF_STUDY_ACTION
 from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
+from ..helper_classes.cohort_assignment import CohortAssignment
 from ..helper_classes.consent_helper import consent_helper
 from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
-from ..helper_classes.utills import cohort_assigned
+from ..helper_classes.utils import cohort_assigned
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
@@ -372,7 +379,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 subject_identifier=instance.subject_identifier,
                 enrollment_cohort=True)
         except Cohort.DoesNotExist:
-            cohort = cohort_assigned(instance.study_child_identifier,
+            cohort = cohort_assigned(instance.subject_identifier,
                                      instance.child_dob,
                                      instance.subject_consent.created.date())
 
@@ -834,7 +841,7 @@ def get_schedule_sequence(subject_identifier, instance,
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
                     child_subject_identifier=None, base_appt_datetime=None,
                     caregiver_visit_count=None):
-    
+
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
         schedule, onschedule_model_cls, schedule_name = get_onschedule_model(

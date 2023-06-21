@@ -22,9 +22,14 @@ from flourish_caregiver.models import MaternalDataset, \
     OnScheduleCohortCSec
 from flourish_caregiver.models.signals import put_cohort_onschedule
 from flourish_child.models import ChildDataset
-from schedule_dict import caregiver_schedule_dict
+from flourish_caregiver.helper_classes.schedule_dict import caregiver_schedule_dict
 
-
+'''
+NOTE: Nimza, name your tests what their testing, 
+, since there are testing for appointments. For example : TestAppointmentSequentialEnrollmentCohort
+you can refer to some of the code the code I wrote for sequantial on how to enrollment
+and add additional tests for a to b, b to c and follow up as well
+''' 
 @tag('seq')
 class TestSequentialEnrollmentCohort(TestCase):
     databases = '__all__'

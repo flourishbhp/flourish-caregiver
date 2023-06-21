@@ -1,8 +1,7 @@
 from django.apps import apps as django_apps
 from edc_base import get_utcnow
 from edc_visit_schedule import site_visit_schedules
-from ..models import OnScheduleCohortBSecQuart
-from schedule_dict import child_schedule_dict, caregiver_schedule_dict
+from flourish_caregiver.helper_classes.schedule_dict import child_schedule_dict, caregiver_schedule_dict
 
 
 class SeqEnrolOnScheduleMixin:
