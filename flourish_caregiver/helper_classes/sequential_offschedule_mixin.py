@@ -1,5 +1,5 @@
 from edc_visit_schedule import site_visit_schedules
-from schedule_dict import child_schedule_dict, caregiver_schedule_dict
+from .schedule_dict import child_schedule_dict, caregiver_schedule_dict
 
 
 class OffScheduleSequentialCohortEnrollmentMixin:
