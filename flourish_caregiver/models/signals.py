@@ -368,11 +368,11 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
         # Check if the participant has been put into an enrolment cohort
         try:
-            cohort_obj = Cohort.objects.get(
+            Cohort.objects.get(
                 subject_identifier=instance.subject_identifier,
                 enrollment_cohort=True)
         except Cohort.DoesNotExist:
-            cohort = cohort_assigned(instance.subject_identifier,
+            cohort = cohort_assigned(instance.study_child_identifier,
                                      instance.child_dob,
                                      instance.subject_consent.created.date())
 
