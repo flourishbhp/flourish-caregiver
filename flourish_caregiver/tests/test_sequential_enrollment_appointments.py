@@ -1,6 +1,7 @@
 import pytz
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
+from django.db import models
 from django.test import tag, TestCase
 from edc_appointment.models import Appointment
 from edc_base import get_utcnow
@@ -18,8 +19,7 @@ from flourish_caregiver.helper_classes.sequential_subject_helper import \
 from flourish_caregiver.models import MaternalDataset, \
     OnScheduleCohortAEnrollment, \
     OnScheduleCohortAQuarterly, OnScheduleCohortBSec, \
-    OnScheduleCohortBSecQuart, \
-    OnScheduleCohortCSec
+    OnScheduleCohortBSecQuart
 from flourish_caregiver.models.signals import put_cohort_onschedule
 from flourish_child.models import ChildDataset
 from flourish_caregiver.helper_classes.schedule_dict import caregiver_schedule_dict
@@ -30,8 +30,13 @@ NOTE: Nimza, name your tests what their testing,
 you can refer to some of the code the code I wrote for sequantial on how to enrollment
 and add additional tests for a to b, b to c and follow up as well
 ''' 
-@tag('seq')
-class TestSequentialEnrollmentCohort(TestCase):
+class PostHIVRapidTestAndConseling(models.Model):
+    maternal_visit = models.CharField(max_length=40)
+    report_datetime = models.DateTimeField()
+
+
+@tag('seq_appt')
+class TestSequentialEnrollmentAppointments(TestCase):
     databases = '__all__'
     utc = pytz.UTC
 
@@ -66,7 +71,40 @@ class TestSequentialEnrollmentCohort(TestCase):
         )
 
     @tag('zlz')
-    def test_cohort_a_onschedule(self):
+    def test_delete_completed_appointments(self):
+        """Test function to delete completed appointments for a subject from one
+        schedule and add to another schedule. The function performs the following tasks:
+            1. Retrieves a subject identifier
+            2. Asserts that the subject identifier is not None
+            3. Asserts that the OnScheduleCohortAEnrollment database has an object with
+            matching subject identifier and 'a_enrol1_schedule1' schedule name
+            4. Asserts that the OnScheduleCohortAQuarterly database has 0 objects with
+            matching subject identifier and 'a_quarterly1_schedule1' schedule name
+            5. Creates a MaternalVisit object for the subject and
+            'a_quarterly1_schedule1' schedule name, then asserts that the
+            OnScheduleCohortAQuarterly database has 1 object with matching subject
+            identifier and 'a_quarterly1_schedule1' schedule name
+            6. Filters appointments for the subject with 'a_quarterly1_schedule1'
+            schedule name, and creates maternal visit objects for all appointments
+            except the last 5. Sets appointment status to 'DONE' for each completed
+            appointment.
+            7. Removes the caregiver from the 'quarterly' type schedule for 'cohort_a'
+            cohort and 'child_count' of 1.
+            8. Updates subject and caregiver-child consents, maternal dataset object,
+            child dataset object, and Cohort object variables. Adds the Cohort object
+            onto the 'b_sec1_schedule1' schedule, then asserts that the subject is on
+            the 'b_sec1_schedule1' schedule and has 1 related appointment.
+            9. Asserts that the OnScheduleCohortBSecQuart database has 0 objects with
+            matching subject identifier and 'b_sec_quart1_schedule1' schedule name,
+            creates a MaternalVisit object for the subject and 'b_sec1_schedule1'
+            schedule name, then asserts that the OnScheduleCohortBSecQuart
+            database has 1 object with matching subject identifier and
+            'b_sec_quart1_schedule1' schedule name.
+            10. Deletes completed appointments from the 'a_quarterly1_schedule1'
+            schedule for the subject and adds them to the 'b_sec_quart1_schedule1'
+            schedule. Asserts that no appointments exist for the subject in both
+            schedules.
+            """
         subject_identifier = self.sequential_helper.get_cohort_a_subj()
         self.assertNotEqual(subject_identifier, None)
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
