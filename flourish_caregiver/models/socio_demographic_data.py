@@ -126,7 +126,7 @@ class SocioDemographicData(CrfModelMixin):
     @property
     def is_pregnant(self):
         return AntenatalEnrollment.objects.filter(
-            subject_identifier=self.subject_identifier)
+            subject_identifier=self.subject_identifier).exists()
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'

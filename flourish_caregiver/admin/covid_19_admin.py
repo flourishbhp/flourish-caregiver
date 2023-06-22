@@ -1,6 +1,4 @@
 from django.contrib import admin
-from edc_metadata import KEYED
-from edc_metadata.models import CrfMetadata
 from edc_model_admin import audit_fieldset_tuple
 
 from ..admin_site import flourish_caregiver_admin

@@ -1,14 +1,12 @@
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 from edc_model_admin import audit_fieldset_tuple
+
+from .modeladmin_mixins import ModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverLocatorForm
 from ..models import CaregiverLocator
-from .modeladmin_mixins import ModelAdminMixin
-from flourish_caregiver.models import MaternalDataset
-from django.shortcuts import redirect, reverse
-from django.conf import settings
 from ..models import SubjectConsent
-from django.http import HttpResponseRedirect
 
 
 @admin.register(CaregiverLocator, site=flourish_caregiver_admin)

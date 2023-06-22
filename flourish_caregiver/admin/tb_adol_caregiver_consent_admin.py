@@ -106,7 +106,7 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
         if subject_identifier:
         
             children = CaregiverChildConsent.objects.filter(
-                subject_identifier__istartswith=subject_identifier,
+                subject_consent__subject_identifier=subject_identifier,
             )
             
             for child in children:

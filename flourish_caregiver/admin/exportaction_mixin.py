@@ -1,6 +1,5 @@
 import datetime
 import uuid
-import itertools
 
 from django.apps import apps as django_apps
 from django.db.models import ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel
@@ -9,7 +8,6 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 import xlwt
-import re
 from ..helper_classes import MaternalStatusHelper
 
 
@@ -178,11 +176,12 @@ class ExportActionMixin:
         """
         Returns the consent version of an object
         """
-        version_model = django_apps.get_model('flourish_caregiver.flourishconsentversion')
+        version_model = django_apps.get_model(
+            'flourish_caregiver.flourishconsentversion')
         try:
-            version = version_model.objects.get(screening_identifier=self.screening_identifier(
-                subject_identifier=obj.subject_identifier
-            ))
+            version = version_model.objects.get(
+                screening_identifier=self.screening_identifier(
+                    subject_identifier=obj.subject_identifier, ))
         except version_model.DoesNotExist:
             return ""
         else:
