@@ -1,10 +1,14 @@
 from django.apps import apps as django_apps
+from edc_appointment.models import Appointment
 from edc_base import get_utcnow
 from edc_visit_schedule import site_visit_schedules
-from flourish_caregiver.helper_classes.schedule_dict import child_schedule_dict, caregiver_schedule_dict
+from flourish_caregiver.helper_classes.schedule_dict import child_schedule_dict, \
+    caregiver_schedule_dict
+from flourish_child.models import Appointment as ChildAppointment
 
 
 class SeqEnrolOnScheduleMixin:
+
     def put_caregiver_onschedule(self):
         """Put a caregiver on schedule.
         """
@@ -25,8 +29,8 @@ class SeqEnrolOnScheduleMixin:
         prev_schedule_name = self.caregiver_last_qt_subject_schedule_obj.schedule_name
 
         self.delete_completed_appointments(
-            appointment_model_cls=self.child_appointment_cls,
-            subject_identifier=self.child_subject_identifier,
+            appointment_model_cls=Appointment,
+            subject_identifier=self.caregiver_subject_identifier,
             prev_schedule_name=prev_schedule_name,
             new_schedule_name=schedule_name)
 
@@ -51,7 +55,7 @@ class SeqEnrolOnScheduleMixin:
             prev_schedule_name = self.child_last_qt_subject_schedule_obj.schedule_name
 
             self.delete_completed_appointments(
-                appointment_model_cls=self.child_appointment_cls,
+                appointment_model_cls=ChildAppointment,
                 subject_identifier=self.child_subject_identifier,
                 prev_schedule_name=prev_schedule_name,
                 new_schedule_name=schedule_name)
