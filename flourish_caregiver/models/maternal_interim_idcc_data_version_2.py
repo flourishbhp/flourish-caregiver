@@ -93,7 +93,9 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
     any_new_diagnoses = models.CharField(
         max_length=3,
         verbose_name="Is there any other new diagnoses in your last IDCC review?",
-        choices=YES_NO)
+        choices=YES_NO,
+        blank=True,
+        null=True)
 
     new_other_diagnoses = models.TextField(
         max_length=25,

@@ -78,14 +78,16 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
     def format_form_label(self, label=None, instance=None, appointment=None, **kwargs):
 
         previous_instance = self.get_previous_instance(request=self.request)
+        previous_appointment = self.get_previous_appt_instance(
+            appointment=self.get_appointment(request=self.request)
+        )
 
         previous = None
 
         if previous_instance:
             previous = previous_instance.report_datetime.date()
-        elif self.maternal_delivery_obj:
-            previous = getattr(
-                self.maternal_hiv_interimhx_obj, 'cd4_date', None)
+        elif previous_appointment:
+            previous = previous_appointment.maternalvisit.report_datetime.date()
 
         label = label.format(previous=previous or 'Unknown')
 
