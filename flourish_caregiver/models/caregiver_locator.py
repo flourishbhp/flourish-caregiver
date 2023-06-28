@@ -143,12 +143,13 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         null=True)
 
     is_locator_updated = models.CharField(
-        verbose_name='Did you update caregiver locator information',
+        verbose_name='Did you make any changes to this form',
         choices=YES_NO,
         null=True,
         blank=True,
         max_length=5
     )
+   
 
     history = HistoricalRecords()
 
