@@ -42,10 +42,6 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         return django_apps.get_model(self.subject_schedule_model)
 
     @property
-    def subject_schedule_cls(self):
-        return django_apps.get_model(self.subject_schedule_model)
-
-    @property
     def child_last_qt_subject_schedule_obj(self):
         try:
             schedule_obj = self.subject_schedule_cls.objects.filter(
