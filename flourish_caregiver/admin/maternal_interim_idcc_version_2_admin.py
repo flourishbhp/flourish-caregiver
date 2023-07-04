@@ -33,13 +33,11 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
                 'last_visit_result',
                 'reason_cd4_not_availiable',
                 'reason_cd4_not_availiable_other',
-                'cd4_value_and_date_availiable',
                 'recent_cd4',
                 'recent_cd4_date',
                 'vl_result_availiable',
                 'reason_vl_not_availiable',
                 'reason_vl_not_availiable_other',
-                'vl_value_and_date_availiable',
                 'value_vl_size',
                 'value_vl',
                 'recent_vl_date',
@@ -51,10 +49,8 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
                     'laboratory_information_available': admin.VERTICAL,
                     'last_visit_result': admin.VERTICAL,
                     'reason_cd4_not_availiable': admin.VERTICAL,
-                    'cd4_value_and_date_availiable': admin.VERTICAL,
                     'vl_result_availiable': admin.VERTICAL,
                     'reason_vl_not_availiable': admin.VERTICAL,
-                    'vl_value_and_date_availiable': admin.VERTICAL,
                     'value_vl_size': admin.VERTICAL,
                     'any_new_diagnoses': admin.VERTICAL, }
 
@@ -79,14 +75,16 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
     def format_form_label(self, label=None, instance=None, appointment=None, **kwargs):
 
         previous_instance = self.get_previous_instance(request=self.request)
+        previous_appointment = self.get_previous_appt_instance(
+            appointment=self.get_appointment(request=self.request)
+        )
 
         previous = None
 
         if previous_instance:
             previous = previous_instance.report_datetime.date()
-        elif self.maternal_delivery_obj:
-            previous = getattr(
-                self.maternal_hiv_interimhx_obj, 'cd4_date', None)
+        elif previous_appointment:
+            previous = previous_appointment.maternalvisit.report_datetime.date()
 
         label = label.format(previous=previous or 'Unknown')
 

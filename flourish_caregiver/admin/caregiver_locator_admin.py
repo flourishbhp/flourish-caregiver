@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
+from edc_fieldsets import Fieldsets
 from edc_model_admin import audit_fieldset_tuple
 
 from .modeladmin_mixins import ModelAdminMixin
@@ -66,9 +67,24 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
         'may_call_work': admin.VERTICAL,
         'may_visit_home': admin.VERTICAL,
         'may_contact_indirectly': admin.VERTICAL,
-        'has_caretaker': admin.VERTICAL}
+        'has_caretaker': admin.VERTICAL,
+        'is_locator_updated': admin.VERTICAL,
+    }
 
     search_fields = ['subject_identifier', 'study_maternal_identifier']
 
     list_display = ('study_maternal_identifier', 'subject_identifier', 'may_visit_home',
                     'may_call', 'may_call_work')
+
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj=obj)
+        if obj.subject_identifier and 'P' in obj.subject_identifier:
+            fieldsets = Fieldsets(fieldsets=fieldsets)
+            try:
+                fieldsets.insert_fields(*('is_locator_updated',), insert_after='caretaker_tel')
+            except AttributeError:
+                pass
+            else:
+                return fieldsets.fieldsets
+        return fieldsets
