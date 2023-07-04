@@ -30,7 +30,7 @@ caregiver_schedule_dict = {
             '1': 'a_fu_quarterly1_schedule1',
             '2': 'a_fu_quarterly2_schedule1',
             '3': 'a_fu_quarterly3_schedule1',
-            'onschedule_model': 'flourish_caregiver.onschedulecohortAfuquarterly'
+            'onschedule_model': 'flourish_caregiver.onschedulecohortafuquarterly'
         },
         'quarterly': {
             '1': 'a_quarterly1_schedule1',
