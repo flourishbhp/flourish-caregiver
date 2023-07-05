@@ -1132,4 +1132,3 @@ def encrypt_files(instance, subject_identifier):
         os.remove(f'{instance.image.path}')
     instance.image = f'{upload_to}{zip_filename}'
     instance.save()
-    
