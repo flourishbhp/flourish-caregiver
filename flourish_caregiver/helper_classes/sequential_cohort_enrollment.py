@@ -195,17 +195,22 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         """
         # Check if a child has aged up
 
-        with transaction.atomic():
-            if self.aged_up and self.current_cohort != self.evaluated_cohort:
-                # put them on a new aged up cohort
+        try:
 
-                defaults = {
-                    'assign_datetime': get_utcnow(),
-                    'enrollment_cohort': False
-                }
-                cohort_obj, _ = Cohort.objects.get_or_create(
-                    defaults=defaults, subject_identifier=self.child_subject_identifier,
-                    name=self.evaluated_cohort, )
-                # Put caregiver and child off and on schedule
-                if cohort_obj:
-                    self.put_onschedule()
+            with transaction.atomic():
+                if self.aged_up and self.current_cohort != self.evaluated_cohort:
+                    # put them on a new aged up cohort
+
+                    defaults = {
+                        'assign_datetime': get_utcnow(),
+                        'enrollment_cohort': False
+                    }
+                    cohort_obj, _ = Cohort.objects.get_or_create(
+                        defaults=defaults, subject_identifier=self.child_subject_identifier,
+                        name=self.evaluated_cohort, )
+                    # Put caregiver and child off and on schedule
+                    if cohort_obj:
+                        self.put_onschedule()
+        except Exception as e:
+            e.add_note(f'failed for child : {self.child_subject_identifier}')
+            raise e
