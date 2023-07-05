@@ -1,5 +1,5 @@
+from edc_base.utils import get_utcnow
 from edc_visit_schedule import site_visit_schedules
-from .schedule_dict import child_schedule_dict, caregiver_schedule_dict
 
 
 class OffScheduleSequentialCohortEnrollmentMixin:
@@ -14,7 +14,7 @@ class OffScheduleSequentialCohortEnrollmentMixin:
             name=schedule_name)
 
         if schedule.is_onschedule(subject_identifier=self.child_subject_identifier,
-                                  report_datetime=self.child_consent_obj.consent_datetime):
+                                  report_datetime=get_utcnow()):
             schedule.take_off_schedule(
                 subject_identifier=self.child_subject_identifier,
                 schedule_name=schedule_name)
@@ -29,7 +29,7 @@ class OffScheduleSequentialCohortEnrollmentMixin:
             name=schedule_name)
 
         if schedule.is_onschedule(subject_identifier=self.caregiver_subject_identifier,
-                                  report_datetime=self.child_consent_obj.consent_datetime):
+                                  report_datetime=get_utcnow()):
             schedule.take_off_schedule(
                 subject_identifier=self.caregiver_subject_identifier,
                 schedule_name=schedule_name)

@@ -282,7 +282,8 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
                             subject_identifier=instance.subject_identifier,
                             child_subject_identifier=child_subject_identifier,
                             caregiver_visit_count=children_count,
-                            base_appt_datetime=instance.report_datetime.replace(microsecond=0))
+                            base_appt_datetime=instance.report_datetime.replace(
+                                microsecond=0))
 
 
 @receiver(post_save, weak=False, sender=MaternalDelivery,
@@ -368,7 +369,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if not children_count:
             children_count = 1 + child_dummy_consent_cls.objects.filter(
                 subject_identifier__startswith=instance.subject_consent.subject_identifier
-            ).exclude(dob=instance.child_dob,).count()
+            ).exclude(dob=instance.child_dob, ).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
@@ -401,10 +402,13 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         version=instance.version,
                         cohort=cohort)
             # Put participant into a cohort
-            Cohort.objects.create(
+            cohort_obj = Cohort.objects.create(
                 subject_identifier=instance.subject_identifier,
                 name=cohort,
                 enrollment_cohort=True)
+
+            instance.cohort = cohort_obj.name
+            instance.save_base(raw=True)
 
         else:
             # TO-DO: Update child cohort
@@ -565,13 +569,13 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
             'flourish_caregiver.tboffstudy')
 
         tb_referral = (
-            instance.have_cough == YES or
-            instance.cough_duration == '=>2 week' or
-            instance.fever == YES or
-            instance.night_sweats == YES or
-            instance.weight_loss == YES or
-            instance.cough_blood == YES or
-            instance.enlarged_lymph_nodes == YES
+                instance.have_cough == YES or
+                instance.cough_duration == '=>2 week' or
+                instance.fever == YES or
+                instance.night_sweats == YES or
+                instance.weight_loss == YES or
+                instance.cough_blood == YES or
+                instance.enlarged_lymph_nodes == YES
         )
 
         if not tb_referral:
@@ -625,7 +629,7 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=instance.schedule_name)
                 if schedule.is_onschedule(
-                    subject_identifier=instance.subject_identifier,
+                        subject_identifier=instance.subject_identifier,
                         report_datetime=get_utcnow()):
                     schedule.take_off_schedule(
                         subject_identifier=instance.subject_identifier,
@@ -833,15 +837,14 @@ def get_schedule_sequence(subject_identifier, instance,
                           onschedule_cls, caregiver_visit_count=None):
     children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
-                          subject_identifier=subject_identifier).exclude(
-                              child_subject_identifier=instance.subject_identifier).count())
+                subject_identifier=subject_identifier).exclude(
+                child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
 def put_on_schedule(cohort, instance=None, subject_identifier=None,
                     child_subject_identifier=None, base_appt_datetime=None,
                     caregiver_visit_count=None):
-
     subject_identifier = subject_identifier or instance.subject_consent.subject_identifier
     if instance:
         schedule, onschedule_model_cls, schedule_name = get_onschedule_model(
@@ -882,7 +885,6 @@ def put_on_schedule(cohort, instance=None, subject_identifier=None,
 
 def get_onschedule_model(cohort, caregiver_visit_count=None, subject_identifier=None,
                          instance=None):
-
     cohort_label_lower = ''.join(cohort.split('_'))
 
     if 'enrol' in cohort:
@@ -972,9 +974,10 @@ def create_registered_infant(instance):
                         'flourish_caregiver.caregiverchildconsent')
 
                     # Create caregiver child consent
-                    caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
-                        subject_identifier__startswith=instance.subject_identifier,
-                        preg_enroll=True)
+                    caregiver_child_consent_objs = \
+                        caregiver_child_consent_cls.objects.filter(
+                            subject_identifier__startswith=instance.subject_identifier,
+                            preg_enroll=True)
 
                     if not caregiver_child_consent_objs:
                         caregiver_child_consent_cls.objects.create(

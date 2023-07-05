@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'pre_flourish.apps.AppConfig',
     'pre_flourish_follow.apps.AppConfig',
     'flourish_follow.apps.AppConfig',
+    'flourish_calendar.apps.AppConfig',
     'flourish_labs.apps.AppConfig',
     'edc_senaite_interface.apps.AppConfig',
     'flourish_caregiver.apps.EdcAppointmentAppConfig',

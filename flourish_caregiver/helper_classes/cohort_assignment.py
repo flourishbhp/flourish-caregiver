@@ -69,7 +69,7 @@ class CohortAssignment:
             @return: concat of age and month parsed as decimal.
         """
         child_age = age(self.child_dob, self.enrolment_dt)
-        child_age = child_age.years + (child_age.months/12)
+        child_age = round(child_age.years + (child_age.months/12) + (child_age.days/365.25), 2)
 
         return child_age
 

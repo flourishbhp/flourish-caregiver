@@ -1,7 +1,7 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from ...models import Cohort, CaregiverChildConsent
+from ...models import CaregiverChildConsent
 from ...helper_classes import SequentialCohortEnrollment
 
 
