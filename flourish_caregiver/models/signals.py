@@ -23,20 +23,13 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
 from PIL import Image
 
-from ..action_items import CAREGIVEROFF_STUDY_ACTION, TB_OFF_STUDY_ACTION
-from ..constants import MIN_GA_LMP_ENROL_WEEKS, MAX_GA_LMP_ENROL_WEEKS
-from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from .cohort import Cohort
-from ..models import CaregiverOffSchedule, ScreeningPregWomen
-from ..models import ScreeningPriorBhpParticipants
-from ..models.tb_informed_consent import TbInformedConsent
-from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
+from .cohort import Cohort
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
@@ -50,7 +43,6 @@ from ..action_items import CAREGIVEROFF_STUDY_ACTION
 from ..action_items import TB_OFF_STUDY_ACTION
 from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort_assignment import CohortAssignment
 from ..helper_classes.consent_helper import consent_helper
 from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..helper_classes.utils import cohort_assigned
@@ -380,7 +372,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 subject_identifier=instance.subject_identifier,
                 enrollment_cohort=True)
         except Cohort.DoesNotExist:
-            cohort = cohort_assigned(instance.subject_identifier,
+            cohort = cohort_assigned(instance.study_child_identifier,
                                      instance.child_dob,
                                      instance.subject_consent.created.date())
 
@@ -1140,3 +1132,4 @@ def encrypt_files(instance, subject_identifier):
         os.remove(f'{instance.image.path}')
     instance.image = f'{upload_to}{zip_filename}'
     instance.save()
+    
