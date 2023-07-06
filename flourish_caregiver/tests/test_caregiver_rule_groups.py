@@ -8,7 +8,7 @@ from edc_facility.import_holidays import import_holidays
 from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 from edc_metadata.models import CrfMetadata
 from model_mommy import mommy
-
+from edc_visit_schedule import site_visit_schedules
 from edc_appointment.constants import NEW_APPT
 from edc_appointment.creators import AppointmentInProgressError
 from edc_appointment.creators import InvalidParentAppointmentMissingVisitError
@@ -1354,3 +1354,67 @@ class TestRuleGroups(TestCase):
             visit_code_sequence='0').values_list('entry_status', flat=True)
 
         self.assertIn(REQUIRED, entry_statuses)
+
+    @tag('post_hiv_test')
+    def test_post_hiv_rapid_in_quarterly_required(self):
+        # FIXME: Failing
+
+        schedule_name = 'b_quarterly1_schedule1'
+
+        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+            name=schedule_name,
+            onschedule_model='flourish_caregiver.onschedulecohortbquarterly')
+
+        schedule.put_on_schedule(
+            subject_identifier = self.subject_identifier,
+            schedule_name = schedule_name
+        )
+
+
+        maternal_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            schedule_name = schedule_name,
+            subject_identifier = self.subject_identifier,
+            appointment = Appointment.objects.get(visit_code = '2001M')
+        )
+
+        maternal_visit.save()
+
+        crf_metadata = CrfMetadata.objects.get(
+                model = 'flourish_caregiver.posthivrapidtestandconseling',
+                visit_code  = '2001M',)
+
+        self.assertEqual(crf_metadata.entry_status, REQUIRED)
+
+    @tag('post_hiv_test')
+    def test_post_hiv_rapid_in_follow_up_quarterly_required(self):
+        # FIXME: Failing
+
+        schedule_name = 'a_fu_quarterly1_schedule1'
+
+        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+            name=schedule_name,
+            onschedule_model='flourish_caregiver.onschedulecohortafuquarterly')
+
+        schedule.put_on_schedule(
+            subject_identifier = self.subject_identifier,
+            schedule_name = schedule_name
+        )
+
+
+        maternal_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            schedule_name = schedule_name,
+            subject_identifier = self.subject_identifier,
+            appointment = Appointment.objects.get(visit_code = '3001M')
+        )
+
+        # maternal_visit.save()
+
+        crf_metadata = CrfMetadata.objects.get(
+                model = 'flourish_caregiver.posthivrapidtestandconseling',
+                visit_code  = '3001M',)
+
+        self.assertEqual(crf_metadata.entry_status, REQUIRED)
+
+       
