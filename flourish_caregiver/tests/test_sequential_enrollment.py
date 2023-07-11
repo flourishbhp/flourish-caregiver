@@ -68,7 +68,7 @@ class TestSequentialEnrollmentCohort(TestCase):
 
     @property
     def child_cohort_c_fu_quartely_cls(self):
-        return django_apps.get_model(self.child_cohort_c_fu_quartely_model)\
+        return django_apps.get_model(self.child_cohort_c_fu_quartely_model)
 
 
     @property
