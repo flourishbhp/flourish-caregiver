@@ -1,7 +1,7 @@
 from django.apps import apps as django_apps
 from django.db.models import Q
+from django.db import transaction
 from edc_base.utils import age, get_utcnow
-
 from .utils import cohort_assigned
 from ..models.cohort import Cohort
 from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
@@ -139,7 +139,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def put_onschedule(self):
 
         if 'followup_quarterly' == self.schedule_type and\
-            'sec' in self.evaluated_cohort:
+                'sec' in self.evaluated_cohort:
             return
 
         self.take_off_child_offschedule()
@@ -194,16 +194,23 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         """Checks if a child has aged up and put the on a new cohort and schedule.
         """
         # Check if a child has aged up
-        if self.aged_up and self.current_cohort != self.evaluated_cohort:
-            # put them on a new aged up cohort
 
-            defaults = {
-                'assign_datetime': get_utcnow(),
-                'enrollment_cohort': False
-            }
-            cohort_obj, _ = Cohort.objects.get_or_create(
-                defaults=defaults, subject_identifier=self.child_subject_identifier,
-                name=self.evaluated_cohort, )
-            # Put caregiver and child off and on schedule
-            if cohort_obj:
-                self.put_onschedule()
+        try:
+
+            with transaction.atomic():
+                if self.aged_up and self.current_cohort != self.evaluated_cohort:
+                    # put them on a new aged up cohort
+
+                    defaults = {
+                        'assign_datetime': get_utcnow(),
+                        'enrollment_cohort': False
+                    }
+                    cohort_obj, _ = Cohort.objects.get_or_create(
+                        defaults=defaults, subject_identifier=self.child_subject_identifier,
+                        name=self.evaluated_cohort, )
+                    # Put caregiver and child off and on schedule
+                    if cohort_obj:
+                        self.put_onschedule()
+        except Exception as e:
+            e.add_note(f'failed for child : {self.child_subject_identifier}')
+            raise e

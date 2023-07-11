@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.db.models import Q
 from edc_appointment.models import Appointment
@@ -24,11 +25,26 @@ class SeqEnrolOnScheduleMixin:
             'onschedule_model']
         schedule_name = caregiver_schedule_dict[cohort][schedule_type][child_count]
 
+
         self.put_on_schedule(onschedule_model=onschedule_model,
-                             schedule_name=schedule_name,
-                             base_appt_datetime=onschedule_datetime,
-                             subject_identifier=self.caregiver_subject_identifier,
-                             is_caregiver=True)
+                                schedule_name=schedule_name,
+                                onschedule_datetime=onschedule_datetime,
+                                subject_identifier=self.caregiver_subject_identifier,
+                                is_caregiver=True)
+
+        
+        if 'follow' in schedule_type:
+
+            fu_onschedule_model =  caregiver_schedule_dict[cohort]['followup']['onschedule_model']
+            fu_schedule_name =  caregiver_schedule_dict[cohort]['followup'][child_count]
+            fu_onschedule_datetime = get_utcnow() + relativedelta(months=6)
+
+            self.put_on_schedule(onschedule_model=fu_onschedule_model,
+                                schedule_name=fu_schedule_name,
+                                onschedule_datetime=fu_onschedule_datetime,
+                                subject_identifier=self.caregiver_subject_identifier,
+                                is_caregiver=True)
+            
 
         self.delete_completed_appointments(
             appointment_model_cls=Appointment,
@@ -43,7 +59,8 @@ class SeqEnrolOnScheduleMixin:
         onschedule_model = child_schedule_dict[cohort][schedule_type]['onschedule_model']
         schedule_name = child_schedule_dict[cohort][schedule_type]['name']
         onschedule_datetime = self.child_last_qt_subject_schedule_obj.onschedule_datetime
-        
+
+
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model,
             name=schedule_name)
@@ -54,6 +71,18 @@ class SeqEnrolOnScheduleMixin:
                                  schedule_name=schedule_name,
                                  base_appt_datetime=onschedule_datetime,
                                  subject_identifier=self.child_subject_identifier)
+            
+        if 'follow' in schedule_type:
+
+            fu_onschedule_model = child_schedule_dict[cohort]['followup']['onschedule_model']
+            fu_schedule_name = child_schedule_dict[cohort]['followup']['name']
+            fu_onschedule_datetime = get_utcnow() + relativedelta(months=6)
+        
+            self.put_on_schedule(onschedule_model=fu_onschedule_model,
+                                schedule_name=fu_schedule_name,
+                                subject_identifier=self.child_subject_identifier,
+                                onschedule_datetime=fu_onschedule_datetime)
+
 
             self.delete_completed_appointments(
                 appointment_model_cls=ChildAppointment,
@@ -61,20 +90,24 @@ class SeqEnrolOnScheduleMixin:
                 schedule_name=schedule_name)
 
     def put_on_schedule(self, onschedule_model, schedule_name,
-                        subject_identifier, base_appt_datetime=None, is_caregiver=False):
+                        subject_identifier, base_appt_datetime=None, is_caregiver=False, 
+                        onschedule_datetime = get_utcnow()):
+        
+        
+
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model,
             name=schedule_name)
         schedule.put_on_schedule(
             subject_identifier=subject_identifier,
-            onschedule_datetime=get_utcnow(),
+            onschedule_datetime=onschedule_datetime,
             base_appt_datetime=base_appt_datetime,
             schedule_name=schedule_name)
 
         if is_caregiver:
             self.update_onschedule_model(onschedule_model=onschedule_model,
                                          schedule_name=schedule_name, schedule=schedule)
-
+            
     def update_onschedule_model(self, onschedule_model, schedule_name, schedule):
 
         onschedule_model_cls = django_apps.get_model(onschedule_model)
