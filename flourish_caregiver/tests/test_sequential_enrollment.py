@@ -9,7 +9,7 @@ from flourish_caregiver.helper_classes.sequential_subject_helper import \
     SequentialSubjectHelper
 from flourish_caregiver.models import (OnScheduleCohortAEnrollment, OnScheduleCohortBEnrollment,
                                        OnScheduleCohortCSec, OnScheduleCohortCFUQuarterly,
-                                       OnScheduleCohortCFU,OnScheduleCohortBSecQuart, 
+                                       OnScheduleCohortCFU, OnScheduleCohortBSecQuart,
                                        OnScheduleCohortBQuarterly, OnScheduleCohortCQuarterly)
 from flourish_child.models import OnScheduleChildCohortCFU
 from model_mommy import mommy
@@ -33,7 +33,6 @@ class TestSequentialEnrollmentCohort(TestCase):
     child_cohort_b_fu_quartely_model = 'flourish_child.onschedulechildcohortbfuquart'
     child_cohort_c_fu_quartely_model = 'flourish_child.onschedulechildcohortcfuquart'
     child_cohord_c_fu_enrollment_model = 'flourish_child.onschedulechildcohortcfu'
-
 
     @property
     def child_cohort_a_quartely_cls(self):
@@ -62,15 +61,16 @@ class TestSequentialEnrollmentCohort(TestCase):
     @property
     def child_cohort_c_sec_quartely_cls(self):
         return django_apps.get_model(self.child_cohort_c_sec_quartely_model)
-    
+
     @property
     def child_cohort_b_fu_quartely_cls(self):
         return django_apps.get_model(self.child_cohort_b_fu_quartely_model)
-    
+
     @property
     def child_cohort_c_fu_quartely_cls(self):
         return django_apps.get_model(self.child_cohort_c_fu_quartely_model)\
-    
+
+
     @property
     def child_cohord_c_fu_enrollment_cls(self):
         return django_apps.get_model(self.child_cohord_c_fu_enrollment_model)
@@ -86,7 +86,7 @@ class TestSequentialEnrollmentCohort(TestCase):
 
         self.subject_consent = mommy.make_recipe('flourish_caregiver.subjectconsent',
                                                  subject_identifier=self.subject_identifier,)
-        
+
         self.subject_consent.save()
 
         try:
@@ -99,7 +99,6 @@ class TestSequentialEnrollmentCohort(TestCase):
         self.sq_erollment = SequentialCohortEnrollment(
             child_subject_identifier=self.child_subject_identifier)
 
-
     @tag('sq1')
     def test_caregiver_cohort_a_to_cohort_b(self):
 
@@ -110,10 +109,9 @@ class TestSequentialEnrollmentCohort(TestCase):
                                                study_child_identifier=self.study_child_identifier)
 
         cohort = mommy.make_recipe('flourish_caregiver.cohort',
-                          subject_identifier=self.child_subject_identifier,
-                          name='cohort_a',
-                          enrollment_cohort=True)
-        
+                                   subject_identifier=self.child_subject_identifier,
+                                   name='cohort_a',
+                                   enrollment_cohort=True)
 
         self.caregiver_child_consent = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                                          subject_identifier=self.child_subject_identifier,
@@ -524,7 +522,6 @@ class TestSequentialEnrollmentCohort(TestCase):
             subject_identifier=self.subject_identifier).exists())
         self.assertTrue(self.child_cohort_b_sec_quartely_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).exists())
-        
 
     def test_age_up_fu_enrollment_put_onschedule(self):
 
@@ -575,18 +572,16 @@ class TestSequentialEnrollmentCohort(TestCase):
             subject_identifier=self.child_subject_identifier,
             onschedule_datetime=get_utcnow(),
             schedule_name='child_b_fu_qt_schedule1')
-        
-        self.sq_erollment.age_up_enrollment()
 
+        self.sq_erollment.age_up_enrollment()
 
         self.assertTrue(OnScheduleCohortCFUQuarterly.objects.filter(
             subject_identifier=self.subject_identifier).exists())
         self.assertTrue(self.child_cohort_c_fu_quartely_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).exists())
-        
 
     def test_age_up_fu_enrollment_put_onschedule(self):
-    
+
         self.child_dob = (
             get_utcnow() - relativedelta(years=11)).date()
         self.child_dataset = mommy.make_recipe('flourish_child.childdataset',
@@ -634,13 +629,11 @@ class TestSequentialEnrollmentCohort(TestCase):
             subject_identifier=self.child_subject_identifier,
             onschedule_datetime=get_utcnow(),
             schedule_name='child_b_fu_qt_schedule1')
-        
-        self.sq_erollment.age_up_enrollment()
 
+        self.sq_erollment.age_up_enrollment()
 
         self.assertTrue(OnScheduleCohortCFU.objects.filter(
             subject_identifier=self.subject_identifier).exists())
-        
+
         self.assertTrue(self.child_cohord_c_fu_enrollment_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).exists())
-        
