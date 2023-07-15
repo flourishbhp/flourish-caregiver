@@ -1,3 +1,4 @@
+import logging
 from django.apps import apps as django_apps
 from django.db.models import Q
 from django.db import transaction
@@ -17,6 +18,9 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     """Class that checks and enrols participants to the next
     the next cohort when they age up.
     """
+
+    logger = logging.getLogger(__name__)
+    
 
     subject_schedule_model = 'edc_visit_schedule.subjectschedulehistory'
 
@@ -194,9 +198,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         """Checks if a child has aged up and put the on a new cohort and schedule.
         """
         # Check if a child has aged up
-
         try:
-
             with transaction.atomic():
                 if self.aged_up and self.current_cohort != self.evaluated_cohort:
                     # put them on a new aged up cohort
@@ -212,5 +214,4 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
                     if cohort_obj:
                         self.put_onschedule()
         except Exception as e:
-            e.add_note(f'failed for child : {self.child_subject_identifier}')
-            raise e
+            self.logger.exception(f'Failed to sequantial enrol pid: {self.child_subject_identifier} ')

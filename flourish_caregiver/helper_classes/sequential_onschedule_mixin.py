@@ -33,7 +33,7 @@ class SeqEnrolOnScheduleMixin:
                                 is_caregiver=True)
 
         
-        if cohort in ['cohort_a', 'cohort_b', 'cohort_c']:
+        if 'follow' in self.schedule_type:
 
             fu_onschedule_model =  caregiver_schedule_dict[cohort]['followup']['onschedule_model']
             fu_schedule_name =  caregiver_schedule_dict[cohort]['followup'][child_count]
@@ -73,16 +73,19 @@ class SeqEnrolOnScheduleMixin:
                                  subject_identifier=self.child_subject_identifier)
             
 
-            if cohort in ['cohort_a', 'cohort_b', 'cohort_c']:
+        if 'follow' in self.schedule_type:
 
-                fu_onschedule_model = child_schedule_dict[cohort]['followup']['onschedule_model']
-                fu_schedule_name = child_schedule_dict[cohort]['followup']['name']
-                fu_onschedule_datetime = get_utcnow() + relativedelta(months=6)
-            
-                self.put_on_schedule(onschedule_model=fu_onschedule_model,
-                                    schedule_name=fu_schedule_name,
-                                    subject_identifier=self.child_subject_identifier,
-                                    onschedule_datetime=fu_onschedule_datetime)
+            fu_onschedule_model = child_schedule_dict[cohort]['followup']['onschedule_model']
+            fu_schedule_name = child_schedule_dict[cohort]['followup']['name']
+            fu_onschedule_datetime = get_utcnow() + relativedelta(months=6)
+
+            print('follow up')
+
+        
+            self.put_on_schedule(onschedule_model=fu_onschedule_model,
+                                schedule_name=fu_schedule_name,
+                                subject_identifier=self.child_subject_identifier,
+                                onschedule_datetime=fu_onschedule_datetime)
 
 
             self.delete_completed_appointments(
