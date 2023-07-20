@@ -8,11 +8,14 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 class ConsentHelper:
 
+    @property
+    def pre_flourish_registered_subject_model_cls(self):
+        return django_apps.get_model('pre_flourish.PreFlourishRegisteredSubject')
+
     @staticmethod
-    def verify_registered_subject(instance):
-        """Raises an error if subject is not registered."""
+    def validate_pre_flourish_registered_subject(instance):
         try:
-            RegisteredSubject.objects.get(
+            consent_helper.pre_flourish_registered_subject_model_cls.objects.get(
                 subject_identifier=instance.subject_identifier,
                 consent_datetime__lte=instance.report_datetime)
         except ObjectDoesNotExist:
@@ -21,6 +24,23 @@ class ConsentHelper:
                 f'{instance._meta.label_lower}. '
                 f'Got {instance.subject_identifier} on '
                 f'{instance.report_datetime}.')
+
+    @staticmethod
+    def verify_registered_subject(instance):
+        """Raises an error if subject is not registered."""
+        if 'P' in instance.subject_identifier:
+            consent_helper.validate_pre_flourish_registered_subject(instance)
+        else:
+            try:
+                RegisteredSubject.objects.get(
+                    subject_identifier=instance.subject_identifier,
+                    consent_datetime__lte=instance.report_datetime)
+            except ObjectDoesNotExist:
+                raise NotConsentedError(
+                    f'Subject is not registered. Unable to save '
+                    f'{instance._meta.label_lower}. '
+                    f'Got {instance.subject_identifier} on '
+                    f'{instance.report_datetime}.')
 
     @staticmethod
     def get_requires_consent(instance, consent_model, schedule=None):
