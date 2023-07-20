@@ -1,0 +1,18 @@
+os: linux
+dist: focal
+language: python
+
+python: "3.9" 
+
+addons:
+    apt_packages:
+        - libcups2-dev
+
+install:
+  - pip install -r requirements.txt
+  - pip install flake8
+  
+# command to run tests --todo
+
+before_script:
+  - flake8 trainee
