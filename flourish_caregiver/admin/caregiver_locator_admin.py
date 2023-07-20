@@ -81,7 +81,8 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj=obj)
-        if hasattr(obj, 'subject_identifier') and 'P' in obj.subject_identifier:
+        subject_identifier = getattr(obj, 'subject_identifier', '')
+        if subject_identifier and 'P' in subject_identifier:
             fieldsets = Fieldsets(fieldsets=fieldsets)
             try:
                 fieldsets.insert_fields(*('is_locator_updated',), insert_after='caretaker_tel')
