@@ -11,9 +11,8 @@ class ObstericalHistory(CrfModelMixin):
     """
 
     prev_pregnancies = models.IntegerField(
-        verbose_name='How many pregnancies has the participant '
-                     'had(if participant is currently pregnant,'
-                     ' please include in the count of pregnancies)',
+        verbose_name=('Including the pregnancy of the child in the FLOURISH '
+                      'study, how many previous pregnancies for this participant?'),
         validators=[MinValueValidator(1), MaxValueValidator(20), ],
     )
 
@@ -64,5 +63,5 @@ class ObstericalHistory(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Obstetrical History'
-        verbose_name_plural = 'Obstetrical History'
+        verbose_name = 'Obsterical History'
+        verbose_name_plural = 'Obsterical History'
