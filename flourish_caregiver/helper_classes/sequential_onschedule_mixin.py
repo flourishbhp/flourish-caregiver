@@ -32,24 +32,22 @@ class SeqEnrolOnScheduleMixin:
                                 subject_identifier=self.caregiver_subject_identifier,
                                 is_caregiver=True)
 
-        
-        if 'follow' in schedule_type:
-
-            fu_onschedule_model =  caregiver_schedule_dict[cohort]['followup']['onschedule_model']
-            fu_schedule_name =  caregiver_schedule_dict[cohort]['followup'][child_count]
-            fu_onschedule_datetime = get_utcnow() + relativedelta(months=6)
-
-            self.put_on_schedule(onschedule_model=fu_onschedule_model,
-                                schedule_name=fu_schedule_name,
-                                onschedule_datetime=fu_onschedule_datetime,
-                                subject_identifier=self.caregiver_subject_identifier,
-                                is_caregiver=True)
-            
-
         self.delete_completed_appointments(
             appointment_model_cls=Appointment,
             subject_identifier=self.caregiver_subject_identifier,
             schedule_name=schedule_name)
+
+        if 'follow' in schedule_type:
+
+            fu_onschedule_model =  caregiver_schedule_dict[cohort]['followup']['onschedule_model']
+            fu_schedule_name =  caregiver_schedule_dict[cohort]['followup'][child_count]
+            base_appt_datetime = get_utcnow() + relativedelta(months=6)
+
+            self.put_on_schedule(onschedule_model=fu_onschedule_model,
+                                schedule_name=fu_schedule_name,
+                                base_appt_datetime=base_appt_datetime,
+                                subject_identifier=self.caregiver_subject_identifier,
+                                is_caregiver=True)
 
     def put_child_onschedule(self):
 
@@ -76,12 +74,12 @@ class SeqEnrolOnScheduleMixin:
 
             fu_onschedule_model = child_schedule_dict[cohort]['followup']['onschedule_model']
             fu_schedule_name = child_schedule_dict[cohort]['followup']['name']
-            fu_onschedule_datetime = get_utcnow() + relativedelta(months=6)
+            base_appt_datetime = get_utcnow() + relativedelta(months=6)
         
             self.put_on_schedule(onschedule_model=fu_onschedule_model,
                                 schedule_name=fu_schedule_name,
                                 subject_identifier=self.child_subject_identifier,
-                                onschedule_datetime=fu_onschedule_datetime)
+                                base_appt_datetime=base_appt_datetime)
 
 
             self.delete_completed_appointments(
