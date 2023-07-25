@@ -217,6 +217,20 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             pass
         else:
             return child_dataset_obj
+    @property   
+    def get_protocol(self):
+        maternal_dataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
+        childdataset = self.get_child_dataset(study_child_identifier=self.study_child_identifier)
+        if childdataset:
+            maternal_identifier = childdataset.study_maternal_identifier
+            try:
+                maternal_dataset_obj = maternal_dataset_cls.objects.get(
+                    study_maternal_identifier=maternal_identifier)
+            except maternal_dataset_cls.DoesNotExist:
+                pass
+            else:
+                return maternal_dataset_obj.protocol
 
     def duplicate_subject_identifier_preg(self):
         try:

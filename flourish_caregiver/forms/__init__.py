@@ -82,3 +82,4 @@ from .tb_study_screening_form import TbStudyScreeningForm
 from .tb_visit_screening_women_form import TbVisitScreeningWomenForm
 from .ultrasound_form import UltraSoundForm
 from .interview_focus_group_interest_form import InterviewFocusGroupInterestForm
+from .post_hiv_rapid_testing_and_conseling_form import PostHivRapidTestAndConselingForm
