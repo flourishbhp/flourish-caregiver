@@ -147,11 +147,11 @@ class TestCohortAssignmentSetup(TestCase):
         """  Assert that a participant with a child who is less than
             10 years old at beginning of year 3 goes into cohort b schedule.
         """
-
+        dob_dt = (get_utcnow() - relativedelta(years=9, months=9)).date()
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = self.year_3_age(10, 0)
+        self.maternal_dataset_options['delivdt'] = dob_dt
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -161,7 +161,7 @@ class TestCohortAssignmentSetup(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=self.year_3_age(10, 0),
+            dob=dob_dt,
             **self.child_dataset_options)
 
         self.options = {
