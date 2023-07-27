@@ -1,5 +1,3 @@
-
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_constants.choices import YES_NO, POS_NEG_IND_UNKNOWN
 from ..choices import HIV_TESTING_REFUSAL_REASON

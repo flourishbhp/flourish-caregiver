@@ -68,7 +68,7 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
         
         
 class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
-                                  admin.StackedInline):
+                               admin.StackedInline):
     model = TbAdolChildConsent
     form = TbAdolChildConsentForm
 
@@ -90,27 +90,21 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
     
     radio_fields = {
         'adol_gender': admin.VERTICAL,
-    }
-    
-        
+    }   
     
     def get_formset(self, request, obj, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
         
-        
         initial = []
-
         
         subject_identifier = request.GET.get('subject_identifier', None)
         
         if subject_identifier:
         
             children = CaregiverChildConsent.objects.filter(
-                subject_consent__subject_identifier=subject_identifier,
-            )
+                subject_consent__subject_identifier=subject_identifier, )
             
             for child in children:
-                
                 age = relativedelta(get_utcnow().date(), child.child_dob).years
                 
                 if 10 <= age <= 17:

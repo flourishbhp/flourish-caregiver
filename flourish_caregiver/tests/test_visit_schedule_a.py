@@ -167,11 +167,11 @@ class TestVisitScheduleSetupA(TestCase):
     def test_cohort_a_onsec_and_onschedule_antenatal_valid(self):
         """Assert that a woman with a enrolled with a toddler can enroll for antenatal cohort a
         """
-
+        dob_dt = (get_utcnow() - relativedelta(years=4, months=1)).date()
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Tshilo Dikotla'
-        self.maternal_dataset_options['delivdt'] = self.year_3_age(4, 1)
+        self.maternal_dataset_options['delivdt'] = dob_dt
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -181,7 +181,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=self.year_3_age(4, 1),
+            dob=dob_dt,
             **self.child_dataset_options)
 
         sh = SubjectHelperMixin()

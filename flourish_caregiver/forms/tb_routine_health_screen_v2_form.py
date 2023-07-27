@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from flourish_form_validations.form_validators import TbRoutineHealthScreenV2FormValidator
 
 from ..models import TbRoutineHealthScreenV2, TbRoutineHealthEncounters
-from .form_mixins import SubjectModelFormMixin, InlineSubjectModelFormMixin
+from .form_mixins import SubjectModelFormMixin
 
 
 class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):

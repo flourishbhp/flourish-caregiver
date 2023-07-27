@@ -1,4 +1,3 @@
-from django.core.validators import MinValueValidator
 from django.db import models
 from .model_mixins import CrfModelMixin
 from ..choices import ARV_INTERRUPTION_REASON_POST_ADHERENCE
