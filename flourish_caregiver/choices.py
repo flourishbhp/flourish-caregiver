@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN, \
     FAILED_ELIGIBILITY, PARTICIPANT, DWTA, POS, NEG, ON_STUDY, OFF_STUDY, MALE, FEMALE, \
-    NEVER, DONT_KNOW
+    NEVER, DONT_KNOW, PENDING, IND
 from edc_constants.constants import YES, NO
 from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
 from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
@@ -672,9 +672,18 @@ TESTING_REASONS = (
 POS_NEG_PENDING_UNKNOWN = (
     (POS, 'Positive'),
     (NEG, 'Negative'),
-    ('PENDING', 'Pending'),
+    (PENDING, 'Pending'),
     (UNKNOWN, 'Unknown'),
 )
+
+POS_NEG_IND_UNKNOWN = (
+    (POS, 'Positive'),
+    (NEG, 'Negative'),
+    (PENDING, 'Pending'),
+    (IND, 'Pending'),
+    (UNKNOWN, 'Unknown'),
+)
+
 
 ISOLATION_LOCATION = (
     ('home', 'Home'),
@@ -998,6 +1007,7 @@ FUTURE_OF_RELATIONSHIP = (
      'It would be nice if my partnership succeeded, but I refuse to do more'),
     ('nothing_more',
      'My partnership can never succeed and there is nothing more I can do'),
+    (PNTA, 'Prefer not to answer')
 )
 
 FATHER_VISITS = (
@@ -1092,4 +1102,15 @@ YES_NO_TBD = (
     (YES, YES),
     (NO, NO),
     ('TBD', 'I will think about it'),
+)
+
+
+HIV_TESTING_REFUSAL_REASON = (
+    ('no_apparent_reason', 'No apparent reason'),
+    ('time_constraints', 'Time constraints'),
+    ('busy_schedule_at_work', 'Busy schedule at work'),
+    ('I_did_not_know_it_was_uncessary', 'I did not know it was necessary'),
+    ('test_kits_out_of_stock', 'Test kits out of stock at local clinic '),
+    ('not_ready', 'Not ready for testing'),
+    (OTHER, 'Other'),
 )

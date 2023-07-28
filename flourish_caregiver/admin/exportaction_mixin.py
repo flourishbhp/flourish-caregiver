@@ -1,6 +1,5 @@
 import datetime
 import uuid
-import itertools
 
 from django.apps import apps as django_apps
 from django.db.models import ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel
@@ -9,7 +8,6 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 import xlwt
-import re
 from ..helper_classes import MaternalStatusHelper
 
 
@@ -56,7 +54,9 @@ class ExportActionMixin:
         if ((queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound') and
                 queryset[0].get_current_ga):
             field_names.append('current_ga')
+            field_names.append('ga_birth_usconfirm')
             field_names.append('maternal_delivery_date')
+            field_names.append('study_status')
 
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
@@ -134,11 +134,12 @@ class ExportActionMixin:
                 data.append(field_value)
 
             if queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound':
-                if queryset[0].get_current_ga:
-                    field_value = getattr(obj, 'get_current_ga', '')
-                    data.append(field_value)
-                if maternal_delivery_obj:
-                    data.append(maternal_delivery_obj.delivery_datetime.date())
+                field_value = getattr(obj, 'get_current_ga', '')
+                data.append(field_value)
+                delivery_dt = getattr(maternal_delivery_obj, 'delivery_datetime', None)
+                data.append(field_value if delivery_dt else '')
+                data.append(delivery_dt.date() if delivery_dt else '')
+                data.append(self.study_status(subject_identifier) or '')
 
             if not self.is_consent(obj) and inline_objs:
                 # Update header
@@ -273,12 +274,15 @@ class ExportActionMixin:
         visit_cls = django_apps.get_model('flourish_caregiver.maternalvisit')
         return isinstance(obj, visit_cls)
 
-    def on_study(self, subject_identifier):
-        caregiver_offstudy_cls = django_apps.get_model('flourish_prn.caregiveroffstudy')
+    def study_status(self, subject_identifier=None):
+        if not subject_identifier:
+            return ''
+        caregiver_offstudy_cls = django_apps.get_model(
+            'flourish_prn.caregiveroffstudy')
         is_offstudy = caregiver_offstudy_cls.objects.filter(
             subject_identifier=subject_identifier).exists()
 
-        return 'No' if is_offstudy else 'Yes'
+        return 'off_study' if is_offstudy else 'on_study'
 
     @property
     def get_model_fields(self):

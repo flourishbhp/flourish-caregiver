@@ -546,6 +546,7 @@ REASON_CD4_RESULT_UNAVAILABLE = (
     (NO_SAMPLE_COLLECTED, 'No CD4 sample requested at last IDCC review'),
     (NO_SAMPLE_TUBES, 'No sample collection tubes at local IDCC'),
     (MACHINE_NOT_WORKING, 'Diagnostic machines not working'),
+    (OTHER, 'Other'),
 )
 
 REASON_VL_RESULT_UNAVAILABLE = (
@@ -555,4 +556,5 @@ REASON_VL_RESULT_UNAVAILABLE = (
     (NO_SAMPLE_COLLECTED, 'No VL sample requested at last IDCC review'),
     (NO_SAMPLE_TUBES, 'No sample collection tubes at local IDCC'),
     (MACHINE_NOT_WORKING, 'Diagnostic machines not working'),
+    (OTHER, 'Other'),
 )

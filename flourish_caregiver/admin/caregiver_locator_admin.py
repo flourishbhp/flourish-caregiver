@@ -4,6 +4,7 @@ from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverLocatorForm
 from ..models import CaregiverLocator
 from .modeladmin_mixins import ModelAdminMixin
+from edc_fieldsets import Fieldsets
 from flourish_caregiver.models import MaternalDataset
 from django.shortcuts import redirect, reverse
 from django.conf import settings
@@ -68,9 +69,25 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
         'may_call_work': admin.VERTICAL,
         'may_visit_home': admin.VERTICAL,
         'may_contact_indirectly': admin.VERTICAL,
-        'has_caretaker': admin.VERTICAL}
+        'has_caretaker': admin.VERTICAL,
+        'is_locator_updated': admin.VERTICAL,
+    }
 
     search_fields = ['subject_identifier', 'study_maternal_identifier']
 
     list_display = ('study_maternal_identifier', 'subject_identifier', 'may_visit_home',
                     'may_call', 'may_call_work')
+
+
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super().get_fieldsets(request, obj=obj)
+        subject_identifier = getattr(obj, 'subject_identifier', '')
+        if subject_identifier and 'P' in subject_identifier:
+            fieldsets = Fieldsets(fieldsets=fieldsets)
+            try:
+                fieldsets.insert_fields(*('is_locator_updated',), insert_after='caretaker_tel')
+            except AttributeError:
+                pass
+            else:
+                return fieldsets.fieldsets
+        return fieldsets
