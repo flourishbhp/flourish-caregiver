@@ -15,9 +15,11 @@ from flourish_form_validations.form_validators import \
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 
 from ..models import MaternalVisit, SubjectConsent
+from ..visit_sequence import VisitSequence
 
 
 class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin):
+    visit_sequence_cls = VisitSequence
     consent_version_model = 'flourish_caregiver.flourishconsentversion'
 
     def clean(self):

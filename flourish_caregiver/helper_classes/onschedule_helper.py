@@ -78,14 +78,17 @@ class OnScheduleHelper(object):
                 instance=instance)
 
             assent_onschedule_datetime = self.get_assent_onschedule_datetime
+            onschedule_datetime = (self.onschedule_datetime
+                                   or assent_onschedule_datetime
+                                   or instance.created.replace(microsecond=0))
 
-            schedule.put_on_schedule(
-                subject_identifier=subject_identifier,
-                onschedule_datetime=(self.onschedule_datetime
-                                     or assent_onschedule_datetime
-                                     or instance.created.replace(microsecond=0)),
-                schedule_name=schedule_name,
-                base_appt_datetime=base_appt_datetime)
+            if not schedule.is_onschedule(subject_identifier=instance.subject_identifier,
+                                          report_datetime=onschedule_datetime):
+                schedule.put_on_schedule(
+                    subject_identifier=subject_identifier,
+                    onschedule_datetime=onschedule_datetime,
+                    schedule_name=schedule_name,
+                    base_appt_datetime=base_appt_datetime)
 
             try:
                 onschedule_model_cls.objects.get(
