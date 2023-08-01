@@ -414,7 +414,13 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                             version=instance.version,
                             identity=instance.identity)
                     except child_dummy_consent_cls.DoesNotExist:
-                        pass
+                        child_dummy_consent = child_dummy_consent_cls.objects.create(
+                            subject_identifier=instance.subject_identifier,
+                            consent_datetime=instance.consent_datetime,
+                            identity=instance.identity,
+                            dob=instance.child_dob,
+                            version=instance.version,
+                            cohort=instance.cohort)
                     else:
                         if not child_dummy_consent.cohort:
                             child_dummy_consent.cohort = instance.cohort
