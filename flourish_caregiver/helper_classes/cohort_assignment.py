@@ -2,6 +2,7 @@ from django.apps import apps as django_apps
 from edc_base.utils import age
 
 from ..models.caregiver_child_consent import CaregiverChildConsent
+from ..models.cohort import Cohort
 
 
 class CohortAssignment:
@@ -23,17 +24,21 @@ class CohortAssignment:
     def child_dataset_cls(self):
         return django_apps.get_model('flourish_child.childdataset')
 
+    def get_study_child_identifier(self, subject_identifier=None):
+        consent = CaregiverChildConsent.objects.filter(
+            subject_identifier=subject_identifier).first()
+        return getattr(consent, 'study_child_identifier', None)
+
     def child_identifiers(self, cohort):
         """ Return a list of identifiers for child/infant participant's
             onschedule.
             @param cohort: cohort child/infant enrolled for.
             @return: list of enrolled child identifiers.
         """
-        identifiers = CaregiverChildConsent.objects.filter(cohort=cohort).exclude(
-            study_child_identifier='').values_list(
-            'subject_identifier', 'study_child_identifier').distinct()
-        identifiers = [child_ids[1] for child_ids in identifiers if self.child_onschedule(child_ids[0])]
-        return list(set(identifiers))
+        identifiers = Cohort.objects.filter(
+            name=cohort).values_list('subject_identifier', flat=True)
+        study_child_ids = [self.get_study_child_identifier(idx) for idx in identifiers if self.child_onschedule(idx)]
+        return study_child_ids
 
     def child_onschedule(self, subject_identifier=None):
         """ Checks if infant/child is onschedule by querying their onschedule
