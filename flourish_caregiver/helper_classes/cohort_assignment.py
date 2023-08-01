@@ -3,6 +3,7 @@ from edc_base.utils import age
 
 from ..models.caregiver_child_consent import CaregiverChildConsent
 from ..models.cohort import Cohort
+from ..helper_classes.schedule_dict import child_schedule_dict
 
 
 class CohortAssignment:
@@ -37,16 +38,18 @@ class CohortAssignment:
         """
         identifiers = Cohort.objects.filter(
             name=cohort).values_list('subject_identifier', flat=True)
-        study_child_ids = [self.get_study_child_identifier(idx) for idx in identifiers if self.child_onschedule(idx)]
+        study_child_ids = [self.get_study_child_identifier(idx) for idx in identifiers if self.child_onschedule(idx, cohort)]
         return study_child_ids
 
-    def child_onschedule(self, subject_identifier=None):
+    def child_onschedule(self, subject_identifier=None, cohort=None):
         """ Checks if infant/child is onschedule by querying their onschedule
             objects.
             @param subject_identifier: child subject_identifier.
         """
+        cohort_onschedules = [name_dict.get('name') for name_dict in child_schedule_dict.get(cohort).values()]
         onschedules = self.subject_schedule_history_cls.objects.onschedules(
             subject_identifier=subject_identifier)
+        onschedules = [onsch for onsch in onschedules if onsch.schedule_name in cohort_onschedules]
         return bool(onschedules)
 
     def total_enrolled_HUU(self, cohort):
