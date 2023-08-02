@@ -19,6 +19,7 @@ from .models import CaregiverPhqReferral, FlourishConsentVersion
 from .models import CaregiverPreviouslyEnrolled
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
 from .models import MaternalInterimIdccVersion2
+from .models import InterviewFocusGroupInterestV2
 
 fake = Faker()
 
@@ -233,3 +234,7 @@ maternalinterimidccversion2 = Recipe(
 
 tbroutinehealthscreenv2 = Recipe(
     TbRoutineHealthScreenV2, )
+
+
+interviewfocusgroupinterestv2 = Recipe(
+    InterviewFocusGroupInterestV2, )
