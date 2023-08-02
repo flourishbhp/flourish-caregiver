@@ -1509,3 +1509,79 @@ class TestRuleGroups(TestCase):
                 visit_code  = '3001M',)
 
         self.assertEqual(crf_metadata.entry_status, REQUIRED)
+
+    @tag('ifg')
+    def test_interview_focus_group_interest_version_required(self):
+        subject_identifier = 'B142-040990645-9'
+        screening_identifier = 'S99YBPT4'
+        options = {
+            'consent_datetime': get_utcnow().date(),
+            'breastfeed_intent': YES,
+            'version': '3'}
+        
+        mommy.make_recipe('flourish_caregiver.flourishconsentversion', 
+                         screening_identifier = screening_identifier,
+                          version = '3')
+        
+        mommy.make_recipe(
+            'flourish_caregiver.screeningpregwomen',
+            screening_identifier = screening_identifier,
+            subject_identifier = subject_identifier)
+        
+        consent = subject_consent = mommy.make_recipe(
+            'flourish_caregiver.subjectconsent',
+            screening_identifier=screening_identifier,
+            subject_identifier = subject_identifier,
+            version = '3')
+        
+        consent.save()
+        
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            subject_identifier = f'{subject_identifier}-10',
+            consent_datetime = get_utcnow().date(),
+            child_dob=None,
+            first_name=None,
+            last_name=None,)
+        
+
+        mommy.make_recipe(
+            'flourish_caregiver.antenatalenrollment',
+            subject_identifier=subject_identifier,
+            current_hiv_status = NEG,
+            enrollment_hiv_status = NEG,
+        )
+
+        
+
+        schedule_name = 'a_quarterly1_schedule1'
+
+        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+            name=schedule_name,
+            onschedule_model='flourish_caregiver.onschedulecohortaquarterly')
+        
+
+
+        schedule.put_on_schedule(
+            subject_identifier = subject_identifier,
+            schedule_name = schedule_name,
+            onschedule_datetime = get_utcnow()
+            
+        )
+
+        maternal_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            subject_identifier = subject_identifier,
+            appointment = Appointment.objects.get(visit_code = '2001M'),
+            report_datetime = get_utcnow()
+        )
+
+
+        maternal_visit.save()
+
+        crf_metadata = CrfMetadata.objects.get(
+                model = 'flourish_caregiver.interviewfocusgroupinterestv2',
+                visit_code  = '2001M',)
+
+        self.assertEqual(crf_metadata.entry_status, REQUIRED)
