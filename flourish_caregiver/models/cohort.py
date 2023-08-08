@@ -72,10 +72,9 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
 
     def check_onschedule(self):
         cohort_onschedules = [name_dict.get('name') for name_dict in child_schedule_dict.get(self.name).values()]
-        onschedules = self.schedule_history_cls.objects.onschedules(
-            subject_identifier=self.subject_identifier)
-        onschedules = [onsch for onsch in onschedules if onsch.schedule_name in cohort_onschedules]
-        return bool(onschedules)
+        lastest_onschedule = self.schedule_history_cls.objects.filter(
+            subject_identifier=self.subject_identifier).order_by('-onschedule_datetime').first()
+        return getattr(lastest_onschedule, 'schedule_name', None) in cohort_onschedules
 
     class Meta:
         app_label = 'flourish_caregiver'
