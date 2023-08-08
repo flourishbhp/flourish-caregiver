@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from django.db import models
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
@@ -9,6 +10,9 @@ from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
 from .model_mixins import SearchSlugModelMixin
+from .caregiver_child_consent import CaregiverChildConsent
+from ..helper_classes import MaternalStatusHelper
+from ..helper_classes.schedule_dict import child_schedule_dict
 
 
 class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
@@ -35,15 +39,31 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         default=False,
         editable=False)
 
-    schedule_status = models.CharField(
-        verbose_name='Schedule status (i.e. onschedule/offschedule)',
-        max_length=11, )
-
-    exposure_status = models.CharField(
-        verbose_name='Exposure status (i.e. HIV exposed/unexposed',
-        max_length=9, )
-
     history = HistoricalRecords()
+
+    @property
+    def schedule_history_cls(self):
+        return django_apps.get_model('edc_visit_schedule.subjectschedulehistory')
+
+    @property
+    def check_exposure(self):
+        child_consent = CaregiverChildConsent.objects.filter(
+            subject_identifier=self.subject_identifier).first()
+        maternal_status = MaternalStatusHelper(subject_identifier=self.subject_identifier)
+        child_dataset = getattr(child_consent, 'child_dataset', None)
+        if child_dataset:
+            return getattr(child_dataset, 'infant_hiv_exposed', None).upper()
+        else:
+            hiv_status = getattr(maternal_status, 'hiv_status', None)
+            return f'ANC_{hiv_status}'
+
+    @property
+    def check_onschedule(self):
+        cohort_onschedules = [name_dict.get('name') for name_dict in child_schedule_dict.get(self.name).values()]
+        onschedules = self.schedule_history_cls.objects.onschedules(
+            subject_identifier=self.subject_identifier)
+        onschedules = [onsch for onsch in onschedules if onsch.schedule_name in cohort_onschedules]
+        return bool(onschedules)
 
     class Meta:
         app_label = 'flourish_caregiver'
