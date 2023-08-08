@@ -14,6 +14,9 @@ class CohortAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     fields = ('name',
               'assign_datetime',
-              'enrollment_cohort', )
+             'enrollment_cohort',
+              'schedule_status',
+              'exposure_status', )
 
-    list_display = ('subject_identifier', 'assign_datetime', 'enrollment_cohort', )
+    list_display = ('subject_identifier', 'assign_datetime',
+                    'enrollment_cohort', 'schedule_status', 'exposure_status')

@@ -39,13 +39,26 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         default=False,
         editable=False)
 
+    schedule_status = models.CharField(
+        verbose_name='Schedule status (i.e. onschedule/offschedule)',
+        max_length=11, )
+
+    exposure_status = models.CharField(
+        verbose_name='Exposure status (i.e. HIV exposed/unexposed',
+        max_length=9, )
+
     history = HistoricalRecords()
+
+    def save(self, *args, **kwargs):
+        self.exposure_status = self.check_exposure()
+        self.schedule_status = self.check_onschedule()
+        super().save(*args, **kwargs)
+        
 
     @property
     def schedule_history_cls(self):
         return django_apps.get_model('edc_visit_schedule.subjectschedulehistory')
 
-    @property
     def check_exposure(self):
         child_consent = CaregiverChildConsent.objects.filter(
             subject_identifier=self.subject_identifier).first()
@@ -57,7 +70,6 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
             hiv_status = getattr(maternal_status, 'hiv_status', None)
             return f'ANC_{hiv_status}'
 
-    @property
     def check_onschedule(self):
         cohort_onschedules = [name_dict.get('name') for name_dict in child_schedule_dict.get(self.name).values()]
         onschedules = self.schedule_history_cls.objects.onschedules(
