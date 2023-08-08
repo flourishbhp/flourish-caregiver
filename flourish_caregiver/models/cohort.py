@@ -35,6 +35,14 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         default=False,
         editable=False)
 
+    schedule_status = models.CharField(
+        verbose_name='Schedule status (i.e. onschedule/offschedule)',
+        max_length=11, )
+
+    exposure_status = models.CharField(
+        verbose_name='Exposure status (i.e. HIV exposed/unexposed',
+        max_length=9, )
+
     history = HistoricalRecords()
 
     class Meta:

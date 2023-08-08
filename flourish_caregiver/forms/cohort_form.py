@@ -5,7 +5,7 @@ from ..models import Cohort
 
 
 class CohortForm(SiteModelFormMixin,
-                     forms.ModelForm):
+                 forms.ModelForm):
 
     class Meta:
         model = Cohort
