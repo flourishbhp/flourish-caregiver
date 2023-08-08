@@ -47,7 +47,7 @@ class CohortAssignment:
             @param subject_identifier: child subject_identifier.
         """
         cohort_onschedules = [name_dict.get('name') for name_dict in child_schedule_dict.get(cohort).values()]
-        lastest_onschedule = self.schedule_history_cls.objects.filter(
+        lastest_onschedule = self.subject_schedule_history_cls.objects.filter(
             subject_identifier=subject_identifier).order_by('-onschedule_datetime').first()
         return getattr(lastest_onschedule, 'schedule_name', None) in cohort_onschedules
 
