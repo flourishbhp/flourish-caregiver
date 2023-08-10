@@ -6,6 +6,7 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
+from edc_constants.constants import POS, NEG
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
@@ -39,9 +40,8 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         default=False,
         editable=False)
 
-    schedule_status = models.CharField(
-        verbose_name='Schedule status (i.e. onschedule/offschedule)',
-        max_length=11, )
+    current_cohort = models.BooleanField(
+        verbose_name='Current cohort', )
 
     exposure_status = models.CharField(
         verbose_name='Exposure status (i.e. HIV exposed/unexposed',
@@ -51,7 +51,7 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
 
     def save(self, *args, **kwargs):
         self.exposure_status = self.check_exposure()
-        self.schedule_status = self.check_onschedule()
+        self.current_cohort = self.check_current_cohort()
         super().save(*args, **kwargs)
         
 
@@ -59,22 +59,40 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
     def schedule_history_cls(self):
         return django_apps.get_model('edc_visit_schedule.subjectschedulehistory')
 
-    def check_exposure(self):
-        child_consent = CaregiverChildConsent.objects.filter(
+    @property
+    def caregiver_child_consent(self):
+        return CaregiverChildConsent.objects.filter(
             subject_identifier=self.subject_identifier).first()
-        maternal_status = MaternalStatusHelper(subject_identifier=self.subject_identifier)
-        child_dataset = getattr(child_consent, 'child_dataset', None)
+
+    @property
+    def caregiver_subject_identifier(self):
+        return self.caregiver_child_consent.subject_consent.subject_identifier
+
+    def check_antenetal_exists(self):
+        antenatal_cls = django_apps.get_model(
+            'flourish_caregiver.antenatalenrollment')
+        antenatal = antenatal_cls.objects.filter(
+            subject_identifier=self.caregiver_subject_identifier)
+        return antenatal.exists()
+        
+    def check_exposure(self):
+        exposure = {POS: 'EXPOSED', NEG: 'UNEXPOSED', }
+        child_dataset = getattr(self.caregiver_child_consent, 'child_dataset', None)
         if child_dataset:
             return getattr(child_dataset, 'infant_hiv_exposed', None).upper()
         else:
-            hiv_status = getattr(maternal_status, 'hiv_status', None)
-            return f'ANC_{hiv_status}'
+            maternal_status = MaternalStatusHelper(
+                subject_identifier=self.caregiver_subject_identifier).hiv_status
+            return exposure.get(maternal_status, maternal_status)
 
-    def check_onschedule(self):
+    def check_current_cohort(self):
         cohort_onschedules = [name_dict.get('name') for name_dict in child_schedule_dict.get(self.name).values()]
-        lastest_onschedule = self.schedule_history_cls.objects.filter(
-            subject_identifier=self.subject_identifier).order_by('-onschedule_datetime').first()
-        return getattr(lastest_onschedule, 'schedule_name', None) in cohort_onschedules
+        latest_onschedule = self.schedule_history_cls.objects.filter(
+            subject_identifier=self.subject_identifier, ).exclude(
+                schedule_name__icontains='tb_adol').order_by('-onschedule_datetime').first()
+        if not latest_onschedule:
+            return self.check_antenetal_exists()
+        return getattr(latest_onschedule, 'schedule_name', None) in cohort_onschedules
 
     class Meta:
         app_label = 'flourish_caregiver'

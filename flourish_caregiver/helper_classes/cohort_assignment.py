@@ -48,7 +48,8 @@ class CohortAssignment:
         """
         cohort_onschedules = [name_dict.get('name') for name_dict in child_schedule_dict.get(cohort).values()]
         lastest_onschedule = self.subject_schedule_history_cls.objects.filter(
-            subject_identifier=subject_identifier).order_by('-onschedule_datetime').first()
+            subject_identifier=subject_identifier).exclude(
+                schedule_name__icontains='tb_adol').order_by('-onschedule_datetime').first()
         return getattr(lastest_onschedule, 'schedule_name', None) in cohort_onschedules
 
     def total_enrolled_HUU(self, cohort):
