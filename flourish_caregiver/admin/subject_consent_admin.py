@@ -93,27 +93,23 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         formset.__init__ = partialmethod(formset.__init__, initial=initial)
         return formset
 
+    def prepare_subject_consent(self, consent):
+        child_consent_obj = self.consent_cls.objects.filter(
+            subject_identifier=consent if isinstance(
+                consent, str) else consent.subject_identifier).latest(
+            'consent_datetime')
+
+        return self.prepare_consent_dict(
+            child_consent_obj.__dict__)
+
     def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
-        initial = []
-        consents = self.consents_filtered_by_subject(
-            obj, subject_identifier)
-
-        for consent in consents:
-            child_consent_obj = self.consent_cls.objects.filter(
-                subject_identifier=consent).latest(
-                'consent_datetime')
-
-            consent_dict = self.prepare_consent_dict(
-                child_consent_obj.__dict__)
-
-            initial.append(consent_dict)
-
-        return initial
+        return [self.prepare_subject_consent(consent) for consent in
+                self.consents_filtered_by_subject(obj, subject_identifier)]
 
     def consents_filtered_by_subject(self, obj, subject_identifier):
         consents = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier).order_by(
-                'consent_datetime')
+            subject_consent__subject_identifier=subject_identifier).order_by(
+            'consent_datetime')
 
         if obj:
             consents = consents.filter(
@@ -141,14 +137,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
     def prepare_consent_dict(self, original_dict):
         exclude_options = ['consent_datetime', 'id', '_state',
                            'created', 'modified', 'user_created',
-                           'user_modified', 'version', 'hostname_modified',
-                           'hostname_created', 'revision', 'device_created',
-                           'device_modified', 'site_id',
-                           'subject_consent_id', 'subject_identifier',
-                           'ineligibility', 'is_eligible',
-                           'caregiver_visit_count', 'child_age_at_enrollment',
-                           'verified_by', 'is_verified_datetime',
-                           'is_verified']
+                           'user_modified', 'version']
         return self.remove_dict_options(original_dict, exclude_options)
 
     def prepare_child_dict(self, obj, child):
@@ -163,8 +152,20 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                 study_child_identifier=child.study_child_identifier))
 
         if pre_flourish_child_consent_model_obj:
-            pre_flourish_child_consent_model_obj = self.prepare_consent_dict(
-                pre_flourish_child_consent_model_obj.__dict__)
+            exclude_options = ['consent_datetime', 'id', '_state',
+                               'created', 'modified', 'user_created',
+                               'user_modified', 'version', 'hostname_modified',
+                               'hostname_created', 'revision', 'device_created',
+                               'device_modified', 'site_id',
+                               'subject_consent_id', 'subject_identifier',
+                               'ineligibility', 'is_eligible',
+                               'caregiver_visit_count', 'child_age_at_enrollment',
+                               'verified_by', 'is_verified_datetime',
+                               'is_verified']
+            pre_flourish_child_consent_model_obj = (
+                self.remove_dict_options(
+                    pre_flourish_child_consent_model_obj.__dict__,
+                    exclude_options))
             child_dict.update(pre_flourish_child_consent_model_obj)
 
         return child_dict
@@ -202,10 +203,12 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         return extra
 
     def get_difference(self, model_objs, obj=None):
-        cc_ids = obj.caregiverchildconsent_set.values_list('subject_identifier', 'version')
+        cc_ids = obj.caregiverchildconsent_set.values_list('subject_identifier',
+                                                           'version')
         consent_version_obj = self.consent_version_obj(obj.screening_identifier)
         child_version = getattr(consent_version_obj, 'child_version', None)
-        return [x for x in model_objs if (x.subject_identifier, x.version) not in cc_ids or x.version != child_version]
+        return [x for x in model_objs if (
+            x.subject_identifier, x.version) not in cc_ids or x.version != child_version]
 
     def get_child_reconsent_extra(self, request):
         screening_identifier = request.GET.get('screening_identifier')
