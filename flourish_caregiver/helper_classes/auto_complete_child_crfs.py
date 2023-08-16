@@ -1,3 +1,4 @@
+import pytz
 from copy import deepcopy
 
 from django.apps import apps as django_apps
@@ -91,13 +92,20 @@ class AutoCompleteChildCrfs:
         blank get the visit of the first child,
         NB: Query visit for first child taking into consideration the window
             period for the appointment. The pre-fill is not per visit code. """
+
+        tz = pytz.timezone('Africa/Gaborone')
         if not self.complete_visit:
+            appt = self.instance.appointment
+            visit_definition = appt.visits.get(appt.visit_code)
+            ideal_timepoint = appt.timepoint_datetime
+
+            earliest_appt_dt = (ideal_timepoint - visit_definition.rlower).astimezone(tz)
+            latest_appt_dt = (ideal_timepoint + visit_definition.rupper).astimezone(tz)
             try:
                 first_visit = MaternalVisit.objects.filter(
                     subject_identifier=self.subject_identifier,
-                    visit_code=self.visit_code,
-                    visit_code_sequence=self.visit_code_sequence).exclude(
-                        schedule_name=self.schedule_name).earliest('created')
+                    report_datetime__range=(earliest_appt_dt, latest_appt_dt)).exclude(
+                        schedule_name=self.schedule_name).latest('report_datetime')
             except MaternalVisit.DoesNotExist:
                 return None
             else:
