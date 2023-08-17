@@ -76,62 +76,105 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         super(CaregiverChildConsentInline, self).save_model(request, obj, form, change)
 
     def get_formset(self, request, obj=None, **kwargs):
-        initial = []
         study_maternal_id = request.GET.get('study_maternal_identifier')
-
         subject_identifier = request.GET.get('subject_identifier')
-        screening_identifier = request.GET.get('screening_identifier')
 
-        if subject_identifier and screening_identifier:
-
-            caregiver_child_consents = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier).order_by(
-                    'consent_datetime')
-
-            caregiver_child_consents_pids = set(
-                caregiver_child_consents.values_list('subject_identifier', flat=True))
-
-            if obj:
-                caregiver_child_consents = caregiver_child_consents.filter(
-                    subject_consent__version=getattr(obj, 'version', None))
-                caregiver_child_consents_pids = set(
-                    [c.subject_identifier for c in self.get_difference(
-                        caregiver_child_consents, obj)])
-
-            if caregiver_child_consents_pids:
-
-                for caregiver_child_consent in caregiver_child_consents_pids:
-
-                    child_consent_obj = self.consent_cls.objects.filter(
-                        subject_identifier=caregiver_child_consent).latest(
-                            'consent_datetime')
-
-                    caregiver_child_consents_dict = child_consent_obj.__dict__
-                    exclude_options = ['consent_datetime', 'id', '_state',
-                                       'created', 'modified', 'user_created',
-                                       'user_modified', 'version']
-                    for option in exclude_options:
-                        del caregiver_child_consents_dict[option]
-                    initial.append(caregiver_child_consents_dict)
-
+        if subject_identifier:
+            initial = self.prepare_initial_values_based_on_subject(
+                obj, subject_identifier)
         elif study_maternal_id:
-            child_datasets = self.child_dataset_cls.objects.filter(
-                study_maternal_identifier=study_maternal_id)
-            genders = {'Male': MALE, 'Female': FEMALE}
-            if obj:
-                child_datasets = self.get_difference(child_datasets, obj)
-
-            for child in child_datasets:
-                initial.append({
-                    'study_child_identifier': child.study_child_identifier,
-                    'gender': genders.get(child.infant_sex),
-                    'child_dob': child.dob
-                })
+            initial = self.prepare_initial_values_based_on_study(
+                obj, study_maternal_id)
+        else:
+            initial = []
 
         formset = super().get_formset(request, obj=obj, **kwargs)
         formset.form = self.auto_number(formset.form)
         formset.__init__ = partialmethod(formset.__init__, initial=initial)
         return formset
+
+    def prepare_subject_consent(self, consent):
+        child_consent_obj = self.consent_cls.objects.filter(
+            subject_identifier=consent if isinstance(
+                consent, str) else consent.subject_identifier).latest(
+            'consent_datetime')
+
+        return self.prepare_consent_dict(
+            child_consent_obj.__dict__)
+
+    def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
+        return [self.prepare_subject_consent(consent) for consent in
+                self.consents_filtered_by_subject(obj, subject_identifier)]
+
+    def consents_filtered_by_subject(self, obj, subject_identifier):
+        consents = self.consent_cls.objects.filter(
+            subject_consent__subject_identifier=subject_identifier).order_by(
+            'consent_datetime')
+
+        if obj:
+            consents = consents.filter(
+                subject_consent__version=getattr(obj, 'version', None))
+            consents = set([c.subject_identifier for c in self.get_difference(
+                consents, obj)])
+
+        return consents
+
+    def prepare_initial_values_based_on_study(self, obj, study_maternal_id):
+        initial = []
+        child_datasets = self.child_dataset_cls.objects.filter(
+            study_maternal_identifier=study_maternal_id)
+
+        if obj:
+            child_datasets = self.get_difference(child_datasets, obj)
+
+        for child in child_datasets:
+            child_dict = self.prepare_child_dict(
+                obj, child)
+            initial.append(child_dict)
+
+        return initial
+
+    def prepare_consent_dict(self, original_dict):
+        exclude_options = ['consent_datetime', 'id', '_state',
+                           'created', 'modified', 'user_created',
+                           'user_modified', 'version']
+        return self.remove_dict_options(original_dict, exclude_options)
+
+    def prepare_child_dict(self, obj, child):
+        child_dict = {
+            'study_child_identifier': child.study_child_identifier,
+            'gender': {'Male': MALE, 'Female': FEMALE}.get(child.infant_sex),
+            'child_dob': child.dob
+        }
+
+        pre_flourish_child_consent_model_obj = (
+            self.pre_flourish_child_consent_model_obj(
+                study_child_identifier=child.study_child_identifier))
+
+        if pre_flourish_child_consent_model_obj:
+            exclude_options = ['consent_datetime', 'id', '_state',
+                               'created', 'modified', 'user_created',
+                               'user_modified', 'version', 'hostname_modified',
+                               'hostname_created', 'revision', 'device_created',
+                               'device_modified', 'site_id',
+                               'subject_consent_id', 'subject_identifier',
+                               'ineligibility', 'is_eligible',
+                               'caregiver_visit_count', 'child_age_at_enrollment',
+                               'verified_by', 'is_verified_datetime',
+                               'is_verified']
+            pre_flourish_child_consent_model_obj = (
+                self.remove_dict_options(
+                    pre_flourish_child_consent_model_obj.__dict__,
+                    exclude_options))
+            child_dict.update(pre_flourish_child_consent_model_obj)
+
+        return child_dict
+
+    def remove_dict_options(self, input_dict, options):
+        input_dict = dict(input_dict)
+        for option in options:
+            del input_dict[option]
+        return input_dict
 
     def get_extra(self, request, obj=None, **kwargs):
 
@@ -143,7 +186,7 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         if subject_identifier:
             caregiver_child_consents = set(list(self.consent_cls.objects.filter(
                 subject_consent__subject_identifier=subject_identifier
-                ).values_list('subject_identifier', flat=True)))
+            ).values_list('subject_identifier', flat=True)))
 
             if not obj:
                 extra = len(caregiver_child_consents)
@@ -160,10 +203,12 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         return extra
 
     def get_difference(self, model_objs, obj=None):
-        cc_ids = obj.caregiverchildconsent_set.values_list('subject_identifier', 'version')
+        cc_ids = obj.caregiverchildconsent_set.values_list('subject_identifier',
+                                                           'version')
         consent_version_obj = self.consent_version_obj(obj.screening_identifier)
         child_version = getattr(consent_version_obj, 'child_version', None)
-        return [x for x in model_objs if (x.subject_identifier, x.version) not in cc_ids or x.version != child_version]
+        return [x for x in model_objs if (
+            x.subject_identifier, x.version) not in cc_ids or x.version != child_version]
 
     def get_child_reconsent_extra(self, request):
         screening_identifier = request.GET.get('screening_identifier')
@@ -179,7 +224,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         return 0
 
     def consent_version_obj(self, screening_identifier=None):
-        consent_version_cls = django_apps.get_model('flourish_caregiver.flourishconsentversion')
+        consent_version_cls = django_apps.get_model(
+            'flourish_caregiver.flourishconsentversion')
         try:
             consent_version_obj = consent_version_cls.objects.get(
                 screening_identifier=screening_identifier)
@@ -187,6 +233,19 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
             return None
         else:
             return consent_version_obj
+
+    pre_flourish_child_consent_model = 'pre_flourish.preflourishcaregiverchildconsent'
+
+    @property
+    def pre_flourish_child_consent_cls(self):
+        return django_apps.get_model(self.pre_flourish_child_consent_model)
+
+    def pre_flourish_child_consent_model_obj(self, study_child_identifier):
+        try:
+            return self.pre_flourish_child_consent_cls.objects.get(
+                subject_identifier=study_child_identifier)
+        except self.pre_flourish_child_consent_cls.DoesNotExist:
+            return None
 
 
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)
@@ -443,9 +502,10 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             extra_data.update({'hiv_exposure': self.caregiver_hiv_status(
                 subject_identifier=subject_identifier[:-3])})
 
-            data = [obj_data[field] if field not in ['protocol', 'study_maternal_identifier',
-                                                     'hiv_exposure']
-                    else extra_data.get(field, '') for field in field_names]
+            data = [
+                obj_data[field] if field not in ['protocol', 'study_maternal_identifier',
+                                                 'hiv_exposure']
+                else extra_data.get(field, '') for field in field_names]
 
             row_num += 1
             for col_num in range(len(data)):
