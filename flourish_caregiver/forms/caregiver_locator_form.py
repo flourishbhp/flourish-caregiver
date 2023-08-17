@@ -84,12 +84,16 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
     def clean(self):
         self.cleaned_data = super().clean()
         subject_identifier = self.initial.get('subject_identifier', None)
-        prev_instance = CaregiverLocator.objects.get(
-            subject_identifier=subject_identifier)
-        has_changed = self.compare_instance_fields(prev_instance)
-        if not has_changed and self.cleaned_data.get('is_locator_updated') == YES:
-            raise forms.ValidationError(
-                'No changes detected. Please update at least one field.')
+        try:
+            prev_instance = CaregiverLocator.objects.get(
+                subject_identifier=subject_identifier)
+        except CaregiverLocator.DoesNotExist:
+            pass
+        else:
+            has_changed = self.compare_instance_fields(prev_instance)
+            if not has_changed and self.cleaned_data.get('is_locator_updated') == YES:
+                raise forms.ValidationError(
+                    'No changes detected. Please update at least one field.')
         return self.cleaned_data
 
     class Meta:
