@@ -145,8 +145,7 @@ class HouseHoldDetails(CrfInlineModelMixin, BaseUuidModel):
 
     child_identifier = models.CharField(
         verbose_name='Child Identifier',
-        max_length=50,
-        unique=True)
+        max_length=50, )
 
     stay_with_child = models.CharField(
         verbose_name=(
@@ -160,4 +159,4 @@ class HouseHoldDetails(CrfInlineModelMixin, BaseUuidModel):
         verbose_name = 'Household Details'
         verbose_name_plural = 'Household Details'
         unique_together = (
-            'socio_demographics_data', 'child_identifier',)
+            ('socio_demographics_data', 'child_identifier'),)
