@@ -41,16 +41,17 @@ class MaternalInterimIdccAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     radio_fields = {'info_since_lastvisit': admin.VERTICAL,
                     'value_vl_size': admin.VERTICAL}
-    
+
     def get_model_data(self, request, object_id=None):
-    
+
         subject_identifier = None
-        
+
         if self.get_instance(request):
-            subject_identifier = self.get_instance(request).subject_identifier 
+            subject_identifier = self.get_instance(request).subject_identifier
         elif object_id:
-            subject_identifier = self.get_object(request, object_id).maternal_visit.subject_identifier
-        
+            subject_identifier = self.get_object(
+                request, object_id).maternal_visit.subject_identifier
+
         if subject_identifier:
             try:
                 return MaternalHivInterimHx.objects.get(
@@ -58,16 +59,16 @@ class MaternalInterimIdccAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             except MaternalHivInterimHx.DoesNotExist:
                 pass
 
-    def add_view(self, request,form_url='', extra_context=None):
+    def add_view(self, request, form_url='', extra_context=None):
         extra_context = extra_context or {}
 
         extra_context['interimhx'] = self.get_model_data(request)
         return super().add_view(
             request, form_url=form_url, extra_context=extra_context)
 
-    def change_view(self, request, object_id,form_url='', extra_context=None):
+    def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}
 
         extra_context['interimhx'] = self.get_model_data(request, object_id)
         return super().change_view(
-            request, object_id,form_url=form_url, extra_context=extra_context)
+            request, object_id, form_url=form_url, extra_context=extra_context)

@@ -53,7 +53,8 @@ class MaternalHivInterimHx(CrfModelMixin):
     vl_result = models.CharField(
         verbose_name="Result of most recent VL test",
         max_length=35,
-        validators=[RegexValidator(r'^[><]?[0-9]*$', 'Viral load can only be a number'),],
+        validators=[RegexValidator(
+            r'^[><]?[0-9]*$', 'Viral load can only be a number'),],
         blank=True,
         null=True)
 

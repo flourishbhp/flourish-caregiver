@@ -51,7 +51,8 @@ class TestVisitScheduleSetupA(TestCase):
         app_config = django_apps.get_app_config('flourish_caregiver')
         start_date_year_3 = app_config.start_date_year_3
 
-        child_dob = start_date_year_3 - relativedelta(years=year_3_years, months=year_3_months)
+        child_dob = start_date_year_3 - \
+            relativedelta(years=year_3_years, months=year_3_months)
         return child_dob
 
     @tag('aa')
@@ -90,20 +91,20 @@ class TestVisitScheduleSetupA(TestCase):
         # with a child from previous study.
         # """
         # screening_preg = mommy.make_recipe(
-            # 'flourish_caregiver.screeningpregwomen',)
-            #
+        # 'flourish_caregiver.screeningpregwomen',)
+        #
         # subject_consent = mommy.make_recipe(
-            # 'flourish_caregiver.subjectconsent',
-            # screening_identifier=screening_preg.screening_identifier,
-            # subject_identifier=self.subject_identifier,
-            # breastfeed_intent=YES,
-            # **self.options)
-            #
+        # 'flourish_caregiver.subjectconsent',
+        # screening_identifier=screening_preg.screening_identifier,
+        # subject_identifier=self.subject_identifier,
+        # breastfeed_intent=YES,
+        # **self.options)
+        #
         # mommy.make_recipe(
-            # 'flourish_caregiver.antenatalenrollment',
-            # subject_identifier=subject_consent.subject_identifier,)
-            #
-            #
+        # 'flourish_caregiver.antenatalenrollment',
+        # subject_identifier=subject_consent.subject_identifier,)
+        #
+        #
 
     @tag('ax1')
     def test_cohort_a_onschedule_antenatal_and_onsec_valid(self):
@@ -153,8 +154,8 @@ class TestVisitScheduleSetupA(TestCase):
             study_child_identifier=self.child_dataset_options['study_child_identifier'])
 
         mommy.make_recipe(
-                'flourish_caregiver.caregiverpreviouslyenrolled',
-                subject_identifier=subject_consent.subject_identifier)
+            'flourish_caregiver.caregiverpreviouslyenrolled',
+            subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
@@ -213,19 +214,20 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 0)
 
-        consent_obj = SubjectConsent.objects.get(subject_identifier=subject_identifier)
+        consent_obj = SubjectConsent.objects.get(
+            subject_identifier=subject_identifier)
 
         # Antenatal Enrollment
         mommy.make_recipe(
             'flourish_caregiver.screeningpregwomen',)
 
         ccc = mommy.make_recipe(
-                'flourish_caregiver.caregiverchildconsent',
-                subject_consent=consent_obj,
-                first_name=None,
-                last_name=None,
-                study_child_identifier=None,
-                child_dob=None,)
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=consent_obj,
+            first_name=None,
+            last_name=None,
+            study_child_identifier=None,
+            child_dob=None,)
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
@@ -307,19 +309,20 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 0)
 
-        consent_obj = SubjectConsent.objects.get(subject_identifier=subject_identifier)
+        consent_obj = SubjectConsent.objects.get(
+            subject_identifier=subject_identifier)
 
         # Antenatal Enrollment
         mommy.make_recipe(
             'flourish_caregiver.screeningpregwomen',)
 
         mommy.make_recipe(
-                'flourish_caregiver.caregiverchildconsent',
-                subject_consent=consent_obj,
-                first_name=None,
-                last_name=None,
-                study_child_identifier=None,
-                child_dob=None,)
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=consent_obj,
+            first_name=None,
+            last_name=None,
+            study_child_identifier=None,
+            child_dob=None,)
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
@@ -371,8 +374,8 @@ class TestVisitScheduleSetupA(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
 
         mommy.make_recipe(
-                'flourish_caregiver.caregiverpreviouslyenrolled',
-                subject_identifier=subject_consent.subject_identifier)
+            'flourish_caregiver.caregiverpreviouslyenrolled',
+            subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
@@ -432,8 +435,8 @@ class TestVisitScheduleSetupA(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=2, months=5)).date(),)
 
         mommy.make_recipe(
-                'flourish_caregiver.caregiverpreviouslyenrolled',
-                subject_identifier=subject_consent.subject_identifier)
+            'flourish_caregiver.caregiverpreviouslyenrolled',
+            subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
@@ -456,8 +459,8 @@ class TestVisitScheduleSetupA(TestCase):
             schedule_name='a_quarterly1_schedule1').count(), 1)
 
         # self.assertEqual(OnScheduleCohortAFU.objects.filter(
-            # subject_identifier=subject_consent.subject_identifier,
-            # schedule_name='a_fu1_schedule1').count(), 1)
+        # subject_identifier=subject_consent.subject_identifier,
+        # schedule_name='a_fu1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)

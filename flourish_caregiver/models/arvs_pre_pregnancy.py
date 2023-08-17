@@ -5,7 +5,7 @@ from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 
 from ..maternal_choices import PRIOR_PREG_ART_STATUS
-from .list_models import PriorArv
+from .lists_models import PriorArv
 from .model_mixins import CrfModelMixin
 
 

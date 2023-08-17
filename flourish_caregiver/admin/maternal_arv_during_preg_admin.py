@@ -64,7 +64,7 @@ class MaternalArvTableDuringPregAdmin(ModelAdminMixin, admin.ModelAdmin):
             ]
         }
 
-         ), audit_fieldset_tuple,
+        ), audit_fieldset_tuple,
     )
     list_display = ('arv_code', 'start_date', 'stop_date', 'reason_for_stop',)
 

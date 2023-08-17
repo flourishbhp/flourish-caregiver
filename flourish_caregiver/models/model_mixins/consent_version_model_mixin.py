@@ -24,7 +24,7 @@ class ConsentVersionModelModelMixin:
         except preg_subject_screening_cls.DoesNotExist:
 
             subject_screening_objs = prior_subject_screening_cls.objects.filter(
-                    subject_identifier=self.subject_identifier)
+                subject_identifier=self.subject_identifier)
 
             if not subject_screening_objs:
                 raise ValidationError(
@@ -35,12 +35,13 @@ class ConsentVersionModelModelMixin:
             screening_identifiers = subject_screening_objs.values_list(
                 'screening_identifier', flat=True)
         elif subject_screening_obj:
-            screening_identifiers = [subject_screening_obj.screening_identifier, ]
+            screening_identifiers = [
+                subject_screening_obj.screening_identifier, ]
 
         if screening_identifiers:
 
             consent_version_obj = consent_version_cls.objects.filter(
-                    screening_identifier__in=screening_identifiers)
+                screening_identifier__in=screening_identifiers)
 
             if consent_version_obj.count() > 1:
                 raise ValidationError(
