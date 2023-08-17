@@ -1,14 +1,10 @@
 from django.contrib import admin
-from django.http import request
 from edc_model_admin import audit_fieldset_tuple
 from flourish_caregiver.models.maternal_hiv_interim_hx import MaternalHivInterimHx
-
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalInterimIdccFormVersion2
 from ..models import MaternalInterimIdccVersion2
 from .modeladmin_mixins import CrfModelAdminMixin
-from django.utils.safestring import mark_safe
-from django.core.exceptions import ObjectDoesNotExist
 from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 
 
@@ -95,14 +91,12 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
 
     def get_model_data(self, request, object_id=None):
 
-        subject_identifier = None
-
         self.request = request
 
         if self.get_instance(request):
-            subject_identifier = self.get_instance(request).subject_identifier
+            self.get_instance(request).subject_identifier
         elif object_id:
-            subject_identifier = self.get_object(
+            self.get_object(
                 request, object_id).maternal_visit.subject_identifier
 
         return self.maternal_hiv_interimhx_obj

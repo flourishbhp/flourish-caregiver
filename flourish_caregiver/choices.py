@@ -1089,7 +1089,7 @@ DISCUSSION_PREF_CHOICES = (
     ('group', 'Group discussion'),
     ('either', 'Either one-one or group discussion'),
     ('unsure', 'Unsure'),
-    ('neither', 
+    ('neither',
      'Not interested in either interview or group discussion'),
 )
 
