@@ -1,5 +1,3 @@
-from flourish_form_validations.form_validators import CaregiverReferralFUFormValidator
-
 from ..models import PostHivRapidTestAndConseling
 from .form_mixins import SubjectModelFormMixin
 from flourish_form_validations.form_validators import PostHIVRapidTestCounselingFormValidator
