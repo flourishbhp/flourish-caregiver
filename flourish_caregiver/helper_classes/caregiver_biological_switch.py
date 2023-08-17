@@ -80,7 +80,8 @@ class CaregiverBiologicalSwitch:
     @property
     def caregiver_locator_obj(self):
         try:
-            locator = self.caregiver_locator_cls.objects.get(subject_identifier=self.caregiver_sid)
+            locator = self.caregiver_locator_cls.objects.get(
+                subject_identifier=self.caregiver_sid)
         except self.caregiver_locator_cls.DoesNotExist:
             return None
         else:
@@ -133,7 +134,8 @@ class CaregiverBiologicalSwitch:
         self.update_dataset_screening_identifier(dataset_obj)
 
         try:
-            locator = self.caregiver_locator_cls.objects.create(**locator_defaults)
+            locator = self.caregiver_locator_cls.objects.create(
+                **locator_defaults)
         except IntegrityError:
             raise Exception
         else:
@@ -160,11 +162,14 @@ class CaregiverBiologicalSwitch:
             @param subject_type: whether bioloigical mother or caregiver to determine sID. 
             @param sid_swap: tuple to determine the pid replacement pattern.
         """
-        first_name = kwargs.pop('first_name', self.biological_mother_locator.first_name)
-        last_name = kwargs.pop('last_name', self.biological_mother_locator.last_name)
+        first_name = kwargs.pop(
+            'first_name', self.biological_mother_locator.first_name)
+        last_name = kwargs.pop(
+            'last_name', self.biological_mother_locator.last_name)
         initials = self.set_initials(first_name, last_name)
 
-        subject_identifier = self.caregiver_sid.replace(sid_swap[0], sid_swap[1])
+        subject_identifier = self.caregiver_sid.replace(
+            sid_swap[0], sid_swap[1])
 
         consent_defaults = {
             'subject_identifier': subject_identifier,
@@ -175,7 +180,8 @@ class CaregiverBiologicalSwitch:
             'gender': FEMALE,
             **kwargs, }
         try:
-            consent = self.subject_consent_cls.objects.create(**consent_defaults)
+            consent = self.subject_consent_cls.objects.create(
+                **consent_defaults)
         except IntegrityError:
             raise Exception
         else:
@@ -188,19 +194,22 @@ class CaregiverBiologicalSwitch:
         child_consents = self.caregiverchild_consent_cls.objects.filter(
             subject_identifier__startswith=self.caregiver_sid)
         for consent in child_consents:
-            self.biological_mother_consent.caregiverchildconsent_set.add(consent)
+            self.biological_mother_consent.caregiverchildconsent_set.add(
+                consent)
 
     def update_child_registered_subject(self):
         """ Update the relative identifier on the child's registered subject model
             object to associate with the biological mother's sID.
         """
         try:
-            child_consent = self.biological_mother_consent.caregiverchildconsent_set.latest('consent_datetime')
+            child_consent = self.biological_mother_consent.caregiverchildconsent_set.latest(
+                'consent_datetime')
             registered_obj = self.registered_subject_cls.objects.get(
                 subject_identifier=child_consent.subject_identifier)
         except (self.caregiverchild_consent_cls.DoesNotExist,
                 self.registered_subject_cls.DoesNotExist):
-            print('Child consent was not moved correctly or Registered subject isn\'t there')
+            print(
+                'Child consent was not moved correctly or Registered subject isn\'t there')
             raise Exception
         else:
             registered_obj.relative_identifier = self.biological_mother_consent.subject_identifier
@@ -247,7 +256,8 @@ class CaregiverBiologicalSwitch:
     def align_with_child_appts(self):
         instance = self.child_consent_model_obj
         complete_appts = self.child_appointment_cls.objects.filter(
-            Q(schedule_name__icontains='quart') | Q(schedule_name__icontains='qt'),
+            Q(schedule_name__icontains='quart') | Q(
+                schedule_name__icontains='qt'),
             subject_identifier=instance.subject_identifier, ).exclude(
                 appt_status=NEW_APPT).values_list('visit_code', flat=True).distinct()
 
@@ -262,7 +272,8 @@ class CaregiverBiologicalSwitch:
     @property
     def child_consent_model_obj(self):
         try:
-            instance = self.biological_mother_consent.caregiverchildconsent_set.latest('consent_datetime')
+            instance = self.biological_mother_consent.caregiverchildconsent_set.latest(
+                'consent_datetime')
         except self.caregiverchild_consent_cls.DoesNotExist:
             print('Child consent was not moved correctly')
             raise Exception

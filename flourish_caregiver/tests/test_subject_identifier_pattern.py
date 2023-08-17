@@ -36,7 +36,8 @@ class TestSubjectIdentifier(TestCase):
         biological mother.
         """
         self.eligible_options.update(biological_caregiver=YES)
-        mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
+        mommy.make_recipe('flourish_caregiver.subjectconsent',
+                          **self.eligible_options)
         self.assertTrue(
             re.match(
                 subject_identifier,
@@ -52,7 +53,8 @@ class TestSubjectIdentifier(TestCase):
             screening_identifier=subject_screening.screening_identifier,
             biological_caregiver=YES)
 
-        mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
+        mommy.make_recipe('flourish_caregiver.subjectconsent',
+                          **self.eligible_options)
         subject_identifier = SubjectConsent.objects.all()[0].subject_identifier
         self.assertTrue(subject_identifier.startswith('B'))
 
@@ -61,7 +63,8 @@ class TestSubjectIdentifier(TestCase):
         non biological mother.
         """
         self.eligible_options.update(biological_caregiver=NO)
-        mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
+        mommy.make_recipe('flourish_caregiver.subjectconsent',
+                          **self.eligible_options)
         self.assertTrue(
             re.match(
                 subject_identifier,
@@ -72,7 +75,8 @@ class TestSubjectIdentifier(TestCase):
          non biological mother.
         """
         self.eligible_options.update(biological_caregiver=NO)
-        mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
+        mommy.make_recipe('flourish_caregiver.subjectconsent',
+                          **self.eligible_options)
         subject_identifier = SubjectConsent.objects.all()[0].subject_identifier
         self.assertTrue(subject_identifier.startswith('C'))
 
@@ -91,21 +95,24 @@ class TestSubjectIdentifier(TestCase):
 
         child_consent2 = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                            subject_consent=subject_consent,
-                                           child_dob=(get_utcnow() - relativedelta(years=13)).date(),
+                                           child_dob=(
+                                               get_utcnow() - relativedelta(years=13)).date(),
                                            identity=None,
                                            confirm_identity=None,
                                            identity_type=None)
 
         child_consent3 = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                            subject_consent=subject_consent,
-                                           child_dob=(get_utcnow() - relativedelta(years=14)).date(),
+                                           child_dob=(
+                                               get_utcnow() - relativedelta(years=14)).date(),
                                            identity=None,
                                            confirm_identity=None,
                                            identity_type=None)
 
         child_consent4 = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                            subject_consent=subject_consent,
-                                           child_dob=(get_utcnow() - relativedelta(years=10)).date(),
+                                           child_dob=(
+                                               get_utcnow() - relativedelta(years=10)).date(),
                                            identity=None,
                                            confirm_identity=None,
                                            identity_type=None)
@@ -125,4 +132,3 @@ class TestSubjectIdentifier(TestCase):
         self.assertTrue(
             re.match(
                 child_consent4.subject_identifier, subject_consent.subject_identifier + '-80'))
-

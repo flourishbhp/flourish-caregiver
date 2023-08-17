@@ -131,7 +131,8 @@ class EnrollmentMixin(models.Model):
         super(EnrollmentMixin, self).save(*args, **kwargs)
 
     def get_registration_date(self):
-        child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+        child_consent_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverchildconsent')
 
         child_consents = child_consent_cls.objects.filter(
             subject_identifier__startswith=self.subject_identifier,

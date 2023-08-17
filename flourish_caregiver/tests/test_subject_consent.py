@@ -69,7 +69,8 @@ class TestSubjectConsent(TestCase):
         """Test consent creates a registered subject on save if participant is eligible.
         """
         self.assertEquals(RegisteredSubject.objects.all().count(), 0)
-        mommy.make_recipe('flourish_caregiver.subjectconsent', **self.eligible_options)
+        mommy.make_recipe('flourish_caregiver.subjectconsent',
+                          **self.eligible_options)
         self.assertEquals(RegisteredSubject.objects.all().count(), 1)
 
     @tag('identifiers')

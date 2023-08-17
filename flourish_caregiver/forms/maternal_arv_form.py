@@ -17,10 +17,12 @@ class MaternalArvAtDeliveryForm(SubjectModelFormMixin, forms.ModelForm):
             'maternalarvtableatdelivery_set-TOTAL_FORMS')
 
         if int(maternal_arv_count) == 0 and cleaned_data.get('last_visit_change') == YES:
-            raise forms.ValidationError('Please complete the maternal arv table.')
+            raise forms.ValidationError(
+                'Please complete the maternal arv table.')
 
         elif int(maternal_arv_count) != 0 and cleaned_data.get('last_visit_change') == NO:
-            raise forms.ValidationError('Maternal ARV tables are not required.')
+            raise forms.ValidationError(
+                'Maternal ARV tables are not required.')
 
         self.validate_date_resumed()
 
@@ -36,8 +38,8 @@ class MaternalArvAtDeliveryForm(SubjectModelFormMixin, forms.ModelForm):
                     raise forms.ValidationError('Maternal ARV tables date resumed '
                                                 'is required')
         elif self.cleaned_data.get('resume_treat') == YES:
-            raise forms.ValidationError('Please complete the maternal arv table.')
-
+            raise forms.ValidationError(
+                'Please complete the maternal arv table.')
 
     class Meta:
         model = MaternalArvAtDelivery

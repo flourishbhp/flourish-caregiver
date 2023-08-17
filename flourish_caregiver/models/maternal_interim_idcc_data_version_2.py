@@ -69,7 +69,6 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
 
     reason_vl_not_availiable_other = OtherCharField()
 
-
     value_vl_size = models.CharField(
         max_length=25,
         verbose_name="Is the VL value “< or >”",

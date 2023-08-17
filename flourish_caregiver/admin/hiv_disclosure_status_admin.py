@@ -81,7 +81,8 @@ class HIVDisclosureStatusAdminB(HIVDisclosureStatusAdminMixin,
 
         if associated_child_identifier:
             post_fix = int(associated_child_identifier[-2:])
-            associated_child_identifier = associated_child_identifier[:-2] + str(post_fix + 10)
+            associated_child_identifier = associated_child_identifier[:-2] + str(
+                post_fix + 10)
 
         g = request.GET.copy()
         g.update({
@@ -103,7 +104,8 @@ class HIVDisclosureStatusAdminC(HIVDisclosureStatusAdminMixin,
 
         if associated_child_identifier:
             post_fix = int(associated_child_identifier[-3:])
-            associated_child_identifier = associated_child_identifier[:-3] + str(post_fix + 20)
+            associated_child_identifier = associated_child_identifier[:-3] + str(
+                post_fix + 20)
 
         g = request.GET.copy()
         g.update({
@@ -116,5 +118,5 @@ class HIVDisclosureStatusAdminC(HIVDisclosureStatusAdminMixin,
 
 # @admin.register(HIVDisclosureStatusD, site=flourish_caregiver_admin)
 # class HIVDisclosureStatusAdminD(HIVDisclosureStatusAdminMixin,
-                                # admin.ModelAdmin):
+        # admin.ModelAdmin):
     # form = HIVDisclosureStatusFormD

@@ -8,6 +8,7 @@ from .form_mixins import SubjectModelFormMixin
 
 
 class CaregiverChildConsentForm(SubjectModelFormMixin):
+
     form_validator_cls = CaregiverChildConsentFormValidator
 
     child_dataset_model = 'flourish_child.childdataset'
@@ -25,7 +26,8 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         super().__init__(*args, **kwargs)
 
         # # fields already initialized in the super
-        self.study_child_identifier = self.initial.get('study_child_identifier', None)
+        study_child_identifier = self.initial.get(
+            'study_child_identifier', None)
         gender = self.initial.get('gender', None)
         child_dob = self.initial.get('child_dob', None)
 
@@ -33,17 +35,18 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         self.fields['child_dob'].disabled = True
         # # if and only if the above fields exist, make the field readonly
         # # or else make the fields editable
-        if self.study_child_identifier:
+        if study_child_identifier:
             self.fields['study_child_identifier'].disabled = True
         if gender:
             self.fields['gender'].disabled = True
         if child_dob:
             self.fields['child_dob'] = forms.CharField(
-                initial=self.initial['child_dob'], )
+                initial=self.initial['child_dob'],)
             self.fields['child_dob'].disabled = True
 
         screening_identifier = kwargs.get('screening_identifier', None)
-        setattr(CaregiverChildConsentFormValidator, 'screening', screening_identifier)
+        setattr(CaregiverChildConsentFormValidator,
+                'screening', screening_identifier)
 
         instance = getattr(self, 'instance', None)
         subject_identifier = instance.subject_identifier if instance else None
