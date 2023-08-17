@@ -29,14 +29,14 @@ class AppointmentAdmin(BaseAppointmentAdmin):
 
             earliest_start = (app_obj.timepoint_datetime -
                               app_obj.visits.get(app_obj.visit_code).rlower).astimezone(
-                                          pytz.timezone('Africa/Gaborone'))
+                pytz.timezone('Africa/Gaborone'))
 
             latest_start = (app_obj.timepoint_datetime +
                             app_obj.visits.get(app_obj.visit_code).rupper).astimezone(
-                                          pytz.timezone('Africa/Gaborone'))
+                pytz.timezone('Africa/Gaborone'))
 
             ideal_start = app_obj.timepoint_datetime.astimezone(
-                                          pytz.timezone('Africa/Gaborone'))
+                pytz.timezone('Africa/Gaborone'))
 
             extra_context.update({
                 'earliest_start': earliest_start.strftime("%Y-%m-%d, %H:%M:%S"),

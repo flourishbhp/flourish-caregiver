@@ -4,11 +4,10 @@ from flourish_form_validations.form_validators import BreastFeedingQuestionnaire
 from .form_mixins import SubjectModelFormMixin
 
 
-class BreastFeedingQuestionnaireForm(SubjectModelFormMixin,forms.ModelForm):
-    
+class BreastFeedingQuestionnaireForm(SubjectModelFormMixin, forms.ModelForm):
+
     form_validator_cls = BreastFeedingQuestionnaireFormValidator
-    
+
     class Meta:
         model = BreastFeedingQuestionnaire
         fields = '__all__'
-        

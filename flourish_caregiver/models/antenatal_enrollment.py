@@ -75,12 +75,14 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
             except MaternalDelivery.DoesNotExist:
                 # if child is not yet delivered
                 today = get_utcnow()
-                result = ultrasound.ga_confirmed + ((today - ultrasound.report_datetime).days / 7)
+                result = ultrasound.ga_confirmed + \
+                    ((today - ultrasound.report_datetime).days / 7)
             else:
                 # if child is already delivered stop changing GA
                 delivery_date = maternal_delivery.delivery_datetime
 
-                result = ultrasound.ga_confirmed + ((delivery_date - ultrasound.report_datetime).days / 7)
+                result = ultrasound.ga_confirmed + \
+                    ((delivery_date - ultrasound.report_datetime).days / 7)
 
         return round(result, 1)
 

@@ -293,7 +293,8 @@ list_data = {
     ],
     'flourish_caregiver.arvinterruptionreasons': [
         ('toxicity_self', 'Toxicity, discontinued by self'),
-        ('toxicity_healthcare_provider', 'Toxicity, discontinued by healthcare provider'),
+        ('toxicity_healthcare_provider',
+         'Toxicity, discontinued by healthcare provider'),
         ('no_drugs', 'No drugs available'),
         ('no_refill', 'Didn\'t get to clinic for refill'),
         ('forgot', 'Participant forgot'),

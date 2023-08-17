@@ -48,7 +48,8 @@ class MaternalArvDuringPreg(CrfModelMixin):
 class MaternalArvTableDuringPreg(MaternalArvTableMixin):
     """ Inline ARV table to indicate ARV medication taken by mother """
 
-    maternal_arv_durg_preg = models.ForeignKey(MaternalArvDuringPreg, on_delete=PROTECT)
+    maternal_arv_durg_preg = models.ForeignKey(
+        MaternalArvDuringPreg, on_delete=PROTECT)
 
     reason_for_stop = models.CharField(
         verbose_name="Reason for stop",

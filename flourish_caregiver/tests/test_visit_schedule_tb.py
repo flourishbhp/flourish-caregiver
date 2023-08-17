@@ -238,7 +238,8 @@ class TestVisitScheduleTb(TestCase):
                 status=NEW)
         except action_item_model_cls.DoesNotExist:
             self.fail('Action Item to created')
-            self.assertNotIsInstance(obj=action_item_obj, cls=action_item_model_cls)
+            self.assertNotIsInstance(
+                obj=action_item_obj, cls=action_item_model_cls)
 
     @tag('off-study-tb')
     def test_tb_off_study_functionality(self):

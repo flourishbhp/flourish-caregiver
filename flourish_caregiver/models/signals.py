@@ -70,7 +70,8 @@ def update_maternal_dataset_and_worklist(subject_identifier,
     study_maternal_identifier = None
 
     if study_child_identifier:
-        child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+        child_dataset_cls = django_apps.get_model(
+            'flourish_child.childdataset')
         try:
             child_dataset_obj = child_dataset_cls.objects.get(
                 study_child_identifier=study_child_identifier)
@@ -106,7 +107,8 @@ def update_maternal_dataset_and_worklist(subject_identifier,
 
             screening_query_id = None
             if screening_identifier:
-                screening_query_id = Q(screening_identifier=screening_identifier)
+                screening_query_id = Q(
+                    screening_identifier=screening_identifier)
             else:
                 screening_query_id = Q(
                     study_maternal_identifier=study_maternal_identifier)
@@ -297,7 +299,8 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
                 'cohort_a_birth', instance=instance,
                 subject_identifier=instance.subject_identifier,
                 child_subject_identifier=preg_child_consents[0].subject_identifier,
-                base_appt_datetime=instance.delivery_datetime.replace(microsecond=0),
+                base_appt_datetime=instance.delivery_datetime.replace(
+                    microsecond=0),
                 caregiver_visit_count=preg_child_consents[0].caregiver_visit_count)
             create_registered_infant(instance)
         try:
@@ -551,16 +554,17 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
           dispatch_uid='tb_visit_screening_women_post_save')
 def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs):
     if not raw:
-        tb_off_study_cls = django_apps.get_model('flourish_caregiver.tboffstudy')
+        tb_off_study_cls = django_apps.get_model(
+            'flourish_caregiver.tboffstudy')
 
         tb_referral = (
-                instance.have_cough == YES or
-                instance.cough_duration == '=>2 week' or
-                instance.fever == YES or
-                instance.night_sweats == YES or
-                instance.weight_loss == YES or
-                instance.cough_blood == YES or
-                instance.enlarged_lymph_nodes == YES
+            instance.have_cough == YES or
+            instance.cough_duration == '=>2 week' or
+            instance.fever == YES or
+            instance.night_sweats == YES or
+            instance.weight_loss == YES or
+            instance.cough_blood == YES or
+            instance.enlarged_lymph_nodes == YES
         )
 
         if not tb_referral:
@@ -646,7 +650,8 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
     registration_datetime = get_registration_date(instance.subject_identifier)
 
     if registration_datetime:
-        weeks_diff = (instance.report_datetime - registration_datetime).days / 7
+        weeks_diff = (instance.report_datetime -
+                      registration_datetime).days / 7
 
         ga_confirmed_after = instance.ga_confirmed - weeks_diff
 
@@ -692,7 +697,8 @@ def tb_informed_consent_post_save(sender, instance, raw, created, **kwargs):
     """
     Put subject on tb enrolment schedule after tv informed consent
     """
-    maternal_delivery_cls = django_apps.get_model('flourish_caregiver.maternaldelivery')
+    maternal_delivery_cls = django_apps.get_model(
+        'flourish_caregiver.maternaldelivery')
     if not raw:
         try:
             maternal_delivery_obj = maternal_delivery_cls.objects.get(
@@ -763,7 +769,8 @@ def validate_requires_consent_on_pre_save(instance, raw, **kwargs):
         else:
             visit_schedule = consent_helper.get_visit_schedule(instance)
             if visit_schedule and visit_schedule.schedules:
-                schedule = visit_schedule.schedules.get(instance.visit.schedule_name)
+                schedule = visit_schedule.schedules.get(
+                    instance.visit.schedule_name)
                 if schedule:
                     requires_consent = consent_helper.get_requires_consent(
                         instance, consent_model, schedule=schedule)
@@ -861,8 +868,8 @@ def get_schedule_sequence(subject_identifier, instance,
                           onschedule_cls, caregiver_visit_count=None):
     children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
-                subject_identifier=subject_identifier).exclude(
-                child_subject_identifier=instance.subject_identifier).count())
+                          subject_identifier=subject_identifier).exclude(
+                          child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
@@ -1081,7 +1088,8 @@ def create_consent_version(instance, version):
 
 
 def get_child_consents(subject_identifier):
-    child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+    child_consent_cls = django_apps.get_model(
+        'flourish_caregiver.caregiverchildconsent')
 
     return child_consent_cls.objects.filter(
         subject_identifier__startswith=subject_identifier).order_by('-consent_datetime')
@@ -1143,7 +1151,8 @@ def print_pdf(filepath):
     for image, index in zip(renderer, page_indices):
         stamped_pdf_images.append(add_image_stamp(base_image=image))
     first_img = stamped_pdf_images[0]
-    first_img.save(filepath, save_all=True, append_images=stamped_pdf_images[1:])
+    first_img.save(filepath, save_all=True,
+                   append_images=stamped_pdf_images[1:])
 
 
 def encrypt_files(instance, subject_identifier):

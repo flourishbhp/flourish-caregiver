@@ -429,7 +429,6 @@ class TbVisitScreeningWomen(CrfModelMixin):
         null=True,
         max_length=30)
 
-
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'TB Screen at 2 months Postpartum'
