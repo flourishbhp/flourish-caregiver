@@ -76,7 +76,8 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
             if exclude and f.name in exclude:
                 continue
             if isinstance(f, ManyToManyField):
-                data[f.name] = [str(obj.id) for obj in f.value_from_object(instance)]
+                data[f.name] = [str(obj.id)
+                                for obj in f.value_from_object(instance)] or None
                 continue
             data[f.name] = f.value_from_object(instance) or None
         return data
