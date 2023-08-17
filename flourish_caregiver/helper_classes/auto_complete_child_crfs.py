@@ -159,14 +159,16 @@ class AutoCompleteChildCrfs:
 
         try:
             kwargs = model_to_dict(model_obj,
-                                   fields=[field.name for field in model_obj._meta.fields],
+                                   fields=[
+                                       field.name for field in model_obj._meta.fields],
                                    exclude=['id', 'maternal_visit_id', 'maternal_visit'])
             new_obj, created = model_cls.objects.get_or_create(
                 maternal_visit=self.instance, defaults=kwargs, )
 
             if created:
                 for key in self.get_many_to_many_fields(model_obj):
-                    getattr(new_obj, key).set(self.get_many_to_many_fields(model_obj).get(key))
+                    getattr(new_obj, key).set(
+                        self.get_many_to_many_fields(model_obj).get(key))
                 new_obj.save()
                 self.save_inlines(new_obj, model_obj)
 
@@ -176,4 +178,3 @@ class AutoCompleteChildCrfs:
             Nothing will be affected
             """
             pass
-

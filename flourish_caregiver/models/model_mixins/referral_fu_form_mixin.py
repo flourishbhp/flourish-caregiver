@@ -44,7 +44,8 @@ class ReferralFUFormMixin(models.Model):
 
     emo_support_type = models.ManyToManyField(
         EmoSupportType,
-        verbose_name=('If yes, what kind of emotional support did you receive?'),
+        verbose_name=(
+            'If yes, what kind of emotional support did you receive?'),
         blank=True)
 
     emo_support_type_other = OtherCharField()
@@ -58,7 +59,8 @@ class ReferralFUFormMixin(models.Model):
     emo_health_improved_other = OtherCharField()
 
     percieve_counselor = models.CharField(
-        verbose_name=('How did you perceive your counselor (social worker or psychologist)?'),
+        verbose_name=(
+            'How did you perceive your counselor (social worker or psychologist)?'),
         max_length=35,
         choices=PERCEIVE_COUNSELOR,
         blank=True,

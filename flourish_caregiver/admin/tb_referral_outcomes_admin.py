@@ -33,11 +33,11 @@ class TbReferralOutcomesAdmin(CrfModelAdminMixin, admin.ModelAdmin):
          ), audit_fieldset_tuple)
 
     radio_fields = {
-                    'tb_eval': admin.VERTICAL,
-                    'tb_eval_location': admin.VERTICAL,
-                    'tb_diagnostic_perf': admin.VERTICAL,
-                    'tb_diagnose_pos': admin.VERTICAL,
-                    'tb_treat_start': admin.VERTICAL,
-                    'tb_prev_therapy_start': admin.VERTICAL, }
+        'tb_eval': admin.VERTICAL,
+        'tb_eval_location': admin.VERTICAL,
+        'tb_diagnostic_perf': admin.VERTICAL,
+        'tb_diagnose_pos': admin.VERTICAL,
+        'tb_treat_start': admin.VERTICAL,
+        'tb_prev_therapy_start': admin.VERTICAL, }
 
     filter_horizontal = ('tb_diagnostics',)

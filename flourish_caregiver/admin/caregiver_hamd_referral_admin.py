@@ -23,4 +23,3 @@ class CaregiverHamdReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
          ), audit_fieldset_tuple)
 
     radio_fields = {'referred_to': admin.VERTICAL}
-

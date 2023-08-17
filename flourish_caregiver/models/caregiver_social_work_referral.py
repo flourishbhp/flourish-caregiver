@@ -50,5 +50,3 @@ class CaregiverSocialWorkReferral(CrfModelMixin):
         app_label = 'flourish_caregiver'
         verbose_name = 'Caregiver Social Work Referral'
         verbose_name_plural = 'Caregiver Social Work Referral'
-
-

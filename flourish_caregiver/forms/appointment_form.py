@@ -30,7 +30,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
 
         if cleaned_data.get('appt_datetime'):
 
-            visit_definition = self.instance.visits.get(self.instance.visit_code)
+            visit_definition = self.instance.visits.get(
+                self.instance.visit_code)
 
             earliest_appt_date = (self.instance.timepoint_datetime -
                                   visit_definition.rlower).astimezone(
@@ -44,7 +45,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                         microsecond=0)
                         or (self.instance.visit_code not in ['1000M', '2000M']
                             and cleaned_data.get('appt_datetime') > latest_appt_date.replace(
-                                    microsecond=0))):
+                            microsecond=0))):
                     raise forms.ValidationError(
                         'The appointment datetime cannot be outside the window period, '
                         'please correct. See earliest, ideal and latest datetimes below.')
@@ -61,7 +62,8 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             consent_version_obj = self.flourish_consent_version(
                 maternal_consents[0].screening_identifier)
 
-        onschedule_model = getattr(self.instance.schedule, 'onschedule_model', '')
+        onschedule_model = getattr(
+            self.instance.schedule, 'onschedule_model', '')
 
         onschedule_model_cls = django_apps.get_model(onschedule_model)
         try:
@@ -77,14 +79,16 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
                 subject_identifier=onschedule_obj.child_subject_identifier,
                 is_eligible=True, child_age_at_enrollment__gte=7)
             for child_consent in child_consents:
-                child_version = getattr(consent_version_obj, 'child_version', '') or child_consent.version
+                child_version = getattr(
+                    consent_version_obj, 'child_version', '') or child_consent.version
                 exists = ChildAssent.objects.filter(
                     subject_identifier=child_consent.subject_identifier,
                     version=child_version).exists()
                 child_assents_exists.append(exists)
             child_assents_exists = all(child_assents_exists)
             if not child_assents_exists:
-                raise ValidationError('Please fill the child assent(s) form(s) first')
+                raise ValidationError(
+                    'Please fill the child assent(s) form(s) first')
 
     def flourish_consent_version(self, screening_identifier=None):
         try:

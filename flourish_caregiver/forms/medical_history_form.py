@@ -48,7 +48,7 @@ class MedicalHistoryForm(SubjectModelFormMixin, forms.ModelForm):
                            'last visit. Please don\'t make any changes to this form.'}
                 raise forms.ValidationError(message)
         form_validator = self.form_validator_cls(
-                    cleaned_data=self.cleaned_data)
+            cleaned_data=self.cleaned_data)
         form_validator.subject_status = MaternalStatusHelper(
             maternal_visit=self.cleaned_data.get('maternal_visit')).hiv_status
         cleaned_data = form_validator.validate()
@@ -61,7 +61,8 @@ class MedicalHistoryForm(SubjectModelFormMixin, forms.ModelForm):
                           'med_history_changed', ]
         m2m_fields = ['who', 'caregiver_chronic', 'caregiver_medications']
         if prev_instance:
-            other_values = self.model_to_dict(prev_instance, exclude=exclude_fields)
+            other_values = self.model_to_dict(
+                prev_instance, exclude=exclude_fields)
             values = {key: self.data.get(key) or None if key not in m2m_fields else
                       self.data.getlist(key) for key in other_values.keys()}
             return values != other_values
@@ -81,7 +82,8 @@ class MedicalHistoryForm(SubjectModelFormMixin, forms.ModelForm):
             if exclude and f.name in exclude:
                 continue
             if isinstance(f, ManyToManyField):
-                data[f.name] = [str(obj.id) for obj in f.value_from_object(instance)]
+                data[f.name] = [str(obj.id)
+                                for obj in f.value_from_object(instance)]
                 continue
             data[f.name] = f.value_from_object(instance) or None
         return data

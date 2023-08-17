@@ -58,7 +58,8 @@ class TestSubjectHelperMixin(TestCase):
         self.subject_helper.create_TD_efv_enrollment(
             screening_identifier=maternal_dataset_obj.screening_identifier)
 
-        self.assertEqual(ScreeningPriorBhpParticipants.objects.all().count(), 1)
+        self.assertEqual(
+            ScreeningPriorBhpParticipants.objects.all().count(), 1)
 
         self.assertEqual(MaternalDataset.objects.all().count(), 1)
 
@@ -78,7 +79,8 @@ class TestSubjectHelperMixin(TestCase):
             'flourish_child.childdataset',
             **self.child_dataset_options)
 
-        self.subject_helper.prepare_prior_participant_enrollment(maternal_dataset_obj)
+        self.subject_helper.prepare_prior_participant_enrollment(
+            maternal_dataset_obj)
 
         logentry_cls = django_apps.get_model('flourish_follow.logentry')
 
@@ -182,4 +184,3 @@ class TestSubjectHelperMixin(TestCase):
         self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_fu1_schedule1').count(), 1)
-

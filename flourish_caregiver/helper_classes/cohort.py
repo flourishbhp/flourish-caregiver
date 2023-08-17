@@ -185,11 +185,12 @@ class Cohort:
             'subject_identifier', flat=True)
 
         child_subject_identifiers = self.caregiver_child_consent_cls.objects.filter(
-                child_age_at_enrollment__lte=2.5,
-                study_child_identifier__in=study_child_identifiers).values_list(
+            child_age_at_enrollment__lte=2.5,
+            study_child_identifier__in=study_child_identifiers).values_list(
             'subject_identifier', flat=True)
 
-        onstudy_huu = list(set(child_subject_identifiers) - set(child_offstudies))
+        onstudy_huu = list(set(child_subject_identifiers) -
+                           set(child_offstudies))
 
         return len(onstudy_huu)
 
@@ -252,7 +253,7 @@ class Cohort:
             if (self.protocol == 'Tshilo Dikotla' and self.hiv_exposed_uninfected
                     and self.total_HEU(protocol='Tshilo Dikotla') < 200):
                 return 'cohort_a'
-            elif(self.protocol == 'Tshilo Dikotla' and self.hiv_unexposed_uninfected
+            elif (self.protocol == 'Tshilo Dikotla' and self.hiv_unexposed_uninfected
                     and self.total_HUU(protocol='Tshilo Dikotla') < 75):
                 return 'cohort_a'
             return 'cohort_a_sec'
