@@ -79,7 +79,7 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
                 continue
             if isinstance(f, ManyToManyField):
                 data[f.name] = [str(obj.id)
-                                for obj in f.value_from_object(instance)]
+                                for obj in f.value_from_object(instance)] or None
                 continue
             data[f.name] = f.value_from_object(instance) or None
         return data
