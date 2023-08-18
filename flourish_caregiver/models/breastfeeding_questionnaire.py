@@ -144,7 +144,7 @@ class BreastFeedingQuestionnaire(CrfModelMixin):
         verbose_name='Since this baby was born, the individuals most influential in '
                      'helping me make a feeding choice for this baby have been '
                      '(Select all that apply):',
-         )
+    )
 
     after_delivery_influencers_other = OtherCharField(
         verbose_name="if other specify...",

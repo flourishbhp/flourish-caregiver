@@ -37,16 +37,16 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
             self.validate_med_history_changed(socio_demo_changed)
             if socio_demo_changed == YES and not has_changed:
                 message = {'socio_demo_changed':
-                               'Participant\'s Socio-demographic information has '
-                               'changed since '
-                               'last visit. Please update the information on this form.'}
+                           'Participant\'s Socio-demographic information has '
+                           'changed since '
+                           'last visit. Please update the information on this form.'}
                 raise forms.ValidationError(message)
             elif socio_demo_changed == NO and has_changed:
                 message = {'socio_demo_changed':
-                               'Participant\'s Socio-demographic information has not '
-                               'changed '
-                               'since last visit. Please don\'t make any changes to '
-                               'this form.'}
+                           'Participant\'s Socio-demographic information has not '
+                           'changed '
+                           'since last visit. Please don\'t make any changes to '
+                           'this form.'}
                 raise forms.ValidationError(message)
         cleaned_data = super().clean()
         return cleaned_data
@@ -57,8 +57,10 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
                           'device_modified', 'report_datetime', 'maternal_visit',
                           'socio_demo_changed', ]
         if prev_instance:
-            other_values = self.model_to_dict(prev_instance, exclude=exclude_fields)
-            values = {key: self.data.get(key) or None for key in other_values.keys()}
+            other_values = self.model_to_dict(
+                prev_instance, exclude=exclude_fields)
+            values = {key: self.data.get(
+                key) or None for key in other_values.keys()}
             return values != other_values
         return False
 
@@ -76,7 +78,8 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
             if exclude and f.name in exclude:
                 continue
             if isinstance(f, ManyToManyField):
-                data[f.name] = [str(obj.id) for obj in f.value_from_object(instance)]
+                data[f.name] = [str(obj.id)
+                                for obj in f.value_from_object(instance)] or None
                 continue
             data[f.name] = f.value_from_object(instance) or None
         return data

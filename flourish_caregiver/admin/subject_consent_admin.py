@@ -69,11 +69,14 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
                     'future_studies_contact': admin.VERTICAL}
 
     child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
-    preg_women_cls = django_apps.get_model('flourish_caregiver.screeningpregwomen')
-    consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+    preg_women_cls = django_apps.get_model(
+        'flourish_caregiver.screeningpregwomen')
+    consent_cls = django_apps.get_model(
+        'flourish_caregiver.caregiverchildconsent')
 
     def save_model(self, request, obj, form, change):
-        super(CaregiverChildConsentInline, self).save_model(request, obj, form, change)
+        super(CaregiverChildConsentInline, self).save_model(
+            request, obj, form, change)
 
     def get_formset(self, request, obj=None, **kwargs):
         study_maternal_id = request.GET.get('study_maternal_identifier')
@@ -203,9 +206,11 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         return extra
 
     def get_difference(self, model_objs, obj=None):
-        cc_ids = obj.caregiverchildconsent_set.values_list('subject_identifier',
-                                                           'version')
-        consent_version_obj = self.consent_version_obj(obj.screening_identifier)
+        cc_ids = obj.caregiverchildconsent_set.values_list(
+            'subject_identifier', 'version')
+        consent_version_obj = self.consent_version_obj(
+            obj.screening_identifier)
+
         child_version = getattr(consent_version_obj, 'child_version', None)
         return [x for x in model_objs if (
             x.subject_identifier, x.version) not in cc_ids or x.version != child_version]
@@ -443,17 +448,20 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                    'child_preg_test',
                    'identity_type')
 
-    search_fields = ['subject_identifier', 'subject_consent__subject_identifier', ]
+    search_fields = ['subject_identifier',
+                     'subject_consent__subject_identifier', ]
 
     def render_change_form(self, request, context, *args, **kwargs):
         context['adminform'].form.fields['subject_consent'].queryset = \
-            SubjectConsent.objects.filter(id=request.GET.get('subject_consent'))
+            SubjectConsent.objects.filter(
+                id=request.GET.get('subject_consent'))
         return super(CaregiverChildConsentAdmin, self).render_change_form(
             request, context, *args, **kwargs)
 
     def caregiver_hiv_status(self, subject_identifier=None):
 
-        status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
+        status_helper = MaternalStatusHelper(
+            subject_identifier=subject_identifier)
 
         return status_helper.hiv_status
 

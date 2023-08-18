@@ -38,7 +38,8 @@ class TbOffStudyForm(FormValidatorMixin, FormValidator, forms.ModelForm):
                             f'- TB symptoms in household members at 2 months postpartum')
 
     def validate_against_latest_visit(self):
-        self.visit_cls = django_apps.get_model('flourish_caregiver.maternalvisit')
+        self.visit_cls = django_apps.get_model(
+            'flourish_caregiver.maternalvisit')
 
         subject_identifier = self.cleaned_data.get('subject_identifier')
         latest_visit = self.visit_cls.objects.filter(

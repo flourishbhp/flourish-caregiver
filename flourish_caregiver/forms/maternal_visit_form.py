@@ -32,7 +32,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             if not id:
                 self.validate_offstudy_model()
 
-        self.validate_against_consent_datetime(self.cleaned_data.get('report_datetime'))
+        self.validate_against_consent_datetime(
+            self.cleaned_data.get('report_datetime'))
 
         self.validate_consent_version_obj()
 
@@ -95,7 +96,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             raise ValidationError(msg)
 
     def validate_offstudy_model(self):
-        maternal_offstudy_cls = django_apps.get_model('flourish_prn.caregiveroffstudy')
+        maternal_offstudy_cls = django_apps.get_model(
+            'flourish_prn.caregiveroffstudy')
         action_cls = site_action_items.get(
             maternal_offstudy_cls.action_name)
         action_item_model_cls = action_cls.action_item_model_cls()
@@ -116,7 +118,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
                     'Participant has been taken offstudy. Cannot capture any '
                     'new data.')
         else:
-            self.maternal_visit = self.cleaned_data.get('maternal_visit') or None
+            self.maternal_visit = self.cleaned_data.get(
+                'maternal_visit') or None
             if not self.maternal_visit or self.maternal_visit.require_crfs == NO:
                 raise forms.ValidationError(
                     'Participant is scheduled to be taken offstudy without '

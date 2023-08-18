@@ -26,6 +26,7 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
 
         # # fields already initialized in the super
         self.study_child_identifier = self.initial.get('study_child_identifier', None)
+
         gender = self.initial.get('gender', None)
         child_dob = self.initial.get('child_dob', None)
 
@@ -43,7 +44,8 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
             self.fields['child_dob'].disabled = True
 
         screening_identifier = kwargs.get('screening_identifier', None)
-        setattr(CaregiverChildConsentFormValidator, 'screening', screening_identifier)
+        setattr(CaregiverChildConsentFormValidator,
+                'screening', screening_identifier)
 
         instance = getattr(self, 'instance', None)
         subject_identifier = instance.subject_identifier if instance else None

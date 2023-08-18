@@ -39,7 +39,6 @@ class MaternalArvAtDelivery(CrfModelMixin):
         default=NOT_APPLICABLE
     )
 
-
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'Maternal ARV At Delivery'
@@ -49,14 +48,14 @@ class MaternalArvAtDelivery(CrfModelMixin):
 class MaternalArvTableAtDelivery(MaternalArvTableMixin):
     """ Inline ARV table to indicate ARV medication taken by mother """
 
-    maternal_arv_at_delivery = models.ForeignKey(MaternalArvAtDelivery, on_delete=PROTECT)
+    maternal_arv_at_delivery = models.ForeignKey(
+        MaternalArvAtDelivery, on_delete=PROTECT)
 
     date_resumed = models.DateField(
         verbose_name="Date Resumed",
         validators=[date_not_future],
         null=True,
         blank=True)
-
 
     class Meta:
         app_label = 'flourish_caregiver'

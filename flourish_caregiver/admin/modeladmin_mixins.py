@@ -82,10 +82,10 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
                 options = {
                     '{}__appointment'.format(self.model.visit_model_attr()):
                         self.get_previous_appt_instance(appointment)
-                    }
+                }
                 try:
                     obj = self.model.objects.get(**options)
-                except ObjectDoesNotExist: 
+                except ObjectDoesNotExist:
                     pass
                 else:
                     break
@@ -129,7 +129,8 @@ class VersionControlMixin:
 
     def get_form_version(self, request):
 
-        form_versions = django_apps.get_app_config('flourish_caregiver').form_versions
+        form_versions = django_apps.get_app_config(
+            'flourish_caregiver').form_versions
 
         queryset = self.get_queryset(request)
         model_name = queryset.model._meta.label_lower

@@ -72,7 +72,8 @@ class MaternalArvAtDeliveryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         model_dict = {}
         for model_name in self.extra_context_models:
             data_dict = {}
-            model_cls = django_apps.get_model(f'flourish_caregiver.{model_name}')
+            model_cls = django_apps.get_model(
+                f'flourish_caregiver.{model_name}')
             model_objs = model_cls.objects.filter(
                 maternal_visit__subject_identifier=subject_identifier)
             for obj in model_objs:
@@ -102,7 +103,7 @@ class MaternalArvTableAtDeliveryAdmin(ModelAdminMixin, admin.ModelAdmin):
             ]
         }
 
-         ), audit_fieldset_tuple,
+        ), audit_fieldset_tuple,
     )
     list_display = ('arv_code', 'start_date', 'stop_date',)
 

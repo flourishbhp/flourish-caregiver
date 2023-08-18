@@ -19,7 +19,8 @@ class CaregiverRequisitionResult(SenaiteResultModelMixin, SiteModelMixin, BaseUu
 
 class CaregiverResultValue(SenaiteResultValueMixin, BaseUuidModel):
 
-    result = models.ForeignKey(CaregiverRequisitionResult, on_delete=models.PROTECT)
+    result = models.ForeignKey(
+        CaregiverRequisitionResult, on_delete=models.PROTECT)
 
     history = HistoricalRecords()
 
