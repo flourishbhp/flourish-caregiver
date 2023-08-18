@@ -199,11 +199,6 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
                 arv_code = self.data.get(
                     'maternalarvtableduringpreg_set-' + str(index) + '-arv_code')
 
-                arv_stop_date = self.data.get(
-                    'maternalarvtableduringpreg_set-' + str(index) + '-stop_date')
-                datetime.datetime.strptime(
-                    arv_stop_date, '%Y-%m-%d') if arv_stop_date else None
-
                 prev_arv = previous_arv_preg.maternalarv_set.filter(
                     arv_code=arv_code).order_by('-created').first()
 
