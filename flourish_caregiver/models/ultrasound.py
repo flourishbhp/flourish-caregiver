@@ -133,8 +133,7 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
 
     @property
     def get_current_ga(self):
-        antenatal_enrol = django_apps.get_model(
-            f'flourish_caregiver.antenatalenrollment')
+        antenatal_enrol = django_apps.get_model('flourish_caregiver.antenatalenrollment')
         try:
             antenatal_enrol_obj = antenatal_enrol.objects.get(
                 subject_identifier=self.subject_identifier)

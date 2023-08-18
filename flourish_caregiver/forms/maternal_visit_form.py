@@ -2,7 +2,6 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from edc_base.sites import SiteModelFormMixin
-from edc_constants.constants import ALIVE
 from edc_constants.constants import OFF_STUDY, DEAD, YES, ON_STUDY, NEW, OTHER
 from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
 from edc_form_validators import FormValidatorMixin
@@ -252,8 +251,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
 
             except SubjectConsent.DoesNotExist:
                 raise forms.ValidationError(
-                    'Please complete Caregiver Consent form '
-                    f'before proceeding.')
+                    'Please complete Caregiver Consent form before proceeding.')
             else:
                 if report_datetime and report_datetime < subject_consents.latest(
                         'consent_datetime').consent_datetime:
