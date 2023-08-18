@@ -1022,7 +1022,7 @@ def create_registered_infant(instance):
                         child_dummy_consent_cls = django_apps.get_model(
                             'flourish_child.childdummysubjectconsent')
                         try:
-                            dummy_consent_obj = child_dummy_consent_cls.objects.get(
+                            child_dummy_consent_cls.objects.get(
                                 subject_identifier=caregiver_child_consent_obj.subject_identifier,
                                 version=caregiver_child_consent_obj.version)
                         except child_dummy_consent_cls.DoesNotExist:

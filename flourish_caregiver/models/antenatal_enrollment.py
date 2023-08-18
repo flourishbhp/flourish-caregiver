@@ -8,7 +8,6 @@ from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import date_not_before_study_start
 
-from ..helper_classes import EnrollmentHelper
 from .enrollment_mixin import EnrollmentMixin
 from .maternal_delivery import MaternalDelivery
 from .ultrasound import UltraSound

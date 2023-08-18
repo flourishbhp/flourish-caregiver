@@ -32,10 +32,10 @@ class TbOffStudyForm(FormValidatorMixin, FormValidator, forms.ModelForm):
         if (tb_visit_screening_objs < 0 and
                 tb_routine_screening_objs < 0 and
                 tb_in_house_members_objs < 0):
-            ValidationError(f'Please make sure that the following forms\n'
-                            f'- Tb screen at 2 months Postpartum\n'
-                            f'- Screen for TB at routine health encounters\n'
-                            f'- TB symptoms in household members at 2 months postpartum')
+            ValidationError('Please make sure that the following forms\n'
+                            '- Tb screen at 2 months Postpartum\n'
+                            '- Screen for TB at routine health encounters\n'
+                            '- TB symptoms in household members at 2 months postpartum')
 
     def validate_against_latest_visit(self):
         self.visit_cls = django_apps.get_model(

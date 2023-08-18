@@ -5,9 +5,6 @@ from ..forms import CaregiverLocatorForm
 from ..models import CaregiverLocator
 from .modeladmin_mixins import ModelAdminMixin
 from edc_fieldsets import Fieldsets
-from flourish_caregiver.models import MaternalDataset
-from django.shortcuts import redirect, reverse
-from django.conf import settings
 from ..models import SubjectConsent
 from django.http import HttpResponseRedirect
 

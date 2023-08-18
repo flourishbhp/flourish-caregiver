@@ -1,6 +1,6 @@
 
 [flake8]
-max-line-length = 100
+max-line-length = 120
 
 exclude =
   migrations,
@@ -9,3 +9,7 @@ exclude =
   manage.py,
   settings.py,
   __init__.py,
+
+
+per-file-ignores =
+    flourish_caregiver/apps.py:F401

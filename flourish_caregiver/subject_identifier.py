@@ -1,5 +1,5 @@
 from edc_identifier.infant_identifier import (
-    InfantIdentifier as BaseInfantIdentifier, InfantIdentifierError)
+    InfantIdentifier as BaseInfantIdentifier)
 from edc_identifier.subject_identifier import SubjectIdentifier as BaseSubjectIdentifier
 
 

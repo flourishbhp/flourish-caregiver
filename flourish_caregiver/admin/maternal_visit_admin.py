@@ -14,7 +14,6 @@ from edc_model_admin import (
     ModelAdminNextUrlRedirectMixin, ModelAdminAuditFieldsMixin,
     ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
 from edc_model_admin import audit_fieldset_tuple
-from numpy import insert
 
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin

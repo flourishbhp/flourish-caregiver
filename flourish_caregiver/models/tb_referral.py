@@ -3,7 +3,7 @@ from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
 from flourish_caregiver.maternal_choices import GC_DHMT_CLINICS
-from flourish_caregiver.models.model_mixins import CrfModelMixin, ReferralFormMixin
+from flourish_caregiver.models.model_mixins import CrfModelMixin
 
 
 class TbReferral(CrfModelMixin):

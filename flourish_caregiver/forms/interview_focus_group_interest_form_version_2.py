@@ -11,4 +11,3 @@ class InterviewFocusGroupInterestVersion2Form(SubjectModelFormMixin, forms.Model
     class Meta:
         model = InterviewFocusGroupInterestV2
         fields = '__all__'
-

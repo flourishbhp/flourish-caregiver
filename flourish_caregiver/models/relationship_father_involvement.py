@@ -12,7 +12,7 @@ from edc_constants.choices import YES_NO
 from ..choices import (YES_NO_PNTA_DNK, YES_NO_PNTA, YES_NO_PNTA_NA,
                        YES_NO_PNTA_UNKNOWN, HIV_STATUS_DISCUSSION, PARTNERS_SUPPORT,
                        CHOICE_FREQUENCY, HAPPINESS_CHOICES, FATHER_VISITS,
-                       FUTURE_OF_RELATIONSHIP, FATHERS_FINANCIAL_SUPPORT, HOUSEHOLD_MEMBER)
+                       FUTURE_OF_RELATIONSHIP, FATHERS_FINANCIAL_SUPPORT)
 from .list_models import HouseholdMember
 from .model_mixins import CrfModelMixin
 
