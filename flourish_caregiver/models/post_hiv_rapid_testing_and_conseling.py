@@ -1,5 +1,3 @@
-
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_constants.choices import YES_NO, POS_NEG_IND_UNKNOWN
 from ..choices import HIV_TESTING_REFUSAL_REASON
@@ -19,7 +17,7 @@ class PostHivRapidTestAndConseling(CrfModelMixin):
         verbose_name='Date of Rapid test',
         blank=True,
         null=True,
-        validators=[date_not_future,]
+        validators=[date_not_future]
     )
 
     result = models.CharField(

@@ -2,7 +2,7 @@ from django.apps import apps as django_apps
 from django.db.models import Q
 from django.db.utils import IntegrityError
 from edc_appointment.constants import NEW_APPT
-from edc_constants.constants import OTHER, YES, FEMALE
+from edc_constants.constants import OTHER, FEMALE
 
 from .onschedule_helper import OnScheduleHelper
 from ..identifiers import ScreeningIdentifier
@@ -159,7 +159,7 @@ class CaregiverBiologicalSwitch:
 
     def create_bio_consent(self, sid_swap=('C', 'B'), **kwargs):
         """ Create an instance of the subject consent for the participant.
-            @param subject_type: whether bioloigical mother or caregiver to determine sID. 
+            @param subject_type: whether bioloigical mother or caregiver to determine sID.
             @param sid_swap: tuple to determine the pid replacement pattern.
         """
         first_name = kwargs.pop(
