@@ -1,3 +1,6 @@
+import pytz
+from datetime import datetime
+from django.apps import apps as django_apps
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from edc_base.model_managers import HistoricalRecords
@@ -74,8 +77,9 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
                     subject_identifier=self.subject_identifier)
             except MaternalDelivery.DoesNotExist:
                 # if child is not yet delivered
-                today = get_utcnow()
-                result = ultrasound.ga_confirmed + ((today - ultrasound.report_datetime).days / 7)
+                today = self.caregiver_offstudy_dt or get_utcnow()
+                result = ultrasound.ga_confirmed + \
+                    ((today - ultrasound.report_datetime).days / 7)
             else:
                 # if child is already delivered stop changing GA
                 delivery_date = maternal_delivery.delivery_datetime
@@ -88,6 +92,21 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
 
     def __str__(self):
         return f'antenatal: {self.subject_identifier}'
+
+    @property
+    def caregiver_offstudy_dt(self):
+        tz = pytz.timezone('Africa/Gaborone')
+
+        caregiver_offstudy_cls = django_apps.get_model(
+            'flourish_prn.caregiveroffstudy')
+        try:
+            offstudy = caregiver_offstudy_cls.objects.get(
+                subject_identifier=self.subject_identifier)
+        except caregiver_offstudy_cls.DoesNotExist:
+            return None
+        else:
+            offstudy_dt = getattr(offstudy, 'offstudy_date', None)
+            return datetime.combine(offstudy_dt, offstudy.report_datetime.time(), tzinfo=tz)
 
     # def unenrolled_error_messages(self):
     # """Returns a tuple (True, None) if mother is eligible otherwise
