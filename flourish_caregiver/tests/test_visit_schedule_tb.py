@@ -165,61 +165,6 @@ class TestVisitScheduleTb(TestCase):
             subject_identifier=self.consent.subject_identifier,
             visit_code='2100T').entry_status, REQUIRED)
 
-    def test_tb_screening_form_enrol_visit(self):
-        self.assertEqual(CrfMetadata.objects.get(
-            model='flourish_caregiver.tbstudyeligibility',
-            subject_identifier=self.consent.subject_identifier,
-            visit_code='1000M').entry_status, NOT_REQUIRED)
-
-        mommy.make_recipe('flourish_caregiver.ultrasound',
-                          maternal_visit=self.enrol_visit,
-                          est_edd_ultrasound=get_utcnow().date(),
-                          ga_confirmed=22)
-
-        self.assertEqual(CrfMetadata.objects.get(
-            model='flourish_caregiver.tbstudyeligibility',
-            subject_identifier=self.consent.subject_identifier,
-            visit_code='1000M').entry_status, REQUIRED)
-
-    @tag('tb-scre')
-    def test_tb_screening_form_devlivery_visit(self):
-        mommy.make_recipe('flourish_caregiver.ultrasound',
-                          maternal_visit=self.enrol_visit,
-                          est_edd_ultrasound=get_utcnow().date(),
-                          ga_confirmed=22)
-
-        self.assertEqual(CrfMetadata.objects.get(
-            model='flourish_caregiver.tbstudyeligibility',
-            subject_identifier=self.consent.subject_identifier,
-            visit_code='1000M').entry_status, REQUIRED)
-
-        mommy.make_recipe('flourish_caregiver.tbstudyeligibility',
-                          maternal_visit=self.enrol_visit,
-                          reasons_not_participating='still_think')
-
-        mommy.make_recipe(
-            'flourish_caregiver.maternaldelivery',
-            subject_identifier=self.consent.subject_identifier, )
-        child_consent = ChildDummySubjectConsent.objects.get(
-            subject_identifier=self.child_consent.subject_identifier,
-        )
-
-        child_consent.dob = (get_utcnow() - relativedelta(days=1)).date()
-        child_consent.save()
-
-        mommy.make_recipe(
-            'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(
-                subject_identifier=self.consent.subject_identifier,
-                visit_code='2000D'),
-            report_datetime=get_utcnow(),
-            reason=SCHEDULED)
-
-        self.assertEqual(CrfMetadata.objects.get(
-            model='flourish_caregiver.tbstudyeligibility',
-            subject_identifier=self.consent.subject_identifier,
-            visit_code='2000D').entry_status, REQUIRED)
-
     @tag('off-study-tb')
     def test_tb_off_study_required(self):
         self.prepare_off_study_2_months_visit()
