@@ -40,7 +40,7 @@ class MaternalStatusHelper(object):
                 'flourish_caregiver.antenatalenrollment')
             try:
                 antenatal_enrollment = antenatal_enrollment_cls.objects.get(
-                        subject_identifier=self.subject_identifier)
+                    subject_identifier=self.subject_identifier)
             except antenatal_enrollment_cls.DoesNotExist:
                 status = self.enrollment_hiv_status
             else:
@@ -105,11 +105,12 @@ class MaternalStatusHelper(object):
                 return previous_enrollment.current_hiv_status
 
         maternal_dataset_objs = maternal_dataset_cls.objects.filter(
-                subject_identifier=self.subject_identifier)
+            subject_identifier=self.subject_identifier)
 
         # for maternal_dataset_obj in maternal_dataset_objs:
         if maternal_dataset_objs:
-            mom_hiv_statuses = maternal_dataset_objs.values_list('mom_hivstatus', flat=True)
+            mom_hiv_statuses = maternal_dataset_objs.values_list(
+                'mom_hivstatus', flat=True)
 
             if 'HIV-infected' in mom_hiv_statuses:
                 return POS

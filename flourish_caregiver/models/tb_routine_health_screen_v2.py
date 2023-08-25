@@ -23,7 +23,8 @@ class TbRoutineHealthScreenV2(CrfModelMixin):
 
 
 class TbRoutineHealthEncounters(BaseUuidModel):
-    routine_encounter = models.ForeignKey(TbRoutineHealthScreenV2, on_delete=models.PROTECT,)
+    routine_encounter = models.ForeignKey(
+        TbRoutineHealthScreenV2, on_delete=models.PROTECT,)
     screen_location = models.ManyToManyField(
         TbVisitCareLocation,
         verbose_name="For visit #1, where did you receive care",
@@ -69,4 +70,3 @@ class TbRoutineHealthEncounters(BaseUuidModel):
     class Meta:
         verbose_name = 'TB Routine Health Encounters Inline'
         app_label = 'flourish_caregiver'
-

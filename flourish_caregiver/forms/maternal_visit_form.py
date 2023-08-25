@@ -2,7 +2,6 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from edc_base.sites import SiteModelFormMixin
-from edc_constants.constants import ALIVE
 from edc_constants.constants import OFF_STUDY, DEAD, YES, ON_STUDY, NEW, OTHER
 from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
 from edc_form_validators import FormValidatorMixin
@@ -32,7 +31,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             if not id:
                 self.validate_offstudy_model()
 
-        self.validate_against_consent_datetime(self.cleaned_data.get('report_datetime'))
+        self.validate_against_consent_datetime(
+            self.cleaned_data.get('report_datetime'))
 
         self.validate_consent_version_obj()
 
@@ -95,7 +95,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             raise ValidationError(msg)
 
     def validate_offstudy_model(self):
-        maternal_offstudy_cls = django_apps.get_model('flourish_prn.caregiveroffstudy')
+        maternal_offstudy_cls = django_apps.get_model(
+            'flourish_prn.caregiveroffstudy')
         action_cls = site_action_items.get(
             maternal_offstudy_cls.action_name)
         action_item_model_cls = action_cls.action_item_model_cls()
@@ -116,7 +117,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
                     'Participant has been taken offstudy. Cannot capture any '
                     'new data.')
         else:
-            self.maternal_visit = self.cleaned_data.get('maternal_visit') or None
+            self.maternal_visit = self.cleaned_data.get(
+                'maternal_visit') or None
             if not self.maternal_visit or self.maternal_visit.require_crfs == NO:
                 raise forms.ValidationError(
                     'Participant is scheduled to be taken offstudy without '
@@ -249,8 +251,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
 
             except SubjectConsent.DoesNotExist:
                 raise forms.ValidationError(
-                    'Please complete Caregiver Consent form '
-                    f'before proceeding.')
+                    'Please complete Caregiver Consent form before proceeding.')
             else:
                 if report_datetime and report_datetime < subject_consents.latest(
                         'consent_datetime').consent_datetime:

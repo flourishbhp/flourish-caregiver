@@ -121,7 +121,6 @@ class TbPresenceHouseholdMembers(CrfModelMixin):
         blank=True,
         null=True)
 
-
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'TB symptoms in household members at 2 months postpartum'

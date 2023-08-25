@@ -22,14 +22,13 @@ from ..choices import IDENTITY_TYPE
 from .model_mixins import SearchSlugModelMixin
 
 
-
-
 class TbAdolConsentManager(ConsentManager, SearchSlugManager, models.Manager):
 
     def get_by_natural_key(self, subject_identifier, version):
         return self.get(
             subject_identifier=subject_identifier, version=version)
-        
+
+
 class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
                     UpdatesOrCreatesRegistrationModelMixin,
                     NonUniqueSubjectIdentifierModelMixin, IdentityFieldsMixin,
@@ -46,22 +45,22 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         help_text=('Ensure initials consist of letters '
                    'only in upper case, no spaces.'),
         null=True, blank=False)
-    
+
     # adol_firstname = FirstnameField(
     #     verbose_name = 'Adolescent Firstname',
     #     blank=False,
     #     max_length = 50,)
-    
+
     # adol_lastname = LastnameField(
     #     verbose_name='Adolescent Lastname',
     #     blank=False,
     #     max_length = 50,)
-    
+
     # adol_gender = models.CharField(
     #     verbose_name='Adolescent Gender',
     #     choices=GENDER,
     #     max_length=1)
-    
+
     # adol_dob = models.DateField(
     #     verbose_name='Adolescent DOB'
     # )
@@ -89,7 +88,8 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         blank=False)
 
     tb_blood_test_consent = models.CharField(
-        verbose_name=('Will you allow for blood testing for TB for your adolescent? '),
+        verbose_name=(
+            'Will you allow for blood testing for TB for your adolescent? '),
         max_length=3,
         choices=YES_NO,
         validators=[eligible_if_yes, ],
@@ -143,35 +143,36 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
             ('first_name', 'dob', 'initials', 'version'))
 
 
-
 class TbAdolChildConsent(BaseUuidModel):
-    
-    tb_adol_consent = models.ForeignKey(TbAdolConsent, on_delete=models.PROTECT)
-    
-    subject_identifier = models.CharField(verbose_name='Subject Identifer', max_length=20)
-    
+
+    tb_adol_consent = models.ForeignKey(
+        TbAdolConsent, on_delete=models.PROTECT)
+
+    subject_identifier = models.CharField(
+        verbose_name='Subject Identifer', max_length=20)
+
     adol_firstname = FirstnameField(
-        verbose_name = 'Adolescent Firstname',
+        verbose_name='Adolescent Firstname',
         blank=False,
-        max_length = 50,)
-    
+        max_length=50,)
+
     adol_lastname = LastnameField(
         verbose_name='Adolescent Lastname',
         blank=False,
-        max_length = 50,)
-    
+        max_length=50,)
+
     adol_gender = models.CharField(
         verbose_name='Adolescent Gender',
         choices=GENDER,
         max_length=1)
-    
+
     adol_dob = models.DateField(
         verbose_name='Adolescent DOB'
     )
-    
+
     def natural_key(self):
         return self.subject_identifier, self.version
-    
+
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'TB Adolescent Child Consent'

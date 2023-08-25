@@ -1,8 +1,7 @@
 from django.contrib import admin
-from edc_model_admin import TabularInlineMixin
 from edc_model_admin import audit_fieldset_tuple
 
-from .modeladmin_mixins import CrfModelAdminMixin, ModelAdminMixin
+from .modeladmin_mixins import ModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalArvPostAdherenceForm
 from ..models import MaternalArvPostAdherence

@@ -20,6 +20,7 @@ from .models import CaregiverPreviouslyEnrolled
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
 from .models import MaternalInterimIdccVersion2
 from .models import Cohort
+from .models import InterviewFocusGroupInterestV2
 
 fake = Faker()
 
@@ -235,7 +236,6 @@ maternalinterimidccversion2 = Recipe(
 tbroutinehealthscreenv2 = Recipe(
     TbRoutineHealthScreenV2, )
 
-
 registeredsubject = Recipe(
     django_apps.get_model('edc_registration.registeredsubject'),
 )
@@ -243,3 +243,6 @@ registeredsubject = Recipe(
 cohort = Recipe(
     Cohort,
 )
+
+interviewfocusgroupinterestv2 = Recipe(
+    InterviewFocusGroupInterestV2, )

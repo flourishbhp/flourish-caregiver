@@ -159,7 +159,7 @@ class CaregiverRequisitionAdmin(ExportRequisitionCsvMixin, CrfModelAdminMixin,
                 options = {
                     '{}__appointment'.format(self.model.visit_model_attr()):
                         self.get_previous_appt_instance(appointment)
-                    }
+                }
                 obj = self.model.objects.filter(**options).first()
                 appointment = self.get_previous_appt_instance(appointment)
         return obj

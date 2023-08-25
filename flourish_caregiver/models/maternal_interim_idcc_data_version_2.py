@@ -6,8 +6,6 @@ from edc_constants.choices import YES_NO
 from ..maternal_choices import SIZE_CHECK_WITHOUT_EQUAL, \
     REASON_CD4_RESULT_UNAVAILABLE, REASON_VL_RESULT_UNAVAILABLE
 from .model_mixins import CrfModelMixin
-from ..constants import BREASTFEED_ONLY, MISSED, NO_SAMPLE_COLLECTED,\
-    NO_SAMPLE_TUBES, MACHINE_NOT_WORKING
 
 
 class MaternalInterimIdccVersion2(CrfModelMixin):
@@ -68,7 +66,6 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
         choices=REASON_VL_RESULT_UNAVAILABLE)
 
     reason_vl_not_availiable_other = OtherCharField()
-
 
     value_vl_size = models.CharField(
         max_length=25,

@@ -47,7 +47,8 @@ class TbReferralOutcomes(CrfModelMixin):
         blank=True)
 
     tb_diagnostic_perf = models.CharField(
-        verbose_name=('Were TB diagnostic studies performed at the clinic visit?'),
+        verbose_name=(
+            'Were TB diagnostic studies performed at the clinic visit?'),
         max_length=20,
         choices=YES_NO_UNABLE_DET,
         null=True,

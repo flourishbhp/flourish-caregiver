@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from flourish_form_validations.form_validators import TbRoutineHealthScreenV2FormValidator
 
 from ..models import TbRoutineHealthScreenV2, TbRoutineHealthEncounters
-from .form_mixins import SubjectModelFormMixin, InlineSubjectModelFormMixin
+from .form_mixins import SubjectModelFormMixin
 
 
 class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
@@ -13,7 +13,7 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
     @property
     def tb_routine_health_screen_v2_cls(self):
         return django_apps.get_model(self.tb_routine_health_screen_v2_model)
-    
+
     def has_changed(self):
         return True
 
@@ -22,9 +22,9 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
 
     def clean(self):
         clean_data = super().clean()
-        
-        
-        tb_healthvisit_inlines =  int(self.data.get('tbroutinehealthencounters_set-TOTAL_FORMS', 0))
+
+        tb_healthvisit_inlines = int(self.data.get(
+            'tbroutinehealthencounters_set-TOTAL_FORMS', 0))
 
         try:
             tb_health_visits_counter = int(clean_data.get('tb_health_visits'))
@@ -32,8 +32,9 @@ class TbRoutineHealthScreenV2Form(SubjectModelFormMixin, forms.ModelForm):
             pass
         else:
             if tb_healthvisit_inlines != tb_health_visits_counter:
-                raise ValidationError({'tb_health_visits': 'Not equal to the provided number of visits'})
-            
+                raise ValidationError(
+                    {'tb_health_visits': 'Not equal to the provided number of visits'})
+
         return clean_data
 
     class Meta:

@@ -10,7 +10,6 @@ from .model_mixins import CrfModelMixin
 class ClinicianNotes(VerificationFieldsMixin, CrfModelMixin):
     crf_date_validator_cls = None
 
-
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
         verbose_name = 'Caregiver Clinician Notes'
@@ -41,7 +40,6 @@ class ClinicianNotesImage(BaseUuidModel):
 
     clinician_notes_image.short_description = 'Clinician Notes Image'
     clinician_notes_image.allow_tags = True
-
 
     class Meta:
         app_label = 'flourish_caregiver'

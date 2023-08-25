@@ -9,13 +9,12 @@ from edc_consent.modelform_mixins import ConsentModelFormMixin
 from ..models import TbAdolConsent, TbAdolChildConsent
 
 
-
 class TbAdolChildConsentForm(SiteModelFormMixin,
                              FormValidatorMixin,
                              forms.ModelForm):
-    
+
     form_validator_cls = TbChildAdolConsentFormValidator
-    
+
     subject_identifier = forms.CharField(
         label='Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
@@ -28,14 +27,14 @@ class TbAdolChildConsentForm(SiteModelFormMixin,
 
 class TbAdolConsentForm(SiteModelFormMixin, FormValidatorMixin,
                         ConsentModelFormMixin, forms.ModelForm):
-    
+
     form_validator_cls = TbAdolConsentFormValidator
 
     subject_identifier = forms.CharField(
         label='Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
-    
+
     def clean_guardian_and_dob(self):
         pass
 

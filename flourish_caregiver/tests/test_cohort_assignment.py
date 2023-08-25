@@ -129,7 +129,8 @@ class TestVisitScheduleSetup(TestCase):
         child_consent = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
-            study_child_identifier=self.child_dataset_options.get('study_child_identifier'),
+            study_child_identifier=self.child_dataset_options.get(
+                'study_child_identifier'),
             child_dob=maternal_dataset_obj.delivdt,)
 
         child_dummy_consent = self.child_dummy_consent_cls.objects.get(
@@ -169,8 +170,8 @@ class TestVisitScheduleSetup(TestCase):
             **self.child_dataset_options)
 
         self.options = {
-                'consent_datetime': get_utcnow(),
-                'version': '1'}
+            'consent_datetime': get_utcnow(),
+            'version': '1'}
 
         mommy.make_recipe(
             'flourish_caregiver.screeningpriorbhpparticipants',
@@ -214,4 +215,3 @@ class TestVisitScheduleSetup(TestCase):
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 0)
-

@@ -136,6 +136,7 @@ from .hiv_disclosure_status import HIVDisclosureStatusC
 from .hiv_rapid_test_counseling import HIVRapidTestCounseling
 from .hiv_viralload_cd4 import HivViralLoadAndCd4
 from .interview_focus_group_interest import InterviewFocusGroupInterest
+from .interview_focus_group_interest_version_2 import InterviewFocusGroupInterestV2
 from .list_models import *
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_arv import MaternalArvAtDelivery, MaternalArvTableAtDelivery

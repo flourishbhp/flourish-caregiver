@@ -385,7 +385,6 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         subject_identifier=instance.subject_identifier,
                         version=instance.version, )
                 except child_dummy_consent_cls.DoesNotExist:
-
                     child_dummy_consent_cls.objects.create(
                         subject_identifier=instance.subject_identifier,
                         consent_datetime=instance.consent_datetime,
@@ -419,23 +418,23 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                             base_appt_datetime=prev_enrolled_obj.report_datetime.replace(
                                 microsecond=0))
 
-                    try:
-                        child_dummy_consent = child_dummy_consent_cls.objects.get(
-                            subject_identifier=instance.subject_identifier,
-                            version=instance.version,
-                            identity=instance.identity)
-                    except child_dummy_consent_cls.DoesNotExist:
-                        child_dummy_consent = child_dummy_consent_cls.objects.create(
-                            subject_identifier=instance.subject_identifier,
-                            consent_datetime=instance.consent_datetime,
-                            identity=instance.identity,
-                            dob=instance.child_dob,
-                            version=instance.version,
-                            cohort=instance.cohort)
-                    else:
-                        if not child_dummy_consent.cohort:
-                            child_dummy_consent.cohort = instance.cohort
-                        child_dummy_consent.save()
+            # Get or create a child dummy consent instance (account for re-consenting).
+            try:
+                child_dummy_consent = child_dummy_consent_cls.objects.get(
+                    subject_identifier=instance.subject_identifier,
+                    version=instance.version, )
+            except child_dummy_consent_cls.DoesNotExist:
+                child_dummy_consent = child_dummy_consent_cls.objects.create(
+                    subject_identifier=instance.subject_identifier,
+                    consent_datetime=instance.consent_datetime,
+                    identity=instance.identity,
+                    dob=instance.child_dob,
+                    version=instance.version,
+                    cohort=instance.cohort)
+            else:
+                if not child_dummy_consent.cohort:
+                    child_dummy_consent.cohort = instance.cohort
+                child_dummy_consent.save()
 
         if created:
             instance.caregiver_visit_count = children_count
@@ -567,13 +566,13 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
             'flourish_caregiver.tboffstudy')
 
         tb_referral = (
-                instance.have_cough == YES or
-                instance.cough_duration == '=>2 week' or
-                instance.fever == YES or
-                instance.night_sweats == YES or
-                instance.weight_loss == YES or
-                instance.cough_blood == YES or
-                instance.enlarged_lymph_nodes == YES
+            instance.have_cough == YES or
+            instance.cough_duration == '=>2 week' or
+            instance.fever == YES or
+            instance.night_sweats == YES or
+            instance.weight_loss == YES or
+            instance.cough_blood == YES or
+            instance.enlarged_lymph_nodes == YES
         )
 
         if not tb_referral:
@@ -842,8 +841,8 @@ def get_schedule_sequence(subject_identifier, instance,
                           onschedule_cls, caregiver_visit_count=None):
     children_count = (caregiver_visit_count or
                       1 + onschedule_cls.objects.filter(
-                subject_identifier=subject_identifier).exclude(
-                child_subject_identifier=instance.subject_identifier).count())
+                          subject_identifier=subject_identifier).exclude(
+                          child_subject_identifier=instance.subject_identifier).count())
     return children_count
 
 
@@ -996,7 +995,7 @@ def create_registered_infant(instance):
                         child_dummy_consent_cls = django_apps.get_model(
                             'flourish_child.childdummysubjectconsent')
                         try:
-                            dummy_consent_obj = child_dummy_consent_cls.objects.get(
+                            child_dummy_consent_cls.objects.get(
                                 subject_identifier=caregiver_child_consent_obj.subject_identifier,
                                 version=caregiver_child_consent_obj.version)
                         except child_dummy_consent_cls.DoesNotExist:

@@ -23,15 +23,16 @@ class HouseHoldDetailsInlineAdmin(StackedInlineMixin, ModelAdminFormAutoNumberMi
             'fields': (
                 'child_identifier',
                 'stay_with_child', )
-            }),
-        )
+        }),
+    )
 
     radio_fields = {'stay_with_child': admin.VERTICAL}
 
     def get_formset(self, request, obj=None, **kwargs):
         initial = []
         formset = super().get_formset(request, obj, **kwargs)
-        twin_enrol = self.twin_enrolment(request.GET.get('subject_identifier', ''))
+        twin_enrol = self.twin_enrolment(
+            request.GET.get('subject_identifier', ''))
         for sidx in twin_enrol:
             initial.append({'child_identifier': sidx})
         formset.__init__ = partialmethod(formset.__init__, initial=initial)
@@ -96,8 +97,10 @@ class HouseHoldDetailsInlineAdmin(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
     def twin_enrolment(self, subject_identifier=None):
         child_consents = []
-        dataset_cls = django_apps.get_model('flourish_caregiver.maternaldataset')
-        child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+        dataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
+        child_dataset_cls = django_apps.get_model(
+            'flourish_child.childdataset')
 
         consents = self.subject_consents(subject_identifier)
         latest_consent = self.latest_consent(consents)
@@ -211,7 +214,8 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
         conditional_fieldlists.update(
             {schedule: Fieldlist(insert_fields=('socio_demo_changed',),
-                                 remove_fields=('number_of_household_members',),
+                                 remove_fields=(
+                                     'number_of_household_members',),
                                  insert_after='report_datetime')})
 
     def get_form(self, request, obj=None, *args, **kwargs):
@@ -231,7 +235,8 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             twin_enrol = household_instance.twin_enrolment(subject_identifier)
             maternal_visit = request.GET.get('maternal_visit', '')
 
-            child_sidx = household_instance.onschedule_sid(obj, maternal_visit_id=maternal_visit)
+            child_sidx = household_instance.onschedule_sid(
+                obj, maternal_visit_id=maternal_visit)
 
             if child_sidx and child_sidx in twin_enrol:
                 fieldsets = Fieldsets(fieldsets=fieldsets)

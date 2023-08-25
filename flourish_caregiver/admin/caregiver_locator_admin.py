@@ -5,9 +5,6 @@ from ..forms import CaregiverLocatorForm
 from ..models import CaregiverLocator
 from .modeladmin_mixins import ModelAdminMixin
 from edc_fieldsets import Fieldsets
-from flourish_caregiver.models import MaternalDataset
-from django.shortcuts import redirect, reverse
-from django.conf import settings
 from ..models import SubjectConsent
 from django.http import HttpResponseRedirect
 
@@ -25,7 +22,8 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
         return response if response else super(CaregiverLocatorAdmin, self).response_change(request, obj)
 
     def _redirector(self, obj):
-        caregiver_locator = SubjectConsent.objects.filter(subject_identifier=obj.subject_identifier)
+        caregiver_locator = SubjectConsent.objects.filter(
+            subject_identifier=obj.subject_identifier)
         if caregiver_locator:
             return HttpResponseRedirect(f'/subject/subject_dashboard/{obj.subject_identifier}/')
 
@@ -78,14 +76,14 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
     list_display = ('study_maternal_identifier', 'subject_identifier', 'may_visit_home',
                     'may_call', 'may_call_work')
 
-
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj=obj)
         subject_identifier = getattr(obj, 'subject_identifier', '')
         if subject_identifier and 'P' in subject_identifier:
             fieldsets = Fieldsets(fieldsets=fieldsets)
             try:
-                fieldsets.insert_fields(*('is_locator_updated',), insert_after='caretaker_tel')
+                fieldsets.insert_fields(
+                    *('is_locator_updated',), insert_after='caretaker_tel')
             except AttributeError:
                 pass
             else:
