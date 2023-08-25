@@ -10,7 +10,7 @@ from model_mommy import mommy
 
 from ..forms import MaternalVisitFormValidator
 
-
+@tag('visitvalid')
 class TestMaternalVisitFormValidator(TestCase):
 
     def setUp(self):
@@ -59,7 +59,6 @@ class TestMaternalVisitFormValidator(TestCase):
         except ValidationError as e:
             self.fail(f'ValidationError unexpectedly raised. Got{e}')
 
-    @tag('last_alife')
     def test_last_alive_date_not_required_valid(self):
         cleaned_data = {
             'pk': 'hhdks',

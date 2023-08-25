@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
-from django.test import TestCase, tag
+from django.apps import apps as django_apps
+from django.test import TestCase
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES, NOT_APPLICABLE
 from edc_facility.import_holidays import import_holidays
@@ -12,8 +13,17 @@ from flourish_caregiver.models.caregiver_child_consent import CaregiverChildCons
 from ..models import OnScheduleCohortBSec, OnScheduleCohortBSecQuart
 
 
-@tag('t1')
-class TestVisitScheduleSetupA(TestCase):
+class TestSubjectReConsent2_1(TestCase):
+
+    def year_3_age(self, year_3_years, year_3_months):
+        """Returns the age at year 3.
+        """
+        app_config = django_apps.get_app_config('flourish_caregiver')
+        start_date_year_3 = app_config.start_date_year_3
+
+        child_dob = start_date_year_3 - relativedelta(years=year_3_years,
+                                                      months=year_3_months)
+        return child_dob
 
     def setUp(self):
         import_holidays()

@@ -16,9 +16,11 @@ from flourish_form_validations.form_validators import \
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 
 from ..models import MaternalVisit, SubjectConsent
+from ..visit_sequence import VisitSequence
 
 
 class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin):
+    visit_sequence_cls = VisitSequence
     consent_version_model = 'flourish_caregiver.flourishconsentversion'
 
     def clean(self):
@@ -179,7 +181,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
 
         latest_consent = self.latest_consent_obj
         last_alive_date = self.cleaned_data.get('last_alive_date')
-        if (last_alive_date and not self.instance.pk
+        if (last_alive_date and not getattr(self.instance, 'pk', None)
                 and last_alive_date < latest_consent.consent_datetime.date()):
             msg = {'last_alive_date': 'Date cannot be before consent date'}
             self._errors.update(msg)
@@ -243,7 +245,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         raises an exception if not found."""
         subject_consents = self.subject_consent_cls.objects.filter(
             subject_identifier=self.subject_identifier)
-        if not self.instance.pk:
+        if not getattr(self.instance, 'pk', None):
             try:
                 subject_consents.latest('consent_datetime')
 

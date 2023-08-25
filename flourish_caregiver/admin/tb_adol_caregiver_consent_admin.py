@@ -1,12 +1,15 @@
 from collections import OrderedDict
+from dateutil.relativedelta import relativedelta
 from functools import partialmethod
 
 from django.contrib import admin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
+from edc_base.utils import get_utcnow
 from edc_consent.actions import (flag_as_verified_against_paper,
                                  unflag_as_verified_against_paper)
+from edc_model_admin import StackedInlineMixin
 from edc_model_admin import (
     ModelAdminFormAutoNumberMixin, ModelAdminInstitutionMixin,
     audit_fieldset_tuple, audit_fields, ModelAdminNextUrlRedirectMixin,
@@ -20,9 +23,9 @@ from ..forms import TbAdolConsentForm, TbAdolChildConsentForm
 from ..models import TbAdolConsent, TbAdolChildConsent, CaregiverChildConsent
 from .exportaction_mixin import ExportActionMixin
 from .modeladmin_mixins import VersionControlMixin
-from edc_model_admin import StackedInlineMixin
-from dateutil.relativedelta import relativedelta
-from edc_base.utils import get_utcnow
+
+
+
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
                       ModelAdminRevisionMixin, ModelAdminReplaceLabelTextMixin,
@@ -97,20 +100,15 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
     def get_formset(self, request, obj, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
         
-        
         initial = []
-
-        
+  
         subject_identifier = request.GET.get('subject_identifier', None)
         
-        if subject_identifier:
-        
+        if subject_identifier:        
             children = CaregiverChildConsent.objects.filter(
-                subject_identifier__istartswith=subject_identifier,
-            )
+                subject_consent__subject_identifier=subject_identifier, )
             
             for child in children:
-                
                 age = relativedelta(get_utcnow().date(), child.child_dob).years
                 
                 if 10 <= age <= 17:
