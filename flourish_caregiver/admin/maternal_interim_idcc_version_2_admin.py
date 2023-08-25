@@ -1,11 +1,11 @@
 from django.contrib import admin
+from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 from edc_model_admin import audit_fieldset_tuple
 from flourish_caregiver.models.maternal_hiv_interim_hx import MaternalHivInterimHx
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalInterimIdccFormVersion2
 from ..models import MaternalInterimIdccVersion2
 from .modeladmin_mixins import CrfModelAdminMixin
-from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 
 
 @admin.register(MaternalInterimIdccVersion2, site=flourish_caregiver_admin)

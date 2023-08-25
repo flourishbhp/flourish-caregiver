@@ -46,25 +46,6 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
                    'only in upper case, no spaces.'),
         null=True, blank=False)
 
-    # adol_firstname = FirstnameField(
-    #     verbose_name = 'Adolescent Firstname',
-    #     blank=False,
-    #     max_length = 50,)
-
-    # adol_lastname = LastnameField(
-    #     verbose_name='Adolescent Lastname',
-    #     blank=False,
-    #     max_length = 50,)
-
-    # adol_gender = models.CharField(
-    #     verbose_name='Adolescent Gender',
-    #     choices=GENDER,
-    #     max_length=1)
-
-    # adol_dob = models.DateField(
-    #     verbose_name='Adolescent DOB'
-    # )
-
     consent_datetime = models.DateTimeField(
         verbose_name='Consent date and time',
         help_text='Date and time of consent.',

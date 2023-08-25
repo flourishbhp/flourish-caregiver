@@ -14,6 +14,8 @@ from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
 from ..models import OnScheduleCohortCSec, OnScheduleCohortCSecQuart
 from ..subject_helper_mixin import SubjectHelperMixin
 
+app_config = django_apps.get_app_config('edc_protocol')
+study_close_datetime = app_config.study_close_datetime
 
 @tag('vsc')
 class TestVisitScheduleSetupC(TestCase):
@@ -148,7 +150,7 @@ class TestVisitScheduleSetupC(TestCase):
 
         self.assertEqual(OnScheduleCohortCSecQuart.objects.filter(
             subject_identifier=subject_identifier,
-            schedule_name='b_sec1_quart_schedule1').count(), 0)
+            schedule_name='c_sec_quart1_schedule1').count(), 0)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -160,8 +162,10 @@ class TestVisitScheduleSetupC(TestCase):
 
         self.assertEqual(OnScheduleCohortCSecQuart.objects.filter(
             subject_identifier=subject_identifier,
-            schedule_name='b_sec1_quart_schedule1').count(), 1)
+            schedule_name='c_sec_quart1_schedule1').count(), 1)
 
-        self.assertGreater(Appointment.objects.filter(
+        quart_appts_count = int((study_close_datetime - get_utcnow()).days / 90)
+
+        self.assertEqual(Appointment.objects.filter(
             subject_identifier=subject_identifier,
-            schedule_name='b_sec1_quart_schedule1').count(), 15)
+            schedule_name='c_sec_quart1_schedule1').count(), quart_appts_count)

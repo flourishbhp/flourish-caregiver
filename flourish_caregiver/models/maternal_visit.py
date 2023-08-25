@@ -18,6 +18,7 @@ from edc_visit_tracking.model_mixins import VisitModelMixin, CaretakerFieldsMixi
 
 from ..choices import MATERNAL_VISIT_STUDY_STATUS, VISIT_REASON
 from ..choices import VISIT_INFO_SOURCE, ALIVE_DEAD_UNKNOWN
+from ..visit_sequence import VisitSequence
 
 
 class CurrentSiteManager(VisitModelManager, BaseCurrentSiteManager):
@@ -30,6 +31,7 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
     """ Maternal visit form that links all antenatal/ postnatal follow-up forms
     """
 
+    visit_sequence_cls = VisitSequence
     appointment = models.OneToOneField(Appointment, on_delete=models.PROTECT)
 
     reason = models.CharField(

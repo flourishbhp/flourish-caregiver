@@ -1,5 +1,6 @@
 import re
 
+from dateutil.relativedelta import relativedelta
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_constants.constants import NO, YES
@@ -7,17 +8,19 @@ from edc_facility.import_holidays import import_holidays
 from edc_registration.models import RegisteredSubject
 from model_mommy import mommy
 
-from ..models import SubjectConsent, ScreeningPregWomen, ScreeningPriorBhpParticipants
+from ..models import SubjectConsent, ScreeningPriorBhpParticipants
 
 subject_identifier = '[B|C]142\-[0-9\-]+'
 
 
+@tag('identifiers')
 class TestSubjectConsent(TestCase):
 
     def setUp(self):
         import_holidays()
+
         self.subject_screening = mommy.make_recipe(
-            'flourish_caregiver.screeningpriorbhpparticipants')
+            'flourish_caregiver.screeningpriorbhpparticipants', )
 
         self.eligible_options = {
             'screening_identifier': self.subject_screening.screening_identifier,
@@ -46,7 +49,7 @@ class TestSubjectConsent(TestCase):
         """Test consent allocates subject identifier on save if participant
         is eligible.
         """
-        consent = mommy.make_recipe('flourish_caregiver.subjectconsent',
+        mommy.make_recipe('flourish_caregiver.subjectconsent',
                                     **self.eligible_options)
         self.assertTrue(
             re.match(
@@ -73,11 +76,22 @@ class TestSubjectConsent(TestCase):
                           **self.eligible_options)
         self.assertEquals(RegisteredSubject.objects.all().count(), 1)
 
-    @tag('identifiers')
     def test_screening_updates_subject_identifier(self):
         """Test if subject identifiers for the screening model is being updated after
         saving the consent
         """
+        maternal_dataset_options = {
+            'delivdt': get_utcnow() - relativedelta(years=16, months=4),
+            'screening_identifier': self.subject_screening.screening_identifier,
+            'mom_enrolldate': get_utcnow(),
+            'mom_hivstatus': 'HIV-infected',
+            'study_maternal_identifier': '897212',
+            'protocol': 'Mashi',
+            'preg_pi': 1}
+        
+        mommy.make_recipe('flourish_caregiver.maternaldataset',
+            **maternal_dataset_options)
+
         consent_obj = mommy.make_recipe('flourish_caregiver.subjectconsent',
                                         **self.eligible_options)
         screening_obj = ScreeningPriorBhpParticipants.objects.get(
