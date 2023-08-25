@@ -185,9 +185,9 @@ class ExportActionMixin:
         version_model = django_apps.get_model(
             'flourish_caregiver.flourishconsentversion')
         try:
-            version = version_model.objects.get(screening_identifier=self.screening_identifier(
-                subject_identifier=obj.subject_identifier
-            ))
+            version = version_model.objects.get(
+                screening_identifier=self.screening_identifier(
+                    subject_identifier=obj.subject_identifier, ))
         except version_model.DoesNotExist:
             return ""
         else:

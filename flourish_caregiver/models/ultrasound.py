@@ -4,6 +4,7 @@ from django.db import models
 from edc_action_item.model_mixins import ActionModelMixin
 
 from .subject_consent import SubjectConsent
+from .caregiver_child_consent import CaregiverChildConsent
 from .model_mixins import UltraSoundModelMixin, CrfModelMixin
 from ..action_items import ULTRASOUND_ACTION
 from ..choices import GESTATIONS_NUMBER, ZERO_ONE
@@ -145,9 +146,10 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
 
     @property
     def get_latest_consent(self):
-        consents = SubjectConsent.objects.filter(
-            subject_identifier=self.subject_identifier).order_by('consent_datetime')
-        return consents.first()
+        child_consents = CaregiverChildConsent.objects.filter(
+            subject_consent__subject_identifier=self.subject_identifier,
+            preg_enroll=True).order_by('consent_datetime')
+        return getattr(child_consents.first(), 'subject_consent', None)
 
     @property
     def ga_at_consent(self):

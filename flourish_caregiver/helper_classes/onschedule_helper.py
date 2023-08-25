@@ -7,7 +7,7 @@ class OnScheduleHelper(object):
     """A helper class that puts a participant into a particular schedule
     """
 
-    def __init__(self, subject_identifier, onschedule_datetime=None, cohort=None, ):
+    def __init__(self, subject_identifier=None, onschedule_datetime=None, cohort=None, ):
 
         self.subject_identifier = subject_identifier
         self.onschedule_datetime = onschedule_datetime or get_utcnow()
@@ -36,14 +36,15 @@ class OnScheduleHelper(object):
             @param base_appt_datetime: base datetime to start the appointment.
         """
         cohort = None
-        if 'sec' in instance.schedule_name:
-            cohort = '_'.join([self.cohort.rstrip('_sec'), 'sec_quart'])
-        elif 'fu' in instance.schedule_name:
-            cohort = '_'.join([self.cohort, 'fu_quarterly'])
-        else:
-            cohort = '_'.join([self.cohort, 'quarterly'])
-
         cohort_list = instance.schedule_name.split('_')
+
+        if 'sec' in instance.schedule_name:
+            cohort = '_'.join(['cohort', cohort_list[0], 'sec_quart'])
+        elif 'fu' in instance.schedule_name:
+            cohort = '_'.join(['cohort', cohort_list[0], 'fu_quarterly'])
+        else:
+            cohort = '_'.join(['cohort', cohort_list[0], 'quarterly'])
+
         caregiver_visit_count = cohort_list[1][-1:]
 
         onschedule_model = django_apps.get_model(
@@ -78,14 +79,17 @@ class OnScheduleHelper(object):
                 instance=instance)
 
             assent_onschedule_datetime = self.get_assent_onschedule_datetime
+            onschedule_datetime = (self.onschedule_datetime
+                                   or assent_onschedule_datetime
+                                   or instance.created.replace(microsecond=0))
 
-            schedule.put_on_schedule(
-                subject_identifier=subject_identifier,
-                onschedule_datetime=(self.onschedule_datetime
-                                     or assent_onschedule_datetime
-                                     or instance.created.replace(microsecond=0)),
-                schedule_name=schedule_name,
-                base_appt_datetime=base_appt_datetime)
+            if not schedule.is_onschedule(subject_identifier=instance.subject_identifier,
+                                          report_datetime=onschedule_datetime):
+                schedule.put_on_schedule(
+                    subject_identifier=subject_identifier,
+                    onschedule_datetime=onschedule_datetime,
+                    schedule_name=schedule_name,
+                    base_appt_datetime=base_appt_datetime)
 
             try:
                 onschedule_model_cls.objects.get(
@@ -131,11 +135,9 @@ class OnScheduleHelper(object):
         schedule_name = cohort + '_schedule1'
 
         if 'tb_2_months' in cohort:
-            onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
-            schedule_name = 'tb_2_months_schedule'
+            schedule_name = f'a_tb{children_count}_2_months_schedule1'
         if 'tb_6_months' in cohort:
-            onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
-            schedule_name = 'tb_6_months_schedule'
+            schedule_name = f'a_tb{children_count}_6_months_schedule1'
 
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model, name=schedule_name)
