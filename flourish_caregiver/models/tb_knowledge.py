@@ -1,5 +1,4 @@
 from django.db import models
-
 from ..choices import YES_NO_PNTA, YES_NO_DN_PNTA
 from .list_models import TbKnowledgeMedium
 from .model_mixins import CrfModelMixin

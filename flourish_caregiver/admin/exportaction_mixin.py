@@ -39,7 +39,6 @@ class ExportActionMixin:
                 continue
             field_names.append(field.name)
 
-            
         if queryset and self.is_consent(queryset[0]):
             field_names.insert(0, 'previous_study')
             field_names.insert(1, 'hiv_status')
@@ -136,14 +135,16 @@ class ExportActionMixin:
             if queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound':
                 field_value = getattr(obj, 'get_current_ga', '')
                 data.append(field_value)
-                delivery_dt = getattr(maternal_delivery_obj, 'delivery_datetime', None)
+                delivery_dt = getattr(
+                    maternal_delivery_obj, 'delivery_datetime', None)
                 data.append(field_value if delivery_dt else '')
                 data.append(delivery_dt.date() if delivery_dt else '')
                 data.append(self.study_status(subject_identifier) or '')
 
             if not self.is_consent(obj) and inline_objs:
                 # Update header
-                inline_field_names = self.inline_exclude(field_names=inline_field_names)
+                inline_field_names = self.inline_exclude(
+                    field_names=inline_field_names)
                 if not self.inline_header:
                     self.update_headers_inline(
                         inline_fields=inline_field_names, field_names=field_names,
@@ -155,17 +156,19 @@ class ExportActionMixin:
                         inline_data.extend(data)
                         for field in inline_obj._meta.get_fields():
                             if field.name in inline_field_names:
-                                inline_data.append(getattr(inline_obj, field.name, ''))
+                                inline_data.append(
+                                    getattr(inline_obj, field.name, ''))
                             if isinstance(field, ManyToManyField):
                                 m2m_values = self.get_m2m_values(inline_obj,
                                                                  m2m_field=field)
                                 inline_data.extend(m2m_values)
                         row_num += 1
-                        self.write_rows(data=inline_data, row_num=row_num, ws=ws)
+                        self.write_rows(data=inline_data,
+                                        row_num=row_num, ws=ws)
                 obj_count += 1
             else:
                 row_num += 1
-                
+
                 self.write_rows(data=data, row_num=row_num, ws=ws)
         wb.save(response)
         return response
@@ -209,7 +212,7 @@ class ExportActionMixin:
                 ws.write(row_num, col_num, data[col_num])
 
     def update_headers_inline(self, inline_fields=None, field_names=None,
-            ws=None, row_num=None, font_style=None):
+                              ws=None, row_num=None, font_style=None):
         top_num = len(field_names)
         for col_num in range(len(inline_fields)):
             ws.write(row_num, top_num, inline_fields[col_num], font_style)
@@ -222,7 +225,8 @@ class ExportActionMixin:
         return filename
 
     def previous_bhp_study(self, screening_identifier=None):
-        dataset_cls = django_apps.get_model('flourish_caregiver.maternaldataset')
+        dataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
         if screening_identifier:
             try:
                 dataset_obj = dataset_cls.objects.get(
@@ -233,7 +237,8 @@ class ExportActionMixin:
                 return dataset_obj.protocol
 
     def study_maternal_identifier(self, screening_identifier=None):
-        dataset_cls = django_apps.get_model('flourish_caregiver.maternaldataset')
+        dataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
         if screening_identifier:
             try:
                 dataset_obj = dataset_cls.objects.get(
@@ -245,7 +250,8 @@ class ExportActionMixin:
 
     def caregiver_hiv_status(self, subject_identifier=None):
 
-        status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
+        status_helper = MaternalStatusHelper(
+            subject_identifier=subject_identifier)
 
         return status_helper.hiv_status
 
@@ -253,22 +259,24 @@ class ExportActionMixin:
         """Returns a screening identifier.
         """
         consent = self.consent_obj(subject_identifier=subject_identifier)
-        
+
         if consent:
             return consent.screening_identifier
         return None
-    
-    
+
     def consent_obj(self, subject_identifier: str):
-        consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
-        consent = consent_cls.objects.filter(subject_identifier=subject_identifier)
-        
+        consent_cls = django_apps.get_model(
+            'flourish_caregiver.subjectconsent')
+        consent = consent_cls.objects.filter(
+            subject_identifier=subject_identifier)
+
         if consent.exists():
             return consent.last()
         return None
 
     def is_consent(self, obj):
-        consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
+        consent_cls = django_apps.get_model(
+            'flourish_caregiver.subjectconsent')
         return isinstance(obj, consent_cls)
 
     def is_visit(self, obj):
@@ -328,7 +336,8 @@ class ExportActionMixin:
             return maternal_delivery_obj
 
     def m2m_list_data(self, model_cls=None):
-        qs = model_cls.objects.order_by('created').values_list('short_name', flat=True)
+        qs = model_cls.objects.order_by(
+            'created').values_list('short_name', flat=True)
         return list(qs)
 
     def get_m2m_values(self, model_obj, m2m_field=None):

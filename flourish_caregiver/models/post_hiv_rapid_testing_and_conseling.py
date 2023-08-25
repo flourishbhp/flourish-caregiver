@@ -17,7 +17,7 @@ class PostHivRapidTestAndConseling(CrfModelMixin):
         verbose_name='Date of Rapid test',
         blank=True,
         null=True,
-        validators=[date_not_future,]
+        validators=[date_not_future]
     )
 
     result = models.CharField(

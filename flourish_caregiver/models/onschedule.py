@@ -33,7 +33,8 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
     @property
     def latest_consent_obj_version(self):
 
-        caregiver_consent_cls = django_apps.get_model('flourish_caregiver.subjectconsent')
+        caregiver_consent_cls = django_apps.get_model(
+            'flourish_caregiver.subjectconsent')
 
         subject_consents = caregiver_consent_cls.objects.filter(
             subject_identifier=self.subject_identifier,)
@@ -41,7 +42,8 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
             latest_consent = subject_consents.latest('consent_datetime')
             return latest_consent.version
         else:
-            raise forms.ValidationError('Missing Subject Consent form, cannot proceed.')
+            raise forms.ValidationError(
+                'Missing Subject Consent form, cannot proceed.')
 
     def put_on_schedule(self):
         pass

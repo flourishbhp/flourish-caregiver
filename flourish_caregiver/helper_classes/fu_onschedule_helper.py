@@ -102,16 +102,21 @@ class FollowUpEnrolmentHelper(object):
         vs = latest_appt.schedule_name.split('_')
 
         if 'enrol' in latest_appt.schedule_name:
-            schedule_name = '_'.join([vs[0], vs[1].replace('enrol', 'fu'), vs[2]])
+            schedule_name = '_'.join(
+                [vs[0], vs[1].replace('enrol', 'fu'), vs[2]])
         elif 'birth' in latest_appt.schedule_name:
-            schedule_name = '_'.join([vs[0], vs[1].replace('birth', 'fu'), vs[2]])
+            schedule_name = '_'.join(
+                [vs[0], vs[1].replace('birth', 'fu'), vs[2]])
         elif 'quarterly' in latest_appt.schedule_name:
-            schedule_name = '_'.join([vs[0], vs[1].replace('quarterly', 'fu'), vs[2]])
+            schedule_name = '_'.join(
+                [vs[0], vs[1].replace('quarterly', 'fu'), vs[2]])
         else:
-            schedule_name = '_'.join([vs[0], vs[2].replace('quart', 'fu'), vs[3]])
+            schedule_name = '_'.join(
+                [vs[0], vs[2].replace('quart', 'fu'), vs[3]])
 
         onschedule_model_cls = self.cohort_dict.get(schedule_name[0])
-        onschedule_quart_model_cls = self.cohort_quart_dict.get(schedule_name[0])
+        onschedule_quart_model_cls = self.cohort_quart_dict.get(
+            schedule_name[0])
 
         _, new_schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             name=schedule_name,
@@ -124,9 +129,9 @@ class FollowUpEnrolmentHelper(object):
         print("Going well..")
 
         old_onschedule_obj = django_apps.get_model(
-                latest_appt.schedule.onschedule_model).objects.get(
-                    subject_identifier=latest_appt.subject_identifier,
-                    schedule_name=latest_appt.schedule_name)
+            latest_appt.schedule.onschedule_model).objects.get(
+            subject_identifier=latest_appt.subject_identifier,
+            schedule_name=latest_appt.schedule_name)
 
         self.update_child_identifier_onschedule(
             onschedule_model_cls, latest_appt.subject_identifier, schedule_name,
@@ -179,7 +184,8 @@ class FollowUpEnrolmentHelper(object):
                 if schedule_name:
                     options.update(dict(schedule_name=schedule_name))
             options.update(dict(visit_schedule_name=visit_schedule_name))
-        appointments = Appointment.objects.filter(**options).order_by('-timepoint')
+        appointments = Appointment.objects.filter(
+            **options).order_by('-timepoint')
         for appt in appointments:
             visit_definition = appt.visits.get(appt.visit_code)
             latest_appt_date = (

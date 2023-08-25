@@ -20,19 +20,19 @@ class TbKnowledgeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'tb_informed',
                 'tb_knowledge_medium',
                 'tb_knowledge_medium_other', ]
-            }),
+        }),
         ("TB Knowledge Section (BELOW ARE QUESTIONS ABOUT KNOWLEDGE OF SYMPTOMS OF TB. "
          "FOR EACH QUESTION, PLEASE SAY 'YES' OR 'NO' OR 'I DON’T KNOW' OR 'PREFER NOT TO "
          "ANSWER')", {
-            'fields': [
-                'fever_knowledge',
-                'cough_knowledge',
-                'night_sweats_knowledge',
-                'weight_loss_knowledge',
-                'rash_knowledge',
-                'headache_knowledge',
-                'other_knowledge']
-        }),
+             'fields': [
+                 'fever_knowledge',
+                 'cough_knowledge',
+                 'night_sweats_knowledge',
+                 'weight_loss_knowledge',
+                 'rash_knowledge',
+                 'headache_knowledge',
+                 'other_knowledge']
+         }),
         ('TB Contraction Section', {
             'fields': [
                 'tb_utensils_transmit',

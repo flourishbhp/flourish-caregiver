@@ -102,7 +102,7 @@ class ScreeningPriorBhpParticipants(NonUniqueSubjectIdentifierFieldMixin, SiteMo
     def save(self, *args, **kwargs):
         eligibility_criteria = BHPPriorEligibilty(
             self.child_alive, self.mother_alive, self.flourish_participation,
-            )
+        )
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         if not self.screening_identifier:

@@ -21,7 +21,7 @@ class TestViralLoad(TestCase):
         self.options = {
             'consent_datetime': get_utcnow(),
             'version': '2'
-            }
+        }
 
         screening_preg = mommy.make_recipe(
             'flourish_caregiver.screeningpregwomen', )

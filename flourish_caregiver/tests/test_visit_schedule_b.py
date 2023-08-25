@@ -139,7 +139,7 @@ class TestVisitScheduleSetupB(TestCase):
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
         self.assertEqual(Appointment.objects.filter(
-            subject_identifier=subject_identifier).count(), 9)
+            subject_identifier=subject_identifier).count(), 8)
 
     def test_cohort_b_assent_invalid(self):
         """Assert that a 6 year old whose birthday is within the enrollment month does not get
@@ -169,7 +169,8 @@ class TestVisitScheduleSetupB(TestCase):
             maternal_dataset_obj.screening_identifier,
             study_child_identifier=self.child_dataset_options['study_child_identifier'])
 
-        child_assent_model = django_apps.get_model('flourish_child.childassent')
+        child_assent_model = django_apps.get_model(
+            'flourish_child.childassent')
 
         self.assertEqual(child_assent_model.objects.filter(
             subject_identifier__startswith=subject_identifier).count(), 0)
@@ -182,7 +183,7 @@ class TestVisitScheduleSetupB(TestCase):
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = self.year_3_age(9, 5)
+        self.maternal_dataset_options['delivdt'] = (get_utcnow() - relativedelta(years=9, months=5)).date()
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -192,7 +193,7 @@ class TestVisitScheduleSetupB(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=self.year_3_age(9, 5),
+            dob=(get_utcnow() - relativedelta(years=9, months=5)).date(),
             **self.child_dataset_options)
 
         sh = SubjectHelperMixin()
@@ -259,8 +260,8 @@ class TestVisitScheduleSetupB(TestCase):
             child_dob=self.year_3_age(5, 5),)
 
         mommy.make_recipe(
-                'flourish_caregiver.caregiverpreviouslyenrolled',
-                subject_identifier=subject_consent.subject_identifier)
+            'flourish_caregiver.caregiverpreviouslyenrolled',
+            subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortBSec.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
@@ -388,15 +389,15 @@ class TestVisitScheduleSetupB(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=8, months=2)).date(),)
 
         mommy.make_recipe(
-                'flourish_child.childassent',
-                subject_identifier=child_consent1.subject_identifier,
-                first_name=child_consent1.first_name,
-                last_name=child_consent1.last_name,
-                dob=child_consent1.child_dob,
-                identity=child_consent1.identity,
-                confirm_identity=child_consent1.identity,
-                remain_in_study=YES,
-                version=subject_consent.version)
+            'flourish_child.childassent',
+            subject_identifier=child_consent1.subject_identifier,
+            first_name=child_consent1.first_name,
+            last_name=child_consent1.last_name,
+            dob=child_consent1.child_dob,
+            identity=child_consent1.identity,
+            confirm_identity=child_consent1.identity,
+            remain_in_study=YES,
+            version=subject_consent.version)
 
         child_consent2 = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
@@ -407,19 +408,19 @@ class TestVisitScheduleSetupB(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=8, months=2)).date(),)
 
         mommy.make_recipe(
-                'flourish_child.childassent',
-                subject_identifier=child_consent2.subject_identifier,
-                first_name=child_consent2.first_name,
-                last_name=child_consent2.last_name,
-                dob=child_consent2.child_dob,
-                identity=child_consent2.identity,
-                confirm_identity=child_consent2.identity,
-                remain_in_study=YES,
-                version=subject_consent.version)
+            'flourish_child.childassent',
+            subject_identifier=child_consent2.subject_identifier,
+            first_name=child_consent2.first_name,
+            last_name=child_consent2.last_name,
+            dob=child_consent2.child_dob,
+            identity=child_consent2.identity,
+            confirm_identity=child_consent2.identity,
+            remain_in_study=YES,
+            version=subject_consent.version)
 
         mommy.make_recipe(
-                'flourish_caregiver.caregiverpreviouslyenrolled',
-                subject_identifier=subject_consent.subject_identifier)
+            'flourish_caregiver.caregiverpreviouslyenrolled',
+            subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
@@ -530,8 +531,8 @@ class TestVisitScheduleSetupB(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=5, months=2)).date(),)
 
         mommy.make_recipe(
-                'flourish_caregiver.caregiverpreviouslyenrolled',
-                subject_identifier=subject_consent.subject_identifier)
+            'flourish_caregiver.caregiverpreviouslyenrolled',
+            subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,

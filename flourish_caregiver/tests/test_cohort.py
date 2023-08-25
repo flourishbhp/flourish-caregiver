@@ -39,7 +39,7 @@ class TestCohort(TestCase):
             infant_hiv_exposed='Exposed',
             mum_hiv_status='HIV-infected',
             protocol='Tshilo Dikotla'
-            )
+        )
         self.assertEquals(cohort.age_at_enrollment(), 2.7)
 
     def test_hiv_exposed_uninfected(self):

@@ -130,8 +130,8 @@ class TestSubjectReConsent2_1(TestCase):
             child_dob=self.year_3_age(5, 5),)
 
         mommy.make_recipe(
-                'flourish_caregiver.caregiverpreviouslyenrolled',
-                subject_identifier=subject_consent.subject_identifier)
+            'flourish_caregiver.caregiverpreviouslyenrolled',
+            subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortBSec.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
@@ -156,4 +156,3 @@ class TestSubjectReConsent2_1(TestCase):
         self.assertEqual(OnScheduleCohortBSecQuart.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_sec_quart1_schedule1').count(), 1)
-

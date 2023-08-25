@@ -19,7 +19,7 @@ class MaternalArvPostAdherence(CrfModelMixin):
         verbose_name='Please give reason for interruption',
         max_length=50,
         choices=ARV_INTERRUPTION_REASON_POST_ADHERENCE,
-        )
+    )
 
     interruption_reason_other = models.TextField(
         max_length=250,
@@ -37,5 +37,3 @@ class MaternalArvPostAdherence(CrfModelMixin):
         app_label = 'flourish_caregiver'
         verbose_name = 'Maternal ARVs Post Adherence'
         verbose_name_plural = 'Maternal ARVs Post Adherence'
-
-

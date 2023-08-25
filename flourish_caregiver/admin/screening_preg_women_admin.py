@@ -40,7 +40,8 @@ class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
         redirect_url = super().redirect_url(
             request, obj, post_url_continue=post_url_continue)
 
-        consent_model = django_apps.get_model('flourish_caregiver.subjectconsent')
+        consent_model = django_apps.get_model(
+            'flourish_caregiver.subjectconsent')
         consents = None
 
         if request.GET.get('subject_identifier'):
@@ -57,8 +58,10 @@ class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
                 options = {k: request.GET.dict().get(k)
                            for k in attrs if request.GET.dict().get(k)}
 
-                url_name = settings.DASHBOARD_URL_NAMES.get('subject_dashboard_url')
-                options['subject_identifier'] = request.GET.get('subject_identifier')
+                url_name = settings.DASHBOARD_URL_NAMES.get(
+                    'subject_dashboard_url')
+                options['subject_identifier'] = request.GET.get(
+                    'subject_identifier')
                 del options['screening_identifier']
                 try:
                     redirect_url = reverse(url_name, kwargs=options)
@@ -69,10 +72,12 @@ class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     def get_consent_version(self, screening_identifier):
 
-        consent_version_cls = django_apps.get_model('flourish_caregiver.flourishconsentversion')
+        consent_version_cls = django_apps.get_model(
+            'flourish_caregiver.flourishconsentversion')
 
         try:
-            consent_version_obj = consent_version_cls.objects.get(screening_identifier=screening_identifier)
+            consent_version_obj = consent_version_cls.objects.get(
+                screening_identifier=screening_identifier)
         except consent_version_cls.DoesNotExist:
             return None
         else:

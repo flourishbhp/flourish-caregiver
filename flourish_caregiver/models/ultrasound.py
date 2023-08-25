@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from edc_action_item.model_mixins import ActionModelMixin
 
+from .subject_consent import SubjectConsent
 from .model_mixins import UltraSoundModelMixin, CrfModelMixin
 from ..action_items import ULTRASOUND_ACTION
 from ..choices import GESTATIONS_NUMBER, ZERO_ONE
@@ -129,11 +130,11 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
     def evaluate_ga_confirmed(self):
         return int(
             abs(40 - (
-                    (self.edd_confirmed - self.report_datetime.date()).days / 7)))
+                (self.edd_confirmed - self.report_datetime.date()).days / 7)))
 
     @property
     def get_current_ga(self):
-        antenatal_enrol = django_apps.get_model(f'flourish_caregiver.antenatalenrollment')
+        antenatal_enrol = django_apps.get_model('flourish_caregiver.antenatalenrollment')
         try:
             antenatal_enrol_obj = antenatal_enrol.objects.get(
                 subject_identifier=self.subject_identifier)
@@ -141,6 +142,20 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
             pass
         else:
             return antenatal_enrol_obj.real_time_ga
+
+    @property
+    def get_latest_consent(self):
+        consents = SubjectConsent.objects.filter(
+            subject_identifier=self.subject_identifier).order_by('consent_datetime')
+        return consents.first()
+
+    @property
+    def ga_at_consent(self):
+        if self.get_latest_consent:
+            consent_dt = getattr(
+                self.get_latest_consent, 'consent_datetime', None)
+            result = self.ga_confirmed + ((consent_dt - self.report_datetime).days / 7)
+            return round(result, 1)
 
     @property
     def action_item_reason(self):
