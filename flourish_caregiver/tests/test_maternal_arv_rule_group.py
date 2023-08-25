@@ -102,7 +102,9 @@ class TestMaternalARVRuleGroup(TestCase):
             subject_identifier=self.consent.subject_identifier,
             visit_code='2000D').entry_status, REQUIRED)
 
-        self.assertEqual(CrfMetadata.objects.get(
-            model='flourish_caregiver.maternalarvduringpreg',
-            subject_identifier=self.consent.subject_identifier,
-            visit_code='2000D').entry_status, NOT_REQUIRED)
+        # CRF has been removed at delivery and replaced with
+        # Maternal at delivery CRF. Assert Does not exist. (redmine 6265)
+        self.assertEqual(CrfMetadata.objects.filter(
+                model='flourish_caregiver.maternalarvduringpreg',
+                subject_identifier=self.consent.subject_identifier,
+                visit_code='2000D').count(), 0, )

@@ -144,7 +144,7 @@ class FollowUpEnrolmentHelper(object):
     def get_related_child_pids(self, subject_identifier):
 
         related_children = RegisteredSubject.objects.filter(
-            subject_identifier__startswith=subject_identifier,
+            relative_identifier=subject_identifier,
             subject_type='infant')
 
         return related_children.values_list('subject_identifier', flat=True)

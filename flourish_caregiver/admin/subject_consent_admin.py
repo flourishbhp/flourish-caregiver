@@ -448,9 +448,10 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             if maternal_dataset_qs:
                 extra_data = maternal_dataset_qs.__dict__
 
-            subject_identifier = getattr(obj, 'subject_identifier')
+            parent_obj = getattr(obj, 'subject_consent', None)
+            caregiver_sid = getattr(parent_obj, 'subject_identifier', None)
             extra_data.update({'hiv_exposure': self.caregiver_hiv_status(
-                subject_identifier=subject_identifier[:-3])})
+                subject_identifier=caregiver_sid)})
 
             data = [obj_data[field] if field not in ['protocol', 'study_maternal_identifier',
                                                      'hiv_exposure']
