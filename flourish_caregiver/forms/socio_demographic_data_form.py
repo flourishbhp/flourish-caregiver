@@ -56,9 +56,12 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
                           'hostname_created', 'hostname_modified', 'device_created',
                           'device_modified', 'report_datetime', 'maternal_visit',
                           'socio_demo_changed', ]
+        m2m_fields = ['expense_contributors']
         if prev_instance:
-            other_values = self.model_to_dict(prev_instance, exclude=exclude_fields)
-            values = {key: self.data.get(key) or None for key in other_values.keys()}
+            other_values = self.model_to_dict(
+                prev_instance, exclude=exclude_fields)
+            values = {key: self.data.get(key) or None if key not in m2m_fields else
+                      self.data.getlist(key) for key in other_values.keys()}
             return values != other_values
         return False
 
@@ -76,7 +79,8 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
             if exclude and f.name in exclude:
                 continue
             if isinstance(f, ManyToManyField):
-                data[f.name] = [str(obj.id) for obj in f.value_from_object(instance)]
+                data[f.name] = [str(obj.id)
+                                for obj in f.value_from_object(instance)]
                 continue
             data[f.name] = f.value_from_object(instance) or None
         return data
