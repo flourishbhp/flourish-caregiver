@@ -52,7 +52,7 @@ if settings.APP_NAME == 'flourish_caregiver':
                 appt_type='clinic'),
             AppointmentConfig(
                 model='pre_flourish.appointment',
-                related_visit_model='pre_flourish.preflourishvisit',
+                related_visit_model='pre_flourish.preflourishcaregivervisit',
                 appt_type='clinic'),
             AppointmentConfig(
                 model='flourish_child.appointment',
@@ -62,7 +62,7 @@ if settings.APP_NAME == 'flourish_caregiver':
 
     class EdcMetadataAppConfig(BaseEdcMetadataAppConfig):
         reason_field = {
-            'pre_flourish.preflourishvisit': 'reason',
+            'pre_flourish.preflourishcaregivervisit': 'reason',
             'flourish_caregiver.maternalvisit': 'reason',
             'flourish_child.childvisit': 'reason', }
         create_on_reasons = [SCHEDULED, UNSCHEDULED, COMPLETED_PROTOCOL_VISIT]
@@ -115,7 +115,7 @@ if settings.APP_NAME == 'flourish_caregiver':
             'flourish_child': (
                 'child_visit', 'flourish_child.childvisit'),
             'pre_flourish': (
-                'pre_flourish_visit', 'pre_flourish.preflourishvisit'),
+                'maternal_visit', 'pre_flourish.preflourishcaregivervisit'),
         }
 
     class EdcFacilityAppConfig(BaseEdcFacilityAppConfig):

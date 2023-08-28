@@ -163,6 +163,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     def save(self, *args, **kwargs):
 
+
         self.preg_enroll = self.is_preg
 
         eligibility_criteria = CaregiverChildConsentEligibility(
@@ -238,7 +239,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         try:
             child_consent = self._meta.model.objects.get(
                 preg_enroll=True,
-                subject_identifier__startswith=self.subject_consent.subject_identifier)
+                subject_consent__subject_identifier=self.subject_consent.subject_identifier)
         except self._meta.model.DoesNotExist:
             pass
         else:
@@ -278,17 +279,17 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     @property
     def live_infants(self):
-        child_dummy_consent_cls = django_apps.get_model(
-            'flourish_child.childdummysubjectconsent')
-        return child_dummy_consent_cls.objects.filter(
-            subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
+        registered_subject_cls = django_apps.get_model(
+            'edc_registration.registeredsubject')
+        return registered_subject_cls.objects.filter(
+            relative_identifier=self.subject_consent.subject_identifier).exclude(
                 identity=self.identity).count() + 1
 
     @property
     def subject_identifier_sufix(self):
-
         caregiver_child_consent_cls = django_apps.get_model(
             self._meta.label_lower)
+
         child_identifier_postfix = ''
         if self.child_dataset:
             if self.subject_consent.multiple_birth:
@@ -321,7 +322,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                             child_identifier_postfix = '56'
             else:
                 children_count = len(set(caregiver_child_consent_cls.objects.filter(
-                    subject_identifier__startswith=self.subject_consent.subject_identifier).exclude(
+                    subject_consent__subject_identifier=self.subject_consent.subject_identifier).exclude(
                         child_dob=self.child_dob,
                         first_name=self.first_name).values_list('subject_identifier', flat=True)))
                 if children_count:
@@ -330,9 +331,10 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                     child_identifier_postfix = 10
         else:
             children_count = len(set(caregiver_child_consent_cls.objects.filter(
-                subject_identifier__startswith=self.subject_consent.subject_identifier).exclude(
-                child_dob=self.child_dob,
-                first_name=self.first_name).values_list('subject_identifier', flat=True)))
+                    subject_consent__subject_identifier=self.subject_consent.subject_identifier).exclude(
+                        child_dob=self.child_dob,
+                        first_name=self.first_name).values_list('subject_identifier', flat=True)))
+
             if children_count:
                 child_identifier_postfix = str((children_count + 5) * 10)
             else:
@@ -361,7 +363,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         caregiver_child_consent_cls = django_apps.get_model(
             self._meta.label_lower)
         return caregiver_child_consent_cls.objects.filter(
-            subject_identifier__icontains=self.subject_consent.subject_identifier).exclude(
+            subject_consent__subject_identifier=self.subject_consent.subject_identifier).exclude(
                 identity=self.identity).count() + 1
 
     def get_child_age_at_enrollment(self):
@@ -369,8 +371,23 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             child_dob=self.child_dob,
             check_date=self.created.date())
 
+    @property
+    def relative_identifier(self):
+        return self.subject_consent.subject_identifier
+
+    @property
+    def assign_enrol_instance_cohort(self):
+        try:
+            enrol_consent = self._meta.model.objects.filter(
+                subject_identifier=self.subject_identifier).earliest('consent_datetime')
+        except self._meta.model.DoesNotExist:
+            return None
+        else:
+            return getattr(enrol_consent, 'cohort', None)
+
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'Caregiver Consent On Behalf Of Child'
         verbose_name_plural = 'Caregiver Consent On Behalf Of Child'
-        # unique_together = ('subject_consent', 'subject_identifier', 'version')
+        unique_together = (('subject_identifier', 'version'),
+                           ('subject_consent', 'subject_identifier', 'version'))
