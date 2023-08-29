@@ -27,6 +27,7 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'caregiver_chronic_other',
                 'who_diagnosis',
                 'who',
+                'who_other',
                 'caregiver_medications',
                 'caregiver_medications_other',
                 'know_hiv_status',
