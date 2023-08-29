@@ -57,6 +57,7 @@ list_data = {
         ('who_leishman', 'Atypical disseminated leishmaniasis'),
         ('who_cardiomy', 'Sympt nephropathy/cardiomyopathy'),
         ('who_na', 'Not Applicable'),
+        ('who_other', 'Other, specify'),
     ],
     'flourish_caregiver.caregivermedications': [
         ('mmed_na', 'Not Applicable'),
