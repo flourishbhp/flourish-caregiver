@@ -183,8 +183,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
             self.version = self.child_consent_version or '3'
 
-            if self.preg_enroll:
-                self.duplicate_subject_identifier_preg()
+            # if self.preg_enroll:
+                # self.duplicate_subject_identifier_preg()
 
             if not self.subject_identifier:
                 self.subject_identifier = InfantIdentifier(
