@@ -37,17 +37,16 @@ class SeqEnrolOnScheduleMixin:
             subject_identifier=self.caregiver_subject_identifier,
             schedule_name=schedule_name)
 
-        if 'follow' in schedule_type:
-
+        if '_sec' not in cohort:
             fu_onschedule_model =  caregiver_schedule_dict[cohort]['followup']['onschedule_model']
             fu_schedule_name =  caregiver_schedule_dict[cohort]['followup'][child_count]
-            base_appt_datetime = get_utcnow() + relativedelta(months=6)
 
-            self.put_on_schedule(onschedule_model=fu_onschedule_model,
-                                schedule_name=fu_schedule_name,
-                                base_appt_datetime=base_appt_datetime,
-                                subject_identifier=self.caregiver_subject_identifier,
-                                is_caregiver=True)
+            self.enrol_fu_schedule(
+                cohort=cohort,
+                subject_identifier=self.caregiver_subject_identifier,
+                schedule_name=fu_schedule_name,
+                onschedule_model=fu_onschedule_model,
+                is_caregiver=True)
 
     def put_child_onschedule(self):
 
@@ -69,23 +68,20 @@ class SeqEnrolOnScheduleMixin:
                                  schedule_name=schedule_name,
                                  base_appt_datetime=onschedule_datetime,
                                  subject_identifier=self.child_subject_identifier)
-            
-        if 'follow' in schedule_type:
-
-            fu_onschedule_model = child_schedule_dict[cohort]['followup']['onschedule_model']
-            fu_schedule_name = child_schedule_dict[cohort]['followup']['name']
-            base_appt_datetime = get_utcnow() + relativedelta(months=6)
-        
-            self.put_on_schedule(onschedule_model=fu_onschedule_model,
-                                schedule_name=fu_schedule_name,
-                                subject_identifier=self.child_subject_identifier,
-                                base_appt_datetime=base_appt_datetime)
-
 
             self.delete_completed_appointments(
                 appointment_model_cls=ChildAppointment,
                 subject_identifier=self.child_subject_identifier,
                 schedule_name=schedule_name)
+            
+        if '_sec' not in cohort:
+            fu_onschedule_model = child_schedule_dict[cohort]['followup']['onschedule_model']
+            fu_schedule_name = child_schedule_dict[cohort]['followup']['name']
+        
+            self.enrol_fu_schedule(cohort=cohort,
+                                   subject_identifier=self.child_subject_identifier,
+                                   schedule_name=fu_schedule_name,
+                                   onschedule_model=fu_onschedule_model, )
 
     def put_on_schedule(self, onschedule_model, schedule_name,
                         subject_identifier, base_appt_datetime=None, is_caregiver=False, 
@@ -149,3 +145,33 @@ class SeqEnrolOnScheduleMixin:
             visit_code__in=complete_appts)
         if new_appts.exists():
             new_appts.delete()
+
+    def enrol_fu_schedule(self, cohort, subject_identifier, schedule_name, onschedule_model,
+                          is_caregiver=False, ):
+        """ Put participant on FU schedule for sequential cohort, based on age criteria:
+            Cohort A → B: Follow-up visit occurs at 7 years, if already 7 years occurs 6
+            months after.
+            Cohort B → C: Follow-up visit occurs at 12 years, if already 12 years occurs
+            6 months after.
+            @param cohort: sequentially enrolled cohort
+            @param subject_identifier: participant sid
+            @param schedule_name: schedule name for sequentially enrolled cohort
+            @param onschedule_model: onschedule model name for sequentially enrolled cohort
+            @param is_caregiver: bool representing caregiver/child participant   
+        """
+        cohort_ages = {'cohort_b': 7, 'cohort_c': 12}
+        onschedule_datetime = None
+        age_fu = cohort_ages.get(cohort, self.child_current_age)
+        if self.child_current_age < age_fu:
+            age_diff = round(age_fu - self.child_current_age, 2)
+            age_in_months = round(age_diff * 12)
+            onschedule_datetime = get_utcnow() + relativedelta(months=age_in_months)
+        else:
+            onschedule_datetime = get_utcnow() + relativedelta(months=6)
+
+        if onschedule_datetime:
+            self.put_on_schedule(onschedule_model=onschedule_model,
+                                 schedule_name=schedule_name,
+                                 base_appt_datetime=onschedule_datetime,
+                                 subject_identifier=subject_identifier,
+                                 is_caregiver=is_caregiver)

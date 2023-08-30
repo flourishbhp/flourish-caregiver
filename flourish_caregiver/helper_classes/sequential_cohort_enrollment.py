@@ -158,10 +158,10 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         if dob:
             if check_date > dob:
                 child_age = age(dob, check_date)
-                child_age = str(child_age.years) + '.' + str(child_age.months)
+                child_age = round(child_age.years + (child_age.months/12) + (child_age.days/365.25), 2)
             else:
                 child_age = 0
-            return float(child_age)
+            return child_age
         return None
 
     @property
