@@ -55,7 +55,6 @@ class TestVisitScheduleSetupA(TestCase):
             relativedelta(years=year_3_years, months=year_3_months)
         return child_dob
 
-    @tag('aa')
     def test_cohort_a_onschedule_antenatal_valid(self):
         """Assert that a pregnant woman is put on cohort a schedule.
         """
@@ -68,6 +67,14 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=self.subject_identifier,
             breastfeed_intent=YES,
             **self.options)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            study_child_identifier=None,
+            child_dob=None,
+            first_name=None,
+            last_name=None)
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
@@ -85,30 +92,10 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             visit_code='1000M')
 
-    # @tag('aa')
-    # def test_antenatal_enroll_prev_valid(self):
-        # """Assert that a pregnant woman already enrolled for antenatal can enroll
-        # with a child from previous study.
-        # """
-        # screening_preg = mommy.make_recipe(
-        # 'flourish_caregiver.screeningpregwomen',)
-        #
-        # subject_consent = mommy.make_recipe(
-        # 'flourish_caregiver.subjectconsent',
-        # screening_identifier=screening_preg.screening_identifier,
-        # subject_identifier=self.subject_identifier,
-        # breastfeed_intent=YES,
-        # **self.options)
-        #
-        # mommy.make_recipe(
-        # 'flourish_caregiver.antenatalenrollment',
-        # subject_identifier=subject_consent.subject_identifier,)
-        #
-        #
-
     @tag('ax1')
     def test_cohort_a_onschedule_antenatal_and_onsec_valid(self):
-        """Assert that a pregnant woman with a toddler is put on 2 seperate cohort a schedules
+        """ Assert that a pregnant woman with a toddler is put on 2 separate
+            cohort a schedules, antenatal for first child and prev. for 2nd
         """
 
         screening_preg = mommy.make_recipe(
@@ -159,11 +146,11 @@ class TestVisitScheduleSetupA(TestCase):
 
         self.assertEqual(OnScheduleCohortAEnrollment.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='a_enrol1_schedule1').count(), 1)
+            schedule_name='a_enrol2_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='a_quarterly1_schedule1').count(), 0)
+            schedule_name='a_quarterly2_schedule1').count(), 0)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -175,19 +162,18 @@ class TestVisitScheduleSetupA(TestCase):
 
         self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
-            schedule_name='a_quarterly1_schedule1').count(), 1)
+            schedule_name='a_quarterly2_schedule1').count(), 1)
 
         self.assertEqual(ccc2.caregiver_visit_count, 2)
 
-    @tag('ax2')
     def test_cohort_a_onsec_and_onschedule_antenatal_valid(self):
         """Assert that a woman with a enrolled with a toddler can enroll for antenatal cohort a
         """
-
+        dob_dt = (get_utcnow() - relativedelta(years=4, months=1)).date()
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Tshilo Dikotla'
-        self.maternal_dataset_options['delivdt'] = self.year_3_age(4, 1)
+        self.maternal_dataset_options['delivdt'] = dob_dt
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -197,7 +183,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=self.year_3_age(4, 1),
+            dob=dob_dt,
             **self.child_dataset_options)
 
         sh = SubjectHelperMixin()
@@ -235,8 +221,24 @@ class TestVisitScheduleSetupA(TestCase):
 
         self.assertEqual(OnScheduleCohortAAntenatal.objects.filter(
             subject_identifier=subject_identifier,
-            schedule_name='a_antenatal1_schedule1').count(), 1)
+            schedule_name='a_antenatal2_schedule1').count(), 1)
 
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=subject_identifier,)
+
+        self.assertEqual(OnScheduleCohortABirth.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='a_birth2_schedule1').count(), 1)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2000D',
+                subject_identifier=subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
@@ -249,9 +251,12 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 1)
 
+        self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
+            subject_identifier=subject_identifier,
+            schedule_name='a_quarterly2_schedule1').count(), 1)
+
         self.assertEqual(ccc.caregiver_visit_count, 2)
 
-    @tag('bb')
     def test_cohort_a_onschedule_birth_valid(self):
 
         screening_preg = mommy.make_recipe(
@@ -265,6 +270,14 @@ class TestVisitScheduleSetupA(TestCase):
             **self.options)
 
         mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=subject_consent,
+            study_child_identifier=None,
+            child_dob=None,
+            first_name=None,
+            last_name=None)
+
+        mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=subject_consent.subject_identifier,)
 
@@ -276,13 +289,13 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_birth1_schedule1').count(), 1)
 
-    @tag('bb1')
     def test_cohort_a_onschedule_birth2_valid(self):
 
+        dob_dt = (get_utcnow() - relativedelta(years=4, months=1)).date()
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Tshilo Dikotla'
-        self.maternal_dataset_options['delivdt'] = self.year_3_age(4, 1)
+        self.maternal_dataset_options['delivdt'] = dob_dt
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -292,7 +305,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=self.year_3_age(4, 1),
+            dob=dob_dt,
             **self.child_dataset_options)
 
         sh = SubjectHelperMixin()
@@ -340,7 +353,6 @@ class TestVisitScheduleSetupA(TestCase):
             subject_identifier=consent_obj.subject_identifier,
             schedule_name='a_birth2_schedule1').count(), 1)
 
-    @tag('aa1')
     def test_cohort_a_onschedule_consent_valid(self):
         """Assert that a 2 year old participant's mother is put on cohort a schedule.
         """
@@ -400,7 +412,6 @@ class TestVisitScheduleSetupA(TestCase):
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
-    @tag('tt1')
     def test_cohort_a_onschedule_sec_valid(self):
         """Assert that a 2 year old participant's mother is put on cohort a schedule.
         """
@@ -457,10 +468,6 @@ class TestVisitScheduleSetupA(TestCase):
         self.assertEqual(OnScheduleCohortAQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='a_quarterly1_schedule1').count(), 1)
-
-        # self.assertEqual(OnScheduleCohortAFU.objects.filter(
-        # subject_identifier=subject_consent.subject_identifier,
-        # schedule_name='a_fu1_schedule1').count(), 1)
 
         self.assertNotEqual(Appointment.objects.filter(
             subject_identifier=subject_consent.subject_identifier).count(), 0)

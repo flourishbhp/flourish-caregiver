@@ -10,6 +10,7 @@ from model_mommy import mommy
 from edc_appointment.models import Appointment
 
 from ..models import SubjectConsent, OnScheduleCohortBEnrollment
+from ..models import FlourishConsentVersion
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
@@ -47,7 +48,7 @@ class TestSubjectReConsent(TestCase):
             'study_maternal_identifier': self.study_maternal_identifier,
             'study_child_identifier': '1234'}
 
-        maternal_dataset_obj = mommy.make_recipe(
+        self.maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             preg_efv=1,
             **self.maternal_dataset_options)
@@ -61,15 +62,16 @@ class TestSubjectReConsent(TestCase):
             'consent_datetime': get_utcnow(),
             'version': '2'}
 
-        self.flourish_consent_version = mommy.make_recipe(
-            'flourish_caregiver.flourishconsentversion',
-            screening_identifier=maternal_dataset_obj.screening_identifier,
-            version='2')
         sh = SubjectHelperMixin()
 
         self.subject_identifier = sh.enroll_prior_participant(
-            maternal_dataset_obj.screening_identifier,
-            study_child_identifier=self.child_dataset_options['study_child_identifier'])
+            self.maternal_dataset_obj.screening_identifier,
+            study_child_identifier=self.child_dataset_options['study_child_identifier'],
+            version='2',
+             child_version='2')
+
+        self.flourish_consent_version = FlourishConsentVersion.objects.get(
+            screening_identifier=self.maternal_dataset_obj.screening_identifier)
 
     def test_reconsent_participant(self):
         self.flourish_consent_version.version = '3'

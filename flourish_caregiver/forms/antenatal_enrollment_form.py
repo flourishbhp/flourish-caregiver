@@ -38,8 +38,7 @@ class AntenatalEnrollmentForm(
             'flourish_caregiver.caregiverchildconsent')
 
         child_consents = child_consent_cls.objects.filter(
-            subject_identifier__startswith=self.cleaned_data.get(
-                'subject_identifier'),
+            subject_consent__subject_identifier=self.cleaned_data.get('subject_identifier'),
             preg_enroll=True).order_by('consent_datetime')
 
         if not child_consents:

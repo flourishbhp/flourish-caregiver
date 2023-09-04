@@ -2,7 +2,6 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from edc_base.sites import SiteModelFormMixin
-from edc_constants.constants import ALIVE
 from edc_constants.constants import OFF_STUDY, DEAD, YES, ON_STUDY, NEW, OTHER
 from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
 from edc_form_validators import FormValidatorMixin
@@ -16,9 +15,11 @@ from flourish_form_validations.form_validators import \
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 
 from ..models import MaternalVisit, SubjectConsent
+from ..visit_sequence import VisitSequence
 
 
 class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin):
+    visit_sequence_cls = VisitSequence
     consent_version_model = 'flourish_caregiver.flourishconsentversion'
 
     def clean(self):
@@ -182,7 +183,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
 
         latest_consent = self.latest_consent_obj
         last_alive_date = self.cleaned_data.get('last_alive_date')
-        if (last_alive_date and not self.instance.pk
+        if (last_alive_date and not getattr(self.instance, 'pk', None)
                 and last_alive_date < latest_consent.consent_datetime.date()):
             msg = {'last_alive_date': 'Date cannot be before consent date'}
             self._errors.update(msg)
@@ -246,14 +247,13 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         raises an exception if not found."""
         subject_consents = self.subject_consent_cls.objects.filter(
             subject_identifier=self.subject_identifier)
-        if not self.instance.pk:
+        if not getattr(self.instance, 'pk', None):
             try:
                 subject_consents.latest('consent_datetime')
 
             except SubjectConsent.DoesNotExist:
                 raise forms.ValidationError(
-                    'Please complete Caregiver Consent form '
-                    f'before proceeding.')
+                    'Please complete Caregiver Consent form before proceeding.')
             else:
                 if report_datetime and report_datetime < subject_consents.latest(
                         'consent_datetime').consent_datetime:
