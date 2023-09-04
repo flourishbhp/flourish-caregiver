@@ -54,20 +54,20 @@ class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
          ),
         ("In the past 3 days, did you or any household member aged 15 or over engage"
          " in any of the following activities with the child", {
-             "fields": (
-                 'read_books',
-                 'read_books_other',
-                 'told_stories',
-                 'told_stories_other',
-                 'sang_songs',
-                 'sang_songs_other',
-                 'took_child_outside',
-                 'took_child_outside_other',
-                 'played_with_child',
-                 'played_with_child_other',
-                 'named_with_child',
-                 'named_with_child_other'
-             ), }
+            "fields": (
+                'read_books',
+                'read_books_other',
+                'told_stories',
+                'told_stories_other',
+                'sang_songs',
+                'sang_songs_other',
+                'took_child_outside',
+                'took_child_outside_other',
+                'played_with_child',
+                'played_with_child_other',
+                'named_with_child',
+                'named_with_child_other'
+            ), }
          ),
         ("Participiate in study about caregiving", {
             "fields": (
