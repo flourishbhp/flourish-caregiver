@@ -313,8 +313,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
                 'cohort_a_tb_2_months',
                 instance=instance,
                 child_subject_identifier=preg_child_consents[0].subject_identifier,
-                base_appt_datetime=instance.delivery_datetime.replace(
-                    microsecond=0),
+                base_appt_datetime=instance.delivery_datetime.replace(microsecond=0),
                 caregiver_visit_count=preg_child_consents[0].caregiver_visit_count)
 
 
@@ -409,8 +408,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 if child_age:
                     if instance.subject_identifier[-3:] not in ['-35', '-46',
                                                                 '-56']:
-                        helper_cls = onschedule_helper_cls(
-                            cohort=instance.cohort)
+                        helper_cls = onschedule_helper_cls(cohort=instance.cohort)
                         helper_cls.put_cohort_onschedule(
                             instance,
                             base_appt_datetime=prev_enrolled_obj.report_datetime.replace(
@@ -548,8 +546,7 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
                 pass
             else:
                 onschedule_dt = instance.report_datetime.replace(microsecond=0)
-                helper_cls = onschedule_helper_cls(
-                    instance.subject_identifier, )
+                helper_cls = onschedule_helper_cls(instance.subject_identifier, )
                 helper_cls.put_on_schedule(
                     'cohort_a_tb_6_months',
                     instance=instance,
@@ -727,31 +724,30 @@ def tb_interview_post_save(sender, instance, raw, created, **kwargs):
 
 @receiver(pre_save, dispatch_uid='requires_consent_on_pre_save')
 def validate_requires_consent_on_pre_save(instance, raw, **kwargs):
-    pass
-    # """
-    # Validate that subject has consented to be in the study
-    # """
-    # if not raw:
-    #     try:
-    #         consent_model = site_visit_schedules.all_post_consent_models[
-    #             instance._meta.label_lower]
-    #     except KeyError:
-    #         pass
-    #     else:
-    #         visit_schedule = consent_helper.get_visit_schedule(instance)
-    #         if visit_schedule and visit_schedule.schedules:
-    #             schedule = visit_schedule.schedules.get(
-    #                 instance.visit.schedule_name)
-    #             if schedule:
-    #                 requires_consent = consent_helper.get_requires_consent(
-    #                     instance, consent_model, schedule=schedule)
-    #                 instance.consent_version = requires_consent.version
-    #         elif consent_model:
-    #             requires_consent = consent_helper.get_requires_consent(
-    #                 instance, consent_model)
-    #             instance.consent_version = requires_consent.version
-    #         else:
-    #             consent_helper.verify_registered_subject(instance)
+    """
+    Validate that subject has consented to be in the study
+    """
+    if not raw:
+        try:
+            consent_model = site_visit_schedules.all_post_consent_models[
+                instance._meta.label_lower]
+        except KeyError:
+            pass
+        else:
+            visit_schedule = consent_helper.get_visit_schedule(instance)
+            if visit_schedule and visit_schedule.schedules:
+                schedule = visit_schedule.schedules.get(
+                    instance.visit.schedule_name)
+                if schedule:
+                    requires_consent = consent_helper.get_requires_consent(
+                        instance, consent_model, schedule=schedule)
+                    instance.consent_version = requires_consent.version
+            elif consent_model:
+                requires_consent = consent_helper.get_requires_consent(
+                    instance, consent_model)
+                instance.consent_version = requires_consent.version
+            else:
+                consent_helper.verify_registered_subject(instance)
 
 
 def screening_preg_exists(child_consent_obj):
