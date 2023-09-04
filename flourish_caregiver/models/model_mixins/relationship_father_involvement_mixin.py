@@ -21,7 +21,6 @@ class RelationshipFatherInvolvementMixin(models.Model):
     """A CRF to be completed by biological mothers living with HIV,
     at enrollment, annual (every 4th quarterly call), and follow-up
     """
-
     partner_present = models.CharField(
         verbose_name="Do you currently have a partner? ",
         choices=YES_NO_PNTA,

@@ -21,7 +21,6 @@ class RelationshipFatherInvolvement(CrfModelMixin):
     """A CRF to be completed by biological mothers living with HIV,
     at enrollment, annual (every 4th quarterly call), and follow-up
     """
-
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
         default=get_utcnow,
