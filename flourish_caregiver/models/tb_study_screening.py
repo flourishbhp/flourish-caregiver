@@ -36,7 +36,6 @@ class TbStudyEligibility(CrfModelMixin):
         self.is_eligibile = self.tb_participation == YES
         super().save(*args, **kwargs)
 
-
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'TB Study Screening Form'

@@ -14,7 +14,6 @@ from edc_model_admin import (
     ModelAdminNextUrlRedirectMixin, ModelAdminAuditFieldsMixin,
     ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
 from edc_model_admin import audit_fieldset_tuple
-from numpy import insert
 
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
@@ -111,9 +110,9 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         try:
 
             enrollment_visit = self.model.objects.get(
-                    subject_identifier=subject_identifier,
-                    visit_code='1000M',
-                    visit_code_sequence='0')
+                subject_identifier=subject_identifier,
+                visit_code='1000M',
+                visit_code_sequence='0')
 
         except self.model.DoesNotExist:
             """

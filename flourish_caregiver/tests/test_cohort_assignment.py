@@ -7,18 +7,15 @@ from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 import pytz
 
-from edc_appointment.models import Appointment
 from edc_visit_schedule.models import SubjectScheduleHistory
 
 from ..models import OnScheduleCohortAAntenatal
-from ..models import OnScheduleCohortAEnrollment, OnScheduleCohortAQuarterly
+from ..models import OnScheduleCohortAQuarterly
 from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
-from ..models import OnScheduleCohortBSec
-from ..subject_helper_mixin import SubjectHelperMixin
 
 
-@tag('3')
-class TestVisitScheduleSetup(TestCase):
+@tag('ca')
+class TestCohortAssignmentSetup(TestCase):
 
     databases = '__all__'
     utc = pytz.UTC
@@ -58,7 +55,6 @@ class TestVisitScheduleSetup(TestCase):
                                                       months=year_3_months)
         return child_dob
 
-    @tag('this1')
     def test_cohort_a_onschedule_antenatal_valid(self):
         """Assert that a pregnant woman is put on cohort a schedule.
         """
@@ -129,7 +125,8 @@ class TestVisitScheduleSetup(TestCase):
         child_consent = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
-            study_child_identifier=self.child_dataset_options.get('study_child_identifier'),
+            study_child_identifier=self.child_dataset_options.get(
+                'study_child_identifier'),
             child_dob=maternal_dataset_obj.delivdt,)
 
         child_dummy_consent = self.child_dummy_consent_cls.objects.get(
@@ -148,14 +145,14 @@ class TestVisitScheduleSetup(TestCase):
             schedule_name='b_quarterly1_schedule1').count(), 0)
 
     def test_cohort_b_lt10(self):
-        """Assert that a participant with a child who is 10.5 years old at beginning
-         of year 3 goes into cohort b schedule.
+        """  Assert that a participant with a child who is less than
+            10 years old at beginning of year 3 goes into cohort b schedule.
         """
-
+        dob_dt = (get_utcnow() - relativedelta(years=9, months=9)).date()
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = self.year_3_age(10, 5)
+        self.maternal_dataset_options['delivdt'] = dob_dt
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -165,12 +162,18 @@ class TestVisitScheduleSetup(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=self.year_3_age(10, 5),
+            dob=dob_dt,
             **self.child_dataset_options)
 
         self.options = {
-                'consent_datetime': get_utcnow(),
-                'version': '1'}
+            'consent_datetime': get_utcnow(),
+            'version': '1'}
+
+        mommy.make_recipe(
+            'flourish_caregiver.flourishconsentversion',
+            screening_identifier=maternal_dataset_obj.screening_identifier,
+            version='1',
+            child_version='1')
 
         mommy.make_recipe(
             'flourish_caregiver.screeningpriorbhpparticipants',
@@ -214,4 +217,3 @@ class TestVisitScheduleSetup(TestCase):
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 0)
-

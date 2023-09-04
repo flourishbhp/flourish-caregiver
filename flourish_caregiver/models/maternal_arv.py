@@ -5,8 +5,7 @@ from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 
-from .model_mixins import CrfModelMixin
-from .model_mixins.martenal_arv_table_mixin import MaternalArvTableMixin
+from .model_mixins import CrfModelMixin, MaternalArvTableMixin
 from ..choices import ARV_INTERRUPTION_REASON
 
 
@@ -39,7 +38,6 @@ class MaternalArvAtDelivery(CrfModelMixin):
         default=NOT_APPLICABLE
     )
 
-
     class Meta:
         app_label = 'flourish_caregiver'
         verbose_name = 'Maternal ARV At Delivery'
@@ -49,14 +47,14 @@ class MaternalArvAtDelivery(CrfModelMixin):
 class MaternalArvTableAtDelivery(MaternalArvTableMixin):
     """ Inline ARV table to indicate ARV medication taken by mother """
 
-    maternal_arv_at_delivery = models.ForeignKey(MaternalArvAtDelivery, on_delete=PROTECT)
+    maternal_arv_at_delivery = models.ForeignKey(
+        MaternalArvAtDelivery, on_delete=PROTECT)
 
     date_resumed = models.DateField(
         verbose_name="Date Resumed",
         validators=[date_not_future],
         null=True,
         blank=True)
-
 
     class Meta:
         app_label = 'flourish_caregiver'

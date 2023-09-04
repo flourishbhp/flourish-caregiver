@@ -9,9 +9,9 @@ from ..forms import CaregiverSocialWorkReferralForm
 
 @admin.register(CaregiverSocialWorkReferral, site=flourish_caregiver_admin)
 class CaregiverSocialWorkReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
-    
+
     form = CaregiverSocialWorkReferralForm
-    
+
     fieldsets = (
         (None, {
             "fields": (
@@ -22,16 +22,13 @@ class CaregiverSocialWorkReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'referral_reason',
                 'reason_other',
                 'comment',
-                
+
             ),
-        }),audit_fieldset_tuple
+        }), audit_fieldset_tuple
     )
-    
+
     radio_fields = {
-        'is_preg': admin.VERTICAL, 
+        'is_preg': admin.VERTICAL,
         'current_hiv_status': admin.VERTICAL, }
 
-
     filter_horizontal = ('referral_reason',)
-
-

@@ -3,8 +3,7 @@ from django.db.models import PROTECT
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 
-from .model_mixins import CrfModelMixin
-from .model_mixins.martenal_arv_table_mixin import MaternalArvTableMixin
+from .model_mixins import CrfModelMixin, MaternalArvTableMixin
 from ..choices import ARV_INTERRUPTION_REASON, REASON_ARV_STOP
 
 
@@ -48,7 +47,8 @@ class MaternalArvDuringPreg(CrfModelMixin):
 class MaternalArvTableDuringPreg(MaternalArvTableMixin):
     """ Inline ARV table to indicate ARV medication taken by mother """
 
-    maternal_arv_durg_preg = models.ForeignKey(MaternalArvDuringPreg, on_delete=PROTECT)
+    maternal_arv_durg_preg = models.ForeignKey(
+        MaternalArvDuringPreg, on_delete=PROTECT)
 
     reason_for_stop = models.CharField(
         verbose_name="Reason for stop",

@@ -60,6 +60,7 @@ class MaternalDatasetAdmin(ModelAdminMixin, admin.ModelAdmin):
             ]}
          ), audit_fieldset_tuple)
 
-    search_fields = ['subject_identifier', 'study_maternal_identifier', 'screening_identifier']
+    search_fields = ['subject_identifier',
+                     'study_maternal_identifier', 'screening_identifier']
 
     list_filter = ('protocol', 'twin_triplet', 'mom_hivstatus')

@@ -26,7 +26,7 @@ class SocioDemographicData(SocioDemographicDataMixin, CrfModelMixin):
     @property
     def is_pregnant(self):
         return AntenatalEnrollment.objects.filter(
-            subject_identifier=self.subject_identifier)
+            subject_identifier=self.subject_identifier).exists()
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
@@ -48,4 +48,4 @@ class HouseHoldDetails(HouseHoldDetailsMixin, BaseUuidModel):
         verbose_name = 'Household Details'
         verbose_name_plural = 'Household Details'
         unique_together = (
-            'socio_demographics_data', 'child_identifier',)
+            ('socio_demographics_data', 'child_identifier'),)

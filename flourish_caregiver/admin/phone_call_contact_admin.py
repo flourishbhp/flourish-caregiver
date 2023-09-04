@@ -52,12 +52,14 @@ class PhoneCallContactAdmin(ModelAdminMixin, admin.ModelAdmin):
         form = super().get_form(request, *args, **kwargs)
         custom_choices = []
 
-        study_maternal_identifier = kwargs.get('study_maternal_identifier', 'B003611-4')
+        study_maternal_identifier = kwargs.get(
+            'study_maternal_identifier', 'B003611-4')
 
         fields = self.get_all_fields(form)
 
         for idx, field in enumerate(fields):
-            custom_value = self.custom_field_label(study_maternal_identifier, field)
+            custom_value = self.custom_field_label(
+                study_maternal_identifier, field)
 
             if custom_value:
                 custom_choices.append([field, custom_value])

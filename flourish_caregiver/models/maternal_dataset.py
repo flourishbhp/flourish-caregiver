@@ -101,7 +101,7 @@ class MaternalDataset(NonUniqueSubjectIdentifierFieldMixin,
     mom_occupation = models.CharField(
         verbose_name='Mother\'s occupation',
         max_length=150,
-         blank=True, null=True)
+        blank=True, null=True)
 
     mom_pregarv_strat = models.CharField(
         verbose_name='Maternal ARVs during pregnancy',

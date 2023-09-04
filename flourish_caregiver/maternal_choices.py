@@ -513,7 +513,8 @@ REASONS_FOR_RESCHEDULING = (
     ('Participant_quarantine',
      'Participant on quarantine or Isolations due to covid-19 exposure or infection'),
     ('Participant_changed_mind',
-     'Participant changed mind and asked for a re-appointments or want to withdraw / be-withdraw from participating on study '),
+     'Participant changed mind and asked for a re-appointments or want to withdraw/'
+     ' be-withdraw from participating on study '),
     ('caregiver_not_well', 'Child, mother, caregiver not well'),
     ('undisclosed_personal_reasons', 'Participant has undisclosed personal reasons'),
     ('another_appointment',

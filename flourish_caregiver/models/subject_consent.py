@@ -190,7 +190,8 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
     def multiple_births(self):
         """Returns value of births if the mother has twins/triplets.
         """
-        dataset_cls = django_apps.get_model('flourish_caregiver.maternaldataset')
+        dataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
 
         try:
             dataset_obj = dataset_cls.objects.get(
@@ -198,7 +199,8 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         except dataset_cls.DoesNotExist:
             pass
         else:
-            child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+            child_dataset_cls = django_apps.get_model(
+                'flourish_child.childdataset')
             children = child_dataset_cls.objects.filter(
                 study_maternal_identifier=dataset_obj.study_maternal_identifier)
             if children.count() == 2:
@@ -235,7 +237,8 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         return subject_identifier.identifier
 
     def update_dataset_identifier(self):
-        dataset_cls = django_apps.get_model('flourish_caregiver.maternaldataset')
+        dataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
 
         try:
             dataset_obj = dataset_cls.objects.get(
@@ -247,7 +250,8 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
             dataset_obj.save()
 
     def update_locator_subject_identifier(self):
-        locator_cls = django_apps.get_model('flourish_caregiver.caregiverlocator')
+        locator_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverlocator')
         try:
             locator_obj = locator_cls.objects.get(
                 screening_identifier=self.screening_identifier)

@@ -2,7 +2,6 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from edc_base.sites import SiteModelFormMixin
-from edc_constants.constants import ALIVE
 from edc_constants.constants import OFF_STUDY, DEAD, YES, ON_STUDY, NEW, OTHER
 from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
 from edc_form_validators import FormValidatorMixin
@@ -16,9 +15,11 @@ from flourish_form_validations.form_validators import \
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 
 from ..models import MaternalVisit, SubjectConsent
+from ..visit_sequence import VisitSequence
 
 
 class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin):
+    visit_sequence_cls = VisitSequence
     consent_version_model = 'flourish_caregiver.flourishconsentversion'
 
     def clean(self):
@@ -32,7 +33,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             if not id:
                 self.validate_offstudy_model()
 
-        self.validate_against_consent_datetime(self.cleaned_data.get('report_datetime'))
+        self.validate_against_consent_datetime(
+            self.cleaned_data.get('report_datetime'))
 
         self.validate_consent_version_obj()
 
@@ -95,7 +97,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             raise ValidationError(msg)
 
     def validate_offstudy_model(self):
-        maternal_offstudy_cls = django_apps.get_model('flourish_prn.caregiveroffstudy')
+        maternal_offstudy_cls = django_apps.get_model(
+            'flourish_prn.caregiveroffstudy')
         action_cls = site_action_items.get(
             maternal_offstudy_cls.action_name)
         action_item_model_cls = action_cls.action_item_model_cls()
@@ -116,7 +119,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
                     'Participant has been taken offstudy. Cannot capture any '
                     'new data.')
         else:
-            self.maternal_visit = self.cleaned_data.get('maternal_visit') or None
+            self.maternal_visit = self.cleaned_data.get(
+                'maternal_visit') or None
             if not self.maternal_visit or self.maternal_visit.require_crfs == NO:
                 raise forms.ValidationError(
                     'Participant is scheduled to be taken offstudy without '
@@ -179,7 +183,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
 
         latest_consent = self.latest_consent_obj
         last_alive_date = self.cleaned_data.get('last_alive_date')
-        if (last_alive_date and not self.instance.pk
+        if (last_alive_date and not getattr(self.instance, 'pk', None)
                 and last_alive_date < latest_consent.consent_datetime.date()):
             msg = {'last_alive_date': 'Date cannot be before consent date'}
             self._errors.update(msg)
@@ -243,14 +247,13 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         raises an exception if not found."""
         subject_consents = self.subject_consent_cls.objects.filter(
             subject_identifier=self.subject_identifier)
-        if not self.instance.pk:
+        if not getattr(self.instance, 'pk', None):
             try:
                 subject_consents.latest('consent_datetime')
 
             except SubjectConsent.DoesNotExist:
                 raise forms.ValidationError(
-                    'Please complete Caregiver Consent form '
-                    f'before proceeding.')
+                    'Please complete Caregiver Consent form before proceeding.')
             else:
                 if report_datetime and report_datetime < subject_consents.latest(
                         'consent_datetime').consent_datetime:

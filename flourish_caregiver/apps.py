@@ -10,13 +10,13 @@ class AppConfig(DjangoAppConfig):
     verbose_name = 'Flourish Caregiver'
     admin_site_name = 'flourish_caregiver_admin'
     start_date_year_3 = datetime(
-            2022, 7, 1, 0, 0, 0, tzinfo=gettz('UTC')).date()
+        2022, 7, 1, 0, 0, 0, tzinfo=gettz('UTC')).date()
     end_date_year_5 = datetime(
-            2024, 6, 30, 0, 0, 0, tzinfo=gettz('UTC')).date()
+        2024, 6, 30, 0, 0, 0, tzinfo=gettz('UTC')).date()
 
     form_versions = {
         'flourish_caregiver.tbinformedconsent': 1.0,
-        }
+    }
 
     extra_assignee_choices = ()
     interviewers_group = 'Interviewer'
@@ -52,7 +52,7 @@ if settings.APP_NAME == 'flourish_caregiver':
                 appt_type='clinic'),
             AppointmentConfig(
                 model='pre_flourish.appointment',
-                related_visit_model='pre_flourish.preflourishvisit',
+                related_visit_model='pre_flourish.preflourishcaregivervisit',
                 appt_type='clinic'),
             AppointmentConfig(
                 model='flourish_child.appointment',
@@ -62,7 +62,7 @@ if settings.APP_NAME == 'flourish_caregiver':
 
     class EdcMetadataAppConfig(BaseEdcMetadataAppConfig):
         reason_field = {
-            'pre_flourish.preflourishvisit': 'reason',
+            'pre_flourish.preflourishcaregivervisit': 'reason',
             'flourish_caregiver.maternalvisit': 'reason',
             'flourish_child.childvisit': 'reason', }
         create_on_reasons = [SCHEDULED, UNSCHEDULED, COMPLETED_PROTOCOL_VISIT]
@@ -115,7 +115,7 @@ if settings.APP_NAME == 'flourish_caregiver':
             'flourish_child': (
                 'child_visit', 'flourish_child.childvisit'),
             'pre_flourish': (
-                'pre_flourish_visit', 'pre_flourish.preflourishvisit'),
+                'maternal_visit', 'pre_flourish.preflourishcaregivervisit'),
         }
 
     class EdcFacilityAppConfig(BaseEdcFacilityAppConfig):

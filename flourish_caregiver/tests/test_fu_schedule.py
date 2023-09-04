@@ -76,8 +76,8 @@ class TestVisitScheduleFUA(TestCase):
             child_dob=(get_utcnow() - relativedelta(years=4, months=5)).date(),)
 
         mommy.make_recipe(
-                'flourish_caregiver.caregiverpreviouslyenrolled',
-                subject_identifier=subject_consent.subject_identifier)
+            'flourish_caregiver.caregiverpreviouslyenrolled',
+            subject_identifier=subject_consent.subject_identifier)
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',

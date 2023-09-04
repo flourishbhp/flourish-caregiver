@@ -9,23 +9,18 @@ from edc_base.model_fields.custom_fields import OtherCharField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from edc_constants.choices import YES_NO
 
-from ..choices import (YES_NO_PNTA_DNK, YES_NO_PNTA, YES_NO_PNTA_NA,
-                       YES_NO_PNTA_UNKNOWN, HIV_STATUS_DISCUSSION, PARTNERS_SUPPORT,
-                       CHOICE_FREQUENCY, HAPPINESS_CHOICES, FATHER_VISITS,
-                       FUTURE_OF_RELATIONSHIP, FATHERS_FINANCIAL_SUPPORT)
-from .list_models import HouseholdMember
-from .model_mixins import CrfModelMixin
+from ...choices import (YES_NO_PNTA_DNK, YES_NO_PNTA, YES_NO_PNTA_NA,
+                        YES_NO_PNTA_UNKNOWN, HIV_STATUS_DISCUSSION, PARTNERS_SUPPORT,
+                        CHOICE_FREQUENCY, HAPPINESS_CHOICES, FATHER_VISITS,
+                        FUTURE_OF_RELATIONSHIP, FATHERS_FINANCIAL_SUPPORT)
+
+from ..list_models import HouseholdMember
 
 
-class RelationshipFatherInvolvement(CrfModelMixin):
+class RelationshipFatherInvolvementMixin(models.Model):
     """A CRF to be completed by biological mothers living with HIV,
     at enrollment, annual (every 4th quarterly call), and follow-up
     """
-    report_datetime = models.DateTimeField(
-        verbose_name='Report Time and Date',
-        default=get_utcnow,
-        validators=[datetime_not_future, datetime_not_before_study_start], )
-
     partner_present = models.CharField(
         verbose_name="Do you currently have a partner? ",
         choices=YES_NO_PNTA,
@@ -281,7 +276,5 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         max_length=3,
     )
 
-    class Meta(CrfModelMixin.Meta):
-        app_label = 'flourish_caregiver'
-        verbose_name = 'Relationship and Father Involvement'
-        verbose_name_plural = 'Relationship and Father Involvement'
+    class Meta:
+        abstract = True

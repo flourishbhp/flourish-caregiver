@@ -25,13 +25,14 @@ class UltraSoundAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'ga_by_ultrasound_wks',
                 'ga_by_ultrasound_days',
                 'ga_confirmed',
+                'ga_at_consent',
                 'est_fetal_weight',
                 'est_edd_ultrasound',
                 'edd_confirmed',
                 'amniotic_fluid_volume', ]}
          ), audit_fieldset_tuple)
 
-    readonly_fields = ('edd_confirmed', 'ga_confirmed', 'ga_by_lmp')
+    readonly_fields = ('edd_confirmed', 'ga_confirmed', 'ga_by_lmp', 'ga_at_consent')
 
     radio_fields = {'number_of_gestations': admin.VERTICAL,
                     'amniotic_fluid_volume': admin.VERTICAL, }
