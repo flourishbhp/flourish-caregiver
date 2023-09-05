@@ -34,7 +34,8 @@ class AntenatalEnrollmentForm(
         super().clean()
 
     def validate_child_consent_exists(self):
-        child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+        child_consent_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverchildconsent')
 
         child_consents = child_consent_cls.objects.filter(
             subject_consent__subject_identifier=self.cleaned_data.get('subject_identifier'),

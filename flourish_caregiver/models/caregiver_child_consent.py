@@ -220,11 +220,13 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             pass
         else:
             return child_dataset_obj
-    @property   
+
+    @property
     def get_protocol(self):
         maternal_dataset_cls = django_apps.get_model(
             'flourish_caregiver.maternaldataset')
-        childdataset = self.get_child_dataset(study_child_identifier=self.study_child_identifier)
+        childdataset = self.get_child_dataset(
+            study_child_identifier=self.study_child_identifier)
         if childdataset:
             maternal_identifier = childdataset.study_maternal_identifier
             try:
@@ -271,7 +273,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                 return (self.child_dob and self.child_dob > self.consent_datetime.date()
                         or self.child_dob is None)
         else:
-            earliest_caregiver_child_consent = caregiver_child_consent_objs.order_by("consent_datetime").first()
+            earliest_caregiver_child_consent = caregiver_child_consent_objs.order_by(
+                "consent_datetime").first()
             return earliest_caregiver_child_consent.preg_enroll
 
         return False
@@ -342,7 +345,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     @property
     def child_dataset(self):
-        child_dataset_cls = django_apps.get_model('flourish_child.childdataset')
+        child_dataset_cls = django_apps.get_model(
+            'flourish_child.childdataset')
         try:
             child_dataset = child_dataset_cls.objects.get(
                 study_child_identifier=self.study_child_identifier)
@@ -358,7 +362,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
     @property
     def birth_order(self):
-        caregiver_child_consent_cls = django_apps.get_model(self._meta.label_lower)
+        caregiver_child_consent_cls = django_apps.get_model(
+            self._meta.label_lower)
         return caregiver_child_consent_cls.objects.filter(
             subject_consent__subject_identifier=self.subject_consent.subject_identifier).exclude(
                 identity=self.identity).count() + 1

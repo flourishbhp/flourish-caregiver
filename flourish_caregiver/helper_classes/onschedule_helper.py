@@ -47,7 +47,8 @@ class OnScheduleHelper(object):
 
         caregiver_visit_count = cohort_list[1][-1:]
 
-        onschedule_model = django_apps.get_model(instance.schedule.onschedule_model)
+        onschedule_model = django_apps.get_model(
+            instance.schedule.onschedule_model)
 
         child_subject_identifier = None
 
@@ -64,7 +65,7 @@ class OnScheduleHelper(object):
                              instance=instance,
                              child_subject_identifier=child_subject_identifier,
                              base_appt_datetime=base_appt_datetime or instance.report_datetime.replace(
-                                microsecond=0),
+                                 microsecond=0),
                              caregiver_visit_count=caregiver_visit_count)
 
     def put_on_schedule(self, cohort, instance=None, child_subject_identifier=None,
@@ -117,7 +118,8 @@ class OnScheduleHelper(object):
         cohort_label_lower = ''.join(cohort.split('_'))
 
         if 'enrol' in cohort:
-            cohort_label_lower = cohort_label_lower.replace('enrol', 'enrollment')
+            cohort_label_lower = cohort_label_lower.replace(
+                'enrol', 'enrollment')
 
         onschedule_model = 'flourish_caregiver.onschedule' + cohort_label_lower
 

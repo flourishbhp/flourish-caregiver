@@ -37,16 +37,16 @@ class SocioDemographicDataForm(SubjectModelFormMixin, forms.ModelForm):
             self.validate_med_history_changed(socio_demo_changed)
             if socio_demo_changed == YES and not has_changed:
                 message = {'socio_demo_changed':
-                               'Participant\'s Socio-demographic information has '
-                               'changed since '
-                               'last visit. Please update the information on this form.'}
+                           'Participant\'s Socio-demographic information has '
+                           'changed since '
+                           'last visit. Please update the information on this form.'}
                 raise forms.ValidationError(message)
             elif socio_demo_changed == NO and has_changed:
                 message = {'socio_demo_changed':
-                               'Participant\'s Socio-demographic information has not '
-                               'changed '
-                               'since last visit. Please don\'t make any changes to '
-                               'this form.'}
+                           'Participant\'s Socio-demographic information has not '
+                           'changed '
+                           'since last visit. Please don\'t make any changes to '
+                           'this form.'}
                 raise forms.ValidationError(message)
         cleaned_data = super().clean()
         return cleaned_data

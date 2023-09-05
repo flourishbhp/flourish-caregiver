@@ -48,7 +48,7 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             label=('Since the last scheduled visit in {previous}, has any of '
                    'your medical history changed?'),
             previous_appointment=True)
-        ]
+    ]
 
     schedule_names = ['a_quarterly1_schedule1', 'a_quarterly2_schedule1',
                       'a_quarterly3_schedule1', 'a_sec_quart1_schedule1',

@@ -27,6 +27,7 @@ from .modeladmin_mixins import VersionControlMixin
 
 
 
+
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
                       ModelAdminRevisionMixin, ModelAdminReplaceLabelTextMixin,
                       ModelAdminInstitutionMixin, ModelAdminReadOnlyMixin,
@@ -68,18 +69,16 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
 
         return super().change_view(
             request, object_id, form_url=form_url, extra_context=extra_context)
-        
-        
+
+
 class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
-                                  admin.StackedInline):
+                               admin.StackedInline):
     model = TbAdolChildConsent
     form = TbAdolChildConsentForm
 
     extra = 0
     max_num = 3
-    
-    
-    
+
     fieldsets = (
         (None, {
             'fields': (
@@ -90,27 +89,23 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
                 'adol_gender'
             ),
         }),)
-    
+
     radio_fields = {
         'adol_gender': admin.VERTICAL,
     }
-    
-        
-    
+
     def get_formset(self, request, obj, **kwargs):
-        formset = super().get_formset(request, obj, **kwargs)
-        
         initial = []
-  
+
         subject_identifier = request.GET.get('subject_identifier', None)
-        
-        if subject_identifier:        
+
+        if subject_identifier:
             children = CaregiverChildConsent.objects.filter(
                 subject_consent__subject_identifier=subject_identifier, )
             
             for child in children:
                 age = relativedelta(get_utcnow().date(), child.child_dob).years
-                
+
                 if 10 <= age <= 17:
                     initial.append({
                         'adol_firstname': child.first_name,
@@ -118,14 +113,14 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
                         'adol_gender': child.gender,
                         'adol_dob': child.child_dob,
                         'subject_identifier': child.subject_identifier})
-                    
-            self.extra = len(initial)
-            
-        formset = super(TbAdolChildConsentInline, self).get_formset(request, obj, **kwargs)
-        formset.__init__ = partialmethod(formset.__init__, initial=initial)
-        
-        return formset
 
+            self.extra = len(initial)
+
+        formset = super(TbAdolChildConsentInline, self).get_formset(
+            request, obj, **kwargs)
+        formset.__init__ = partialmethod(formset.__init__, initial=initial)
+
+        return formset
 
 
 @admin.register(TbAdolConsent, site=flourish_caregiver_admin)
@@ -133,7 +128,7 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                          SimpleHistoryAdmin, admin.ModelAdmin):
 
     form = TbAdolConsentForm
-    
+
     inlines = [TbAdolChildConsentInline,]
 
     fieldsets = (

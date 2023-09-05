@@ -11,7 +11,6 @@ from edc_constants.choices import YES_NO
 from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import date_not_before_study_start
 
-from ..helper_classes import EnrollmentHelper
 from .enrollment_mixin import EnrollmentMixin
 from .maternal_delivery import MaternalDelivery
 from .ultrasound import UltraSound
@@ -84,7 +83,8 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
                 # if child is already delivered stop changing GA
                 delivery_date = maternal_delivery.delivery_datetime
 
-                result = ultrasound.ga_confirmed + ((delivery_date - ultrasound.report_datetime).days / 7)
+                result = ultrasound.ga_confirmed + \
+                    ((delivery_date - ultrasound.report_datetime).days / 7)
 
         return round(result, 1)
 

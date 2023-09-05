@@ -28,8 +28,10 @@ class FlourishConsentVersionAdmin(ModelAdminMixin, ModelAdminNextUrlRedirectMixi
 
         if obj:
 
-            consent_model = django_apps.get_model('flourish_caregiver.subjectconsent')
-            preg_screening_cls = django_apps.get_model('flourish_caregiver.screeningpregwomen')
+            consent_model = django_apps.get_model(
+                'flourish_caregiver.subjectconsent')
+            preg_screening_cls = django_apps.get_model(
+                'flourish_caregiver.screeningpregwomen')
             maternal_dataset_cls = django_apps.get_model(
                 'flourish_caregiver.maternaldataset')
 
@@ -42,12 +44,14 @@ class FlourishConsentVersionAdmin(ModelAdminMixin, ModelAdminNextUrlRedirectMixi
 
             if request.GET.get('screening_identifier'):
                 consents = consent_model.objects.filter(
-                    screening_identifier=request.GET.get('screening_identifier'),
+                    screening_identifier=request.GET.get(
+                        'screening_identifier'),
                     version=obj.version)
 
                 if consents and request.GET.dict().get('next'):
 
-                    url_name = settings.DASHBOARD_URL_NAMES.get('subject_dashboard_url')
+                    url_name = settings.DASHBOARD_URL_NAMES.get(
+                        'subject_dashboard_url')
                     del options['screening_identifier']
                     options['subject_identifier'] = consents[0].subject_identifier
 
@@ -89,7 +93,7 @@ class FlourishConsentVersionAdmin(ModelAdminMixin, ModelAdminNextUrlRedirectMixi
                 'report_datetime',
                 'version',
                 'child_version'
-                ]}
+            ]}
          ), audit_fieldset_tuple)
 
     radio_fields = {'version': admin.VERTICAL,
@@ -100,7 +104,8 @@ class FlourishConsentVersionAdmin(ModelAdminMixin, ModelAdminNextUrlRedirectMixi
                     'version',
                     'child_version')
 
-    conditional_fieldlists = {'is_preg': Insert('child_version', after='version')}
+    conditional_fieldlists = {'is_preg': Insert(
+        'child_version', after='version')}
 
     def is_delivery_window(self, subject_identifier):
 

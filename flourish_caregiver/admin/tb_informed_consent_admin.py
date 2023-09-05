@@ -147,7 +147,7 @@ class TbInformedConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         return super().get_readonly_fields(request, obj=obj) + audit_fields
 
     def render_change_form(self, request, context, add=False, change=False, form_url='',
-            obj=None):
+                           obj=None):
         context.update({
             'show_save': True,
             'show_save_and_continue': False,

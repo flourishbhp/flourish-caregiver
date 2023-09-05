@@ -16,6 +16,6 @@ class EnrollmentAdmin(ModelAdminMixin, admin.ModelAdmin):
               'report_datetime',
               'pregnant',)
 
-    radio_fields = {'pregnant': admin.VERTICAL,}
+    radio_fields = {'pregnant': admin.VERTICAL, }
 
     list_display = ('subject_identifier', 'pregnant')
