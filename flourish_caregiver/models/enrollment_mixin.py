@@ -134,7 +134,7 @@ class EnrollmentMixin(models.Model):
         child_consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
 
         child_consents = child_consent_cls.objects.filter(
-            subject_identifier__startswith=self.subject_identifier,
+            subject_consent__subject_identifier=self.subject_identifier,
             preg_enroll=True).order_by('consent_datetime')
 
         if (child_consents and child_consents.values_list(

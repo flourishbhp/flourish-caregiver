@@ -5,8 +5,7 @@ from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 
-from .model_mixins import CrfModelMixin
-from .model_mixins.martenal_arv_table_mixin import MaternalArvTableMixin
+from .model_mixins import CrfModelMixin, MaternalArvTableMixin
 from ..choices import ARV_INTERRUPTION_REASON
 
 

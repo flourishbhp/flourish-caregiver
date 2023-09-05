@@ -1,13 +1,18 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
+from django.contrib.auth.models import Group, User
 from django.test import TestCase, tag
+from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
 from edc_facility.import_holidays import import_holidays
+from edc_visit_tracking.constants import SCHEDULED
 from model_mommy import mommy
 
+from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..models import MaternalDataset, ScreeningPriorBhpParticipants, SubjectConsent
 from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
 from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
+from ..models import OnScheduleCohortBFU, OnScheduleCohortCFU
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
@@ -15,6 +20,11 @@ from ..subject_helper_mixin import SubjectHelperMixin
 class TestSubjectHelperMixin(TestCase):
 
     def setUp(self):
+        app_config = django_apps.get_app_config('flourish_follow')
+        Group.objects.create(name=app_config.assignable_users_group)
+        Group.objects.create(name='Recruiters')
+        User.objects.create(username='flourish')
+
         import_holidays()
         self.subject_helper = SubjectHelperMixin()
 
@@ -86,8 +96,8 @@ class TestSubjectHelperMixin(TestCase):
 
     def test_enroll_prior_participant_cohort_b(self):
 
-        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=4,
-                                                                                months=5)
+        self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
+                                                                                months=1)
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -97,7 +107,7 @@ class TestSubjectHelperMixin(TestCase):
 
         child_dataset = mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=get_utcnow() - relativedelta(years=4, months=5),
+            dob=get_utcnow() - relativedelta(years=5, months=1),
             **self.child_dataset_options)
 
         subject_identifier = self.subject_helper.enroll_prior_participant(
@@ -108,15 +118,33 @@ class TestSubjectHelperMixin(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
+        # Subject enroled on quarterly schedule when enrolment visit completed.
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000M'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        # Subject enroled on FU schedule by user initiated action that will
+        # invoke the fu onschudule helper
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2001M'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+        helper_cls = FollowUpEnrolmentHelper(
+            subject_identifier=subject_identifier, cohort='b', )
+        helper_cls.activate_fu_schedule()
+
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_fu1_schedule1').count(), 1)
 
-    @tag('sh1')
     def test_enroll_prior_participant_assent_cohort_b(self):
 
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7,
@@ -142,11 +170,30 @@ class TestSubjectHelperMixin(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='b_enrol1_schedule1').count(), 1)
 
+        # Subject enroled on quarterly schedule when enrolment visit completed.
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000M'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
+        # Subject enroled on FU schedule by user initiated action that will
+        # invoke the fu onschudule helper
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2001M'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+        helper_cls = FollowUpEnrolmentHelper(
+            subject_identifier=subject_identifier, cohort='b', )
+        helper_cls.activate_fu_schedule()
+
+        self.assertEqual(OnScheduleCohortBFU.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='b_fu1_schedule1').count(), 1)
 
@@ -164,7 +211,7 @@ class TestSubjectHelperMixin(TestCase):
 
         child_dataset = mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=get_utcnow() - relativedelta(years=10, months=5),
+            dob=get_utcnow() - relativedelta(years=10, months=6),
             **self.child_dataset_options)
 
         subject_identifier = self.subject_helper.enroll_prior_participant_assent(
@@ -175,11 +222,30 @@ class TestSubjectHelperMixin(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='c_enrol1_schedule1').count(), 1)
 
+        # Subject enroled on quarterly schedule when enrolment visit completed.
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2000M'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
         self.assertEqual(OnScheduleCohortCQuarterly.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_quarterly1_schedule1').count(), 1)
 
-        self.assertEqual(OnScheduleCohortCEnrollment.objects.filter(
+        # Subject enroled on FU schedule by user initiated action that will
+        # invoke the fu onschudule helper
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(visit_code='2001M'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+        helper_cls = FollowUpEnrolmentHelper(
+            subject_identifier=subject_identifier, cohort='c', )
+        helper_cls.activate_fu_schedule()
+
+        self.assertEqual(OnScheduleCohortCFU.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name='c_fu1_schedule1').count(), 1)
 

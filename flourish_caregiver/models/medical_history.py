@@ -44,6 +44,12 @@ class MedicalHistory(CrfModelMixin):
         'not reported'
     )
 
+    who_other = OtherCharField(
+        max_length=35,
+        verbose_name='If other, specify.',
+        blank=True,
+        null=True)
+
     caregiver_medications = models.ManyToManyField(
         CaregiverMedications,
         verbose_name='Does the caregiver currently take any of the above '
