@@ -1,5 +1,6 @@
 from django.contrib import admin
-from edc_model_admin import audit_fieldset_tuple, StackedInlineMixin, ModelAdminFormAutoNumberMixin
+from edc_model_admin import (audit_fieldset_tuple, StackedInlineMixin,
+                             ModelAdminFormAutoNumberMixin)
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import TbRoutineHealthScreenV2Form, TbRoutineHealthEncountersForm

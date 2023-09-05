@@ -176,6 +176,12 @@ class TestCohortAssignmentSetup(TestCase):
             child_version='1')
 
         mommy.make_recipe(
+            'flourish_caregiver.flourishconsentversion',
+            screening_identifier=maternal_dataset_obj.screening_identifier,
+            version='1',
+            child_version='1')
+
+        mommy.make_recipe(
             'flourish_caregiver.screeningpriorbhpparticipants',
             screening_identifier=maternal_dataset_obj.screening_identifier,
             study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier)
