@@ -46,4 +46,4 @@ class CaregiverGadAnxietyScreeningMixin(models.Model):
     
     class Meta:
         abstract = True
-    
+        
