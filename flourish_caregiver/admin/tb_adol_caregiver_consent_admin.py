@@ -1,12 +1,15 @@
 from collections import OrderedDict
+from dateutil.relativedelta import relativedelta
 from functools import partialmethod
 
 from django.contrib import admin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
+from edc_base.utils import get_utcnow
 from edc_consent.actions import (flag_as_verified_against_paper,
                                  unflag_as_verified_against_paper)
+from edc_model_admin import StackedInlineMixin
 from edc_model_admin import (
     ModelAdminFormAutoNumberMixin, ModelAdminInstitutionMixin,
     audit_fieldset_tuple, audit_fields, ModelAdminNextUrlRedirectMixin,
@@ -20,9 +23,10 @@ from ..forms import TbAdolConsentForm, TbAdolChildConsentForm
 from ..models import TbAdolConsent, TbAdolChildConsent, CaregiverChildConsent
 from .exportaction_mixin import ExportActionMixin
 from .modeladmin_mixins import VersionControlMixin
-from edc_model_admin import StackedInlineMixin
-from dateutil.relativedelta import relativedelta
-from edc_base.utils import get_utcnow
+
+
+
+
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
                       ModelAdminRevisionMixin, ModelAdminReplaceLabelTextMixin,
@@ -65,18 +69,16 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
 
         return super().change_view(
             request, object_id, form_url=form_url, extra_context=extra_context)
-        
-        
+
+
 class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
-                                  admin.StackedInline):
+                               admin.StackedInline):
     model = TbAdolChildConsent
     form = TbAdolChildConsentForm
 
     extra = 0
     max_num = 3
-    
-    
-    
+
     fieldsets = (
         (None, {
             'fields': (
@@ -87,32 +89,23 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
                 'adol_gender'
             ),
         }),)
-    
+
     radio_fields = {
         'adol_gender': admin.VERTICAL,
     }
-    
-        
-    
+
     def get_formset(self, request, obj, **kwargs):
-        formset = super().get_formset(request, obj, **kwargs)
-        
-        
         initial = []
 
-        
         subject_identifier = request.GET.get('subject_identifier', None)
-        
+
         if subject_identifier:
-        
             children = CaregiverChildConsent.objects.filter(
-                subject_identifier__istartswith=subject_identifier,
-            )
+                subject_consent__subject_identifier=subject_identifier, )
             
             for child in children:
-                
                 age = relativedelta(get_utcnow().date(), child.child_dob).years
-                
+
                 if 10 <= age <= 17:
                     initial.append({
                         'adol_firstname': child.first_name,
@@ -120,14 +113,14 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
                         'adol_gender': child.gender,
                         'adol_dob': child.child_dob,
                         'subject_identifier': child.subject_identifier})
-                    
-            self.extra = len(initial)
-            
-        formset = super(TbAdolChildConsentInline, self).get_formset(request, obj, **kwargs)
-        formset.__init__ = partialmethod(formset.__init__, initial=initial)
-        
-        return formset
 
+            self.extra = len(initial)
+
+        formset = super(TbAdolChildConsentInline, self).get_formset(
+            request, obj, **kwargs)
+        formset.__init__ = partialmethod(formset.__init__, initial=initial)
+
+        return formset
 
 
 @admin.register(TbAdolConsent, site=flourish_caregiver_admin)
@@ -135,7 +128,7 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                          SimpleHistoryAdmin, admin.ModelAdmin):
 
     form = TbAdolConsentForm
-    
+
     inlines = [TbAdolChildConsentInline,]
 
     fieldsets = (

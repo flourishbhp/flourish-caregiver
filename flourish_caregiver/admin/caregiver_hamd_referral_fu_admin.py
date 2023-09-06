@@ -36,4 +36,3 @@ class CaregiverHamdReferralFUAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'additional_counseling': admin.VERTICAL, }
 
     filter_horizontal = ('emo_support_type', 'emo_health_improved')
-

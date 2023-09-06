@@ -25,4 +25,6 @@ class TbAdolEligibilityAdmin(ModelAdminMixin, admin.ModelAdmin):
     radio_fields = {
         'tb_adol_participation': admin.VERTICAL,
         'reasons_unwilling_part': admin.VERTICAL,
-         }
+    }
+
+    search_fields = ('subject_identifier',)

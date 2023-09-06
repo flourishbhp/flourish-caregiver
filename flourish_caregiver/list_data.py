@@ -57,6 +57,7 @@ list_data = {
         ('who_leishman', 'Atypical disseminated leishmaniasis'),
         ('who_cardiomy', 'Sympt nephropathy/cardiomyopathy'),
         ('who_na', 'Not Applicable'),
+        ('who_other', 'Other, specify'),
     ],
     'flourish_caregiver.caregivermedications': [
         ('mmed_na', 'Not Applicable'),
@@ -293,7 +294,8 @@ list_data = {
     ],
     'flourish_caregiver.arvinterruptionreasons': [
         ('toxicity_self', 'Toxicity, discontinued by self'),
-        ('toxicity_healthcare_provider', 'Toxicity, discontinued by healthcare provider'),
+        ('toxicity_healthcare_provider',
+         'Toxicity, discontinued by healthcare provider'),
         ('no_drugs', 'No drugs available'),
         ('no_refill', 'Didn\'t get to clinic for refill'),
         ('forgot', 'Participant forgot'),

@@ -4,7 +4,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from ..choices import INTERVIEW_LOCATIONS, INTERVIEW_LANGUAGE
-# from ..model_validators import validate_mp3_file_extension, validate_docx_file_extension
 from .model_mixins import CrfModelMixin
 
 

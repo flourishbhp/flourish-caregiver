@@ -124,7 +124,8 @@ class TestCaregiverBiologicalSwitch(TestCase):
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
-        self.switch_cls = CaregiverBiologicalSwitch(caregiver_sid=self.subject_identifier)
+        self.switch_cls = CaregiverBiologicalSwitch(
+            caregiver_sid=self.subject_identifier)
 
     def test_caregiver_child_pair_enrolled(self):
         self.assertEqual(SubjectConsent.objects.filter(
@@ -221,7 +222,8 @@ class TestCaregiverBiologicalSwitch(TestCase):
             subject_identifier=self.switch_cls.biological_mother_consent.subject_identifier).exists())
         self.assertEqual(self.subject_identifier.replace('C', 'B'),
                          self.switch_cls.biological_mother_consent.subject_identifier)
-        self.assertEqual(self.switch_cls.biological_mother_consent.caregiverchildconsent_set.count(), 0)
+        self.assertEqual(
+            self.switch_cls.biological_mother_consent.caregiverchildconsent_set.count(), 0)
         self.assertEqual(SubjectConsent.objects.get(
             subject_identifier=self.subject_identifier).caregiverchildconsent_set.count(), 1)
 

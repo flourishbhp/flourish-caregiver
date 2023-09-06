@@ -149,7 +149,6 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         blank=True,
         max_length=5
     )
-   
 
     history = HistoricalRecords()
 
@@ -200,7 +199,8 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
                 action_item_obj.save()
 
     def update_locator_subject_identifier(self):
-        locator_cls = django_apps.get_model('flourish_caregiver.caregiverlocator')
+        locator_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverlocator')
         try:
             locator_obj = locator_cls.objects.get(
                 screening_identifier=self.screening_identifier)

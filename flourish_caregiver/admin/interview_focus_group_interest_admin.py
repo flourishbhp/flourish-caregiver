@@ -17,43 +17,43 @@ class InterviewFocusGroupInterestAdmin(CrfModelAdminMixin, admin.ModelAdmin):
          "either be one-on-one with a study staff member or in a group with other study participants. We would like "
          "to understand whether you would be interested in participating in discussions, and if so, whether you would "
          "prefer a one-on-one or group discussion. ", {
-            "fields": (
-                'maternal_visit',
-                'report_datetime',
-                'discussion_pref',
-                'hiv_group_pref',
-            ), }
+             "fields": (
+                 'maternal_visit',
+                 'report_datetime',
+                 'discussion_pref',
+                 'hiv_group_pref',
+             ), }
          ),
 
         ("Some people feel more comfortable talking one-on-one rather than in a group about certain topics. "
          "Do while others may feel more comfortable talking in groups. "
          "We would like to understand your preference in participating in the following topic discussions",
          {
-            "fields": (
-                'infant_feeding',
-                'school_performance',
-                'adult_mental_health',
-                'child_mental_health',
-                'sexual_health',
-                'hiv_topics',
-                'food_insecurity',
-                'wellness',
-                'non_comm_diseases',
-                'social_issues',
-                'covid19',
-                'vaccines',
-                'infant_feeding_group_interest',
-                'same_status_comfort',
-                'diff_status_comfort',
-            ), }
+             "fields": (
+                 'infant_feeding',
+                 'school_performance',
+                 'adult_mental_health',
+                 'child_mental_health',
+                 'sexual_health',
+                 'hiv_topics',
+                 'food_insecurity',
+                 'wellness',
+                 'non_comm_diseases',
+                 'social_issues',
+                 'covid19',
+                 'vaccines',
+                 'infant_feeding_group_interest',
+                 'same_status_comfort',
+                 'diff_status_comfort',
+             ), }
          ),
 
         ("Additional Topics",
          {
-            "fields": (
-                'women_discussion_topics',
-                'adolescent_discussion_topics',
-            ), }
+             "fields": (
+                 'women_discussion_topics',
+                 'adolescent_discussion_topics',
+             ), }
          ), audit_fieldset_tuple
     )
 

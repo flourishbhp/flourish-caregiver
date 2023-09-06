@@ -42,8 +42,10 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
         except SubjectConsent.DoesNotExist:
             pass
         else:
-            self.fields['first_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
-            self.fields['last_name'].widget = forms.TextInput(attrs={'readonly': 'readonly'})
+            self.fields['first_name'].widget = forms.TextInput(
+                attrs={'readonly': 'readonly'})
+            self.fields['last_name'].widget = forms.TextInput(
+                attrs={'readonly': 'readonly'})
             self.initial['first_name'] = subject_consented.first_name
             self.initial['last_name'] = subject_consented.last_name
 
