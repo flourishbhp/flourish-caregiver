@@ -67,4 +67,5 @@ class CaregiverEdinburghDeprScreeningMixin(models.Model):
     
 
     class Meta:
-        abstract =True 
+        abstract =True
+    
