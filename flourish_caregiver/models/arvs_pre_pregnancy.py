@@ -42,7 +42,7 @@ class ArvsPrePregnancy(CrfModelMixin):
 
     preg_on_art = models.CharField(
         max_length=25,
-        choices=YES_NO_NA,
+        choices=YES_NO,
         verbose_name=("Was she still on triple antiretrovirals at the "
                       "time she became pregnant"
                       " for this pregnancy? "))
