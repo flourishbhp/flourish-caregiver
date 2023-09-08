@@ -16,26 +16,28 @@ class ArvsPrePregnancy(CrfModelMixin):
 
     prev_preg_azt = models.CharField(
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         verbose_name="Did she ever receive AZT monotherapy in a "
         "previous pregnancy?  ")
 
     prev_sdnvp_labour = models.CharField(
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         verbose_name="Did she ever receive single-dose NVP in labour "
         "during a previous pregnancy?")
 
     prev_preg_art = models.CharField(
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         verbose_name=("Did she ever receive triple antiretrovirals during a "
                       "prior pregnancy?"))
 
     art_start_date = models.DateField(
         validators=[
             date_not_future, ],
-        verbose_name="Date of triple antiretrovirals first started")
+        verbose_name="Date of triple antiretrovirals first started",
+        null=True,
+        blank=True)
 
     is_date_estimated = IsDateEstimatedFieldNa(
         verbose_name=("Is the subject's date of triple antiretrovirals estimated?"))
