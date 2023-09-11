@@ -3,7 +3,7 @@ from edc_constants.constants import (CONTINUOUS, RESTARTED, OTHER, STOPPED,
                                      NOT_APPLICABLE, NEW, NEG, POS, IND, PENDING)
 
 from .constants import (LIVE, STILL_BIRTH, MISSED, NO_SAMPLE_COLLECTED,
-                        NO_SAMPLE_TUBES, MACHINE_NOT_WORKING, FORGOT)
+                        NO_SAMPLE_TUBES, MACHINE_NOT_WORKING, FORGOT, NEVER_RECEIVED_ART)
 
 LIVE_STILL_BIRTH = (
     (LIVE, 'live birth'),
@@ -67,6 +67,7 @@ PRIOR_PREG_ART_STATUS = (
     (STOPPED,
      'Had treatment interruption and never restarted ART '
      'prior to this pregnancy'),
+    (NEVER_RECEIVED_ART, 'Never received ART prior pregnancy'),
     (NOT_APPLICABLE, 'Not Applicable'),
 )
 

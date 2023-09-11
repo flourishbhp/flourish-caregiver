@@ -16,6 +16,7 @@ class ObstericalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'maternal_visit',
                 'report_datetime',
                 'prev_pregnancies',
+                'pregs_lt_24wks',
                 'pregs_24wks_or_more',
                 'lost_before_24wks',
                 'lost_after_24wks',
@@ -28,6 +29,7 @@ class ObstericalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     list_display = ('maternal_visit',
                     'prev_pregnancies',
+                    'pregs_lt_24wks',
                     'pregs_24wks_or_more',
                     'lost_before_24wks',
                     'lost_after_24wks',
