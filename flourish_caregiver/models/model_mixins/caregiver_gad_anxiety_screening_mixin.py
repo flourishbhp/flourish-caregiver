@@ -3,7 +3,6 @@ from django.db import models
 from ...choices import DEPRESSION_SCALE
 
 
-
 class CaregiverGadAnxietyScreeningMixin(models.Model):
     feeling_anxious = models.CharField(
         verbose_name='Feeling nervous, anxious, or on edge',
@@ -43,7 +42,6 @@ class CaregiverGadAnxietyScreeningMixin(models.Model):
         verbose_name='Anxiety score',
         null=True,
         blank=True)
-    
+
     class Meta:
         abstract = True
-        

@@ -1,10 +1,7 @@
 from django.db import models
 from ...choices import (ABLE_TO_LAUGH, ANXIOUS, CRYING, ENJOYMENT_TO_THINGS,
-                       HARM, MISERABLE_FEELING, PANICK, SELF_BLAME,
-                       SLEEPING_DIFFICULTY, TOP)
-
-
-
+                        HARM, MISERABLE_FEELING, PANICK, SELF_BLAME,
+                        SLEEPING_DIFFICULTY, TOP)
 
 
 class CaregiverEdinburghDeprScreeningMixin(models.Model):
@@ -64,8 +61,6 @@ class CaregiverEdinburghDeprScreeningMixin(models.Model):
         verbose_name='Depression score',
         null=True,
         blank=True)
-    
 
     class Meta:
-        abstract =True
-    
+        abstract = True

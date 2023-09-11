@@ -2,7 +2,6 @@ from ...choices import DEPRESSION_SCALE
 from django.db import models
 
 
-
 class CaregiverPhqDeprScreeningMixin(models.Model):
     activity_interest = models.CharField(
         verbose_name='Little interest or pleasure in doing things',
@@ -58,7 +57,6 @@ class CaregiverPhqDeprScreeningMixin(models.Model):
         verbose_name='Depression score',
         null=True,
         blank=True)
-    
+
     class Meta:
         abstract = True
-        
