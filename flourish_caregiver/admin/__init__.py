@@ -27,6 +27,7 @@ from .caregiver_previously_enrolled_admin import CaregiverPreviouslyEnrolledAdmi
 from .caregiver_requisition_admin import CaregiverRequisitionAdmin
 from .caregiver_social_work_referral_admin import CaregiverSocialWorkReferralAdmin
 from .caregiver_requisition_result_admin import CaregiverRequisitionResultAdmin
+from .cohort_admin import CohortAdmin
 from .covid_19_admin import Covid19Admin
 from .enrollment_admin import EnrollmentAdmin
 from .flourish_consent_version_admin import FlourishConsentVersionAdmin

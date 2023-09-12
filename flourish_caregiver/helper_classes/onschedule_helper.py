@@ -79,35 +79,48 @@ class OnScheduleHelper(object):
                 instance=instance)
 
             assent_onschedule_datetime = self.get_assent_onschedule_datetime
-            onschedule_datetime = (self.onschedule_datetime
-                                   or assent_onschedule_datetime
-                                   or instance.created.replace(microsecond=0))
+            self.add_on_schedule(
+                schedule=schedule, subject_identifier=subject_identifier, instance=instance,
+                schedule_name=schedule_name, base_appt_datetime=base_appt_datetime,
+                child_subject_identifier=child_subject_identifier, onschedule_model_cls=onschedule_model_cls, 
+                assent_onschedule_datetime=assent_onschedule_datetime,
+                
+            )
 
-            if not schedule.is_onschedule(subject_identifier=instance.subject_identifier,
-                                          report_datetime=onschedule_datetime):
-                schedule.put_on_schedule(
-                    subject_identifier=subject_identifier,
-                    onschedule_datetime=onschedule_datetime,
-                    schedule_name=schedule_name,
-                    base_appt_datetime=base_appt_datetime)
+    def add_on_schedule(self, schedule=None, subject_identifier=None, instance=None,
+                        schedule_name=None, base_appt_datetime=None, child_subject_identifier=None,
+                        onschedule_model_cls=None, assent_onschedule_datetime=None):
+        """Add a mother on a quarterly schedule.
+        """
+        onschedule_datetime = (self.onschedule_datetime
+                               or assent_onschedule_datetime
+                               or instance.created.replace(microsecond=0))
 
+        if not schedule.is_onschedule(subject_identifier=instance.subject_identifier,
+                                      report_datetime=onschedule_datetime):
+            schedule.put_on_schedule(
+                subject_identifier=subject_identifier,
+                onschedule_datetime=onschedule_datetime,
+                schedule_name=schedule_name,
+                base_appt_datetime=base_appt_datetime)
+
+        try:
+            onschedule_model_cls.objects.get(
+                subject_identifier=subject_identifier,
+                schedule_name=schedule_name,
+                child_subject_identifier=child_subject_identifier)
+        except onschedule_model_cls.DoesNotExist:
             try:
-                onschedule_model_cls.objects.get(
+                onschedule_obj = schedule.onschedule_model_cls.objects.get(
                     subject_identifier=subject_identifier,
                     schedule_name=schedule_name,
-                    child_subject_identifier=child_subject_identifier)
-            except onschedule_model_cls.DoesNotExist:
-                try:
-                    onschedule_obj = schedule.onschedule_model_cls.objects.get(
-                        subject_identifier=subject_identifier,
-                        schedule_name=schedule_name,
-                        child_subject_identifier='')
-                except schedule.onschedule_model_cls.DoesNotExist:
-                    pass
-                else:
-                    onschedule_obj.child_subject_identifier = (child_subject_identifier
-                                                               or instance.subject_identifier)
-                    onschedule_obj.save()
+                    child_subject_identifier='')
+            except schedule.onschedule_model_cls.DoesNotExist:
+                pass
+            else:
+                onschedule_obj.child_subject_identifier = (child_subject_identifier
+                                                            or instance.subject_identifier)
+                onschedule_obj.save()
 
     def get_onschedule_model(self, cohort, caregiver_visit_count=None, instance=None):
         """ Retrieve the onschedule model, class and schedule name to enroll subject on.
