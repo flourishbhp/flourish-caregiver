@@ -182,8 +182,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
             self.version = self.child_consent_version or '3'
 
-            if self.preg_enroll:
-                self.duplicate_subject_identifier_preg()
+            # if self.preg_enroll:
+                # self.duplicate_subject_identifier_preg()
 
             if not self.subject_identifier:
                 self.subject_identifier = InfantIdentifier(
@@ -331,9 +331,9 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                     child_identifier_postfix = 10
         else:
             children_count = len(set(caregiver_child_consent_cls.objects.filter(
-                    subject_consent__subject_identifier=self.subject_consent.subject_identifier).exclude(
-                        child_dob=self.child_dob,
-                        first_name=self.first_name).values_list('subject_identifier', flat=True)))
+                subject_consent__subject_identifier=self.subject_consent.subject_identifier).exclude(
+                    child_dob=self.child_dob,
+                    first_name=self.first_name).values_list('subject_identifier', flat=True)))
 
             if children_count:
                 child_identifier_postfix = str((children_count + 5) * 10)

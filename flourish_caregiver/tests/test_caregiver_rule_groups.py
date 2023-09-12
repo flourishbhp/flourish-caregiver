@@ -1315,7 +1315,7 @@ class TestRuleGroups(TestCase):
             consent_datetime=get_utcnow(),
             child_dob=None,
             first_name=None,
-            last_name=None,)
+            last_name=None,)     
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
@@ -1333,7 +1333,6 @@ class TestRuleGroups(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name=schedule_name,
             onschedule_datetime=get_utcnow()
-
         )
 
         maternal_visit = mommy.make_recipe(

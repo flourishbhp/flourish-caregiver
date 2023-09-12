@@ -11,9 +11,15 @@ class ObstericalHistory(CrfModelMixin):
     """
 
     prev_pregnancies = models.IntegerField(
-        verbose_name=('Including the pregnancy of the child in the FLOURISH '
-                      'study, how many previous pregnancies for this participant?'),
+        verbose_name=('How many pregnancies has the participant had (if '
+                      'participant is currently pregnant, please include '
+                      'in the count of pregnancies)?'),
         validators=[MinValueValidator(1), MaxValueValidator(20), ],
+    )
+
+    pregs_lt_24wks = models.IntegerField(
+        verbose_name='Number of pregnancies less than 24 weeks?',
+        validators=[MinValueValidator(0), MaxValueValidator(20), ],
     )
 
     pregs_24wks_or_more = models.IntegerField(
