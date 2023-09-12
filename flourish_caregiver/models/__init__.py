@@ -99,7 +99,6 @@ from .caregiver_requisition_result import CaregiverResultValue
 from .cohort_schedules import CohortSchedules
 from .interview_focus_group_interest import InterviewFocusGroupInterest
 from .interview_focus_group_interest_version_2 import InterviewFocusGroupInterestV2
-from .list_models import *
 from .maternal_arv_adherence import MaternalArvAdherence
 from .maternal_interim_idcc_data_version_2 import MaternalInterimIdccVersion2
 from .socio_demographic_data import HouseHoldDetails
