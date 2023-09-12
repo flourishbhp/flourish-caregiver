@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 
 import PIL
-from PIL import Image
 import pyminizip
 import pypdfium2 as pdfium
 from django import forms
@@ -22,6 +21,7 @@ from edc_constants.constants import YES
 from edc_data_manager.models import DataActionItem
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
+
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from .antenatal_enrollment import AntenatalEnrollment
@@ -29,6 +29,7 @@ from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
 from .caregiver_locator import CaregiverLocator
 from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
+from .cohort import Cohort
 from .locator_logs import LocatorLog, LocatorLogEntry
 from .maternal_dataset import MaternalDataset
 from .maternal_delivery import MaternalDelivery
@@ -41,15 +42,15 @@ from .ultrasound import UltraSound
 from ..action_items import TB_OFF_STUDY_ACTION
 from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
-from ..helper_classes.cohort import Cohort
 from ..helper_classes.consent_helper import consent_helper
 from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
+from ..helper_classes.utils import cohort_assigned
 from ..helper_classes.onschedule_helper import OnScheduleHelper
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
+from ..models.tb_off_study import TbOffStudy  # was supposed to be in the prns
 from ..models.tb_visit_screening_women import TbVisitScreeningWomen
-from ..models.tb_off_study import TbOffStudy
 
 
 class PreFlourishError(Exception):
@@ -126,17 +127,15 @@ def update_maternal_dataset_and_worklist(subject_identifier,
 @receiver(post_save, weak=False, sender=SubjectConsent,
           dispatch_uid='subject_consent_on_post_save')
 def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
-    """
-    - Create locator log entry
+    """ Update subject identifier after consent.
     """
     if not raw:
         update_maternal_dataset_and_worklist(
             instance.subject_identifier,
             screening_identifier=instance.screening_identifier)
 
-        """
-        - Update subject identifier on the screening obj when created
-        """
+        # Update subject identifier on the screening obj when created
+
         screening_obj = None
         try:
             screening_obj = ScreeningPregWomen.objects.get(
@@ -370,8 +369,12 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
 
-        if not instance.cohort:
-
+        # Check if the participant has been put into an enrolment cohort
+        try:
+            Cohort.objects.get(
+                subject_identifier=instance.subject_identifier,
+                enrollment_cohort=True)
+        except Cohort.DoesNotExist:
             cohort = cohort_assigned(instance.study_child_identifier,
                                      instance.child_dob,
                                      instance.subject_consent.created.date())
@@ -393,8 +396,13 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         version=instance.version,
                         relative_identifier=instance.subject_consent.subject_identifier,
                         cohort=cohort)
+            # Put participant into a cohort
+            cohort_obj = Cohort.objects.create(
+                subject_identifier=instance.subject_identifier,
+                name=cohort,
+                enrollment_cohort=True)
 
-            instance.cohort = cohort
+            instance.cohort = cohort_obj.name
             instance.save_base(raw=True)
 
         else:
@@ -592,7 +600,7 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
                     onschedule_model=onschedule_model_obj._meta.label_lower,
                     name=instance.schedule_name)
                 if schedule.is_onschedule(
-                    subject_identifier=instance.subject_identifier,
+                        subject_identifier=instance.subject_identifier,
                         report_datetime=get_utcnow()):
                     schedule.take_off_schedule(
                         subject_identifier=instance.subject_identifier,
@@ -761,41 +769,6 @@ def screening_preg_exists(child_consent_obj):
         return False
     else:
         return True
-
-
-def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
-    """Calculates participant's cohort based on the maternal and child dataset
-    """
-    infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
-
-    try:
-        infant_dataset_obj = infant_dataset_cls.objects.get(
-            study_child_identifier=study_child_identifier,
-            dob=child_dob)
-    except infant_dataset_cls.DoesNotExist:
-        pass
-    except infant_dataset_cls.MultipleObjectsReturned:
-        infant_dataset_obj = infant_dataset_cls.objects.filter(
-            study_child_identifier=study_child_identifier,
-            dob=child_dob)[0]
-    else:
-        try:
-            maternal_dataset_obj = MaternalDataset.objects.get(
-                study_maternal_identifier=infant_dataset_obj.study_maternal_identifier)
-        except MaternalDataset.DoesNotExist:
-            return None
-        else:
-            if infant_dataset_obj:
-                cohort = Cohort(
-                    child_dob=child_dob,
-                    enrollment_date=enrollment_date,
-                    infant_hiv_exposed=infant_dataset_obj.infant_hiv_exposed,
-                    protocol=maternal_dataset_obj.protocol,
-                    mum_hiv_status=maternal_dataset_obj.mom_hivstatus,
-                    dtg=maternal_dataset_obj.preg_dtg,
-                    efv=maternal_dataset_obj.preg_efv,
-                    pi=maternal_dataset_obj.preg_pi).cohort_variable
-                return cohort
 
 
 def onschedule_helper_cls(

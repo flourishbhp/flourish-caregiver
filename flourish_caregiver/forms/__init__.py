@@ -29,6 +29,7 @@ from .caregiver_requisition_form import CaregiverRequisitionForm
 from .caregiver_requisition_result_form import CaregiverRequisitionResultForm
 from .caregiver_social_work_referral_form import CaregiverSocialWorkReferralForm
 from .covid_19_form import Covid19Form
+from .cohort_form import CohortForm
 from .enrollment_form import EnrollmentForm
 from .flourish_consent_version_form import FlourishConsentVersionForm
 from .food_security_questionnaire_form import FoodSecurityQuestionnaireForm

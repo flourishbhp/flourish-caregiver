@@ -101,7 +101,7 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
                 timepoint_datetime__lt=appointment.timepoint_datetime,
                 visit_code_sequence=0).latest('timepoint_datetime')
         except appointment.__class__.DoesNotExist:
-            return None
+            return appointment.previous_by_timepoint
         else:
             return appointment
 

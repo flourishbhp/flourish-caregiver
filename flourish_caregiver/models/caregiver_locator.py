@@ -172,7 +172,6 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         return action_item
 
     def save(self, *args, **kwargs):
-
         if not self.subject_identifier and not self.action_identifier:
             action_item_cls = ActionItemGetter.action_item_model_cls()
             action_item_obj = action_item_cls.objects.create(
