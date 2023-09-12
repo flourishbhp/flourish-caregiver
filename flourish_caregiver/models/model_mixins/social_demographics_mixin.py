@@ -122,8 +122,7 @@ class HouseHoldDetailsMixin(models.Model):
 
     child_identifier = models.CharField(
         verbose_name='Child Identifier',
-        max_length=50,
-        unique=True)
+        max_length=50)
 
     stay_with_child = models.CharField(
         verbose_name=(
