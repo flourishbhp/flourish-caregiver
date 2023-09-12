@@ -162,9 +162,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         editable=False)
 
     def save(self, *args, **kwargs):
-        if self.subject_identifier and not self.cohort:
-            self.cohort = self.assign_enrol_instance_cohort
-
         self.preg_enroll = self.is_preg
 
         eligibility_criteria = CaregiverChildConsentEligibility(
