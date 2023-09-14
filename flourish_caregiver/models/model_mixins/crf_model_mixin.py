@@ -10,6 +10,7 @@ from edc_visit_schedule.model_mixins import SubjectScheduleCrfModelMixin
 from edc_visit_tracking.model_mixins import CrfModelMixin as BaseCrfModelMixin
 from edc_visit_tracking.model_mixins import PreviousVisitModelMixin
 
+from ...visit_sequence import VisitSequence
 from ..maternal_visit import MaternalVisit
 from .consent_version_model_mixin import ConsentVersionModelModelMixin
 
@@ -25,6 +26,7 @@ class CrfModelMixin(BaseCrfModelMixin, ConsentVersionModelModelMixin,
     offschedule_compare_dates_as_datetimes = True
     maternal_visit = models.OneToOneField(MaternalVisit, on_delete=PROTECT)
     crf_date_validator_cls = None
+    visit_sequence_cls = VisitSequence
 
     @property
     def subject_identifier(self):
