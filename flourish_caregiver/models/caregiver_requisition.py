@@ -20,6 +20,7 @@ from edc_visit_tracking.managers import CrfModelManager as VisitTrackingCrfModel
 from edc_visit_tracking.model_mixins import CrfModelMixin as VisitTrackingCrfModelMixin
 from edc_visit_tracking.model_mixins import PreviousVisitModelMixin
 
+from ..visit_sequence import VisitSequence
 from ..choices import STUDY_SITES, REASON_NOT_DRAWN
 from .maternal_visit import MaternalVisit
 from .model_mixins import SearchSlugModelMixin, ConsentVersionModelModelMixin
@@ -40,6 +41,7 @@ class CaregiverRequisition(
         BaseUuidModel):
 
     lab_profile_name = 'flourish_caregiver'
+    visit_sequence_cls = VisitSequence
 
     maternal_visit = models.ForeignKey(MaternalVisit, on_delete=PROTECT)
 
