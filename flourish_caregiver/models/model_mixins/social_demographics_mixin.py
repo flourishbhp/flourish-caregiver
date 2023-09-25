@@ -63,7 +63,9 @@ class SocioDemographicDataMixin(models.Model):
     money_earned = models.CharField(
         max_length=50,
         verbose_name="How much money do you personally earn? ",
-        choices=MONEY_EARNED)
+        choices=MONEY_EARNED,
+        blank=True,
+    )
 
     money_earned_other = OtherCharField(
         max_length=35,
@@ -98,7 +100,6 @@ class SocioDemographicDataMixin(models.Model):
         null=True,
         choices=YES_NO)
 
-
     expense_contributors_other = OtherCharField(
         max_length=35,
         verbose_name="if other specify...",
@@ -113,7 +114,7 @@ class SocioDemographicDataMixin(models.Model):
         null=True)
 
     class Meta:
-        abstract =True 
+        abstract = True
 
 
 class HouseHoldDetailsMixin(models.Model):
@@ -130,8 +131,6 @@ class HouseHoldDetailsMixin(models.Model):
             'who is also participating in the FLOURISH study?'),
         max_length=3,
         choices=YES_NO_NA)
-    
 
     class Meta:
-        abstract =True
-    
+        abstract = True
