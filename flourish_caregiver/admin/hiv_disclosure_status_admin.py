@@ -22,11 +22,20 @@ class HIVDisclosureStatusAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
                 'plan_to_disclose',
                 'reason_not_disclosed',
                 'reason_not_disclosed_other',
+                'disclosure_age',
+                'who_disclosed',
+                'who_disclosed_other',
+                'disclosure_difficulty',
+                'child_reaction',
+                'child_reaction_other',
             ]}
          ), audit_fieldset_tuple)
 
     radio_fields = {'disclosed_status': admin.VERTICAL,
                     'reason_not_disclosed': admin.VERTICAL,
+                    'who_disclosed': admin.VERTICAL,
+                    'disclosure_difficulty': admin.VERTICAL,
+                    'child_reaction': admin.VERTICAL,
                     'plan_to_disclose': admin.VERTICAL}
 
     def child_gt10(self, request):
