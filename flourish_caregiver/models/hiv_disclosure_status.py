@@ -1,14 +1,14 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
-from edc_constants.choices import YES_NO
 from edc_base.model_fields import OtherCharField
-from .model_mixins import CrfModelMixin
+from edc_constants.choices import YES_NO
 
-from ..choices import REASONS_NOT_DISCLOSED
+from .model_mixins import CrfModelMixin
+from ..choices import DIFFICULTY_CHOICES, REACTION_CHOICES, REASONS_NOT_DISCLOSED, \
+    WHODISCLOSED_CHOICES
 
 
 class HIVDisclosureStatusMixin(CrfModelMixin):
-
     associated_child_identifier = models.CharField(
         max_length=25)
 
@@ -35,12 +35,46 @@ class HIVDisclosureStatusMixin(CrfModelMixin):
 
     reason_not_disclosed_other = OtherCharField()
 
+    # Version 2 changes
+
+    disclosure_age = models.PositiveIntegerField(
+        verbose_name='At what age did you disclose your HIV status to your child?',
+        blank=True,
+        null=True,
+        validators=[MinValueValidator(0), MaxValueValidator(18)]
+    )
+
+    who_disclosed = models.CharField(
+        verbose_name="Who disclosed this information to your child",
+        max_length=20,
+        blank=True,
+        null=True,
+        choices=WHODISCLOSED_CHOICES)
+
+    who_disclosed_other = OtherCharField()
+
+    disclosure_difficulty = models.CharField(
+        verbose_name="How easy or difficult was it to disclose your HIV status to your "
+                     "child?",
+        max_length=20,
+        blank=True,
+        null=True,
+        choices=DIFFICULTY_CHOICES)
+
+    child_reaction = models.TextField(
+        verbose_name='What was the reaction of the child after disclosure? (select all '
+                     'that apply)',
+        blank=True,
+        null=True,
+        choices=REACTION_CHOICES)
+
+    child_reaction_other = OtherCharField()
+
     class Meta(CrfModelMixin.Meta):
         abstract = True
 
 
 class HIVDisclosureStatusA(HIVDisclosureStatusMixin):
-
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
         verbose_name = 'HIV Disclosure status A'
@@ -48,7 +82,6 @@ class HIVDisclosureStatusA(HIVDisclosureStatusMixin):
 
 
 class HIVDisclosureStatusB(HIVDisclosureStatusMixin):
-
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
         verbose_name = 'HIV Disclosure statusB'
@@ -56,7 +89,6 @@ class HIVDisclosureStatusB(HIVDisclosureStatusMixin):
 
 
 class HIVDisclosureStatusC(HIVDisclosureStatusMixin):
-
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
         verbose_name = 'HIV Disclosure statusC'
