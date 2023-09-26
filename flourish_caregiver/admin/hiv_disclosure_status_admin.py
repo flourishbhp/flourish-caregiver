@@ -39,24 +39,24 @@ class HIVDisclosureStatusAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
                     'plan_to_disclose': admin.VERTICAL}
 
     def child_gt10(self, request):
-
-        visit_obj = self.visit_model.objects.get(
-            id=request.GET.get('maternal_visit'))
-
-        if visit_obj:
-
-            onschedule_model = django_apps.get_model(
-                visit_obj.appointment.schedule.onschedule_model)
-
-            try:
-                onschedule_obj = onschedule_model.objects.get(
-                    subject_identifier=visit_obj.appointment.subject_identifier,
-                    schedule_name=visit_obj.appointment.schedule_name)
-            except onschedule_model.DoesNotExist:
-                pass
-            else:
-                if 'antenatal' not in onschedule_obj.schedule_name:
-                    return onschedule_obj.child_subject_identifier
+        try:
+            visit_obj = self.visit_model.objects.get(
+                id=request.GET.get('maternal_visit'))
+        except self.visit_model.DoesNotExist:
+            pass
+        else:
+            if visit_obj:
+                onschedule_model = django_apps.get_model(
+                    visit_obj.appointment.schedule.onschedule_model)
+                try:
+                    onschedule_obj = onschedule_model.objects.get(
+                        subject_identifier=visit_obj.appointment.subject_identifier,
+                        schedule_name=visit_obj.appointment.schedule_name)
+                except onschedule_model.DoesNotExist:
+                    pass
+                else:
+                    if 'antenatal' not in onschedule_obj.schedule_name:
+                        return onschedule_obj.child_subject_identifier
 
 
 @admin.register(HIVDisclosureStatusA, site=flourish_caregiver_admin)
