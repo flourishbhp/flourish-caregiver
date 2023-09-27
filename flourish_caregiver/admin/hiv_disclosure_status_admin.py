@@ -22,23 +22,31 @@ class HIVDisclosureStatusAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
                 'plan_to_disclose',
                 'reason_not_disclosed',
                 'reason_not_disclosed_other',
+                'disclosure_age',
+                'who_disclosed',
+                'who_disclosed_other',
+                'disclosure_difficulty',
+                'child_reaction',
+                'child_reaction_other',
             ]}
          ), audit_fieldset_tuple)
 
     radio_fields = {'disclosed_status': admin.VERTICAL,
                     'reason_not_disclosed': admin.VERTICAL,
+                    'who_disclosed': admin.VERTICAL,
+                    'disclosure_difficulty': admin.VERTICAL,
+                    'child_reaction': admin.VERTICAL,
                     'plan_to_disclose': admin.VERTICAL}
 
     def child_gt10(self, request):
-
-        visit_obj = self.visit_model.objects.get(
-            id=request.GET.get('maternal_visit'))
-
-        if visit_obj:
-
+        try:
+            visit_obj = self.visit_model.objects.get(
+                id=request.GET.get('maternal_visit'))
+        except self.visit_model.DoesNotExist:
+            pass
+        else:
             onschedule_model = django_apps.get_model(
                 visit_obj.appointment.schedule.onschedule_model)
-
             try:
                 onschedule_obj = onschedule_model.objects.get(
                     subject_identifier=visit_obj.appointment.subject_identifier,

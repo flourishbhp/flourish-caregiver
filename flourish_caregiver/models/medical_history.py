@@ -2,6 +2,7 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO, YES_NO_NA
 
+from ..choices import CLINIC_VISIT_CHOICES, SYMPTOMS_CHOICES
 from ..maternal_choices import KNOW_HIV_STATUS
 from .list_models import ChronicConditions, CaregiverMedications, WcsDxAdult
 from .model_mixins import CrfModelMixin
@@ -80,6 +81,43 @@ class MedicalHistory(CrfModelMixin):
         max_length=3,
         choices=YES_NO,
         null=True)
+
+    # Version 2 changes
+
+    current_illness = models.CharField(
+        verbose_name="Do you have any current illness?",
+        max_length=10,
+        choices=YES_NO
+    )
+
+    current_symptoms = models.CharField(
+        verbose_name="What are your current symptoms",
+        max_length=30,
+        blank=True,
+        null=True,
+        choices=SYMPTOMS_CHOICES
+    )
+
+    current_symptoms_other = OtherCharField(
+        max_length=35,
+        verbose_name='If other, specify.',
+        blank=True,
+        null=True)
+
+    symptoms_start_date = models.DateField(
+        verbose_name="When did the symptoms start.",
+        null=True,
+        blank=True
+    )
+
+    clinic_visit = models.CharField(
+        verbose_name="Have you been seen at a local clinic or have you been seen for "
+                     "consultation at a local clinic because of this illness?",
+        max_length=20,
+        choices=CLINIC_VISIT_CHOICES,
+        blank=True,
+        null=True
+    )
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
