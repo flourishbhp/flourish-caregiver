@@ -1152,3 +1152,22 @@ REACTION_CHOICES = (
     ("prefer_not_to_answer", "Prefer not to answer"),
     (OTHER, "Other (please specify:"),
 )
+
+SYMPTOMS_CHOICES = (
+    ("cough", "Cough"),
+    ("fever", "Fever"),
+    ("headache", "Headache"),
+    ("vomiting", "Vomiting"),
+    ("diarrhea", "Diarrhea"),
+    ("fatigue", "Fatigue"),
+    ("congestion", "Congestion"),
+    ("enlarged_lymph_nodes", "Enlarged Lymph nodes"),
+    (OTHER, "Other (please specify:")
+)
+
+CLINIC_VISIT_CHOICES = (
+    ("yes", "Yes"),
+    ("no", "No"),
+    ("scheduled", "Appointment Scheduled"),
+    ("will_care", "Will seek care")
+)

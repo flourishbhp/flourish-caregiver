@@ -31,6 +31,11 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'caregiver_medications',
                 'caregiver_medications_other',
                 'know_hiv_status',
+                'current_illness',
+                'current_symptoms',
+                'current_symptoms_other',
+                'symptoms_start_date',
+                'clinic_visit',
                 'comment']}
          ), audit_fieldset_tuple)
 
