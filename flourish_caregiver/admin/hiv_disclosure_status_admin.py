@@ -45,7 +45,7 @@ class HIVDisclosureStatusAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
         except self.visit_model.DoesNotExist:
             pass
         else:
-            if visit_obj:
+            if visit_obj.appointment:
                 onschedule_model = django_apps.get_model(
                     visit_obj.appointment.schedule.onschedule_model)
                 try:
