@@ -111,7 +111,8 @@ class MedicalHistory(CrfModelMixin):
     )
 
     clinic_visit = models.CharField(
-        verbose_name="Have you been seen at a local clinic or have you been seen for consultation at a local clinic because of this illness?",
+        verbose_name="Have you been seen at a local clinic or have you been seen for "
+                     "consultation at a local clinic because of this illness?",
         max_length=20,
         choices=CLINIC_VISIT_CHOICES,
         blank=True,
