@@ -42,6 +42,9 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     radio_fields = {'chronic_since': admin.VERTICAL,
                     'who_diagnosis': admin.VERTICAL,
                     'know_hiv_status': admin.VERTICAL,
+                    'current_illness': admin.VERTICAL,
+                    'current_symptoms': admin.VERTICAL,
+                    'clinic_visit': admin.VERTICAL,
                     'med_history_changed': admin.VERTICAL}
 
     filter_horizontal = (
