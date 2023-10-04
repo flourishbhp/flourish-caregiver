@@ -12,7 +12,7 @@ class CaregiverEdinburghDeprScreeningMixin(models.Model):
         max_length=2)
 
     enjoyment_to_things = models.CharField(
-        verbose_name='I looked forward with enjoyment of things',
+        verbose_name='I have looked forward with enjoyment of things',
         choices=ENJOYMENT_TO_THINGS,
         max_length=2)
 
