@@ -17,6 +17,7 @@ from edc_model_admin import (
 from edc_visit_tracking.modeladmin_mixins import (
     CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin)
 
+from ..models.cohort_schedules import CohortSchedules
 from .exportaction_mixin import ExportActionMixin
 
 
@@ -76,7 +77,6 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
         """
         obj = None
         appointment = instance or self.get_instance(request)
-
         if appointment:
             while appointment:
                 options = {
@@ -101,9 +101,39 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
                 timepoint_datetime__lt=appointment.timepoint_datetime,
                 visit_code_sequence=0).latest('timepoint_datetime')
         except appointment.__class__.DoesNotExist:
-            return appointment.previous_by_timepoint
+            return self.get_previous_by_appt_datetime(appointment)
         else:
             return appointment
+
+    def schedule_names(self, appointment):
+        try:
+            cohort_schedules = CohortSchedules.objects.get(
+                schedule_name=appointment.schedule_name)
+        except CohortSchedules.DoesNotExist:
+            return []
+        else:
+            child_count =  getattr(
+                cohort_schedules, 'child_count', None)
+            schedule_type = getattr(
+                cohort_schedules, 'schedule_type', None)
+            names = CohortSchedules.objects.filter(
+                child_count=child_count,
+                schedule_type=schedule_type).values_list(
+                    'schedule_name', flat=True)
+            return names
+            
+
+    def get_previous_by_appt_datetime(self, appointment):
+        try:
+            prev_appt = appointment.__class__.objects.filter(
+                subject_identifier=appointment.subject_identifier,
+                schedule_name__in=self.schedule_names(appointment),
+                appt_datetime__lt=appointment.appt_datetime).latest(
+                    'appt_datetime')
+        except appointment.__class__.DoesNotExist:
+            return None
+        else:
+            return prev_appt
 
     def get_instance(self, request):
         try:
