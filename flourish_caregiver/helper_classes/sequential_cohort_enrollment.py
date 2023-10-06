@@ -2,6 +2,7 @@ from django.apps import apps as django_apps
 from django.db.models import Q
 from django.db import transaction
 from edc_base.utils import age, get_utcnow
+
 from .utils import cohort_assigned
 from ..models.cohort import Cohort
 from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin

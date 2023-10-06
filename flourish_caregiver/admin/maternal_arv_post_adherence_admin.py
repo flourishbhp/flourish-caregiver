@@ -19,7 +19,13 @@ class MaternalArvPostAdherenceAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'missed_arv',
                 'interruption_reason',
                 'interruption_reason_other',
+                'stopped_art_past_yr',
+                'stopped_art_freq',
+                'stopped_art_reasons',
+                'stopped_reasons_other',
                 'comment']}
          ), audit_fieldset_tuple)
 
-    radio_fields = {'interruption_reason': admin.VERTICAL}
+    radio_fields = {'stopped_art_past_yr': admin.VERTICAL}
+
+    filter_horizontal = ('interruption_reason', 'stopped_art_reasons', )
