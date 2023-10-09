@@ -10,7 +10,7 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
     for all cregivers. """
 
     # field changed to be saved as null because the field
-    # is not required at birth visit
+    # is not required at a birth visit
     height = models.DecimalField(
         max_digits=5,
         decimal_places=2,
@@ -26,7 +26,7 @@ class CaregiverClinicalMeasurements(CrfModelMixin):
         blank=True,
         null=True,
         verbose_name='Caregiver\'s weight? ',
-        validators=[MinValueValidator(40), MaxValueValidator(140), ],
+        validators=[MinValueValidator(37), MaxValueValidator(140), ],
         help_text='Measured in Kilograms (kg)')
 
     systolic_bp = models.IntegerField(
