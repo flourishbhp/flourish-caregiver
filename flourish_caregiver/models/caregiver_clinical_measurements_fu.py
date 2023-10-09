@@ -6,7 +6,7 @@ from .model_mixins import CrfModelMixin
 
 class CaregiverClinicalMeasurementsFu(CrfModelMixin):
     """ A model completed by the user on Height, Weight details
-    for all cregivers. """
+    for all caregivers. """
 
     weight_kg = models.DecimalField(
         max_digits=5,
