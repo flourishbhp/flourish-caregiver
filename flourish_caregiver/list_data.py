@@ -84,6 +84,8 @@ list_data = {
         ('mmed_tenofovir', 'Tenofovir'),
         ('mmed_tld', 'TLD (TDF,3TC, DTG)'),
         ('mmed_raltearavir', 'Raltearavir'),
+        ('mmed_painkillers', 'Painkillers'),
+        ('mmed_antibiotics', 'Antibiotics'),
         ('mmed_other', 'Other, Specify'),
         ('mmed_none', 'None'),
     ],
