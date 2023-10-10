@@ -38,7 +38,7 @@ class MaternalArvPostAdherence(CrfModelMixin):
     """ Version 2 Questions added 06-Oct-2023 by amediphoko
     """
     stopped_art_past_yr = models.CharField(
-        verbose_name=('In the last year, have you ever stopped taking '
+        verbose_name=('Since the last visit, have you ever stopped taking '
                       'ART/treatment continuously for 7 days or more?'),
         max_length=3,
         choices=YES_NO)
