@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from edc_action_item.model_mixins import ActionModelMixin
 
-from .subject_consent import SubjectConsent
 from .caregiver_child_consent import CaregiverChildConsent
 from .model_mixins import UltraSoundModelMixin, CrfModelMixin
 from ..action_items import ULTRASOUND_ACTION
@@ -28,8 +27,10 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         help_text='If number is not equal to 1, then participant '
         'goes off study.')
 
-    ga_by_lmp = models.IntegerField(
+    ga_by_lmp = models.DecimalField(
         verbose_name="GA by LMP at ultrasound date",
+        decimal_places=2,
+        max_digits=8,
         null=True,
         blank=True,
         help_text='Units in weeks. Derived variable, see AntenatalEnrollment.')
@@ -100,8 +101,9 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         return int(self.number_of_gestations) == 1
 
     def evaluate_ga_by_lmp(self):
-        return (int(abs(40 - ((self.antenatal_enrollment.edd_by_lmp -
-                               self.report_datetime.date()).days / 7))) if
+        # remove int parsing, and allow decimal values to return
+        return (round(abs(40 - ((self.antenatal_enrollment.edd_by_lmp -
+                               self.report_datetime.date()).days / 7)), 2) if
                 self.antenatal_enrollment.edd_by_lmp else None)
 
     def evaluate_edd_confirmed(self, error_clss=None):
@@ -110,17 +112,20 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         if not edd_by_lmp:
             return (self.est_edd_ultrasound, 1)
         error_clss = error_clss or ValidationError
-        if ga_by_lmp > 16 and ga_by_lmp < 22:
+        # gte 16
+        if ga_by_lmp >= 16 and ga_by_lmp < 22:
             if edd_by_lmp and self.est_edd_ultrasound and abs((edd_by_lmp - self.est_edd_ultrasound).days) > 10:
                 return (self.est_edd_ultrasound, 1)
             else:
                 return (edd_by_lmp, 0)
-        elif ga_by_lmp > 22 and ga_by_lmp < 28:
+        # gte 22
+        elif ga_by_lmp >= 22 and ga_by_lmp < 28:
             if edd_by_lmp and self.est_edd_ultrasound and abs((edd_by_lmp - self.est_edd_ultrasound).days) > 14:
                 return (self.est_edd_ultrasound, 1)
             else:
                 return (edd_by_lmp, 0)
-        elif ga_by_lmp > 28:
+        # gte 28
+        elif ga_by_lmp >= 28:
             if edd_by_lmp and self.est_edd_ultrasound and abs((edd_by_lmp - self.est_edd_ultrasound).days) > 21:
                 return (self.est_edd_ultrasound, 1)
             else:

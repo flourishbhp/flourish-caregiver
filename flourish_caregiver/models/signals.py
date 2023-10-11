@@ -797,7 +797,7 @@ def get_registration_date(subject_identifier):
     '''
     unborn_baby_consents = list(filter(
         lambda child: child.is_preg, child_consents.filter(
-            first_name='', last_name='', )))
+            study_child_identifier__isnull=True)))
 
     if (child_consents and child_consents.values_list(
             'subject_identifier', flat=True).distinct().count() == 1):
