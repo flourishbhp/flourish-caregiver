@@ -4,7 +4,6 @@ from django.db import transaction
 from edc_base.utils import age, get_utcnow
 
 from .utils import cohort_assigned
-from ..models.cohort import Cohort
 from .sequential_onschedule_mixin import SeqEnrolOnScheduleMixin
 from .sequential_offschedule_mixin import OffScheduleSequentialCohortEnrollmentMixin
 
@@ -43,6 +42,10 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         return django_apps.get_model(self.subject_schedule_model)
 
     @property
+    def cohort_model_cls(self):
+        return django_apps.get_model(self.cohort_model)
+
+    @property
     def child_last_qt_subject_schedule_obj(self):
         try:
             schedule_obj = self.subject_schedule_cls.objects.filter(
@@ -77,10 +80,10 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     @property
     def cohort_obj(self):
         try:
-            cohort_obj = self.cohort_cls.objects.filter(
+            cohort_obj = self.cohort_model_cls.objects.filter(
                 subject_identifier=self.child_subject_identifier).latest(
                 'assign_datetime')
-        except self.cohort_cls.DoesNotExist:
+        except self.cohort_model_cls.DoesNotExist:
             raise SequentialCohortEnrollmentError(
                 f'{self.child_subject_identifier} : cohort instance does not exist')
         else:
@@ -170,7 +173,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         """Returns the cohort the child was enrolled on the first time.
         """
 
-        cohort = Cohort.objects.filter(
+        cohort = self.cohort_model_cls.objects.filter(
             subject_identifier=self.child_subject_identifier).order_by(
             'assign_datetime').last()
         if cohort:
@@ -206,7 +209,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
                         'assign_datetime': get_utcnow(),
                         'enrollment_cohort': False
                     }
-                    cohort_obj, _ = Cohort.objects.get_or_create(
+                    cohort_obj, _ = self.cohort_model_cls.objects.get_or_create(
                         defaults=defaults, subject_identifier=self.child_subject_identifier,
                         name=self.evaluated_cohort, )
                     # Put caregiver and child off and on schedule

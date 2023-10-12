@@ -1,8 +1,6 @@
 from django.apps import apps as django_apps
 from edc_base.utils import age
 
-from ..models.caregiver_child_consent import CaregiverChildConsent
-from ..models.cohort import Cohort
 from ..helper_classes.schedule_dict import child_schedule_dict
 
 
@@ -25,8 +23,20 @@ class CohortAssignment:
     def child_dataset_cls(self):
         return django_apps.get_model('flourish_child.childdataset')
 
+    caregiver_child_consent_model = 'flourish_caregiver.caregiverchildconsent'
+
+    cohort_model = 'flourish_caregiver.cohort'
+
+    @property
+    def cohort_model_cls(self):
+        return django_apps.get_model(self.cohort_model)
+
+    @property
+    def caregiver_child_consent_cls(self):
+        return django_apps.get_model(self.caregiver_child_consent_model)
+
     def get_study_child_identifier(self, subject_identifier=None):
-        consent = CaregiverChildConsent.objects.filter(
+        consent = self.caregiver_child_consent_cls.objects.filter(
             subject_identifier=subject_identifier).first()
         return getattr(consent, 'study_child_identifier', None)
 
@@ -36,7 +46,7 @@ class CohortAssignment:
             @param cohort: cohort child/infant enrolled for.
             @return: list of enrolled child identifiers.
         """
-        identifiers = Cohort.objects.filter(
+        identifiers = self.cohort_model_cls.objects.filter(
             name=cohort).values_list('subject_identifier', flat=True)
         study_child_ids = [self.get_study_child_identifier(idx) for idx in identifiers if self.child_onschedule(idx, cohort)]
         return study_child_ids
