@@ -7,10 +7,14 @@ from edc_base import get_utcnow
 from edc_visit_schedule import site_visit_schedules
 from flourish_caregiver.helper_classes.schedule_dict import child_schedule_dict, \
     caregiver_schedule_dict
-from flourish_child.models import Appointment as ChildAppointment
 
 
 class SeqEnrolOnScheduleMixin:
+    child_appointment_model = 'flourish_child.appointment'
+
+    @property
+    def child_appointment_cls(self):
+        return django_apps.get_model(self.child_appointment_model)
 
     def put_caregiver_onschedule(self):
         """Put a caregiver on schedule.
@@ -24,7 +28,6 @@ class SeqEnrolOnScheduleMixin:
         onschedule_model = caregiver_schedule_dict[cohort][schedule_type][
             'onschedule_model']
         schedule_name = caregiver_schedule_dict[cohort][schedule_type][child_count]
-
 
         self.put_on_schedule(onschedule_model=onschedule_model,
                                 schedule_name=schedule_name,
@@ -57,7 +60,6 @@ class SeqEnrolOnScheduleMixin:
         schedule_name = child_schedule_dict[cohort][schedule_type]['name']
         onschedule_datetime = self.child_last_qt_subject_schedule_obj.onschedule_datetime
 
-
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model,
             name=schedule_name)
@@ -70,10 +72,10 @@ class SeqEnrolOnScheduleMixin:
                                  subject_identifier=self.child_subject_identifier)
 
             self.delete_completed_appointments(
-                appointment_model_cls=ChildAppointment,
+                appointment_model_cls=self.child_appointment_cls,
                 subject_identifier=self.child_subject_identifier,
                 schedule_name=schedule_name)
-            
+
         if '_sec' not in cohort:
             fu_onschedule_model = child_schedule_dict[cohort]['followup']['onschedule_model']
             fu_schedule_name = child_schedule_dict[cohort]['followup']['name']

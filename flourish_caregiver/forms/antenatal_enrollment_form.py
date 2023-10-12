@@ -5,6 +5,7 @@ from edc_base.sites import SiteModelFormMixin
 from edc_form_validators import FormValidatorMixin
 
 from flourish_form_validations.form_validators import AntenatalEnrollmentFormValidator
+from ..helper_classes import EnrollmentHelper
 
 from ..models import AntenatalEnrollment
 
@@ -19,6 +20,21 @@ class AntenatalEnrollmentForm(
         label='Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
+    antenatal_enrollment_model = 'flourish_caregiver.antenatalenrollment'
+
+    child_consent_model = 'flourish_caregiver.caregiverchildconsent'
+
+    @property
+    def antenatal_enrollment_cls(self):
+        return django_apps.get_model(self.antenatal_enrollment_model)
+
+    @property
+    def child_consent_cls(self):
+        return django_apps.get_model(self.child_consent_model)
+    @property
+    def enrolment_helper_cls(self):
+        return EnrollmentHelper
+
     def clean(self):
         rapid_test_result = self.cleaned_data.get('rapid_test_result')
         rapid_test_date = self.cleaned_data.get('rapid_test_date')
@@ -32,6 +48,21 @@ class AntenatalEnrollmentForm(
                     'The rapid test result date cannot be changed')
         self.validate_child_consent_exists()
         super().clean()
+
+    def validate_maternal_hiv_status(self):
+        """Validates maternal hiv status at enrollment."""
+        enrollment_helper = self.enrolment_helper_cls(
+            instance_antenatal=self.antenatal_enrollment_cls(
+                **self.cleaned_data),
+            exception_cls=forms.ValidationError)
+
+        try:
+            enrollment_helper.enrollment_hiv_status()
+        except ValidationError:
+            raise forms.ValidationError(
+                'Unable to determine maternal hiv status at enrollment.')
+
+        enrollment_helper.raise_validation_error_for_rapidtest()
 
     def validate_child_consent_exists(self):
         child_consent_cls = django_apps.get_model(

@@ -1,12 +1,13 @@
 from django.apps import apps as django_apps
 
 from ..helper_classes.cohort_assignment import CohortAssignment
-from ..models.maternal_dataset import MaternalDataset
 
 
 def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
     """Calculates participant's cohort based on the maternal and child dataset
     """
+
+    maternal_dataset_cls = django_apps.get_model('flourish_caregiver.maternaldataset')
     infant_dataset_cls = django_apps.get_model('flourish_child.childdataset')
     infant_dataset_obj = None
     try:
@@ -21,10 +22,10 @@ def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
             dob=child_dob)[0]
     finally:
         try:
-            maternal_dataset_obj = MaternalDataset.objects.get(
+            maternal_dataset_obj = maternal_dataset_cls.objects.get(
                 study_maternal_identifier=getattr(
                     infant_dataset_obj, 'study_maternal_identifier', None))
-        except MaternalDataset.DoesNotExist:
+        except maternal_dataset_cls.DoesNotExist:
             return None
         else:
             cohort = CohortAssignment(
