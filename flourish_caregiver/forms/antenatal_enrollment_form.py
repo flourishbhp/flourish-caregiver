@@ -20,13 +20,7 @@ class AntenatalEnrollmentForm(
         label='Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
-    antenatal_enrollment_model = 'flourish_caregiver.antenatalenrollment'
-
     child_consent_model = 'flourish_caregiver.caregiverchildconsent'
-
-    @property
-    def antenatal_enrollment_cls(self):
-        return django_apps.get_model(self.antenatal_enrollment_model)
 
     @property
     def child_consent_cls(self):
@@ -52,8 +46,7 @@ class AntenatalEnrollmentForm(
     def validate_maternal_hiv_status(self):
         """Validates maternal hiv status at enrollment."""
         enrollment_helper = self.enrolment_helper_cls(
-            instance_antenatal=self.antenatal_enrollment_cls(
-                **self.cleaned_data),
+            instance_antenatal=AntenatalEnrollment(**self.cleaned_data),
             exception_cls=forms.ValidationError)
 
         try:
