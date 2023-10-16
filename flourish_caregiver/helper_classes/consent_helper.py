@@ -14,10 +14,20 @@ class ConsentHelper:
 
     @staticmethod
     def validate_pre_flourish_registered_subject(instance):
+        """Raises an error if subject is not registered."""
+
         try:
-            consent_helper.pre_flourish_registered_subject_model_cls.objects.get(
-                subject_identifier=instance.subject_identifier,
-                consent_datetime__lte=instance.report_datetime)
+            subject_registration = (
+                consent_helper.pre_flourish_registered_subject_model_cls.objects.get(
+                    subject_identifier=instance.subject_identifier))
+
+            naive_subject_registration_time = \
+                subject_registration.registration_datetime.replace(tzinfo=None)
+            naive_report_time = instance.report_datetime.replace(tzinfo=None)
+
+            if naive_report_time <= naive_subject_registration_time:
+                raise ObjectDoesNotExist
+
         except ObjectDoesNotExist:
             raise NotConsentedError(
                 f'Subject is not registered. Unable to save '
@@ -28,19 +38,20 @@ class ConsentHelper:
     @staticmethod
     def verify_registered_subject(instance):
         """Raises an error if subject is not registered."""
-        if 'P' in instance.subject_identifier:
-            consent_helper.validate_pre_flourish_registered_subject(instance)
-        else:
-            try:
-                RegisteredSubject.objects.get(
-                    subject_identifier=instance.subject_identifier,
-                    consent_datetime__lte=instance.report_datetime)
-            except ObjectDoesNotExist:
-                raise NotConsentedError(
-                    f'Subject is not registered. Unable to save '
-                    f'{instance._meta.label_lower}. '
-                    f'Got {instance.subject_identifier} on '
-                    f'{instance.report_datetime}.')
+        if instance.subject_identifier:
+            if 'P' in instance.subject_identifier:
+                consent_helper.validate_pre_flourish_registered_subject(instance)
+            else:
+                try:
+                    RegisteredSubject.objects.get(
+                        subject_identifier=instance.subject_identifier,
+                        consent_datetime__lte=instance.report_datetime)
+                except ObjectDoesNotExist:
+                    raise NotConsentedError(
+                        f'Subject is not registered. Unable to save '
+                        f'{instance._meta.label_lower}. '
+                        f'Got {instance.subject_identifier} on '
+                        f'{instance.report_datetime}.')
 
     @staticmethod
     def get_requires_consent(instance, consent_model, schedule=None):
