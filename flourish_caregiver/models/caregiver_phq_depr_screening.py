@@ -1,7 +1,4 @@
-from django.db import models
-
 from .model_mixins import CrfModelMixin
-from ..choices import DEPRESSION_SCALE
 from .model_mixins import CaregiverPhqDeprScreeningMixin
 
 class CaregiverPhqDeprScreening(CaregiverPhqDeprScreeningMixin, CrfModelMixin):
