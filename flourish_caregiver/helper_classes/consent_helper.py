@@ -13,12 +13,12 @@ class ConsentHelper:
         return django_apps.get_model('pre_flourish.PreFlourishRegisteredSubject')
 
     @staticmethod
-    def validate_pre_flourish_registered_subject(instance):
+    def get_registered_subject_by_identifier_and_time(instance, cls):
         try:
-            consent_helper.pre_flourish_registered_subject_model_cls.objects.get(
+            return cls.objects.get(
                 subject_identifier=instance.subject_identifier,
                 consent_datetime__lte=instance.report_datetime)
-        except ObjectDoesNotExist:
+        except cls.DoesNotExist:
             raise NotConsentedError(
                 f'Subject is not registered. Unable to save '
                 f'{instance._meta.label_lower}. '
@@ -26,21 +26,25 @@ class ConsentHelper:
                 f'{instance.report_datetime}.')
 
     @staticmethod
+    def check_naive_report_time(instance, subject_registration):
+        naive_subject_registration_time = (
+            subject_registration.registration_datetime.replace(
+                tzinfo=None))
+        naive_report_time = instance.report_datetime.replace(tzinfo=None)
+        if naive_report_time <= naive_subject_registration_time:
+            raise ObjectDoesNotExist
+
+    @staticmethod
     def verify_registered_subject(instance):
         """Raises an error if subject is not registered."""
-        if 'P' in instance.subject_identifier:
-            consent_helper.validate_pre_flourish_registered_subject(instance)
-        else:
-            try:
-                RegisteredSubject.objects.get(
-                    subject_identifier=instance.subject_identifier,
-                    consent_datetime__lte=instance.report_datetime)
-            except ObjectDoesNotExist:
-                raise NotConsentedError(
-                    f'Subject is not registered. Unable to save '
-                    f'{instance._meta.label_lower}. '
-                    f'Got {instance.subject_identifier} on '
-                    f'{instance.report_datetime}.')
+        if instance.subject_identifier:
+            subject_registration = (
+                ConsentHelper.get_registered_subject_by_identifier_and_time(
+                    instance,
+                    consent_helper.pre_flourish_registered_subject_model_cls if
+                    'P' in instance.subject_identifier else RegisteredSubject
+                ))
+            ConsentHelper.check_naive_report_time(instance, subject_registration)
 
     @staticmethod
     def get_requires_consent(instance, consent_model, schedule=None):
