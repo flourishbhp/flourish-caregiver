@@ -92,21 +92,21 @@ flourish_schedules = [
         'schedule_name': 'a_fu_quarterly1_schedule1',
         'schedule_type': 'followup_quarterly',
         'cohort_name': 'cohort_a',
-        'onschedule_model': 'flourish_caregiver.onschedulecohortafu',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortafuquarterly',
         'child_count': 1,
     },
     {
         'schedule_name': 'a_fu_quarterly2_schedule1',
         'schedule_type': 'followup_quarterly',
         'cohort_name': 'cohort_a',
-        'onschedule_model': 'flourish_caregiver.onschedulecohortafu',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortafuquarterly',
         'child_count': 2,
     },
     {
         'schedule_name': 'a_fu_quarterly3_schedule1',
         'schedule_type': 'followup_quarterly',
         'cohort_name': 'cohort_a',
-        'onschedule_model': 'flourish_caregiver.onschedulecohortafu',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortafuquarterly',
         'child_count': 3,
     },
     # Quarterly Schedules Cohort A
@@ -136,21 +136,21 @@ flourish_schedules = [
         'schedule_name': 'a_sec1_schedule1',
         'schedule_type': 'enrollment',
         'cohort_name': 'cohort_a_sec',
-        'onschedule_model': 'flourish_caregiver.onschedulecohortase',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortasec',
         'child_count': 1,
     },
     {
         'schedule_name': 'a_sec2_schedule1',
         'schedule_type': 'enrollment',
         'cohort_name': 'cohort_a_sec',
-        'onschedule_model': 'flourish_caregiver.onschedulecohortase',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortasec',
         'child_count': 2,
     },
     {
         'schedule_name': 'a_sec3_schedule1',
         'schedule_type': 'enrollment',
         'cohort_name': 'cohort_a_sec',
-        'onschedule_model': 'flourish_caregiver.onschedulecohortase',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortasec',
         'child_count': 3,
     },
     # Secondary Aims Quarterly Schedules Cohort A
@@ -337,7 +337,7 @@ flourish_schedules = [
         'child_count': 3,
     },
 
-    # Secondary Aims Quarterly Schedules Cohort A
+    # Secondary Aims Quarterly Schedules Cohort B
     {
         'schedule_name': 'b_sec_quart1_schedule1',
         'schedule_type': 'quarterly',
