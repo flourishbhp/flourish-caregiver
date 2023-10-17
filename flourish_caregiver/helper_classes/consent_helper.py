@@ -1,5 +1,4 @@
 from django.apps import apps as django_apps
-from django.core.exceptions import ObjectDoesNotExist
 from edc_consent.exceptions import NotConsentedError
 from edc_consent.requires_consent import RequiresConsent
 from edc_registration.models import RegisteredSubject
@@ -16,8 +15,7 @@ class ConsentHelper:
     def get_registered_subject_by_identifier_and_time(instance, cls):
         try:
             return cls.objects.get(
-                subject_identifier=instance.subject_identifier,
-                consent_datetime__lte=instance.report_datetime)
+                subject_identifier=instance.subject_identifier)
         except cls.DoesNotExist:
             raise NotConsentedError(
                 f'Subject is not registered. Unable to save '
@@ -26,25 +24,14 @@ class ConsentHelper:
                 f'{instance.report_datetime}.')
 
     @staticmethod
-    def check_naive_report_time(instance, subject_registration):
-        naive_subject_registration_time = (
-            subject_registration.registration_datetime.replace(
-                tzinfo=None))
-        naive_report_time = instance.report_datetime.replace(tzinfo=None)
-        if naive_report_time <= naive_subject_registration_time:
-            raise ObjectDoesNotExist
-
-    @staticmethod
     def verify_registered_subject(instance):
         """Raises an error if subject is not registered."""
         if instance.subject_identifier:
-            subject_registration = (
-                ConsentHelper.get_registered_subject_by_identifier_and_time(
-                    instance,
-                    consent_helper.pre_flourish_registered_subject_model_cls if
-                    'P' in instance.subject_identifier else RegisteredSubject
-                ))
-            ConsentHelper.check_naive_report_time(instance, subject_registration)
+            ConsentHelper.get_registered_subject_by_identifier_and_time(
+                instance,
+                consent_helper.pre_flourish_registered_subject_model_cls if
+                'P' in instance.subject_identifier else RegisteredSubject
+            )
 
     @staticmethod
     def get_requires_consent(instance, consent_model, schedule=None):
