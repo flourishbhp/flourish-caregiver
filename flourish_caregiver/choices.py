@@ -1166,8 +1166,8 @@ SYMPTOMS_CHOICES = (
 )
 
 CLINIC_VISIT_CHOICES = (
-    ("yes", "Yes"),
-    ("no", "No"),
+    (YES, YES),
+    (NO, NO),
     ("scheduled", "Appointment Scheduled"),
     ("will_care", "Will seek care")
 )
