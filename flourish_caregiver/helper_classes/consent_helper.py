@@ -33,8 +33,7 @@ class ConsentHelper:
         else:
             try:
                 RegisteredSubject.objects.get(
-                    subject_identifier=instance.subject_identifier,
-                    consent_datetime__lte=instance.report_datetime)
+                    subject_identifier=instance.subject_identifier)
             except ObjectDoesNotExist:
                 raise NotConsentedError(
                     f'Subject is not registered. Unable to save '
