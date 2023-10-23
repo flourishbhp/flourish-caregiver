@@ -69,5 +69,5 @@ class ObstericalHistory(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Obstetrical History'
-        verbose_name_plural = 'Obstetrical History'
+        verbose_name = 'Obstetrical History: Version 2'
+        verbose_name_plural = 'Obstetrical History: Version 2'

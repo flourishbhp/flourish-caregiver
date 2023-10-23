@@ -258,8 +258,9 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         except locator_cls.DoesNotExist:
             pass
         else:
-            locator_obj.subject_identifier = self.subject_identifier
-            locator_obj.save()
+            if not locator_obj.subject_identifier:
+                locator_obj.subject_identifier = self.subject_identifier
+                locator_obj.save()
 
     def is_biological_mother(self):
         # To refactor to include new enrollees !!

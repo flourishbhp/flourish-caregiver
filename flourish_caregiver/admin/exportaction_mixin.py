@@ -55,7 +55,7 @@ class ExportActionMixin:
             field_names.append('current_ga')
             field_names.append('ga_birth_usconfirm')
             field_names.append('maternal_delivery_date')
-            field_names.append('study_status')
+        field_names.append('study_status')
 
         for col_num in range(len(field_names)):
             ws.write(row_num, col_num, field_names[col_num], font_style)
@@ -139,7 +139,7 @@ class ExportActionMixin:
                     maternal_delivery_obj, 'delivery_datetime', None)
                 data.append(field_value if delivery_dt else '')
                 data.append(delivery_dt.date() if delivery_dt else '')
-                data.append(self.study_status(subject_identifier) or '')
+            data.append(self.study_status(subject_identifier) or '')
 
             if not self.is_consent(obj) and inline_objs:
                 # Update header

@@ -51,8 +51,7 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         verbose_name="Eligibility Identifier",
         max_length=36,
         blank=True,
-        null=True,
-        unique=True)
+        null=True, )
 
     subject_identifier = models.CharField(
         verbose_name="Subject Identifier",

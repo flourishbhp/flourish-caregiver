@@ -1,13 +1,12 @@
 from django.utils.translation import ugettext_lazy as _
-from edc_constants.constants import ALIVE, DEAD, NOT_APPLICABLE, OTHER, UNKNOWN, \
-    FAILED_ELIGIBILITY, PARTICIPANT, DWTA, POS, NEG, ON_STUDY, OFF_STUDY, MALE, FEMALE, \
-    NEVER, DONT_KNOW, PENDING, IND
-from edc_constants.constants import YES, NO
-from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
-from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
+from edc_constants.constants import ALIVE, DEAD, DONT_KNOW, DWTA, FAILED_ELIGIBILITY, \
+    FEMALE, IND, MALE, NEG, NEVER, NOT_APPLICABLE, OFF_STUDY, ON_STUDY, OTHER, \
+    PARTICIPANT, PENDING, POS, UNKNOWN
+from edc_constants.constants import NO, YES
+from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT, MISSED_VISIT
+from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, UNSCHEDULED
 
-from flourish_caregiver.constants import NONE, PNTA, BREASTFEED_ONLY
-
+from flourish_caregiver.constants import BREASTFEED_ONLY, NONE, PNTA
 
 ABLE_TO_LAUGH = (
     ('0', 'As much as I always could'),
@@ -323,7 +322,8 @@ INSOMIA_MIDNIGHT = (
     ('0', 'No difficulty.'),
     ('1', 'Patient complains of being restless and disturbed during the night.'),
     ('2',
-     'Waking during the night – any getting out of bed rates 2 (except for purposes of voiding).')
+     'Waking during the night – any getting out of bed rates 2 (except for purposes of '
+     'voiding).')
 )
 
 INSOMNIA_EARLY = (
@@ -480,9 +480,11 @@ SELF_BLAME = (
 SOMATIC_SYMPTOMS = (
     ('0', 'None'),
     ('1',
-     'Loss of appetite but eating without staff encouragement. Heavy feelings in abdomen.'),
+     'Loss of appetite but eating without staff encouragement. Heavy feelings in '
+     'abdomen.'),
     ('2', ('Difficulty eating without staff urging. Requests or requires '
-           'laxatives or medication for bowels or medication for gastro-intestinal symptoms.')),
+           'laxatives or medication for bowels or medication for gastro-intestinal '
+           'symptoms.')),
 )
 
 SUICIDAL = (
@@ -580,7 +582,8 @@ WORK_INTERESTS = (
     ('1', ('Thoughts and feelings of incapacity, fatigue or weakness related to'
            ' activities, work or hobbies.')),
     ('2', ('Loss of interest in activity, hobbies or work – either directly '
-           'reported by the patient or indirect in listlessness, indecision and vacillations')),
+           'reported by the patient or indirect in listlessness, indecision and '
+           'vacillations')),
     ('3', 'Decrease in actual time spent in activities or decrease in productivity'),
     ('4', ('Stopped working because of present illness.'))
 )
@@ -683,7 +686,6 @@ POS_NEG_IND_UNKNOWN = (
     (IND, 'Pending'),
     (UNKNOWN, 'Unknown'),
 )
-
 
 ISOLATION_LOCATION = (
     ('home', 'Home'),
@@ -898,7 +900,8 @@ NO_EMO_SUPPORT_REASON = (
     (OTHER, 'Other, specify'),)
 
 EMO_HEALTH_IMPROVED = (
-    ('difficult_to_tell', 'Difficult to tell because I am still receiving emotional support'),
+    ('difficult_to_tell',
+     'Difficult to tell because I am still receiving emotional support'),
     ('mood_has_improved', 'My mood has improved'),
     ('not_able_to_relax', 'I am now able to relax'),
     ('relationship_with_other_improved',
@@ -998,11 +1001,13 @@ HAPPINESS_CHOICES = (
 
 FUTURE_OF_RELATIONSHIP = (
     ('do_anything',
-     'I want desperately for the partnership to succeed and will do anything to see that it does'),
+     'I want desperately for the partnership to succeed and will do anything to see '
+     'that it does'),
     ('do_what_I_can',
      'I want for my partnership to succeed and will do what I can to see that it does'),
     ('cannot_do_much',
-     'It would be nice if my partnership succeeded, but I can’t do too much more than I do now'),
+     'It would be nice if my partnership succeeded, but I can’t do too much more than I '
+     'do now'),
     ('refuse_to_do_more',
      'It would be nice if my partnership succeeded, but I refuse to do more'),
     ('nothing_more',
@@ -1106,7 +1111,6 @@ YES_NO_TBD = (
     ('TBD', 'I will think about it'),
 )
 
-
 HIV_TESTING_REFUSAL_REASON = (
     ('no_apparent_reason', 'No apparent reason'),
     ('time_constraints', 'Time constraints'),
@@ -1115,4 +1119,36 @@ HIV_TESTING_REFUSAL_REASON = (
     ('test_kits_out_of_stock', 'Test kits out of stock at local clinic '),
     ('not_ready', 'Not ready for testing'),
     (OTHER, 'Other'),
+)
+
+WHODISCLOSED_CHOICES = (
+    ("myself", "Myself (Caregiver enrolled in the study)"),
+    ("father", "Child's biological father"),
+    ("grandmother", "Child's Grandmother"),
+    ("grandfather", "Child's Grandfather"),
+    ("sibling", "Child's Sibling"),
+    ("aunt", "Child's Aunt"),
+    ("uncle", "Child's Uncle"),
+    (OTHER, "Other (please specify:"),
+)
+
+DIFFICULTY_CHOICES = (
+    ("very_difficult", "Very Difficult"),
+    ("difficult", "Difficult"),
+    ("neutral", "Neutral"),
+    ("easy", "Easy"),
+    ("very_easy", "Very Easy"),
+    ("prefer_not_to_answer", "Prefer not to answer"),
+)
+
+REACTION_CHOICES = (
+    ("understanding", "Understanding"),
+    ("calm", "Calm"),
+    ("sympathetic", "Sympathetic"),
+    ("angry", "Angry"),
+    ("scared", "Scared"),
+    ("unaccepting", "Unaccepting"),
+    ("loss_of_respect", "Loss of respect/undermine"),
+    ("prefer_not_to_answer", "Prefer not to answer"),
+    (OTHER, "Other (please specify:"),
 )

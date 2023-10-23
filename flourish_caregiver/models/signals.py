@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
-
 import PIL
+from PIL import Image
 import pyminizip
 import pypdfium2 as pdfium
 from django import forms

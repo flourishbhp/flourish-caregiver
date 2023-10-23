@@ -89,3 +89,9 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
             else:
                 return fieldsets.fieldsets
         return fieldsets
+    
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj=obj, **kwargs)
+        if 'pre_flourish' in request.GET.get('next', None):
+            form.project_name = 'pre_flourish'
+        return form

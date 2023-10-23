@@ -52,6 +52,12 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
             self.initial['first_name'] = subject_consented.first_name
             self.initial['last_name'] = subject_consented.last_name
 
+        # Allow form to update without screening identifier, updated before calling.
+        project_name = getattr(self, 'project_name', None)
+        if project_name == 'pre_flourish':
+            self.fields['screening_identifier'].required = False
+
+
     def compare_instance_fields(self, prev_instance=None):
         exclude_fields = ['modified', 'created', 'user_created', 'user_modified',
                           'hostname_created', 'hostname_modified', 'device_created',

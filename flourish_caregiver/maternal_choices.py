@@ -141,7 +141,6 @@ MONEY_PROVIDER = (
     (OTHER, 'Other, specify'))
 
 MONEY_EARNED = (
-    ('None', 'None'),
     ('<P200 per month / <P47 per week', '<P200 per month / <P47 per week'),
     ('P200-500 per month / P47-116 per week',
      'P200-500 per month / P47-116 per week'),
