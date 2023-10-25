@@ -1,6 +1,5 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_constants.constants import YES, NEG, POS, NO
@@ -9,12 +8,6 @@ from edc_metadata.constants import REQUIRED, NOT_REQUIRED
 from edc_metadata.models import CrfMetadata
 from model_mommy import mommy
 from edc_visit_schedule import site_visit_schedules
-from edc_appointment.constants import NEW_APPT
-from edc_appointment.creators import AppointmentInProgressError
-from edc_appointment.creators import InvalidParentAppointmentMissingVisitError
-from edc_appointment.creators import InvalidParentAppointmentStatusError
-from edc_appointment.creators import UnscheduledAppointmentCreator
-from edc_appointment.creators import UnscheduledAppointmentError
 from edc_appointment.models import Appointment
 from edc_visit_tracking.constants import SCHEDULED
 from unittest.case import skip
@@ -149,29 +142,6 @@ class TestRuleGroups(TestCase):
                 subject_identifier=self.subject_identifier,
                 visit_code='1000M',
                 visit_code_sequence='0').entry_status, REQUIRED)
-
-    def create_unscheduled_appointment(self, base_appointment):
-
-        unscheduled_appointment_cls = UnscheduledAppointmentCreator
-
-        options = {
-            'subject_identifier': base_appointment.subject_identifier,
-            'visit_schedule_name': base_appointment.visit_schedule.name,
-            'schedule_name': base_appointment.schedule.name,
-            'visit_code': base_appointment.visit_code,
-            'suggested_datetime': get_utcnow(),
-            'check_appointment': False,
-            'appt_status': NEW_APPT,
-            'facility': base_appointment.facility
-        }
-
-        try:
-            unscheduled_appointment_cls(**options)
-        except (ObjectDoesNotExist, UnscheduledAppointmentError,
-                InvalidParentAppointmentMissingVisitError,
-                InvalidParentAppointmentStatusError,
-                AppointmentInProgressError) as e:
-            raise ValidationError(str(e))
 
     def test_substanceuse_prior_to_preg_required_cohort_a(self):
         self.assertEqual(

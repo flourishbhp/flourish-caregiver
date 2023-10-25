@@ -1,5 +1,12 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from edc_appointment.constants import NEW_APPT
+from edc_appointment.creators import AppointmentInProgressError
+from edc_appointment.creators import InvalidParentAppointmentMissingVisitError
+from edc_appointment.creators import InvalidParentAppointmentStatusError
+from edc_appointment.creators import UnscheduledAppointmentCreator
+from edc_appointment.creators import UnscheduledAppointmentError
 from edc_base.utils import get_utcnow
 from edc_constants.constants import NOT_APPLICABLE, YES
 from edc_facility.import_holidays import import_holidays
@@ -52,7 +59,7 @@ class SubjectHelperMixin:
             'consent_datetime': get_utcnow(),
             'screening_identifier': preg_screening.screening_identifier,
             'breastfeed_intent': YES,
-            'version': '1'
+            'version': kwargs.get('version', None) or '1'
         }
 
         subject_consent = mommy.make_recipe(
@@ -391,3 +398,28 @@ class SubjectHelperMixin:
                     subject_identifier=subject_consent.subject_identifier)
 
             return subject_consent.subject_identifier
+
+    def create_unscheduled_appointment(self, base_appointment):
+
+        unscheduled_appointment_cls = UnscheduledAppointmentCreator
+
+        options = {
+            'subject_identifier': base_appointment.subject_identifier,
+            'visit_schedule_name': base_appointment.visit_schedule.name,
+            'schedule_name': base_appointment.schedule.name,
+            'visit_code': base_appointment.visit_code,
+            'suggested_datetime': get_utcnow(),
+            'check_appointment': False,
+            'appt_status': NEW_APPT,
+            'facility': base_appointment.facility
+        }
+
+        try:
+            appoinment = unscheduled_appointment_cls(**options)
+        except (ObjectDoesNotExist, UnscheduledAppointmentError,
+                InvalidParentAppointmentMissingVisitError,
+                InvalidParentAppointmentStatusError,
+                AppointmentInProgressError) as e:
+            raise ValidationError(str(e))
+        else:
+            return appoinment.appointment
