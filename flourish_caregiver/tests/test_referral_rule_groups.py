@@ -3,13 +3,12 @@ from django.apps import apps as django_apps
 from django.test import TestCase, tag
 from edc_base.utils import get_utcnow
 from edc_facility.import_holidays import import_holidays
-from edc_metadata.constants import REQUIRED, NOT_REQUIRED
+from edc_metadata.constants import REQUIRED
 from edc_metadata.models import CrfMetadata
 from model_mommy import mommy
 import pytz
 
 from edc_appointment.models import Appointment
-from edc_visit_schedule.models import SubjectScheduleHistory
 from edc_visit_tracking.constants import SCHEDULED
 
 from ..models import MaternalVisit
