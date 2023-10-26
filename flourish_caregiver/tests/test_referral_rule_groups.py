@@ -9,7 +9,6 @@ from model_mommy import mommy
 import pytz
 
 from edc_appointment.models import Appointment
-from edc_visit_schedule.models import SubjectScheduleHistory
 from edc_visit_tracking.constants import SCHEDULED
 
 from ..models import MaternalVisit
@@ -56,9 +55,9 @@ class TestReferralRuleGroups(TestCase):
             dob=self.year_3_age(5, 1),
             **self.child_dataset_options)
 
-        sh = SubjectHelperMixin()
+        self.sh = SubjectHelperMixin()
 
-        subject_identifier = sh.enroll_prior_participant(
+        subject_identifier = self.sh.enroll_prior_participant(
             maternal_dataset_obj.screening_identifier,
             study_child_identifier=self.child_dataset_options['study_child_identifier'])
 
@@ -131,3 +130,105 @@ class TestReferralRuleGroups(TestCase):
                 model='flourish_caregiver.caregiverphqpostreferral',
                 subject_identifier=quart_visit.subject_identifier,
                 visit_code='2001M').entry_status, REQUIRED)
+
+    def test_post_referral_1000M_unscheduled_req(self):
+        """ Assert post referral crf is required for pregnant ANC participant's
+            referred at enrollment visit, and seen for unscheduled visit 7days
+            after referral.
+        """
+        subject_identifier = self.sh.create_antenatal_enrollment(version='3')
+        appt_1000M = Appointment.objects.get(visit_code='1000M',
+                                             subject_identifier=subject_identifier)
+
+        visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=appt_1000M,
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        phq_referral = mommy.make_recipe(
+            'flourish_caregiver.caregiverphqreferral',
+            report_datetime=get_utcnow(),
+            maternal_visit=visit,
+            referred_to='psychiatrist')
+
+        appt_unscheduled = self.sh.create_unscheduled_appointment(
+            base_appointment=appt_1000M)
+        appt_unscheduled.appt_datetime = phq_referral.report_datetime + relativedelta(days=7)
+        appt_unscheduled.save()
+
+        unscheduled_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=appt_unscheduled,
+            schedule_name=visit.schedule_name,
+            visit_schedule_name=visit.visit_schedule_name,
+            report_datetime=appt_unscheduled.appt_datetime)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.caregiverphqpostreferral',
+                subject_identifier=subject_identifier,
+                visit_code='1000M',
+                visit_code_sequence=1).entry_status, REQUIRED)
+
+        unscheduled_visit.report_datetime = phq_referral.report_datetime + relativedelta(days=6)
+        unscheduled_visit.save()
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.caregiverphqpostreferral',
+                subject_identifier=subject_identifier,
+                visit_code='1000M',
+                visit_code_sequence=1).entry_status, NOT_REQUIRED)
+
+    def test_post_referral_required_anc_pos(self):
+        """ Assert post referral crf is required for positive ANC participant's
+            referred at enrollment, on the delivery and/or quarterly visits.
+        """
+        subject_identifier = self.sh.create_antenatal_enrollment(version='3')
+        appt_1000M = Appointment.objects.get(visit_code='1000M',
+                                             subject_identifier=subject_identifier)
+
+        visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=appt_1000M,
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverphqreferral',
+            report_datetime=get_utcnow(),
+            maternal_visit=visit,
+            referred_to='psychiatrist')
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternaldelivery',
+            subject_identifier=subject_identifier)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=subject_identifier,
+                visit_code='2000D'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.caregiverphqpostreferral',
+                subject_identifier=subject_identifier,
+                visit_code='2000D', ).entry_status, REQUIRED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                subject_identifier=subject_identifier,
+                visit_code='2001M'),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.caregiverphqpostreferral',
+                subject_identifier=subject_identifier,
+                visit_code='2001M', ).entry_status, REQUIRED)
