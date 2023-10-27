@@ -14,17 +14,22 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
     form = CaregiverLocatorForm
 
     def response_add(self, request, obj, **kwargs):
-        response = self._redirector(obj)
+        response = self._redirector(request, obj)
         return response if response else super(CaregiverLocatorAdmin, self).response_add(request, obj)
 
     def response_change(self, request, obj):
-        response = self._redirector(obj)
+        response = self._redirector(request, obj)
         return response if response else super(CaregiverLocatorAdmin, self).response_change(request, obj)
 
-    def _redirector(self, obj):
-        caregiver_locator = SubjectConsent.objects.filter(
-            subject_identifier=obj.subject_identifier)
-        if caregiver_locator:
+    def _redirector(self, request, obj):
+
+        caregiver_locator_exist = SubjectConsent.objects.filter(
+            subject_identifier=obj.subject_identifier).exists()
+
+        is_flourish_url = 'flourish_dashboard' in request.GET.get('next', '')
+
+
+        if caregiver_locator_exist and is_flourish_url:
             return HttpResponseRedirect(f'/subject/subject_dashboard/{obj.subject_identifier}/')
 
     fieldsets = (
