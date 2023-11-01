@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'flourish_reference.apps.AppConfig',
     'flourish_metadata_rules.apps.AppConfig',
     'flourish_child.apps.AppConfig',
+    'flourish_facet.apps.AppConfig',
     'pre_flourish.apps.AppConfig',
     'pre_flourish_follow.apps.AppConfig',
     'flourish_follow.apps.AppConfig',

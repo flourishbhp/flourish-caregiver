@@ -1,5 +1,3 @@
-import pytz
-from datetime import datetime
 from django.apps import apps as django_apps
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -76,17 +74,42 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
                     subject_identifier=self.subject_identifier)
             except MaternalDelivery.DoesNotExist:
                 # if child is not yet delivered
-                today = self.caregiver_offstudy_dt or get_utcnow()
-                result = ultrasound.ga_confirmed + \
-                    ((today - ultrasound.report_datetime).days / 7)
+                today = self.caregiver_offstudy_dt or get_utcnow().date()
+                
+                result = self.calculate_ga_weeks(ultrasound, reference_dt=today)
             else:
                 # if child is already delivered stop changing GA
-                delivery_date = maternal_delivery.delivery_datetime
+                delivery_date = maternal_delivery.delivery_datetime.date()
 
-                result = ultrasound.ga_confirmed + \
-                    ((delivery_date - ultrasound.report_datetime).days / 7)
+                result = self.calculate_ga_weeks(ultrasound, reference_dt=delivery_date)
 
         return round(result, 1)
+
+    def calculate_ga_weeks(self, ultrasound=None, reference_dt=get_utcnow().date()):
+        """ Calculate gestational age by weeks, if EDD confirmed by lmp = 0: use lmp
+            to determine GA weeks, elif EDD confirmed by ultrasound = 1: use ga by
+            ultrasound to determine GA weeks.
+            @param ultrasound: Ultrasound object
+            @param reference_dt: delivery date if delivered else current date for
+                                 current GA otherwise off-study date for GA at off-study.
+        """
+        ga_weeks = None
+        confirmation_method = getattr(ultrasound, 'ga_confrimation_method', None)
+        ga_by_ultrasound_wks = getattr(ultrasound, 'ga_by_ultrasound_wks', None)
+        ga_by_ultrasound_days = getattr(ultrasound, 'ga_by_ultrasound_days', None)
+        if confirmation_method == '0':
+            try:
+                ga_weeks = (reference_dt - self.last_period_date).days / 7
+            except TypeError:
+                pass
+        elif confirmation_method == '1':
+            try:
+                us_days = (ga_by_ultrasound_wks * 7) + ga_by_ultrasound_days
+                us_dd = reference_dt - ultrasound.report_datetime.date()
+                ga_weeks = (us_dd.days + us_days) / 7
+            except TypeError:
+                pass
+        return ga_weeks
 
     history = HistoricalRecords()
 
@@ -95,8 +118,6 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
 
     @property
     def caregiver_offstudy_dt(self):
-        tz = pytz.timezone('Africa/Gaborone')
-
         caregiver_offstudy_cls = django_apps.get_model(
             'flourish_prn.caregiveroffstudy')
         try:
@@ -106,7 +127,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
             return None
         else:
             offstudy_dt = getattr(offstudy, 'offstudy_date', None)
-            return datetime.combine(offstudy_dt, offstudy.report_datetime.time(), tzinfo=tz)
+            return offstudy_dt
 
     # def unenrolled_error_messages(self):
     # """Returns a tuple (True, None) if mother is eligible otherwise

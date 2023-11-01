@@ -31,12 +31,20 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'caregiver_medications',
                 'caregiver_medications_other',
                 'know_hiv_status',
+                'current_illness',
+                'current_symptoms',
+                'current_symptoms_other',
+                'symptoms_start_date',
+                'clinic_visit',
                 'comment']}
          ), audit_fieldset_tuple)
 
     radio_fields = {'chronic_since': admin.VERTICAL,
                     'who_diagnosis': admin.VERTICAL,
                     'know_hiv_status': admin.VERTICAL,
+                    'current_illness': admin.VERTICAL,
+                    'current_symptoms': admin.VERTICAL,
+                    'clinic_visit': admin.VERTICAL,
                     'med_history_changed': admin.VERTICAL}
 
     filter_horizontal = (
