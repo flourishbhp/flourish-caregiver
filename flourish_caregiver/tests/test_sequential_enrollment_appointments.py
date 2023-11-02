@@ -1,7 +1,6 @@
 import pytz
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
-from django.db import models
 from django.test import tag, TestCase
 from edc_appointment.models import Appointment
 from edc_base import get_utcnow
@@ -12,6 +11,8 @@ from edc_visit_tracking.constants import SCHEDULED
 from model_mommy import mommy
 
 from flourish_caregiver.helper_classes.cohort import Cohort
+from flourish_caregiver.helper_classes.onschedule_helper import OnScheduleHelper
+from flourish_caregiver.helper_classes.schedule_dict import caregiver_schedule_dict
 from flourish_caregiver.helper_classes.sequential_onschedule_mixin import \
     SeqEnrolOnScheduleMixin
 from flourish_caregiver.helper_classes.sequential_subject_helper import \
@@ -20,19 +21,7 @@ from flourish_caregiver.models import MaternalDataset, \
     OnScheduleCohortAEnrollment, \
     OnScheduleCohortAQuarterly, OnScheduleCohortBSec, \
     OnScheduleCohortBSecQuart
-from flourish_caregiver.models.signals import put_cohort_onschedule
 from flourish_child.models import ChildDataset
-from flourish_caregiver.helper_classes.schedule_dict import caregiver_schedule_dict
-
-'''
-NOTE: Nimza, name your tests what their testing, 
-, since there are testing for appointments. For example : TestAppointmentSequentialEnrollmentCohort
-you can refer to some of the code the code I wrote for sequantial on how to enrollment
-and add additional tests for a to b, b to c and follow up as well
-''' 
-class PostHIVRapidTestAndConseling(models.Model):
-    maternal_visit = models.CharField(max_length=40)
-    report_datetime = models.DateTimeField()
 
 
 @tag('seq_appt')
@@ -53,6 +42,8 @@ class TestSequentialEnrollmentAppointments(TestCase):
         self.maternal_dataset_options = {
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
+            'mom_pregarv_strat': '3-drug ART',
+            'delivdt': get_utcnow() - relativedelta(years=2, months=5),
             'study_maternal_identifier': self.study_maternal_identifier,
             'protocol': 'Tshilo Dikotla'}
 
@@ -74,7 +65,7 @@ class TestSequentialEnrollmentAppointments(TestCase):
     def test_delete_completed_appointments(self):
         """Test function to delete completed appointments for a subject from one
         schedule and add to another schedule. The function performs the following tasks:
-            1. Retrieves a subject identifier
+            1. Retrieves subject identifier
             2. Asserts that the subject identifier is not None
             3. Asserts that the OnScheduleCohortAEnrollment database has an object with
             matching subject identifier and 'a_enrol1_schedule1' schedule name
@@ -167,11 +158,11 @@ class TestSequentialEnrollmentAppointments(TestCase):
             efv=maternal_dataset_obj.preg_efv,
             pi=maternal_dataset_obj.preg_pi).cohort_variable
 
-        put_cohort_onschedule(
-            cohort,
+        OnScheduleHelper(
+            subject_identifier=subject_consent.subject_identifier, cohort=cohort
+        ).put_cohort_onschedule(
             caregiver_child_consent_obj,
-            base_appt_datetime=get_utcnow() + relativedelta(years=1,
-                                                            months=1))
+            base_appt_datetime=get_utcnow() + relativedelta(years=1, months=1))
 
         self.assertEqual(OnScheduleCohortBSec.objects.filter(
             subject_identifier=subject_identifier,
@@ -203,8 +194,7 @@ class TestSequentialEnrollmentAppointments(TestCase):
         sq_onschedule_mixin.delete_completed_appointments(
             appointment_model_cls=Appointment,
             subject_identifier=subject_identifier,
-            prev_schedule_name='a_quarterly1_schedule1',
-            new_schedule_name='b_sec_quart1_schedule1')
+            schedule_name='b_sec_quart1_schedule1')
 
         prev_appts = Appointment.objects.filter(
             subject_identifier=subject_identifier,

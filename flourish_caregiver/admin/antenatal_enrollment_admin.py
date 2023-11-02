@@ -64,6 +64,7 @@ class AntenatalEnrollmentAdmin(ModelAdminMixin, ExportActionMixin,
     fieldsets = (
         (None, {
             'fields': ('subject_identifier',
+                       'child_subject_identifier',
                        'report_datetime',
                        'knows_lmp',
                        'last_period_date',

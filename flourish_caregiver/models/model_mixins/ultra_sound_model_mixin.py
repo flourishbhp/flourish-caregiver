@@ -2,11 +2,10 @@ from django.apps import apps as django_apps
 from django.db import models
 
 from ...choices import AMNIOTIC_FLUID
-from ...validators import validate_bpd, validate_hc, validate_ac, validate_fl
+from ...validators import validate_ac, validate_bpd, validate_fl, validate_hc
 
 
 class UltraSoundModelMixin(models.Model):
-
     """ The base ultra sound model. """
 
     bpd = models.DecimalField(
@@ -58,6 +57,7 @@ class UltraSoundModelMixin(models.Model):
         AntenatalEnrollment = django_apps.get_model(
             'flourish_caregiver.antenatalenrollment')
         return AntenatalEnrollment.objects.get(
+            child_subject_identifier=self.child_subject_identifier,
             subject_identifier=self.maternal_visit.subject_identifier)
 
     class Meta:

@@ -55,7 +55,8 @@ from .modeladmin_mixins import VersionControlMixin
 from .obsterical_history_admin import ObstericalHistoryAdmin
 from .offschedule_admin import CaregiverOffScheduleAdmin
 from .relationship_father_involvement_admin import RelationshipFatherInvolvementAdmin
-from .screening_preg_women_admin import ScreeningPregWomenAdmin
+from .screening_preg_women_admin import (ScreeningPregWomenAdmin,
+                                         ScreeningPregWomenInlineAdmin)
 from .screening_prior_bhp_participants_admin import ScreeningPriorBhpParticipantsAdmin
 from .socio_demographic_data_admin import SocioDemographicDataAdmin
 from .subject_consent_admin import SubjectConsentAdmin, CaregiverChildConsentAdmin

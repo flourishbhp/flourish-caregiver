@@ -1,12 +1,13 @@
 from django.apps import apps as django_apps
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import date_not_future
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
-from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin, \
+    UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import date_not_before_study_start
 
 from .enrollment_mixin import EnrollmentMixin
@@ -14,8 +15,13 @@ from .maternal_delivery import MaternalDelivery
 from .ultrasound import UltraSound
 
 
-class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
+class AntenatalEnrollment(NonUniqueSubjectIdentifierFieldMixin,
                           EnrollmentMixin, BaseUuidModel):
+    child_subject_identifier = models.CharField(
+        verbose_name="Associated Child Identifier",
+        max_length=50,
+        unique=True)
+
     knows_lmp = models.CharField(
         verbose_name="Does the mother know the approximate date "
                      "of the first day her last menstrual period?",
@@ -36,7 +42,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         help_text=" (weeks of gestation at enrollment, LMP). Eligible if"
                   " >16 and <30 weeks GA",
         null=True,
-        blank=True,)
+        blank=True, )
 
     ga_lmp_anc_wks = models.IntegerField(
         verbose_name="What is the mother's gestational age according to"
@@ -44,7 +50,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
         validators=[MinValueValidator(1), MaxValueValidator(40)],
         null=True,
         blank=True,
-        help_text=" (weeks of gestation at enrollment, ANC)",)
+        help_text=" (weeks of gestation at enrollment, ANC)", )
 
     edd_by_lmp = models.DateField(
         verbose_name="Estimated date of delivery by lmp",
@@ -75,7 +81,7 @@ class AntenatalEnrollment(UniqueSubjectIdentifierFieldMixin,
             except MaternalDelivery.DoesNotExist:
                 # if child is not yet delivered
                 today = self.caregiver_offstudy_dt or get_utcnow().date()
-                
+
                 result = self.calculate_ga_weeks(ultrasound, reference_dt=today)
             else:
                 # if child is already delivered stop changing GA

@@ -72,6 +72,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier)
 
         self.status_helper = MaternalStatusHelper(
@@ -100,6 +101,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier, )
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
@@ -122,6 +124,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier, )
 
         child_consent = ChildDummySubjectConsent.objects.get(
@@ -206,6 +209,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier, )
 
         child_consent = ChildDummySubjectConsent.objects.get(
@@ -259,6 +263,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier, )
 
         child_consent = ChildDummySubjectConsent.objects.get(
@@ -306,6 +311,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier, )
 
         child_consent = ChildDummySubjectConsent.objects.get(
@@ -368,6 +374,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier, )
 
         child_consent = ChildDummySubjectConsent.objects.get(
@@ -425,6 +432,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier, )
 
         self.assertEqual(OnScheduleCohortATb2Months.objects.filter(
@@ -457,6 +465,7 @@ class TestVisitScheduleTb(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier, )
 
         child_consent = ChildDummySubjectConsent.objects.get(

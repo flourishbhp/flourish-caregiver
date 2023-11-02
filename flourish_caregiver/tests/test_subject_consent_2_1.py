@@ -60,7 +60,7 @@ class TestSubjectReConsent2_1(TestCase):
             breastfeed_intent=YES,
             **self.options)
 
-        mommy.make_recipe(
+        child_consent = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=None,
@@ -70,10 +70,12 @@ class TestSubjectReConsent2_1(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=child_consent.subject_identifier,
             subject_identifier=subject_consent.subject_identifier,)
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=child_consent.subject_identifier,
             subject_identifier=subject_consent.subject_identifier,)
 
         self.assertEqual(CaregiverChildConsent.objects.filter(

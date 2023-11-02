@@ -7,7 +7,8 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import YES, POS
-from edc_identifier.model_mixins import UniqueSubjectIdentifierFieldMixin
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin, \
+    UniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
 from ..maternal_choices import (
@@ -16,11 +17,16 @@ from ..choices import FEEDING_CHOICES
 from .list_models import DeliveryComplications
 
 
-class MaternalDelivery(UniqueSubjectIdentifierFieldMixin, BaseUuidModel):
+class MaternalDelivery(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
 
     """ A model completed by the user on Maternal Delivery which
     triggers registration of infants.
     """
+
+    child_subject_identifier = models.CharField(
+        verbose_name="Associated Child Identifier",
+        unique=True,
+        max_length=50)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report date",
@@ -122,7 +128,7 @@ class MaternalDelivery(UniqueSubjectIdentifierFieldMixin, BaseUuidModel):
     history = HistoricalRecords()
 
     def __str__(self):
-        return f'{self.subject_identifier}'
+        return f'{self.child_subject_identifier}'
 
     @property
     def antenatal_enrollment(self):

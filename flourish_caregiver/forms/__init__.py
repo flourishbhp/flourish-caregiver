@@ -55,7 +55,7 @@ from .medical_history_form import MedicalHistoryForm
 from .obsterical_history_form import ObstericalHistoryForm
 from .offschedule_form import CaregiverOffScheduleForm
 from .relationship_father_involvement_form import RelationshipFatherInvolvementForm
-from .screening_preg_women_form import ScreeningPregWomenForm
+from .screening_preg_women_form import ScreeningPregWomenForm, ScreeningPregWomenInlineForm
 from .screening_prior_bhp_participants_form import ScreeningPriorBhpParticipantsForm
 from .socio_demographic_data_form import SocioDemographicDataForm
 from .socio_demographic_data_form import HouseHoldDetailsForm

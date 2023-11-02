@@ -68,7 +68,7 @@ class TestVisitScheduleSetupA(TestCase):
             breastfeed_intent=YES,
             **self.options)
 
-        mommy.make_recipe(
+        child_consent= mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=None,
@@ -78,6 +78,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=child_consent.subject_identifier,
             subject_identifier=subject_consent.subject_identifier,)
 
         self.assertEqual(OnScheduleCohortAAntenatal.objects.filter(
@@ -108,7 +109,7 @@ class TestVisitScheduleSetupA(TestCase):
             breastfeed_intent=YES,
             **self.options)
 
-        mommy.make_recipe(
+        child_consent = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=None,
@@ -118,6 +119,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=child_consent.subject_identifier,
             subject_identifier=subject_consent.subject_identifier,)
 
         self.assertEqual(OnScheduleCohortAAntenatal.objects.filter(
@@ -166,6 +168,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         self.assertEqual(ccc2.caregiver_visit_count, 2)
 
+    @tag('tcaoaoav')
     def test_cohort_a_onsec_and_onschedule_antenatal_valid(self):
         """Assert that a woman with a enrolled with a toddler can enroll for antenatal cohort a
         """
@@ -181,7 +184,7 @@ class TestVisitScheduleSetupA(TestCase):
             preg_efv=1,
             **self.maternal_dataset_options)
 
-        mommy.make_recipe(
+        child_dataset_obj = mommy.make_recipe(
             'flourish_child.childdataset',
             dob=dob_dt,
             **self.child_dataset_options)
@@ -205,7 +208,9 @@ class TestVisitScheduleSetupA(TestCase):
 
         # Antenatal Enrollment
         mommy.make_recipe(
-            'flourish_caregiver.screeningpregwomen',)
+            'flourish_caregiver.screeningpregwomen',
+            screening_identifier=consent_obj.screening_identifier
+        )
 
         ccc = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
@@ -217,6 +222,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=ccc.subject_identifier,
             subject_identifier=subject_identifier,)
 
         self.assertEqual(OnScheduleCohortAAntenatal.objects.filter(
@@ -225,6 +231,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=ccc.subject_identifier,
             subject_identifier=subject_identifier,)
 
         self.assertEqual(OnScheduleCohortABirth.objects.filter(
@@ -269,7 +276,7 @@ class TestVisitScheduleSetupA(TestCase):
             breastfeed_intent=YES,
             **self.options)
 
-        mommy.make_recipe(
+        child_consent = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=None,
@@ -279,10 +286,12 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=child_consent.subject_identifier,
             subject_identifier=subject_consent.subject_identifier,)
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=child_consent.subject_identifier,
             subject_identifier=subject_consent.subject_identifier,)
 
         self.assertEqual(OnScheduleCohortABirth.objects.filter(
@@ -327,9 +336,11 @@ class TestVisitScheduleSetupA(TestCase):
 
         # Antenatal Enrollment
         mommy.make_recipe(
-            'flourish_caregiver.screeningpregwomen',)
+            'flourish_caregiver.screeningpregwomen',
+            screening_identifier=consent_obj.screening_identifier
+        )
 
-        mommy.make_recipe(
+        child_consent = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=consent_obj,
             first_name=None,
@@ -339,6 +350,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=child_consent.subject_identifier,
             subject_identifier=subject_identifier,)
 
         self.assertEqual(OnScheduleCohortAAntenatal.objects.filter(
@@ -347,6 +359,7 @@ class TestVisitScheduleSetupA(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=child_consent.subject_identifier,
             subject_identifier=consent_obj.subject_identifier,)
 
         self.assertEqual(OnScheduleCohortABirth.objects.filter(

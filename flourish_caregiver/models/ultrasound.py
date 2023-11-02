@@ -4,15 +4,14 @@ from django.db import models
 from edc_action_item.model_mixins import ActionModelMixin
 
 from .caregiver_child_consent import CaregiverChildConsent
-from .model_mixins import UltraSoundModelMixin, CrfModelMixin
+from .model_mixins import CrfModelMixin, UltraSoundModelMixin
 from ..action_items import ULTRASOUND_ACTION
 from ..choices import GESTATIONS_NUMBER, ZERO_ONE
-from ..validators import validate_ga_by_ultrasound, validate_fetal_weight
+from ..validators import validate_fetal_weight, validate_ga_by_ultrasound
 
 
 class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
-
-    """ The initial ultra sound model that influences mother's
+    """ The initial ultrasound model that influences mother's
     enrollment in to study.
     """
 
@@ -25,7 +24,12 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         max_length=3,
         choices=GESTATIONS_NUMBER,
         help_text='If number is not equal to 1, then participant '
-        'goes off study.')
+                  'goes off study.')
+
+    child_subject_identifier = models.CharField(
+        verbose_name="Associated Child Identifier",
+        max_length=50,
+        unique=True)
 
     ga_by_lmp = models.DecimalField(
         verbose_name="GA by LMP at ultrasound date",
@@ -82,7 +86,7 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         blank=True,
         null=True,
         help_text='0=EDD Confirmed by edd_by_lmp, 1=EDD Confirmed by'
-        ' edd_by_ultrasound.')
+                  ' edd_by_ultrasound.')
 
     def save(self, *args, **kwargs):
         # What if values in AntenatalEnrollment change?
@@ -103,46 +107,49 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
     def evaluate_ga_by_lmp(self):
         # remove int parsing, and allow decimal values to return
         return (round(abs(40 - ((self.antenatal_enrollment.edd_by_lmp -
-                               self.report_datetime.date()).days / 7)), 2) if
+                                 self.report_datetime.date()).days / 7)), 2) if
                 self.antenatal_enrollment.edd_by_lmp else None)
 
     def evaluate_edd_confirmed(self, error_clss=None):
         ga_by_lmp = self.evaluate_ga_by_lmp()
         edd_by_lmp = self.antenatal_enrollment.edd_by_lmp
         if not edd_by_lmp:
-            return (self.est_edd_ultrasound, 1)
+            return self.est_edd_ultrasound, 1
         error_clss = error_clss or ValidationError
         # gte 16
-        if ga_by_lmp >= 16 and ga_by_lmp < 22:
-            if edd_by_lmp and self.est_edd_ultrasound and abs((edd_by_lmp - self.est_edd_ultrasound).days) > 10:
-                return (self.est_edd_ultrasound, 1)
+        if 16 <= ga_by_lmp < 22:
+            if edd_by_lmp and self.est_edd_ultrasound and abs(
+                    (edd_by_lmp - self.est_edd_ultrasound).days) > 10:
+                return self.est_edd_ultrasound, 1
             else:
-                return (edd_by_lmp, 0)
+                return edd_by_lmp, 0
         # gte 22
-        elif ga_by_lmp >= 22 and ga_by_lmp < 28:
-            if edd_by_lmp and self.est_edd_ultrasound and abs((edd_by_lmp - self.est_edd_ultrasound).days) > 14:
-                return (self.est_edd_ultrasound, 1)
+        elif 22 <= ga_by_lmp < 28:
+            if edd_by_lmp and self.est_edd_ultrasound and abs(
+                    (edd_by_lmp - self.est_edd_ultrasound).days) > 14:
+                return self.est_edd_ultrasound, 1
             else:
-                return (edd_by_lmp, 0)
+                return edd_by_lmp, 0
         # gte 28
         elif ga_by_lmp >= 28:
-            if edd_by_lmp and self.est_edd_ultrasound and abs((edd_by_lmp - self.est_edd_ultrasound).days) > 21:
-                return (self.est_edd_ultrasound, 1)
+            if edd_by_lmp and self.est_edd_ultrasound and abs(
+                    (edd_by_lmp - self.est_edd_ultrasound).days) > 21:
+                return self.est_edd_ultrasound, 1
             else:
-                return (edd_by_lmp, 0)
+                return edd_by_lmp, 0
         else:
-            return (edd_by_lmp, 0)
+            return edd_by_lmp, 0
 
     def evaluate_ga_confirmed(self):
-        return int(
-            abs(40 - (
-                (self.edd_confirmed - self.report_datetime.date()).days / 7)))
+        return int(abs(
+            40 - ((self.edd_confirmed - self.report_datetime.date()).days / 7)))
 
     @property
     def get_current_ga(self):
         antenatal_enrol = django_apps.get_model('flourish_caregiver.antenatalenrollment')
         try:
             antenatal_enrol_obj = antenatal_enrol.objects.get(
+                child_subject_identifier=self.child_subject_identifier,
                 subject_identifier=self.subject_identifier)
         except antenatal_enrol.DoesNotExist:
             pass
@@ -152,7 +159,7 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
     @property
     def get_latest_consent(self):
         child_consents = CaregiverChildConsent.objects.filter(
-            subject_consent__subject_identifier=self.subject_identifier,
+            subject_identifier=self.child_subject_identifier,
             preg_enroll=True).order_by('consent_datetime')
         return getattr(child_consents.first(), 'subject_consent', None)
 

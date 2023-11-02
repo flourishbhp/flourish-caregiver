@@ -39,6 +39,7 @@ class TestSubjectReConsent(TestCase):
             'delivdt': self.year_3_age(5, 1),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
+            'mom_pregarv_strat':'3-drug ART',
             'study_maternal_identifier': self.study_maternal_identifier,
             'protocol': 'Mpepu'}
 

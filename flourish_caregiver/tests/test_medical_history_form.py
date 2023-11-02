@@ -81,6 +81,7 @@ class TestMedicalHistoryForm(TestCase):
 
         self.medical_history_options = {'chronic_since': YES,
                                         'who_diagnosis': YES,
+                                        'current_illness': YES,
                                         'know_hiv_status': 'Nobody', }
 
         self.mh_visit2000M = MedicalHistory.objects.create(
@@ -116,6 +117,7 @@ class TestMedicalHistoryForm(TestCase):
         mh.previous_instance = self.mh_visit2000M
         self.assertFalse(mh.is_valid())
 
+    @tag('tmhcv')
     def test_medhistory_has_changed_valid(self):
         """ Assert form valid if medical history information
             remains the same,and indicated on the field
@@ -135,4 +137,4 @@ class TestMedicalHistoryForm(TestCase):
             who=str(obj.id))
         mh = MedicalHistoryForm(data=medical_history_dict)
         mh.previous_instance = self.mh_visit2000M
-        self.assertTrue(mh.is_valid())
+        self.assertTrue(mh.is_valid(), mh.errors)

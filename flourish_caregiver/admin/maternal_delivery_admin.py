@@ -25,6 +25,7 @@ class MaternalDeliveryAdmin(ModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': [
                 'subject_identifier',
+                'child_subject_identifier',
                 'report_datetime',
                 'delivery_datetime',
                 'delivery_time_estimated',

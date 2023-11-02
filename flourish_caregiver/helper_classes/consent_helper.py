@@ -15,7 +15,8 @@ class ConsentHelper:
     def get_registered_subject_by_identifier_and_time(instance, cls):
         try:
             return cls.objects.get(
-                subject_identifier=instance.subject_identifier)
+                subject_identifier=instance.subject_identifier,
+                consent_datetime__lte=instance.report_datetime)
         except cls.DoesNotExist:
             raise NotConsentedError(
                 f'Subject is not registered. Unable to save '

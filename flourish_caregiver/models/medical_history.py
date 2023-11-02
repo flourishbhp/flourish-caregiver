@@ -99,8 +99,7 @@ class MedicalHistory(CrfModelMixin):
         choices=SYMPTOMS_CHOICES
     )
 
-    current_symptoms_other = OtherCharField(
-        max_length=35,
+    current_symptoms_other = models.TextField(
         verbose_name='If other, specify.',
         blank=True,
         null=True)

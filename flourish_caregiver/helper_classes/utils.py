@@ -1,4 +1,5 @@
 from django.apps import apps as django_apps
+from django.core.exceptions import ObjectDoesNotExist
 
 from ..helper_classes.cohort_assignment import CohortAssignment
 
@@ -36,3 +37,21 @@ def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
                 arv_regimen=getattr(
                     maternal_dataset_obj, 'mom_pregarv_strat', None), )
             return cohort.cohort_variable or None
+
+
+def update_preg_screening_obj_child_pid(consent, child_subject_identifier):
+    screening_model_cls = django_apps.get_model('flourish_caregiver.screeningpregwomen')
+    screening_obj = screening_model_cls.objects.filter(
+        screening_identifier=consent.screening_identifier).first()
+
+    if screening_obj:
+        try:
+            screening_obj.screeningpregwomeninline_set.get(
+                child_subject_identifier=child_subject_identifier)
+        except ObjectDoesNotExist:
+            screenings_without_child_pid = screening_obj.screeningpregwomeninline_set.filter(
+                child_subject_identifier__isnull=True)
+            if screenings_without_child_pid.exists():
+                child_screening_obj = screenings_without_child_pid.first()
+                child_screening_obj.child_subject_identifier = child_subject_identifier
+                child_screening_obj.save()

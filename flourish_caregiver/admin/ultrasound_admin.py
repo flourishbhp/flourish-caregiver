@@ -1,9 +1,10 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
+
+from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import UltraSoundForm
 from ..models import UltraSound
-from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(UltraSound, site=flourish_caregiver_admin)
@@ -15,6 +16,7 @@ class UltraSoundAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         (None, {
             'fields': [
                 'maternal_visit',
+                'child_subject_identifier',
                 'report_datetime',
                 'number_of_gestations',
                 'bpd',
