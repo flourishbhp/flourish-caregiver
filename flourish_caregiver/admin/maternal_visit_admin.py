@@ -107,14 +107,17 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         subject_identifier = (request.GET.get('subject_identifier', None)
                               or request.POST.get('subject_identifier', None))
 
-        try:
-
-            enrollment_visit = self.model.objects.get(
+        enrollment_visits = self.model.objects.filter(
                 subject_identifier=subject_identifier,
                 visit_code='1000M',
                 visit_code_sequence='0')
 
-        except self.model.DoesNotExist:
+        if enrollment_visits:
+            for enrollment_visit in enrollment_visits:
+                if enrollment_visit.brain_scan in [NO, NOT_APPLICABLE]:
+                    key = 'interested_in_brain_scan'
+                    break
+        else:
             """
             1000M visit doen't exist, check if the current vist yet to be saved
             is visit 1000M
@@ -129,17 +132,6 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
             except self.appointment_model_cls.DoesNotExist:
                 pass
             else:
-                key = 'interested_in_brain_scan'
-
-        else:
-            """
-            If previous visit does exist, and if response is brain_scan == NO
-            or NOT_APPLICABLE and current visit is 2000D show brain scan option
-            """
-
-            if (enrollment_visit.brain_scan in [NO, NOT_APPLICABLE]
-                    and enrollment_visit.visit_code in ['2000D', '1000M']):
-
                 key = 'interested_in_brain_scan'
 
         return key
