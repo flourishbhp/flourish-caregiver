@@ -7,7 +7,9 @@ from edc_visit_tracking.constants import SCHEDULED
 from flourish_child.models import Appointment as ChildAppointment
 from flourish_child.models import (OnScheduleChildCohortAQuarterly, OnScheduleChildCohortBEnrollment,
                                    OnScheduleChildCohortBQuarterly, ChildOffSchedule,
-                                   OnScheduleChildCohortCQuarterly, OnScheduleChildCohortBFU)
+                                   OnScheduleChildCohortCQuarterly, OnScheduleChildCohortAFU,
+                                   OnScheduleChildCohortBFUSeq, OnScheduleChildCohortCFUSeq)
+from flourish_child.helper_classes.child_fu_onschedule_helper import ChildFollowUpEnrolmentHelper
 
 from model_mommy import mommy
 from dateutil.relativedelta import relativedelta
@@ -15,7 +17,7 @@ from dateutil.relativedelta import relativedelta
 from ..models import (OnScheduleCohortAEnrollment, OnScheduleCohortAQuarterly,
                       OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly,
                       SubjectConsent, CaregiverOffSchedule, OnScheduleCohortCQuarterly,
-                      OnScheduleCohortBFU, OnScheduleCohortBFUSeq, OnScheduleCohortCFUSeq)
+                      OnScheduleCohortAFU, OnScheduleCohortBFUSeq, OnScheduleCohortCFUSeq)
 from ..helper_classes import SequentialCohortEnrollment
 from ..subject_helper_mixin import SubjectHelperMixin
 
@@ -325,6 +327,10 @@ class TestSequentialEnrollment(TestCase):
             subject_identifier=child_consent.subject_identifier)
         self.assertTrue(child_c_onsch.exists())
 
+        child_c_fu = OnScheduleChildCohortCFUSeq.objects.filter(
+            subject_identifier=child_consent.subject_identifier)
+        self.assertTrue(child_c_fu.exists())
+
         # Check appointments completed on previous cohort does not exist.
         appts = Appointment.objects.filter(
             subject_identifier=subject_identifier,
@@ -406,7 +412,7 @@ class TestSequentialEnrollment(TestCase):
             subject_identifier=self.subject_identifier)
         self.assertTrue(b_fu.exists())
 
-        child_b_fu = OnScheduleChildCohortBFU.objects.filter(
+        child_b_fu = OnScheduleChildCohortBFUSeq.objects.filter(
             subject_identifier=child_consent.subject_identifier)
         self.assertTrue(child_b_fu.exists())
 
@@ -415,8 +421,117 @@ class TestSequentialEnrollment(TestCase):
             subject_identifier=self.subject_identifier,
             schedule_name=b_fu[0].schedule_name)
         self.assertTrue(appts.exists())
+        self.assertEqual(appts[0].visit_code, '3000B')
 
         child_appts = ChildAppointment.objects.filter(
             subject_identifier=child_consent.subject_identifier,
             schedule_name=child_b_fu[0].schedule_name)
         self.assertTrue(child_appts.exists())
+        self.assertEqual(child_appts[0].visit_code, '3000B')
+
+    def test_second_sq_enrol_fu(self):
+        subject_consent = SubjectConsent.objects.get(
+            subject_identifier=self.subject_identifier)
+
+        child_consent = subject_consent.caregiverchildconsent_set.first()
+
+        # Trigger caregiver quarterly schedule enrolment
+        enrol_appt = Appointment.objects.get(
+            subject_identifier=self.subject_identifier,
+            schedule_name=self.a_onschedule.schedule_name)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=enrol_appt,
+            report_datetime=enrol_appt.appt_datetime,
+            reason=SCHEDULED)
+
+        enrol_appt.appt_status = INCOMPLETE_APPT
+        enrol_appt.save()
+
+        quart_appt = Appointment.objects.get(
+            subject_identifier=self.subject_identifier,
+            visit_code='2001M')
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=quart_appt,
+            report_datetime=quart_appt.appt_datetime,
+            reason=SCHEDULED)
+
+        quart_appt.appt_status = INCOMPLETE_APPT
+        quart_appt.save()
+
+        # Trigger child quarterly schedule enrolment
+        child_enrol_appt = ChildAppointment.objects.get(
+            subject_identifier=child_consent.subject_identifier,
+            visit_code='2000')
+
+        mommy.make_recipe(
+            'flourish_child.childvisit',
+            appointment=child_enrol_appt,
+            report_datetime=child_enrol_appt.appt_datetime,
+            reason=SCHEDULED)
+
+        child_enrol_appt.appt_status = INCOMPLETE_APPT
+        child_enrol_appt.save()
+
+        child_quart_appt = ChildAppointment.objects.get(
+            subject_identifier=child_consent.subject_identifier,
+            visit_code='2001')
+
+        mommy.make_recipe(
+            'flourish_child.childvisit',
+            appointment=child_quart_appt,
+            report_datetime=child_quart_appt.appt_datetime,
+            reason=SCHEDULED)
+
+        child_quart_appt.appt_status = INCOMPLETE_APPT
+        child_quart_appt.save()
+
+        # Enrol on FU schedule
+        fu_enrol_helper = ChildFollowUpEnrolmentHelper(
+            subject_identifier=child_consent.subject_identifier)
+        fu_enrol_helper.activate_child_fu_schedule()
+
+        a_fu = OnScheduleCohortAFU.objects.filter(
+            subject_identifier=self.subject_identifier)
+        a_fu_appts = Appointment.objects.filter(
+            subject_identifier=self.subject_identifier,
+            schedule_name=a_fu[0].schedule_name)
+        self.assertTrue(a_fu.exists())
+        self.assertEqual(a_fu_appts[0].visit_code, '3000M')
+
+        child_a_fu = OnScheduleChildCohortAFU.objects.filter(
+            subject_identifier=child_consent.subject_identifier)
+        child_a_fu_appts = ChildAppointment.objects.filter(
+            subject_identifier=child_consent.subject_identifier,
+            schedule_name=child_a_fu[0].schedule_name)
+        self.assertTrue(child_a_fu.exists())
+        self.assertEqual(child_a_fu_appts[0].visit_code, '3000')
+
+        sq_enrol_helper = SequentialCohortEnrollment(
+            child_subject_identifier=child_consent.subject_identifier)
+
+        sq_enrol_helper.age_up_enrollment()
+
+        b_sq_fu = OnScheduleCohortBFUSeq.objects.filter(
+            subject_identifier=self.subject_identifier)
+        self.assertTrue(b_sq_fu.exists())
+
+        child_b_sq_fu = OnScheduleChildCohortBFUSeq.objects.filter(
+            subject_identifier=child_consent.subject_identifier)
+        self.assertTrue(child_b_sq_fu.exists())
+
+        # Check FU appointments created.
+        appts = Appointment.objects.filter(
+            subject_identifier=self.subject_identifier,
+            schedule_name=b_sq_fu[0].schedule_name)
+        self.assertTrue(appts.exists())
+        self.assertEqual(appts[0].visit_code, '3000B')
+
+        child_appts = ChildAppointment.objects.filter(
+            subject_identifier=child_consent.subject_identifier,
+            schedule_name=child_b_sq_fu[0].schedule_name)
+        self.assertTrue(child_appts.exists())
+        self.assertEqual(child_appts[0].visit_code, '3000B')

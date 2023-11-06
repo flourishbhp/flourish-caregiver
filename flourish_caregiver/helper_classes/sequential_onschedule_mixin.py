@@ -77,8 +77,8 @@ class SeqEnrolOnScheduleMixin:
                 schedule_name=schedule_name)
 
         if '_sec' not in cohort:
-            fu_onschedule_model = child_schedule_dict[cohort]['followup']['onschedule_model']
-            fu_schedule_name = child_schedule_dict[cohort]['followup']['name']
+            fu_onschedule_model = child_schedule_dict[cohort]['sq_followup']['onschedule_model']
+            fu_schedule_name = child_schedule_dict[cohort]['sq_followup']['name']
         
             self.enrol_fu_schedule(cohort=cohort,
                                    subject_identifier=self.child_subject_identifier,

@@ -179,6 +179,10 @@ child_schedule_dict = {
             'onschedule_model': 'flourish_child.onschedulechildcohortafu',
             'name': 'child_a_fu_schedule1',
         },
+        'sq_followup': {
+            'onschedule_model': 'flourish_child.onschedulechildcohortafuseq',
+            'name': 'child_a_sq_fu_schedule1',
+        },
         'followup_quarterly': {
             'onschedule_model': 'flourish_child.onschedulechildcohortafuquart',
             'name': 'child_a_fu_qt_schedule1',
@@ -207,6 +211,10 @@ child_schedule_dict = {
             'onschedule_model': 'flourish_child.onschedulechildcohortbfu',
             'name': 'child_b_fu_schedule1',
         },
+        'sq_followup': {
+            'onschedule_model': 'flourish_child.onschedulechildcohortbfuseq',
+            'name': 'child_b_sq_fu_schedule1',
+        },
         'followup_quarterly': {
             'onschedule_model': 'flourish_child.onschedulechildcohortbfuquart',
             'name': 'child_b_fu_qt_schedule1',
@@ -234,6 +242,10 @@ child_schedule_dict = {
         'followup': {
             'onschedule_model': 'flourish_child.onschedulechildcohortcfu',
             'name': 'child_c_fu_schedule1',
+        },
+        'sq_followup': {
+            'onschedule_model': 'flourish_child.onschedulechildcohortcfuseq',
+            'name': 'child_c_sq_fu_schedule1',
         },
         'followup_quarterly': {
             'onschedule_model': 'flourish_child.onschedulechildcohortcfuquart',
