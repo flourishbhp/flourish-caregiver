@@ -41,8 +41,8 @@ class SeqEnrolOnScheduleMixin:
             schedule_name=schedule_name)
 
         if '_sec' not in cohort:
-            fu_onschedule_model =  caregiver_schedule_dict[cohort]['followup']['onschedule_model']
-            fu_schedule_name =  caregiver_schedule_dict[cohort]['followup'][child_count]
+            fu_onschedule_model =  caregiver_schedule_dict[cohort]['sq_followup']['onschedule_model']
+            fu_schedule_name =  caregiver_schedule_dict[cohort]['sq_followup'][child_count]
 
             self.enrol_fu_schedule(
                 cohort=cohort,

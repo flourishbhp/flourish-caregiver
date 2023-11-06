@@ -26,6 +26,12 @@ caregiver_schedule_dict = {
             '3': 'a_fu3_schedule1',
             'onschedule_model': 'flourish_caregiver.onschedulecohortafu'
         },
+        'sq_followup': {
+            '1': 'a_sq_fu1_schedule1',
+            '2': 'a_sq_fu2_schedule1',
+            '3': 'a_sq_fu3_schedule1',
+            'onschedule_model': 'flourish_caregiver.onschedulecohortafuseq'
+        },
         'followup_quarterly': {
             '1': 'a_fu_quarterly1_schedule1',
             '2': 'a_fu_quarterly2_schedule1',
@@ -78,6 +84,12 @@ caregiver_schedule_dict = {
             '3': 'b_fu3_schedule1',
             'onschedule_model': 'flourish_caregiver.onschedulecohortbfu'
         },
+        'sq_followup': {
+            '1': 'b_sq_fu1_schedule1',
+            '2': 'b_sq_fu2_schedule1',
+            '3': 'b_sq_fu3_schedule1',
+            'onschedule_model': 'flourish_caregiver.onschedulecohortbfuseq'
+        },
         'followup_quarterly': {
             '1': 'b_fu_quarterly1_schedule1',
             '2': 'b_fu_quarterly2_schedule1',
@@ -117,6 +129,12 @@ caregiver_schedule_dict = {
             '2': 'c_fu2_schedule1',
             '3': 'c_fu3_schedule1',
             'onschedule_model': 'flourish_caregiver.onschedulecohortcfu'
+        },
+        'sq_followup': {
+            '1': 'c_sq_fu1_schedule1',
+            '2': 'c_sq_fu2_schedule1',
+            '3': 'c_sq_fu3_schedule1',
+            'onschedule_model': 'flourish_caregiver.onschedulecohortcfuseq'
         },
         'followup_quarterly': {
             '1': 'c_fu_quarterly1_schedule1',

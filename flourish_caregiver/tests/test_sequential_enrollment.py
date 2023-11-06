@@ -15,7 +15,7 @@ from dateutil.relativedelta import relativedelta
 from ..models import (OnScheduleCohortAEnrollment, OnScheduleCohortAQuarterly,
                       OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly,
                       SubjectConsent, CaregiverOffSchedule, OnScheduleCohortCQuarterly,
-                      OnScheduleCohortBFU)
+                      OnScheduleCohortBFU, OnScheduleCohortBFUSeq, OnScheduleCohortCFUSeq)
 from ..helper_classes import SequentialCohortEnrollment
 from ..subject_helper_mixin import SubjectHelperMixin
 
@@ -317,6 +317,10 @@ class TestSequentialEnrollment(TestCase):
             subject_identifier=subject_identifier)
         self.assertTrue(c_onschedule.exists())
 
+        c_fu = OnScheduleCohortCFUSeq.objects.filter(
+            subject_identifier=subject_identifier)
+        self.assertTrue(c_fu.exists())
+
         child_c_onsch = OnScheduleChildCohortCQuarterly.objects.filter(
             subject_identifier=child_consent.subject_identifier)
         self.assertTrue(child_c_onsch.exists())
@@ -398,7 +402,7 @@ class TestSequentialEnrollment(TestCase):
 
         sq_enrol_helper.age_up_enrollment()
 
-        b_fu = OnScheduleCohortBFU.objects.filter(
+        b_fu = OnScheduleCohortBFUSeq.objects.filter(
             subject_identifier=self.subject_identifier)
         self.assertTrue(b_fu.exists())
 
