@@ -165,11 +165,13 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
 
     @property
     def ga_at_consent(self):
-        if self.get_latest_consent:
+        if self.get_latest_consent and self.ga_confirmed:
             consent_dt = getattr(
                 self.get_latest_consent, 'consent_datetime', None)
             result = self.ga_confirmed + ((consent_dt - self.report_datetime).days / 7)
             return round(result, 1)
+        else:
+            return None
 
     @property
     def action_item_reason(self):
