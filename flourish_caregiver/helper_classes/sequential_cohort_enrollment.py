@@ -141,11 +141,6 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         )
 
     def put_onschedule(self):
-
-        if 'followup_quarterly' == self.schedule_type and\
-                'sec' in self.evaluated_cohort:
-            return
-
         self.take_off_child_offschedule()
         self.take_off_caregiver_offschedule()
         self.put_child_onschedule()

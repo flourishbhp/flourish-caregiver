@@ -8,16 +8,19 @@ from flourish_child.models import Appointment as ChildAppointment
 from flourish_child.models import (OnScheduleChildCohortAQuarterly, OnScheduleChildCohortBEnrollment,
                                    OnScheduleChildCohortBQuarterly, ChildOffSchedule,
                                    OnScheduleChildCohortCQuarterly, OnScheduleChildCohortAFU,
-                                   OnScheduleChildCohortBFUSeq, OnScheduleChildCohortCFUSeq)
+                                   OnScheduleChildCohortBFUSeq, OnScheduleChildCohortCFUSeq,
+                                   OnScheduleChildCohortBSecSeq)
 from flourish_child.helper_classes.child_fu_onschedule_helper import ChildFollowUpEnrolmentHelper
 
 from model_mommy import mommy
 from dateutil.relativedelta import relativedelta
 
+from ..models import MaternalDataset
 from ..models import (OnScheduleCohortAEnrollment, OnScheduleCohortAQuarterly,
                       OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly,
                       SubjectConsent, CaregiverOffSchedule, OnScheduleCohortCQuarterly,
-                      OnScheduleCohortAFU, OnScheduleCohortBFUSeq, OnScheduleCohortCFUSeq)
+                      OnScheduleCohortAFU, OnScheduleCohortBFUSeq, OnScheduleCohortCFUSeq,
+                      OnScheduleCohortBSecSeq)
 from ..helper_classes import SequentialCohortEnrollment
 from ..subject_helper_mixin import SubjectHelperMixin
 
@@ -430,6 +433,10 @@ class TestSequentialEnrollment(TestCase):
         self.assertEqual(child_appts[0].visit_code, '3000B')
 
     def test_second_sq_enrol_fu(self):
+        """ Assert participant already completed their initial FU and is
+            sequentially enrolled for second FU is enrolled correctly on the
+            sequential FU schedules. i.e. 3000[A|B|C {for cohort variable}].
+        """
         subject_consent = SubjectConsent.objects.get(
             subject_identifier=self.subject_identifier)
 
@@ -535,3 +542,125 @@ class TestSequentialEnrollment(TestCase):
             schedule_name=child_b_sq_fu[0].schedule_name)
         self.assertTrue(child_appts.exists())
         self.assertEqual(child_appts[0].visit_code, '3000B')
+
+
+    def test_primary_to_sec_fu_sq_caregiver(self):
+        """ Assert participant already completed FU from their previous cohort schedules,
+            and is sequentially enrolled to secondary aims continues quarterly appts on
+            secondary aims FU sequential schedule. i.e. 3001S, 3002S etc.
+        """
+        subject_consent = SubjectConsent.objects.get(
+            subject_identifier=self.subject_identifier)
+
+        child_consent = subject_consent.caregiverchildconsent_set.first()
+
+        # Trigger caregiver quarterly schedule enrolment
+        enrol_appt = Appointment.objects.get(
+            subject_identifier=self.subject_identifier,
+            schedule_name=self.a_onschedule.schedule_name)
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=enrol_appt,
+            report_datetime=enrol_appt.appt_datetime,
+            reason=SCHEDULED)
+
+        enrol_appt.appt_status = INCOMPLETE_APPT
+        enrol_appt.save()
+
+        quart_appt = Appointment.objects.get(
+            subject_identifier=self.subject_identifier,
+            visit_code='2001M')
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=quart_appt,
+            report_datetime=quart_appt.appt_datetime,
+            reason=SCHEDULED)
+
+        quart_appt.appt_status = INCOMPLETE_APPT
+        quart_appt.save()
+
+        # Trigger child quarterly schedule enrolment
+        child_enrol_appt = ChildAppointment.objects.get(
+            subject_identifier=child_consent.subject_identifier,
+            visit_code='2000')
+
+        mommy.make_recipe(
+            'flourish_child.childvisit',
+            appointment=child_enrol_appt,
+            report_datetime=child_enrol_appt.appt_datetime,
+            reason=SCHEDULED)
+
+        child_enrol_appt.appt_status = INCOMPLETE_APPT
+        child_enrol_appt.save()
+
+        child_quart_appt = ChildAppointment.objects.get(
+            subject_identifier=child_consent.subject_identifier,
+            visit_code='2001')
+
+        mommy.make_recipe(
+            'flourish_child.childvisit',
+            appointment=child_quart_appt,
+            report_datetime=child_quart_appt.appt_datetime,
+            reason=SCHEDULED)
+
+        child_quart_appt.appt_status = INCOMPLETE_APPT
+        child_quart_appt.save()
+
+        # Enrol on FU schedule
+        fu_enrol_helper = ChildFollowUpEnrolmentHelper(
+            subject_identifier=child_consent.subject_identifier)
+        fu_enrol_helper.activate_child_fu_schedule()
+
+        a_fu = OnScheduleCohortAFU.objects.filter(
+            subject_identifier=self.subject_identifier)
+        a_fu_appts = Appointment.objects.filter(
+            subject_identifier=self.subject_identifier,
+            schedule_name=a_fu[0].schedule_name)
+
+
+        child_a_fu = OnScheduleChildCohortAFU.objects.filter(
+            subject_identifier=child_consent.subject_identifier)
+        child_a_fu_appts = ChildAppointment.objects.filter(
+            subject_identifier=child_consent.subject_identifier,
+            schedule_name=child_a_fu[0].schedule_name)
+ 
+        # Complete FU visit, to trigger FU quarterly
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=a_fu_appts[0],
+            report_datetime=a_fu_appts[0].appt_datetime,
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_child.childvisit',
+            appointment=child_a_fu_appts[0],
+            report_datetime=child_a_fu_appts[0].appt_datetime,
+            reason=SCHEDULED)
+
+        # Update maternal dataset to enrol on secondary aims when aging up
+        maternal_dataset = MaternalDataset.objects.filter(
+            screening_identifier=subject_consent.screening_identifier)
+        maternal_dataset.update(mom_pregarv_strat=None)
+
+        sq_enrol_helper = SequentialCohortEnrollment(
+            child_subject_identifier=child_consent.subject_identifier)
+
+        sq_enrol_helper.age_up_enrollment()
+
+        sec_fu_sq = OnScheduleCohortBSecSeq.objects.filter(
+            subject_identifier=self.subject_identifier)
+        self.assertTrue(sec_fu_sq.exists())
+        sec_fu_appts = Appointment.objects.filter(
+            subject_identifier=self.subject_identifier,
+            schedule_name=sec_fu_sq[0].schedule_name)
+        self.assertTrue(sec_fu_appts[0].visit_code.endswith('S'))
+
+        child_sec_fu_sq = OnScheduleChildCohortBSecSeq.objects.filter(
+            subject_identifier=child_consent.subject_identifier,)
+        self.assertTrue(child_sec_fu_sq.exists())
+        child_sec_fu_appts = ChildAppointment.objects.filter(
+            subject_identifier=child_consent.subject_identifier,
+            schedule_name=child_sec_fu_sq[0].schedule_name)
+        self.assertTrue(child_sec_fu_appts[0].visit_code.endswith('S'))
