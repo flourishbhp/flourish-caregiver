@@ -52,11 +52,6 @@ class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
         audit_fieldset_tuple
     )
 
-    list_display = (
-        'screening_identifier', 'report_datetime', 'is_eligible', 'is_consented')
-
-    list_filter = ('report_datetime', 'is_eligible', 'is_consented')
-
     def redirect_url(self, request, obj, post_url_continue=None):
         redirect_url = super().redirect_url(
             request, obj, post_url_continue=post_url_continue)
@@ -102,4 +97,4 @@ class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
         except consent_version_cls.DoesNotExist:
             return None
         else:
-            consent_version_obj.version
+            return consent_version_obj.version

@@ -70,13 +70,15 @@ class AntenatalEnrollment(NonUniqueSubjectIdentifierFieldMixin,
         try:
 
             ultrasound = UltraSound.objects.get(
+                child_subject_identifier=self.child_subject_identifier,
                 maternal_visit__subject_identifier=self.subject_identifier)
         except UltraSound.DoesNotExist:
-            result = "Fill The Ultrasound CRF First"
+            return "Fill The Ultrasound CRF First"
         else:
             try:
 
                 maternal_delivery = MaternalDelivery.objects.get(
+                    child_subject_identifier=self.child_subject_identifier,
                     subject_identifier=self.subject_identifier)
             except MaternalDelivery.DoesNotExist:
                 # if child is not yet delivered

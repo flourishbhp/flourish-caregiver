@@ -31,46 +31,6 @@ class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         null=True,
         unique=True)
 
-    report_datetime = models.DateTimeField(
-        verbose_name="Report Date and Time",
-        default=get_utcnow,
-        validators=[
-            datetime_not_before_study_start,
-            datetime_not_future],
-        null=True,
-        editable=False,
-        help_text='Date and time of assessing eligibility')
-
-    hiv_testing = models.CharField(
-        verbose_name=('If HIV status not known, are you willing to undergo HIV'
-                      ' testing and counseling?'),
-        choices=YES_NO,
-        null=True,
-        editable=False,
-        max_length=3)
-
-    breastfeed_intent = models.CharField(
-        verbose_name='Do you intend on breastfeeding your infant?',
-        choices=YES_NO,
-        null=True,
-        editable=False,
-        max_length=3)
-
-    ineligibility = models.TextField(
-        verbose_name='Reason not eligible',
-        max_length=150,
-        null=True,
-        editable=False)
-
-    is_eligible = models.BooleanField(
-        default=False,
-        editable=False)
-
-    # is updated via signal once subject is consented
-    is_consented = models.BooleanField(
-        default=False,
-        editable=False)
-
     history = HistoricalRecords()
 
     objects = ScreeningPregWomenManager()
