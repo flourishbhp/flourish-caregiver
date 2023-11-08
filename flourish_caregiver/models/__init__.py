@@ -62,6 +62,8 @@ from .onschedule import OnScheduleCohortBSec, OnScheduleCohortCSec, \
 from .onschedule import OnScheduleCohortCQuarterly, OnScheduleCohortCPool, \
     OnScheduleCohortASec
 from .onschedule import OnScheduleCohortCSecQuart, OnScheduleCohortAFUQuarterly
+from .onschedule import OnScheduleCohortAFUSeq, OnScheduleCohortBFUSeq, OnScheduleCohortCFUSeq
+from .onschedule import OnScheduleCohortASecSeq, OnScheduleCohortBSecSeq, OnScheduleCohortCSecSeq
 from .relationship_father_involvement import RelationshipFatherInvolvement
 from .screening_preg_women import ScreeningPregWomen
 from .screening_prior_bhp_participants import ScreeningPriorBhpParticipants
