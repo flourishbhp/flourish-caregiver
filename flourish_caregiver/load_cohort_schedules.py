@@ -131,6 +131,28 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortaquarterly',
         'child_count': 3,
     },
+    # Sequential Enrolment FU Schedules Cohort A
+    {
+        'schedule_name': 'a_sq_fu1_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_a',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortafuseq',
+        'child_count': 1
+    },
+    {
+        'schedule_name': 'a_sq_fu2_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_a',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortafuseq',
+        'child_count': 2
+    },
+    {
+        'schedule_name': 'a_sq_fu3_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_a',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortafuseq',
+        'child_count': 3
+    },
     # Secondary Aims Enrollment Schedules Cohort A
     {
         'schedule_name': 'a_sec1_schedule1',
@@ -175,7 +197,30 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortasecquart',
         'child_count': 3,
     },
-
+    
+    # Secondary aims FU Quarterly Sequential enrolment schedules Cohort A
+    {
+        'schedule_name': 'a_sec_fu_quart1_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_a_sec',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortasecseq',
+        'child_count': 1,
+    },
+    {
+        'schedule_name': 'a_sec_fu_quart2_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_a_sec',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortasecseq',
+        'child_count': 2,
+    },
+    {
+        'schedule_name': 'a_sec_fu_quart3_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_a_sec',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortasecseq',
+        'child_count': 3,
+    },
+    
     # TB 2 months Schedules
     {
         'schedule_name': 'a_tb1_2_months_schedule1',
@@ -222,7 +267,7 @@ flourish_schedules = [
         'child_count': 3,
     },
 
-    # Previous Studies Enrolment schedules Cohort A
+    # Previous Studies Enrolment schedules Cohort B
     {
         'schedule_name': 'b_enrol1_schedule1',
         'schedule_type': 'enrollment',
@@ -313,6 +358,29 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortbquarterly',
         'child_count': 3,
     },
+    
+    # Sequential Enrolment FU Schedules Cohort B
+    {
+        'schedule_name': 'b_sq_fu1_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_b',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortbfuseq',
+        'child_count': 1
+    },
+    {
+        'schedule_name': 'b_sq_fu2_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_b',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortbfuseq',
+        'child_count': 2
+    },
+    {
+        'schedule_name': 'b_sq_fu3_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_b',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortbfuseq',
+        'child_count': 3
+    },
 
     # Secondary Aims Enrollment Schedules Cohort B
     {
@@ -357,6 +425,29 @@ flourish_schedules = [
         'schedule_type': 'quarterly',
         'cohort_name': 'cohort_b_sec',
         'onschedule_model': 'flourish_caregiver.onschedulecohortbsecquart',
+        'child_count': 3,
+    },
+    
+    # Secondary aims FU Quarterly Sequential enrolment schedules Cohort B
+    {
+        'schedule_name': 'b_sec_fu_quart1_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_b_sec',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortbsecseq',
+        'child_count': 1,
+    },
+    {
+        'schedule_name': 'b_sec_fu_quart2_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_b_sec',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortbsecseq',
+        'child_count': 2,
+    },
+    {
+        'schedule_name': 'b_sec_fu_quart3_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_b_sec',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortbsecseq',
         'child_count': 3,
     },
 
@@ -451,6 +542,29 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortcquarterly',
         'child_count': 3,
     },
+    
+    # Sequential Enrolment FU Schedules Cohort C
+    {
+        'schedule_name': 'c_sq_fu1_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_c',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortcfuseq',
+        'child_count': 1
+    },
+    {
+        'schedule_name': 'c_sq_fu2_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_c',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortcfuseq',
+        'child_count': 2
+    },
+    {
+        'schedule_name': 'c_sq_fu3_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_c',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortcfuseq',
+        'child_count': 3
+    },
 
     # Secondary Aims Enrollment Schedules Cohort C
     {
@@ -497,6 +611,30 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortcsecquart',
         'child_count': 3,
     },
+
+    # Secondary aims FU Quarterly Sequential enrolment schedules Cohort C
+    {
+        'schedule_name': 'c_sec_fu_quart1_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_c_sec',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortcsecseq',
+        'child_count': 1,
+    },
+    {
+        'schedule_name': 'c_sec_fu_quart2_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_c_sec',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortcsecseq',
+        'child_count': 2,
+    },
+    {
+        'schedule_name': 'c_sec_fu_quart3_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_c_sec',
+        'onschedule_model': 'flourish_caregiver.onschedulecohortcsecseq',
+        'child_count': 3,
+    },
+
     # child schedules cohort A
     {
         'schedule_name': 'child_a_birth_schedule1',
@@ -529,6 +667,12 @@ flourish_schedules = [
         'onschedule_model': 'flourish_child.onschedulechildcohortaquarterly',
     },
     {
+        'schedule_name': 'child_a_sq_fu_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_a',
+        'onschedule_model': 'flourish_child.onschedulechildcohortafuseq',
+    },
+    {
         'schedule_name': 'child_a_sec_schedule1',
         'schedule_type': 'enrollment',
         'cohort_name': 'cohort_a_sec',
@@ -539,6 +683,12 @@ flourish_schedules = [
         'schedule_type': 'quarterly',
         'cohort_name': 'cohort_a_sec',
         'onschedule_model': 'flourish_child.onschedulechildcohortasecquart',
+    },
+    {
+        'schedule_name': 'child_asec_f_qt_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_a_sec',
+        'onschedule_model': 'flourish_child.onschedulechildcohortasecseq',
     },
     # child schedules cohort B
     {
@@ -566,6 +716,12 @@ flourish_schedules = [
         'onschedule_model': 'flourish_child.onschedulechildcohortbquarterly',
     },
     {
+        'schedule_name': 'child_b_sq_fu_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_b',
+        'onschedule_model': 'flourish_child.onschedulechildcohortbfuseq',
+    },
+    {
         'schedule_name': 'child_b_sec_schedule1',
         'schedule_type': 'enrollment',
         'cohort_name': 'cohort_b_sec',
@@ -576,6 +732,12 @@ flourish_schedules = [
         'schedule_type': 'quarterly',
         'cohort_name': 'cohort_b_sec',
         'onschedule_model': 'flourish_child.onschedulechildcohortbsecquart',
+    },
+    {
+        'schedule_name': 'child_bsec_f_qt_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_b_sec',
+        'onschedule_model': 'flourish_child.onschedulechildcohortbsecseq',
     },
     # child schedules cohort C
     {
@@ -603,6 +765,12 @@ flourish_schedules = [
         'onschedule_model': 'flourish_child.onschedulechildcohortcquarterly',
     },
     {
+        'schedule_name': 'child_c_sq_fu_schedule1',
+        'schedule_type': 'sq_followup',
+        'cohort_name': 'cohort_c',
+        'onschedule_model': 'flourish_child.onschedulechildcohortcfuseq',
+    },
+    {
         'schedule_name': 'child_c_sec_schedule1',
         'schedule_type': 'enrollment',
         'cohort_name': 'cohort_c_sec',
@@ -613,6 +781,12 @@ flourish_schedules = [
         'schedule_type': 'quarterly',
         'cohort_name': 'cohort_c_sec',
         'onschedule_model': 'flourish_child.onschedulechildcohortcsecquart',
+    },
+    {
+        'schedule_name': 'child_csec_f_qt_schedule1',
+        'schedule_type': 'followup_quarterly',
+        'cohort_name': 'cohort_c_sec',
+        'onschedule_model': 'flourish_child.onschedulechildcohortcsecseq',
     },
     {
         'schedule_name': 'tb_adol_schedule',
