@@ -53,7 +53,13 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
         """Validate that screening is done before consent."""
         screening_model_cls = django_apps.get_model(
             'flourish_caregiver.screeningpregwomen')
-        if not self.cleaned_data.get('study_child_identifier'):
+        count = 0
+        for x in range(int(child_count)):
+            study_child_identifier = self.data.get(
+                f'caregiverchildconsent_set-{x}-study_child_identifier')
+            if not study_child_identifier:
+                count += 1
+        if count > 0:
             try:
                 screening_obj = screening_model_cls.objects.get(
                     screening_identifier=self.cleaned_data.get('screening_identifier'))
@@ -63,7 +69,7 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
                 screening_cont = screening_obj.screeningpregwomeninline_set.count()
                 if screening_cont == 0:
                     raise forms.ValidationError('Screening not done. Cannot proceed.')
-                elif screening_cont < child_count:
+                elif screening_cont < count:
                     raise forms.ValidationError('Screening not done for all children. '
                                                 'Cannot proceed.')
 

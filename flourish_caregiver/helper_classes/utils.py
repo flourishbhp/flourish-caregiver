@@ -49,9 +49,28 @@ def update_preg_screening_obj_child_pid(consent, child_subject_identifier):
             screening_obj.screeningpregwomeninline_set.get(
                 child_subject_identifier=child_subject_identifier)
         except ObjectDoesNotExist:
-            screenings_without_child_pid = screening_obj.screeningpregwomeninline_set.filter(
-                child_subject_identifier__isnull=True)
-            if screenings_without_child_pid.exists():
+            screenings_without_child_pid = (
+                screening_obj.screeningpregwomeninline_set.filter(
+                    child_subject_identifier__isnull=True))
+            if screenings_without_child_pid.count() == 1:
                 child_screening_obj = screenings_without_child_pid.first()
                 child_screening_obj.child_subject_identifier = child_subject_identifier
                 child_screening_obj.save()
+            elif screenings_without_child_pid.count() > 1:
+                raise ValueError('More than one screening without child subject '
+                                 'identifier found.')
+
+
+def get_child_subject_identifier_by_visit(visit):
+    """Returns the child subject identifier by visit."""
+    onschedule_model_cls = django_apps.get_model(
+        visit.schedule.onschedule_model)
+
+    try:
+        onschedule_obj = onschedule_model_cls.objects.get(
+            subject_identifier=visit.subject_identifier,
+            schedule_name=visit.schedule_name)
+    except onschedule_model_cls.DoesNotExist:
+        return None
+    else:
+        return onschedule_obj.child_subject_identifier

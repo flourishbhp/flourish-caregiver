@@ -8,7 +8,8 @@ from model_mommy.recipe import Recipe, seq
 from django.apps import apps as django_apps
 from flourish_caregiver.models.hiv_disclosure_status import HIVDisclosureStatusA
 from flourish_caregiver.models.tb_engagement import TbEngagement
-from .models import AntenatalEnrollment, MaternalDelivery, SubjectConsent, \
+from .models import AntenatalEnrollment, MaternalDelivery, ScreeningPregWomenInline, \
+    SubjectConsent, \
     TbInformedConsent, TbInterview, TbOffStudy, TbStudyEligibility, TbVisitScreeningWomen
 from .models import CaregiverChildConsent, HIVRapidTestCounseling, LocatorLogEntry
 from .models import CaregiverEdinburghDeprScreening, CaregiverGadAnxietyScreening, \
@@ -52,7 +53,10 @@ screeningpriorbhpparticipants = Recipe(
     flourish_participation='interested')
 
 screeningpregwomen = Recipe(
-    ScreeningPregWomen,
+    ScreeningPregWomen,)
+
+screeningpregwomeninline = Recipe(
+    ScreeningPregWomenInline,
     hiv_testing=YES,
     breastfeed_intent=YES)
 

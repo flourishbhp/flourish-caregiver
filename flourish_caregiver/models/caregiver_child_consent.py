@@ -179,8 +179,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
             self.version = self.child_consent_version or '3'
 
-            # if self.preg_enroll:
-            # self.duplicate_subject_identifier_preg()
             if not self.subject_identifier:
                 self.subject_identifier = InfantIdentifier(
                     maternal_identifier=self.subject_consent.subject_identifier,
@@ -230,17 +228,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                 pass
             else:
                 return maternal_dataset_obj.protocol
-
-    def duplicate_subject_identifier_preg(self):
-        try:
-            child_consent = self._meta.model.objects.get(
-                preg_enroll=True,
-                subject_consent__subject_identifier=self.subject_consent
-                .subject_identifier)
-        except self._meta.model.DoesNotExist:
-            pass
-        else:
-            self.subject_identifier = child_consent.subject_identifier
 
     @property
     def child_consent_version(self):
@@ -330,9 +317,10 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     def child_identifier_postfix_by_child_count(self):
         caregiver_child_consent_cls = django_apps.get_model(self._meta.label_lower)
 
-        children_count = caregiver_child_consent_cls.objects.filter(
+        children_count = len(set(caregiver_child_consent_cls.objects.filter(
             subject_consent__subject_identifier=self.subject_consent.subject_identifier
-        ).exclude(child_dob=self.child_dob, first_name=self.first_name).count()
+        ).exclude(child_dob=self.child_dob, first_name=self.first_name).values_list(
+            'subject_identifier', flat=True)))
 
         if children_count:
             child_identifier_postfix = str((children_count + 5) * 10)
