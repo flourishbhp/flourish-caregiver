@@ -46,7 +46,6 @@ class ScreeningPriorBhpParticipants(NonUniqueSubjectIdentifierFieldMixin, SiteMo
         verbose_name="Study Caregiver Subject Identifier",
         max_length=50,
         blank=True,
-        unique=True,
         null=True)
 
     child_alive = models.CharField(
