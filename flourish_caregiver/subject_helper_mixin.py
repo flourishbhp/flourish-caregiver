@@ -66,7 +66,7 @@ class SubjectHelperMixin:
             'flourish_caregiver.subjectconsent',
             **self.options)
 
-        mommy.make_recipe(
+        child_consent = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             child_dob=None,
@@ -75,7 +75,9 @@ class SubjectHelperMixin:
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
-            subject_identifier=subject_consent.subject_identifier,)
+            subject_identifier=subject_consent.subject_identifier,
+            child_subject_identifier=child_consent.subject_identifier,
+        )
 
         mommy.make_recipe(
             'flourish_caregiver.caregiverlocator',
@@ -83,7 +85,8 @@ class SubjectHelperMixin:
 
         return subject_consent.subject_identifier
 
-    def create_TD_efv_enrollment(self, screening_identifier, **kwargs):
+    def create_TD_efv_enrollment(self, screening_identifier, study_child_identifier,
+                                 **kwargs):
         import_holidays()
 
         try:
@@ -116,6 +119,7 @@ class SubjectHelperMixin:
             mommy.make_recipe(
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
+                study_child_identifier= study_child_identifier,
                 child_dob=maternal_dataset_obj.delivdt,)
 
             mommy.make_recipe(
@@ -124,7 +128,8 @@ class SubjectHelperMixin:
             return subject_consent.subject_identifier
         return None
 
-    def create_TD_no_hiv_enrollment(self, screening_identifier, **kwargs):
+    def create_TD_no_hiv_enrollment(self, screening_identifier, study_child_identifier,
+                                    **kwargs):
         import_holidays()
 
         self.maternal_dataset_options['mom_hivstatus'] = 'HIV-uninfected'
@@ -159,6 +164,7 @@ class SubjectHelperMixin:
             mommy.make_recipe(
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
+                study_child_identifier=study_child_identifier,
                 child_dob=maternal_dataset_obj.delivdt,)
 
             mommy.make_recipe(

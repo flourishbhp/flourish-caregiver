@@ -126,8 +126,6 @@ class FollowUpEnrolmentHelper(object):
             subject_identifier=latest_appt.subject_identifier,
             schedule_name=schedule_name)
 
-        print("Going well..")
-
         old_onschedule_obj = django_apps.get_model(
             latest_appt.schedule.onschedule_model).objects.get(
             subject_identifier=latest_appt.subject_identifier,
@@ -157,8 +155,6 @@ class FollowUpEnrolmentHelper(object):
 
             self.put_on_fu_schedule(latest_appt)
             self.caregiver_off_current_schedule(latest_appt)
-
-            print("Done!")
 
     def delete_new_appt_window_after_date(self, offschedule_dt,
                                           visit_schedule_name=None,

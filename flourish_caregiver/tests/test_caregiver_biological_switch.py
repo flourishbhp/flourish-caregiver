@@ -1,22 +1,23 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group, User
-from django.test import TestCase, tag
+from django.test import tag, TestCase
 from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
-from edc_constants.constants import NOT_APPLICABLE, YES, NO, OTHER
+from edc_constants.constants import NO, NOT_APPLICABLE, OTHER, YES
 from edc_facility.import_holidays import import_holidays
-from edc_visit_schedule.models import SubjectScheduleHistory
-from edc_visit_schedule.constants import ON_SCHEDULE
-from edc_visit_tracking.constants import SCHEDULED
 from edc_registration.models import RegisteredSubject
-from flourish_prn.models import CaregiverOffStudy
-from flourish_child.models import Appointment as ChildAppointment
+from edc_visit_schedule.constants import ON_SCHEDULE
+from edc_visit_schedule.models import SubjectScheduleHistory
+from edc_visit_tracking.constants import SCHEDULED
 from model_mommy import mommy
 
-from ..models import SubjectConsent, OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly, CaregiverOffSchedule
-from ..models import CaregiverLocator, MaternalDataset, ScreeningPriorBhpParticipants
+from flourish_child.models import Appointment as ChildAppointment
+from flourish_prn.models import CaregiverOffStudy
 from ..helper_classes import CaregiverBiologicalSwitch
+from ..models import CaregiverLocator, MaternalDataset, ScreeningPriorBhpParticipants
+from ..models import CaregiverOffSchedule, OnScheduleCohortBEnrollment, \
+    OnScheduleCohortBQuarterly, SubjectConsent
 
 
 @tag('biological')
@@ -49,7 +50,7 @@ class TestCaregiverBiologicalSwitch(TestCase):
             'protocol': 'Mpepu'}
 
         self.child_dataset_options = {
-            'infant_hiv_exposed': 'Exposed',
+            'infant_hiv_exposed': 'Unexposed',
             'infant_enrolldate': get_utcnow(),
             'study_maternal_identifier': self.study_maternal_identifier,
             'study_child_identifier': '1234'}
@@ -66,7 +67,8 @@ class TestCaregiverBiologicalSwitch(TestCase):
 
         try:
             CaregiverLocator.objects.get(
-                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
+                study_maternal_identifier=maternal_dataset_obj
+                .study_maternal_identifier, )
         except CaregiverLocator.DoesNotExist:
             mommy.make_recipe(
                 'flourish_caregiver.caregiverlocator',
@@ -102,7 +104,7 @@ class TestCaregiverBiologicalSwitch(TestCase):
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=study_child_identifier,
-            child_dob=maternal_dataset_obj.delivdt,)
+            child_dob=maternal_dataset_obj.delivdt, )
 
         mommy.make_recipe(
             'flourish_caregiver.caregiverpreviouslyenrolled',
@@ -140,7 +142,8 @@ class TestCaregiverBiologicalSwitch(TestCase):
         self.assertTrue(self.subject_identifier.startswith('C'))
 
         self.assertEqual(Appointment.objects.filter(
-            subject_identifier=self.subject_identifier, schedule_name='b_enrol1_schedule1').count(), 1)
+            subject_identifier=self.subject_identifier,
+            schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=self.subject_identifier).count(), 1)
@@ -148,6 +151,7 @@ class TestCaregiverBiologicalSwitch(TestCase):
         self.assertEqual(OnScheduleCohortBQuarterly.objects.filter(
             subject_identifier=self.subject_identifier).count(), 1)
 
+    @tag('tcbs')
     def test_caregiver_biological_switch(self):
 
         caregiver_offstudy = self.switch_cls.take_caregiver_offstudy(
@@ -188,7 +192,8 @@ class TestCaregiverBiologicalSwitch(TestCase):
             report_dt=get_utcnow(), **screening_options)
         self.assertIsNotNone(mother_screening)
         self.assertEqual(
-            mother_screening.study_maternal_identifier, dataset[0].study_maternal_identifier)
+            mother_screening.study_maternal_identifier,
+            dataset[0].study_maternal_identifier)
         self.assertEqual(
             mother_screening.screening_identifier, dataset[0].screening_identifier)
 
@@ -219,36 +224,45 @@ class TestCaregiverBiologicalSwitch(TestCase):
 
         self.assertIsNotNone(self.switch_cls.biological_mother_consent)
         self.assertTrue(ScreeningPriorBhpParticipants.objects.filter(
-            subject_identifier=self.switch_cls.biological_mother_consent.subject_identifier).exists())
+            subject_identifier=self.switch_cls.biological_mother_consent
+            .subject_identifier).exists())
         self.assertEqual(self.subject_identifier.replace('C', 'B'),
                          self.switch_cls.biological_mother_consent.subject_identifier)
         self.assertEqual(
-            self.switch_cls.biological_mother_consent.caregiverchildconsent_set.count(), 0)
+            self.switch_cls.biological_mother_consent.caregiverchildconsent_set.count(),
+            0)
         self.assertEqual(SubjectConsent.objects.get(
-            subject_identifier=self.subject_identifier).caregiverchildconsent_set.count(), 1)
+            subject_identifier=self.subject_identifier).caregiverchildconsent_set.count(),
+                         1)
 
         biological_sid = self.switch_cls.biological_mother_consent.subject_identifier
         # Add the child consent to the biological mother, removing it from the caregiver
         self.switch_cls.add_child_consent_to_mother()
         self.assertEqual(
-            self.switch_cls.biological_mother_consent.caregiverchildconsent_set.count(), 1)
+            self.switch_cls.biological_mother_consent.caregiverchildconsent_set.count(),
+            1)
         self.assertEqual(SubjectConsent.objects.get(
-            subject_identifier=self.subject_identifier).caregiverchildconsent_set.count(), 0)
+            subject_identifier=self.subject_identifier).caregiverchildconsent_set.count(),
+                         0)
 
         self.assertEqual(
-            RegisteredSubject.objects.filter(relative_identifier=self.subject_identifier).count(), 1)
+            RegisteredSubject.objects.filter(
+                relative_identifier=self.subject_identifier).count(), 1)
         self.assertEqual(
-            RegisteredSubject.objects.filter(relative_identifier=biological_sid).count(), 0)
+            RegisteredSubject.objects.filter(relative_identifier=biological_sid).count(),
+            0)
 
         # Update biological mother's ID to the child's registered subject object
         self.switch_cls.update_child_registered_subject()
 
         self.assertEqual(
-            RegisteredSubject.objects.filter(relative_identifier=self.subject_identifier).count(), 0)
+            RegisteredSubject.objects.filter(
+                relative_identifier=self.subject_identifier).count(), 0)
         self.assertEqual(
-            RegisteredSubject.objects.filter(relative_identifier=biological_sid).count(), 1)
+            RegisteredSubject.objects.filter(relative_identifier=biological_sid).count(),
+            1)
 
-        # Create instance of the biological mother's previous enrollment information
+        # Create an instance of the biological mother's previous enrollment information
         prev_enrol_defaults = {'maternal_prev_enroll': 'YES'}
         self.switch_cls.create_bio_previous_enrol_info(
             report_dt=get_utcnow(), **prev_enrol_defaults)
@@ -256,7 +270,8 @@ class TestCaregiverBiologicalSwitch(TestCase):
         # Put mother on the enrolment schedule
         self.switch_cls.put_on_enrol_schedule(onschedule_dt=get_utcnow())
         self.assertEqual(Appointment.objects.filter(
-            subject_identifier=biological_sid, schedule_name='b_enrol1_schedule1').count(), 1)
+            subject_identifier=biological_sid,
+            schedule_name='b_enrol1_schedule1').count(), 1)
 
         self.assertEqual(OnScheduleCohortBEnrollment.objects.filter(
             subject_identifier=biological_sid).count(), 1)

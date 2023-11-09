@@ -57,7 +57,7 @@ class TestViralLoad(TestCase):
             breastfeed_intent=YES,
             **self.options)
 
-        mommy.make_recipe(
+        child_2= mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             gender=None,
@@ -71,10 +71,12 @@ class TestViralLoad(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=child_2.subject_identifier,
             subject_identifier=subject_consent.subject_identifier, )
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=child_2.subject_identifier,
             subject_identifier=subject_consent.subject_identifier)
 
         self.assertEqual(OnScheduleCohortABirth.objects.filter(

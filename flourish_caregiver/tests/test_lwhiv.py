@@ -59,6 +59,7 @@ class TestLWHIV(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier)
 
         self.status_helper = MaternalStatusHelper(

@@ -50,7 +50,7 @@ class TestReferralRuleGroups(TestCase):
             preg_efv=1,
             **self.maternal_dataset_options)
 
-        mommy.make_recipe(
+        self.child = mommy.make_recipe(
             'flourish_child.childdataset',
             dob=self.year_3_age(5, 1),
             **self.child_dataset_options)
@@ -131,6 +131,7 @@ class TestReferralRuleGroups(TestCase):
                 subject_identifier=quart_visit.subject_identifier,
                 visit_code='2001M').entry_status, REQUIRED)
 
+    @tag('tpr1ur')
     def test_post_referral_1000M_unscheduled_req(self):
         """ Assert post referral crf is required for pregnant ANC participant's
             referred at enrollment visit, and seen for unscheduled visit 7days
@@ -182,7 +183,7 @@ class TestReferralRuleGroups(TestCase):
                 visit_code_sequence=1).entry_status, NOT_REQUIRED)
 
     def test_post_referral_required_anc_pos(self):
-        """ Assert post referral crf is required for positive ANC participant's
+        """ Assert post-referral crf is required for positive ANC participant's
             referred at enrollment, on the delivery and/or quarterly visits.
         """
         subject_identifier = self.sh.create_antenatal_enrollment(version='3')
@@ -203,6 +204,7 @@ class TestReferralRuleGroups(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child.subject_identifier,
             subject_identifier=subject_identifier)
 
         mommy.make_recipe(

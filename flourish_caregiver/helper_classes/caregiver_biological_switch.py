@@ -159,8 +159,8 @@ class CaregiverBiologicalSwitch:
 
     def create_bio_consent(self, sid_swap=('C', 'B'), **kwargs):
         """ Create an instance of the subject consent for the participant.
-            @param subject_type: whether bioloigical mother or caregiver to determine sID.
-            @param sid_swap: tuple to determine the pid replacement pattern.
+            @param subject_type: Whether bioloigical mother or caregiver to determine sID.
+            @param sid_swap: Tuple to determine the pid replacement pattern.
         """
         first_name = kwargs.pop(
             'first_name', self.biological_mother_locator.first_name)

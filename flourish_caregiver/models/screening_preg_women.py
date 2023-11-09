@@ -31,6 +31,42 @@ class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         null=True,
         unique=True)
 
+    history = HistoricalRecords()
+
+    objects = ScreeningPregWomenManager()
+
+    def __str__(self):
+        return f'{self.screening_identifier}'
+
+    def save(self, *args, **kwargs):
+        if not self.screening_identifier:
+            self.screening_identifier = self.identifier_cls().identifier
+
+        super().save(*args, **kwargs)
+
+    def get_search_slug_fields(self):
+        fields = super().get_search_slug_fields()
+        fields.append('screening_identifier')
+        return fields
+
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Screening for Newly Enrolled Pregnant Women'
+        verbose_name_plural = 'Screening for Newly Enrolled Pregnant Women'
+
+
+class ScreeningPregWomenInline(BaseUuidModel):
+    mother_screening = models.ForeignKey(
+        ScreeningPregWomen,
+        on_delete=models.PROTECT)
+
+    child_subject_identifier = models.CharField(
+        verbose_name='Child Subject Identifier',
+        max_length=36,
+        blank=True,
+        null=True,
+        unique=True)
+
     report_datetime = models.DateTimeField(
         verbose_name="Report Date and Time",
         default=get_utcnow,
@@ -60,34 +96,22 @@ class ScreeningPregWomen(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         default=False,
         editable=False)
 
-    # is updated via signal once subject is consented
     is_consented = models.BooleanField(
         default=False,
         editable=False)
-
-    history = HistoricalRecords()
-
-    objects = ScreeningPregWomenManager()
-
-    def __str__(self):
-        return f'{self.screening_identifier}'
 
     def save(self, *args, **kwargs):
         eligibility_criteria = PregWomenEligibility(
             self.hiv_testing, self.breastfeed_intent)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
-        if not self.screening_identifier:
-            self.screening_identifier = self.identifier_cls().identifier
-
         super().save(*args, **kwargs)
 
-    def get_search_slug_fields(self):
-        fields = super().get_search_slug_fields()
-        fields.append('screening_identifier')
-        return fields
+    def __str__(self):
+        return (f'{self.mother_screening.screening_identifier}'
+                f' {self.child_subject_identifier}')
 
     class Meta:
         app_label = 'flourish_caregiver'
-        verbose_name = 'Screening for Newly Enrolled Pregnant Women'
-        verbose_name_plural = 'Screening for Newly Enrolled Pregnant Women'
+        verbose_name = 'Screening Pregnant Women Inline'
+        verbose_name_plural = 'Screening Pregnant Women Inlines'

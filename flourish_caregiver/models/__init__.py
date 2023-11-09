@@ -65,7 +65,7 @@ from .onschedule import OnScheduleCohortCSecQuart, OnScheduleCohortAFUQuarterly
 from .onschedule import OnScheduleCohortAFUSeq, OnScheduleCohortBFUSeq, OnScheduleCohortCFUSeq
 from .onschedule import OnScheduleCohortASecSeq, OnScheduleCohortBSecSeq, OnScheduleCohortCSecSeq
 from .relationship_father_involvement import RelationshipFatherInvolvement
-from .screening_preg_women import ScreeningPregWomen
+from .screening_preg_women import ScreeningPregWomen, ScreeningPregWomenInline
 from .screening_prior_bhp_participants import ScreeningPriorBhpParticipants
 from .signals import antenatal_enrollment_on_post_save
 from .signals import caregiver_child_consent_on_post_save

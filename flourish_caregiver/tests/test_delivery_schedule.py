@@ -58,6 +58,7 @@ class TestDeliverySchedule(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier)
 
         self.status_helper = MaternalStatusHelper(
@@ -73,6 +74,7 @@ class TestDeliverySchedule(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier)
 
     def test_delivery_form_valid(self):

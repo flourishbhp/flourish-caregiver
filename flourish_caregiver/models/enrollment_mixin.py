@@ -135,11 +135,11 @@ class EnrollmentMixin(models.Model):
             'flourish_caregiver.caregiverchildconsent')
 
         child_consents = child_consent_cls.objects.filter(
-            subject_consent__subject_identifier=self.subject_identifier,
+            subject_identifier=self.child_subject_identifier,
             preg_enroll=True).order_by('consent_datetime')
 
-        if (child_consents and child_consents.values_list(
-                'subject_identifier', flat=True).distinct().count() == 1):
+        if (child_consents and len(set(child_consents.values_list(
+                'subject_identifier', flat=True))) == 1):
             child_consent = child_consents[0]
             return child_consent.consent_datetime.date()
         else:
@@ -152,7 +152,9 @@ class EnrollmentMixin(models.Model):
             'flourish_caregiver.ultrasound')
         try:
             ultra_sound_obj = ultra_sound_cls.objects.get(
-                maternal_visit__subject_identifier=self.subject_identifier)
+                maternal_visit__subject_identifier=self.subject_identifier,
+                child_subject_identifier=self.child_subject_identifier
+            )
         except ultra_sound_cls.DoesNotExist:
             return None
         else:

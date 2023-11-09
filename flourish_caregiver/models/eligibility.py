@@ -59,9 +59,8 @@ class BHPPriorEligibilty:
 class PregWomenEligibility:
 
     def __init__(self, hiv_testing=None, breastfeed_intent=None):
-        """checks if pregnant women enrolling is eligible otherwise'
-        ' error message is the reason for'
-        ' eligibility test failed."""
+        """checks if pregnant women enrolling is eligible otherwise error message is
+        the reason for eligibility test failed."""
         self.error_message = []
         self.hiv_testing = hiv_testing
         self.breastfeed_intent = breastfeed_intent
