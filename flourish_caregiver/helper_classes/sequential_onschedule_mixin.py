@@ -41,8 +41,8 @@ class SeqEnrolOnScheduleMixin:
             schedule_name=schedule_name)
 
         if '_sec' not in cohort:
-            fu_onschedule_model =  caregiver_schedule_dict[cohort]['followup']['onschedule_model']
-            fu_schedule_name =  caregiver_schedule_dict[cohort]['followup'][child_count]
+            fu_onschedule_model =  caregiver_schedule_dict[cohort]['sq_followup']['onschedule_model']
+            fu_schedule_name =  caregiver_schedule_dict[cohort]['sq_followup'][child_count]
 
             self.enrol_fu_schedule(
                 cohort=cohort,
@@ -77,8 +77,8 @@ class SeqEnrolOnScheduleMixin:
                 schedule_name=schedule_name)
 
         if '_sec' not in cohort:
-            fu_onschedule_model = child_schedule_dict[cohort]['followup']['onschedule_model']
-            fu_schedule_name = child_schedule_dict[cohort]['followup']['name']
+            fu_onschedule_model = child_schedule_dict[cohort]['sq_followup']['onschedule_model']
+            fu_schedule_name = child_schedule_dict[cohort]['sq_followup']['name']
         
             self.enrol_fu_schedule(cohort=cohort,
                                    subject_identifier=self.child_subject_identifier,
@@ -163,6 +163,7 @@ class SeqEnrolOnScheduleMixin:
         """
         cohort_ages = {'cohort_b': 7, 'cohort_c': 12}
         onschedule_datetime = None
+        closeout_dt = django_apps.get_app_config('edc_protocol').study_close_datetime
         age_fu = cohort_ages.get(cohort, self.child_current_age)
         if self.child_current_age < age_fu:
             age_diff = round(age_fu - self.child_current_age, 2)
@@ -172,6 +173,8 @@ class SeqEnrolOnScheduleMixin:
             onschedule_datetime = get_utcnow() + relativedelta(months=6)
 
         if onschedule_datetime:
+            onschedule_datetime = (closeout_dt if onschedule_datetime > closeout_dt
+                                   else onschedule_datetime)
             self.put_on_schedule(onschedule_model=onschedule_model,
                                  schedule_name=schedule_name,
                                  base_appt_datetime=onschedule_datetime,

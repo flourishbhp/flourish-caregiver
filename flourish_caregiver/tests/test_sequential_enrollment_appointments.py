@@ -1,6 +1,7 @@
 import pytz
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
+from django.db import models
 from django.test import tag, TestCase
 from edc_appointment.models import Appointment
 from edc_base import get_utcnow
@@ -11,8 +12,6 @@ from edc_visit_tracking.constants import SCHEDULED
 from model_mommy import mommy
 
 from flourish_caregiver.helper_classes.cohort import Cohort
-from flourish_caregiver.helper_classes.onschedule_helper import OnScheduleHelper
-from flourish_caregiver.helper_classes.schedule_dict import caregiver_schedule_dict
 from flourish_caregiver.helper_classes.sequential_onschedule_mixin import \
     SeqEnrolOnScheduleMixin
 from flourish_caregiver.helper_classes.sequential_subject_helper import \
@@ -21,10 +20,17 @@ from flourish_caregiver.models import MaternalDataset, \
     OnScheduleCohortAEnrollment, \
     OnScheduleCohortAQuarterly, OnScheduleCohortBSec, \
     OnScheduleCohortBSecQuart
+from ..helper_classes.onschedule_helper import OnScheduleHelper
 from flourish_child.models import ChildDataset
+from flourish_caregiver.helper_classes.schedule_dict import caregiver_schedule_dict
 
 
-@tag('seq_appt')
+class PostHIVRapidTestAndConseling(models.Model):
+    maternal_visit = models.CharField(max_length=40)
+    report_datetime = models.DateTimeField()
+
+
+@tag('seqappt')
 class TestSequentialEnrollmentAppointments(TestCase):
     databases = '__all__'
     utc = pytz.UTC
@@ -134,9 +140,9 @@ class TestSequentialEnrollmentAppointments(TestCase):
             appointment.status = DONE
             appointment.save()
 
-        self.take_off_caregiver_offschedule(subject_identifier=subject_identifier,
-                                            cohort='cohort_a',
-                                            schedule_type='quarterly', child_count='1')
+        # self.take_off_caregiver_offschedule(subject_identifier=subject_identifier,
+        #                                     cohort='cohort_a',
+        #                                     schedule_type='quarterly', child_count='1')
 
         subject_consent = self.sequential_helper.update_consent(
             subject_identifier=subject_identifier)
@@ -158,9 +164,10 @@ class TestSequentialEnrollmentAppointments(TestCase):
             efv=maternal_dataset_obj.preg_efv,
             pi=maternal_dataset_obj.preg_pi).cohort_variable
 
-        OnScheduleHelper(
-            subject_identifier=subject_consent.subject_identifier, cohort=cohort
-        ).put_cohort_onschedule(
+        helper_cls = OnScheduleHelper(
+            subject_identifier=caregiver_child_consent_obj.subject_identifier,
+            cohort=cohort)
+        helper_cls.put_cohort_onschedule(
             caregiver_child_consent_obj,
             base_appt_datetime=get_utcnow() + relativedelta(years=1, months=1))
 
@@ -207,15 +214,15 @@ class TestSequentialEnrollmentAppointments(TestCase):
             visit_code__in=prev_appts
         ).count(), 0)
 
-    def take_off_caregiver_offschedule(self, subject_identifier, cohort, schedule_type,
-                                       child_count):
-        onschedule_model = caregiver_schedule_dict[cohort][schedule_type][
-            'onschedule_model']
-        schedule_name = caregiver_schedule_dict[cohort][schedule_type][child_count]
-
-        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
-            onschedule_model=onschedule_model,
-            name=schedule_name)
-        schedule.take_off_schedule(
-            subject_identifier=subject_identifier,
-            schedule_name=schedule_name)
+    # def take_off_caregiver_offschedule(self, subject_identifier, cohort, schedule_type,
+    #                                    child_count):
+    #     onschedule_model = caregiver_schedule_dict[cohort][schedule_type][
+    #         'onschedule_model']
+    #     schedule_name = caregiver_schedule_dict[cohort][schedule_type][child_count]
+    #
+    #     _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+    #         onschedule_model=onschedule_model,
+    #         name=schedule_name)
+    #     schedule.take_off_schedule(
+    #         subject_identifier=subject_identifier,
+    #         schedule_name=schedule_name)

@@ -376,7 +376,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         except Cohort.DoesNotExist:
             cohort = cohort_assigned(instance.study_child_identifier,
                                      instance.child_dob,
-                                     instance.subject_consent.created.date())
+                                     instance.subject_consent.consent_datetime.date())
 
             if not cohort and screening_preg_exists(instance):
                 cohort = 'cohort_a'

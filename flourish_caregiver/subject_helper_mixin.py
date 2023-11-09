@@ -210,7 +210,8 @@ class SubjectHelperMixin:
         return caregiver_locator
 
     def enroll_prior_participant(self, screening_identifier, study_child_identifier,
-                                 hiv_status=None, version='1', child_version='1'):
+                                 hiv_status=None, version='1', child_version='1',
+                                 options={}, child_consent_options={}, update_created_dt=None):
 
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(
@@ -218,10 +219,9 @@ class SubjectHelperMixin:
         except MaternalDataset.DoesNotExist:
             pass
         else:
-            self.options = {
+            self.options = options or {
                 'consent_datetime': get_utcnow(),
-                'version': version
-                }
+                'version': version }
 
             screening_options = {
                 'child_alive': YES,
@@ -247,21 +247,30 @@ class SubjectHelperMixin:
                 biological_caregiver=YES,
                 **self.options)
 
-            mommy.make_recipe(
+            child_consent = mommy.make_recipe(
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
                 study_child_identifier=study_child_identifier,
-                child_dob=maternal_dataset_obj.delivdt,)
+                child_dob=maternal_dataset_obj.delivdt,
+                **child_consent_options)
+
+            if update_created_dt:
+                subject_consent.created = self.options.get('consent_datetime')
+                child_consent.created = child_consent_options.get('consent_datetime')
+                subject_consent.save()
+                child_consent.save()
 
             if hiv_status:
                 mommy.make_recipe(
                     'flourish_caregiver.caregiverpreviouslyenrolled',
                     subject_identifier=subject_consent.subject_identifier,
-                    current_hiv_status=hiv_status)
+                    current_hiv_status=hiv_status,
+                    report_datetime=self.options.get('consent_datetime'))
             else:
                 mommy.make_recipe(
                     'flourish_caregiver.caregiverpreviouslyenrolled',
-                    subject_identifier=subject_consent.subject_identifier)
+                    subject_identifier=subject_consent.subject_identifier,
+                    report_datetime=self.options.get('consent_datetime'))
             return subject_consent.subject_identifier
 
     def enroll_prior_participant_assent(self, screening_identifier, study_child_identifier,
