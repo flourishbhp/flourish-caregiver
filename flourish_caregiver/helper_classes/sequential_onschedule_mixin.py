@@ -30,10 +30,10 @@ class SeqEnrolOnScheduleMixin:
         schedule_name = caregiver_schedule_dict[cohort][schedule_type][child_count]
 
         self.put_on_schedule(onschedule_model=onschedule_model,
-                                schedule_name=schedule_name,
-                                onschedule_datetime=onschedule_datetime,
-                                subject_identifier=self.caregiver_subject_identifier,
-                                is_caregiver=True)
+                             schedule_name=schedule_name,
+                             onschedule_datetime=onschedule_datetime,
+                             subject_identifier=self.caregiver_subject_identifier,
+                             is_caregiver=True)
 
         self.delete_completed_appointments(
             appointment_model_cls=Appointment,
