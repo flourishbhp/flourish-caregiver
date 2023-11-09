@@ -63,7 +63,7 @@ class ExportActionMixin:
         for obj in queryset:
             data = []
             inline_field_names = []
-
+            subject_identifier=getattr(obj, 'subject_identifier', None)
             # Add subject identifier and visit code
             if getattr(obj, 'maternal_visit', None):
 
