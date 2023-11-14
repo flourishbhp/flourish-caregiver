@@ -64,7 +64,7 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
                 screening_obj = screening_model_cls.objects.get(
                     screening_identifier=self.cleaned_data.get('screening_identifier'))
             except screening_model_cls.DoesNotExist:
-                raise forms.ValidationError('Screening not done. Cannot proceed.')
+                pass
             else:
                 screening_cont = screening_obj.screeningpregwomeninline_set.count()
                 if screening_cont == 0:
