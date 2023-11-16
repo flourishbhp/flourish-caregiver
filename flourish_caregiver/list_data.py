@@ -233,6 +233,10 @@ list_data = {
          'Difficultly dealing with diagnoses of chronic illness or infectious disease'),
         ('refer_grief', 'Grief counseling (for loss of loved one)'),
         ('refer_adherence', 'Adherence counseling'),
+        ('local_medical_facility', 'Local medical facility (add details under Comments)'),
+        ('pediatrician_support', 'Pediatrician support'),
+        ('schooling_support', 'Schooling support'),
+        ('ophthalmology_eye_care', 'Ophthalmology/Eye care support'),
         ('refer_other', 'Other, specify')
     ],
     'flourish_caregiver.pregnancyinfluencerslist': [

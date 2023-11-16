@@ -164,6 +164,11 @@ CRYING = (
     ('0', 'No, never')
 )
 
+CAREGIVER_OR_CHILD = (
+    ('caregiver', 'Caregiver'),
+    ('child', 'Child')
+)
+
 DECLINE_REASON = (
     ('cant_physically_attend', 'Not able to physically come to clinic'),
     ('not_interested', 'Not interested in participating'),
@@ -763,6 +768,11 @@ HIV_STATUS = (
     (POS, 'Positive'),
     (NEG, 'Negative'),
     (UNKNOWN, 'Unknown'),)
+
+HIV_EXPOSURE_STATUS = (
+    ('heu', 'HEU'),
+    ('huu', 'HUU')
+)
 
 FEEDING_HIV_STATUS = (
     (YES, 'Yes'),
