@@ -1181,3 +1181,31 @@ CLINIC_VISIT_CHOICES = (
     ("scheduled", "Appointment Scheduled"),
     ("will_care", "Will seek care")
 )
+
+CLINIC_NAMES = (
+    ('Bontleng', 'Bontleng'),
+    ('Julia Molefe', 'Julia Molefe'),
+    ('Phase2', 'Phase2'),
+    ('BH2', 'BH2'),
+    ('Nkoyaphiri', 'Nkoyaphiri'),
+    ('Mogoditshane', 'Mogoditshane'),
+    ('Lesirane', 'Lesirane'),
+    ('Old Naledi', 'Old Naledi'),
+    ('BH3', 'BH3'),
+    ('GWest', 'GWest'),
+    ('BH1', 'BH1'),
+    ('Sebele', 'Sebele'),
+    (OTHER, 'Other'),
+)
+
+
+TB_REASON_CHOICES = (
+    ('temporarily', 'Temporarily out of study area'),
+    ('transport', 'Participant does not have transport fares'),
+    ('school', 'Unable to attend due to school, exams or tests'),
+    ('work', 'Participant/caregiver has work/home emergency issues'),
+    ('work', 'Participant/caregiver cannot be released from work'),
+    ('isolation', 'Participant is in isolation due to COVID-19 or another infection'),
+    ('not_well', 'Participant/caregiver is not well'),
+    ('other', 'Other'),
+)

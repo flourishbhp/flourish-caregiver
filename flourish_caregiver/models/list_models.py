@@ -87,3 +87,7 @@ class ArvInterruptionReasons(ListModelMixin, BaseUuidModel):
 
 class ExpenseContributors(ListModelMixin, BaseUuidModel):
     pass
+
+
+class TBTests(ListModelMixin, BaseUuidModel):
+    pass
