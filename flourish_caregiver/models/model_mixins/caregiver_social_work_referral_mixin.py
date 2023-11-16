@@ -1,12 +1,11 @@
-
 from django.db import models
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_base.model_validators import datetime_not_future
+from edc_base.model_fields import OtherCharField
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, UNKNOWN
+
 from ...choices import HIV_STATUS, CAREGIVER_OR_CHILD, HIV_EXPOSURE_STATUS
-from edc_base.model_fields import OtherCharField
-from ..list_models import CaregiverSocialWorkReferralList
 
 
 class CaregiverSocialWorkReferralMixin(models.Model):
@@ -41,13 +40,6 @@ class CaregiverSocialWorkReferralMixin(models.Model):
         max_length=3,
         blank=True,
         null=True
-    )
-
-    referral_reason = models.ManyToManyField(
-        CaregiverSocialWorkReferralList,
-        verbose_name='Please indicate reasons for the need for a social work '
-        'referral for the Mother/Caregiver or Child (select all that apply)',
-        blank=True
     )
 
     reason_other = OtherCharField(
