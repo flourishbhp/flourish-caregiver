@@ -502,7 +502,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             TB_OFF_STUDY_ACTION,
                             instance.subject_identifier)
 
-    if not raw and created and instance.visit_code in ['2000M', '2000D', '3000M']:
+    if not raw and created and instance.visit_code in ['2000M', '2000D', '3000M',
+                                                       '3000A', '3000B', '3000C']:
         base_appt_datetime = instance.report_datetime.replace(microsecond=0)
         helper_cls = onschedule_helper_cls(instance.subject_identifier, )
         helper_cls.put_quarterly_onschedule(
