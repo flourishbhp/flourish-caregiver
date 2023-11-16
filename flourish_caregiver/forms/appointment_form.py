@@ -43,7 +43,7 @@ class AppointmentForm(SiteModelFormMixin, FormValidatorMixin, AppointmentFormVal
             if self.instance.visit_code_sequence == 0 and self.instance.visit_code != '2200T':
                 if (cleaned_data.get('appt_datetime') < earliest_appt_date.replace(
                         microsecond=0)
-                        or (self.instance.visit_code not in ['1000M', '2000M']
+                        or (self.instance.visit_code not in ['1000M', '2000M', '3000A', '3000B', '3000C']
                             and cleaned_data.get('appt_datetime') > latest_appt_date.replace(
                             microsecond=0))):
                     raise forms.ValidationError(
