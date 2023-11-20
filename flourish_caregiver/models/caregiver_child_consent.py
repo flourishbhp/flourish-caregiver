@@ -161,6 +161,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         editable=False)
 
     def save(self, *args, **kwargs):
+        breakpoint()
         self.preg_enroll = self.is_preg
 
         eligibility_criteria = CaregiverChildConsentEligibility(
@@ -177,7 +178,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
-            self.version = self.child_consent_version or '3'
+            self.version = self.child_consent_version or '4'
 
             if not self.subject_identifier:
                 self.subject_identifier = InfantIdentifier(

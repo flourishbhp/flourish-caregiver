@@ -118,14 +118,16 @@ COHORTS = (
 CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
-    ('3', 'Consent version 3')
+    ('3', 'Consent version 3'),
+    ('4', 'Consent version 4'),
 )
 
 CHILD_CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
     ('2.1', 'Consent version 2.1'),
-    ('3', 'Consent version 3')
+    ('3', 'Consent version 3'),
+    ('4', 'Consent version 4')
 )
 
 CONTACT_FAIL_REASON = (
@@ -1197,7 +1199,6 @@ CLINIC_NAMES = (
     ('Sebele', 'Sebele'),
     (OTHER, 'Other'),
 )
-
 
 TB_REASON_CHOICES = (
     ('temporarily', 'Temporarily out of study area'),

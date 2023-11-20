@@ -28,13 +28,13 @@ class BreastFeedingQuestionnaireAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'after_delivery_advice_on_viralload',
                 'use_medicines',
                 'breastfeeding_duration',
-                'during_preg_influencers',
+                # 'during_preg_influencers',
                 'during_preg_influencers_other',
                 'influenced_during_preg',
-                'after_delivery_influencers',
+                # 'after_delivery_influencers',
                 'after_delivery_influencers_other',
                 'influenced_after_delivery',
-                'received_training',
+                # 'received_training',
                 'training_outcome',
                 'feeding_advice',
                 'community_breastfeeding_bias',
@@ -44,7 +44,7 @@ class BreastFeedingQuestionnaireAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'return_to_work_school',
                 'returned_to_work_school',
                 'six_months_feeding',
-                'infant_feeding_reasons',
+                # 'infant_feeding_reasons',
                 'infant_feeding_other',
             ),
         }), audit_fieldset_tuple
@@ -76,5 +76,5 @@ class BreastFeedingQuestionnaireAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     }
 
-    filter_horizontal = ('during_preg_influencers', 'after_delivery_influencers',
-                         'received_training', 'infant_feeding_reasons',)
+    # filter_horizontal = ('during_preg_influencers', 'after_delivery_influencers',
+    #                      'received_training', 'infant_feeding_reasons',)

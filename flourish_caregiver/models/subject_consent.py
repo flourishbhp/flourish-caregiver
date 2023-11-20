@@ -154,7 +154,7 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
                 consent_version_obj = consent_version_cls.objects.get(
                     screening_identifier=self.screening_identifier)
             except consent_version_cls.DoesNotExist:
-                self.version = '3'
+                self.version = '4'
             else:
                 self.version = consent_version_obj.version
 
@@ -184,7 +184,7 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         super().save(*args, **kwargs)
 
     def natural_key(self):
-        return (self.subject_identifier, self.version)
+        return self.subject_identifier, self.version
 
     @property
     def multiple_births(self):
