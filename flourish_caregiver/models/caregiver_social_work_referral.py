@@ -11,7 +11,6 @@ class CaregiverSocialWorkReferral(CrfModelMixin, CaregiverSocialWorkReferralMixi
         CaregiverSocialWorkReferralList,
         verbose_name=('Please indicate reasons for the need for a social work '
                       'referral for the Mother/Caregiver or Child (select all that apply)'),
-        blank=True
     )
     referral_for = models.CharField(
         verbose_name='Referral For ',
