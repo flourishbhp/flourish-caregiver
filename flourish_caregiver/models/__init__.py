@@ -103,3 +103,4 @@ from .maternal_arv_adherence import MaternalArvAdherence
 from .maternal_interim_idcc_data_version_2 import MaternalInterimIdccVersion2
 from .socio_demographic_data import HouseHoldDetails
 from .post_hiv_rapid_testing_and_conseling import PostHivRapidTestAndConseling
+from .caregiver_safi_stigma import CaregiverSafiStigma

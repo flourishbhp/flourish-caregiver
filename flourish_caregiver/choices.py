@@ -1171,3 +1171,35 @@ CLINIC_VISIT_CHOICES = (
     ("scheduled", "Appointment Scheduled"),
     ("will_care", "Will seek care")
 )
+
+
+PERIOD_HAPPENED = (
+    ('past_6_months', 'Past 6 months'),
+    ('more_than_6_months', 'Longer than 6 months ago')
+)
+
+HAPPENED = (
+    ('never_happened', 'Never Happened'),
+    ('ever_happened', 'Ever Happened'),
+    (NOT_APPLICABLE, 'Not Applicable')
+)
+
+PERIOD_HAPPENED_DONT_KNOW = (
+    ('past_6_months', 'Past 6 months'),
+    ('more_than_6_months', 'Longer than 6 months ago'),
+    (DONT_KNOW, "Don't know")
+)
+
+HAPPENED_DONT_KNOW = (
+    ('never_happened', 'Never Happened'),
+    ('ever_happened', 'Ever Happened'),
+    (DONT_KNOW, "Don't know")
+)
+
+
+HIV_PERSPECTIVE = (
+    ('no_one_thinks_that', 'No one thinks that'),
+    ('a_few_people_think_that', 'A few people think that'),
+    ('most_people_think_that', 'Most people think that'),
+    (NOT_APPLICABLE, 'Not Applicable')
+)

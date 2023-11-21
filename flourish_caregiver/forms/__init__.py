@@ -84,3 +84,4 @@ from .ultrasound_form import UltraSoundForm
 from .interview_focus_group_interest_form import InterviewFocusGroupInterestForm
 from .interview_focus_group_interest_form_version_2 import InterviewFocusGroupInterestVersion2Form
 from .post_hiv_rapid_testing_and_conseling_form import PostHivRapidTestAndConselingForm
+from .caregiver_safi_stigma_form import CaregiverSafiStigmaForm
