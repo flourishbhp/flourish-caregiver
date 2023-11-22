@@ -25,10 +25,6 @@ from flourish_child.models import ChildDataset
 from flourish_caregiver.helper_classes.schedule_dict import caregiver_schedule_dict
 
 
-class PostHIVRapidTestAndConseling(models.Model):
-    maternal_visit = models.CharField(max_length=40)
-    report_datetime = models.DateTimeField()
-
 
 @tag('seqappt')
 class TestSequentialEnrollmentAppointments(TestCase):

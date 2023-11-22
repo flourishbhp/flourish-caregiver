@@ -54,11 +54,20 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
         screening_model_cls = django_apps.get_model(
             'flourish_caregiver.screeningpregwomen')
         count = 0
+        subject_identifiers = []
         for x in range(int(child_count)):
             study_child_identifier = self.data.get(
                 f'caregiverchildconsent_set-{x}-study_child_identifier')
-            if not study_child_identifier:
+
+            _subject_identifier = self.data.get(
+                f'caregiverchildconsent_set-{x}-subject_identifier'
+            )
+
+            if (not study_child_identifier and
+                    _subject_identifier not in subject_identifiers):
+                subject_identifiers.append(_subject_identifier)
                 count += 1
+
         if count > 0:
             try:
                 screening_obj = screening_model_cls.objects.get(

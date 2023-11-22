@@ -1,23 +1,21 @@
+import pytz
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
-from django.test import TestCase, tag
+from django.test import tag, TestCase
+from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
 from edc_facility.import_holidays import import_holidays
-from edc_metadata.constants import REQUIRED, NOT_REQUIRED
+from edc_metadata.constants import NOT_REQUIRED, REQUIRED
 from edc_metadata.models import CrfMetadata
-from model_mommy import mommy
-import pytz
-
-from edc_appointment.models import Appointment
 from edc_visit_tracking.constants import SCHEDULED
+from model_mommy import mommy
 
-from ..models import MaternalVisit
+from ..models import CaregiverChildConsent, MaternalVisit
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
 @tag('reff')
 class TestReferralRuleGroups(TestCase):
-
     databases = '__all__'
     utc = pytz.UTC
 
@@ -80,7 +78,6 @@ class TestReferralRuleGroups(TestCase):
         return child_dob
 
     def test_phq9_referral_required(self):
-
         visit = MaternalVisit.objects.get(visit_code='2000M')
         mommy.make_recipe('flourish_caregiver.caregiverphqdeprscreening',
                           maternal_visit=visit)
@@ -92,7 +89,6 @@ class TestReferralRuleGroups(TestCase):
                 visit_code='2000M').entry_status, REQUIRED)
 
     def test_phq9_referral_fu_required(self):
-
         visit = MaternalVisit.objects.get(visit_code='2000M')
         mommy.make_recipe('flourish_caregiver.caregiverphqdeprscreening',
                           maternal_visit=visit)
@@ -108,7 +104,6 @@ class TestReferralRuleGroups(TestCase):
                 visit_code='2000M').entry_status, REQUIRED)
 
     def test_phq9_post_referral_required(self):
-
         visit = MaternalVisit.objects.get(visit_code='2000M')
         mommy.make_recipe('flourish_caregiver.caregiverphqdeprscreening',
                           maternal_visit=visit)
@@ -155,7 +150,8 @@ class TestReferralRuleGroups(TestCase):
 
         appt_unscheduled = self.sh.create_unscheduled_appointment(
             base_appointment=appt_1000M)
-        appt_unscheduled.appt_datetime = phq_referral.report_datetime + relativedelta(days=7)
+        appt_unscheduled.appt_datetime = phq_referral.report_datetime + relativedelta(
+            days=7)
         appt_unscheduled.save()
 
         unscheduled_visit = mommy.make_recipe(
@@ -172,7 +168,8 @@ class TestReferralRuleGroups(TestCase):
                 visit_code='1000M',
                 visit_code_sequence=1).entry_status, REQUIRED)
 
-        unscheduled_visit.report_datetime = phq_referral.report_datetime + relativedelta(days=6)
+        unscheduled_visit.report_datetime = phq_referral.report_datetime + relativedelta(
+            days=6)
         unscheduled_visit.save()
 
         self.assertEqual(
@@ -182,6 +179,7 @@ class TestReferralRuleGroups(TestCase):
                 visit_code='1000M',
                 visit_code_sequence=1).entry_status, NOT_REQUIRED)
 
+    @tag('tprap')
     def test_post_referral_required_anc_pos(self):
         """ Assert post-referral crf is required for positive ANC participant's
             referred at enrollment, on the delivery and/or quarterly visits.
@@ -202,9 +200,12 @@ class TestReferralRuleGroups(TestCase):
             maternal_visit=visit,
             referred_to='psychiatrist')
 
+        child_subject_identifier = CaregiverChildConsent.objects.get(
+            subject_consent__subject_identifier=subject_identifier).subject_identifier
+
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
-            child_subject_identifier=self.child.subject_identifier,
+            child_subject_identifier=child_subject_identifier,
             subject_identifier=subject_identifier)
 
         mommy.make_recipe(

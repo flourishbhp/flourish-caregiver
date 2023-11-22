@@ -1,5 +1,6 @@
-from edc_constants.constants import NONE, OTHER, NOT_APPLICABLE
+from edc_constants.constants import NONE, NOT_APPLICABLE, OTHER
 from edc_list_data import PreloadData
+
 from flourish_caregiver.constants import PNTA
 
 list_data = {
@@ -318,6 +319,15 @@ list_data = {
         ('mother_in_law', 'Mother-in-law or Father-in-law'),
         ('friend', 'Friend'),
         ('unsure', 'Unsure'), (OTHER, 'Other, specify')
+    ],
+    'flourish_caregiver.tbtests': [
+        ('chest_xray', 'Chest Xray'),
+        ('sputum_sample', 'Sputum sample'),
+        ('stool_sample', 'Stool sample'),
+        ('urine_test', 'Urine test (LAM)'),
+        ('skin_test', 'Skin test (TST/Mantoux)'),
+        ('blood_test', 'Blood test (quantiferon)'),
+        (OTHER, 'other')
     ]
 }
 
