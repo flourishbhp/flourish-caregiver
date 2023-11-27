@@ -63,7 +63,7 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
                 f'caregiverchildconsent_set-{x}-subject_identifier'
             )
 
-            if (not study_child_identifier and
+            if (study_child_identifier == '' and
                     _subject_identifier not in subject_identifiers):
                 subject_identifiers.append(_subject_identifier)
                 count += 1
