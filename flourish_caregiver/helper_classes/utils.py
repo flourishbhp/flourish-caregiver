@@ -1,5 +1,6 @@
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 
 from ..helper_classes.cohort_assignment import CohortAssignment
 
@@ -74,3 +75,42 @@ def get_child_subject_identifier_by_visit(visit):
         return None
     else:
         return onschedule_obj.child_subject_identifier
+
+
+def get_schedule_names(instance):
+    onschedules = []
+    child_subject_identifier = get_child_subject_identifier_by_visit(instance)
+    subject_schedule_history_model = 'edc_visit_schedule.subjectschedulehistory'
+    subject_schedule_history_cls = django_apps.get_model(
+        subject_schedule_history_model)
+
+    qs = subject_schedule_history_cls.objects.filter(
+        subject_identifier=instance.subject_identifier).exclude(
+            Q(schedule_name__icontains='tb') | Q(
+                schedule_name__icontains='facet')).values_list(
+                    'onschedule_model', flat=True)
+    for model_name in qs:
+        onschedule_model_cls = django_apps.get_model(model_name)
+        try:
+            onschedule_obj = onschedule_model_cls.objects.get(
+                subject_identifier=instance.subject_identifier,
+                child_subject_identifier=child_subject_identifier)
+        except onschedule_model_cls.DoesNotExist:
+            continue
+        else:
+            onschedules.append(onschedule_obj.schedule_name)
+    return onschedules
+
+
+def get_previous_by_timepoint_dt(appointment):
+    schedule_names = get_schedule_names(appointment)
+    try:
+        previous_appt = appointment.__class__.objects.filter(
+            subject_identifier=appointment.subject_identifier,
+            timepoint_datetime__lt=appointment.timepoint_datetime,
+            schedule_name__in=schedule_names,
+            visit_code_sequence=0).latest('timepoint_datetime')
+    except appointment.__class__.DoesNotExist:
+        return None
+    else:
+        return previous_appt
