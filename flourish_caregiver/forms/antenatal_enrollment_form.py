@@ -2,18 +2,17 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from edc_base.sites import SiteModelFormMixin
+from edc_constants.constants import POS
 from edc_form_validators import FormValidatorMixin
 
 from flourish_form_validations.form_validators import AntenatalEnrollmentFormValidator
 from ..helper_classes import EnrollmentHelper
-
 from ..models import AntenatalEnrollment
 
 
 class AntenatalEnrollmentForm(
-        SiteModelFormMixin, FormValidatorMixin,
-        forms.ModelForm):
-
+    SiteModelFormMixin, FormValidatorMixin,
+    forms.ModelForm):
     form_validator_cls = AntenatalEnrollmentFormValidator
 
     subject_identifier = forms.CharField(
@@ -22,9 +21,17 @@ class AntenatalEnrollmentForm(
 
     child_consent_model = 'flourish_caregiver.caregiverchildconsent'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        _obj = self.antenatal_enrollment_obj
+        if _obj and getattr(_obj, 'current_hiv_status', None) == POS:
+            self.fields['current_hiv_status'].initial = _obj.current_hiv_status
+            self.fields['will_get_arvs'].initial = _obj.will_get_arvs
+
     @property
     def child_consent_cls(self):
         return django_apps.get_model(self.child_consent_model)
+
     @property
     def enrolment_helper_cls(self):
         return EnrollmentHelper
@@ -62,13 +69,24 @@ class AntenatalEnrollmentForm(
             'flourish_caregiver.caregiverchildconsent')
 
         child_consents = child_consent_cls.objects.filter(
-            subject_consent__subject_identifier=self.cleaned_data.get('subject_identifier'),
+            subject_consent__subject_identifier=self.cleaned_data.get(
+                'subject_identifier'),
             preg_enroll=True).order_by('consent_datetime')
 
         if not child_consents:
             raise forms.ValidationError(
                 'Missing Child Consent associated with participant\'s '
                 ' pregnancy screening form. Please correct.')
+
+    @property
+    def antenatal_enrollment_obj(self):
+        subject_identifier = self.initial.get('subject_identifier', None)
+        if subject_identifier:
+            try:
+                return AntenatalEnrollment.objects.filter(
+                    subject_identifier=subject_identifier).earliest('report_datetime')
+            except AntenatalEnrollment.DoesNotExist:
+                return None
 
     class Meta:
         model = AntenatalEnrollment

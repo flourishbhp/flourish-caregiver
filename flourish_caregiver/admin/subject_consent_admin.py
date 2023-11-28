@@ -1,31 +1,31 @@
-import xlwt
-from _collections import OrderedDict
 import datetime
-from functools import partialmethod
 import uuid
+from _collections import OrderedDict
+from functools import partialmethod
 
+import xlwt
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
+from django.db.models import OuterRef, Subquery
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from edc_constants.constants import MALE, FEMALE
+from edc_consent.actions import (
+    flag_as_verified_against_paper, unflag_as_verified_against_paper)
+from edc_constants.constants import FEMALE, MALE
+from edc_model_admin import audit_fields, audit_fieldset_tuple, \
+    ModelAdminFormAutoNumberMixin
 from edc_model_admin import ModelAdminBasicMixin
-from edc_model_admin import ModelAdminFormAutoNumberMixin, audit_fieldset_tuple, \
-    audit_fields
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
 
-from edc_consent.actions import (
-    flag_as_verified_against_paper, unflag_as_verified_against_paper)
-
+from .modeladmin_mixins import ModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..helper_classes import MaternalStatusHelper
-from ..models import CaregiverChildConsent, SubjectConsent, CaregiverLocator
-from .modeladmin_mixins import ModelAdminMixin
+from ..models import CaregiverChildConsent, CaregiverLocator, SubjectConsent
 
 
 class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
@@ -117,6 +117,10 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         if obj:
             consents = consents.filter(
                 subject_consent__version=getattr(obj, 'version', None))
+            subquery = consents.filter(
+                subject_identifier=OuterRef('subject_identifier')).order_by(
+                '-version').values('version')[:1]
+            consents = consents.filter(version=Subquery(subquery))
             consents = set([c.subject_identifier for c in self.get_difference(
                 consents, obj)])
 

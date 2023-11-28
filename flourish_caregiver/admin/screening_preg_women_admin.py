@@ -15,14 +15,10 @@ from ..models import ScreeningPregWomen
 from ..models.screening_preg_women import ScreeningPregWomenInline
 
 
-class ScreeningPregWomenInlineAdmin(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
-                                    admin.StackedInline):
-    model = ScreeningPregWomenInline
-
+# Introducing BaseScreeningPregWomenAdmin class to reduce repetition
+class BaseScreeningPregWomenAdmin:
     form = ScreeningPregWomenInlineForm
-
     extra = 0
-
     fieldsets = (
         (None, {
             'fields': ('child_subject_identifier',
@@ -32,9 +28,18 @@ class ScreeningPregWomenInlineAdmin(StackedInlineMixin, ModelAdminFormAutoNumber
          ),
         audit_fieldset_tuple
     )
-
     radio_fields = {'hiv_testing': admin.VERTICAL,
                     'breastfeed_intent': admin.VERTICAL, }
+
+
+@admin.register(ScreeningPregWomenInline, site=flourish_caregiver_admin)
+class ScreeningPregWomenInlineAdmin(BaseScreeningPregWomenAdmin, admin.ModelAdmin):
+    pass
+
+
+class ScreeningPregWomenInline(BaseScreeningPregWomenAdmin, StackedInlineMixin,
+                               ModelAdminFormAutoNumberMixin, admin.StackedInline, ):
+    model = ScreeningPregWomenInline
 
 
 @admin.register(ScreeningPregWomen, site=flourish_caregiver_admin)
@@ -43,7 +48,7 @@ class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     search_fields = ['screening_identifier']
 
-    inlines = [ScreeningPregWomenInlineAdmin, ]
+    inlines = [ScreeningPregWomenInline, ]
 
     fieldsets = (
         (None, {

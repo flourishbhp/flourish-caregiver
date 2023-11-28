@@ -4,7 +4,7 @@ from edc_base import get_utcnow
 from edc_facility.import_holidays import import_holidays
 from model_mommy import mommy
 
-from flourish_caregiver.models import (OnScheduleCohortAAntenatal,
+from flourish_caregiver.models import (CaregiverChildConsent, OnScheduleCohortAAntenatal,
                                        OnScheduleCohortABirth,
                                        SubjectConsent)
 from flourish_caregiver.subject_helper_mixin import SubjectHelperMixin
@@ -105,3 +105,29 @@ class TestANCSecondPregnancy(TestCase):
         self.assertEqual(OnScheduleCohortABirth.objects.filter(
             subject_identifier=self.subject_identifier,
             schedule_name='a_birth2_schedule1').count(), 1)
+
+    @tag('preg_erol')
+    def test_preg_enrol(self):
+        child_2 = mommy.make_recipe(
+            'flourish_caregiver.caregiverchildconsent',
+            subject_consent=self.subject_consent,
+            child_dob=None,
+            first_name=None,
+            last_name=None, )
+
+        self.assertEqual(None, CaregiverChildConsent.objects.get(
+            subject_identifier=child_2.subject_identifier).child_dob)
+
+        self.assertEqual(True, CaregiverChildConsent.objects.get(
+            subject_identifier=child_2.subject_identifier).is_preg)
+
+        mommy.make_recipe(
+            'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=child_2.subject_identifier,
+            subject_identifier=self.subject_consent.subject_identifier, )
+
+        self.assertEqual(None, CaregiverChildConsent.objects.get(
+            subject_identifier=child_2.subject_identifier).child_dob)
+
+        self.assertEqual(True, CaregiverChildConsent.objects.get(
+            subject_identifier=child_2.subject_identifier).is_preg)
