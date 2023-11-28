@@ -64,14 +64,16 @@ class OnScheduleHelper(object):
         self.put_on_schedule(cohort,
                              instance=instance,
                              child_subject_identifier=child_subject_identifier,
-                             base_appt_datetime=base_appt_datetime or instance.report_datetime.replace(
-                                 microsecond=0),
+                             base_appt_datetime=base_appt_datetime or
+                                                instance.report_datetime.replace(
+                                                    microsecond=0),
                              caregiver_visit_count=caregiver_visit_count)
 
     def put_on_schedule(self, cohort, instance=None, child_subject_identifier=None,
                         base_appt_datetime=None, caregiver_visit_count=None):
 
-        subject_identifier = self.subject_identifier or instance.subject_consent.subject_identifier
+        subject_identifier = (self.subject_identifier or
+                              instance.subject_consent.subject_identifier)
         if instance:
             schedule, onschedule_model_cls, schedule_name = self.get_onschedule_model(
                 cohort=cohort,
@@ -80,18 +82,22 @@ class OnScheduleHelper(object):
 
             assent_onschedule_datetime = self.get_assent_onschedule_datetime
             self.add_on_schedule(
-                schedule=schedule, subject_identifier=subject_identifier, instance=instance,
+                schedule=schedule, subject_identifier=subject_identifier,
+                instance=instance,
                 schedule_name=schedule_name, base_appt_datetime=base_appt_datetime,
-                child_subject_identifier=child_subject_identifier, onschedule_model_cls=onschedule_model_cls, 
+                child_subject_identifier=child_subject_identifier,
+                onschedule_model_cls=onschedule_model_cls,
                 assent_onschedule_datetime=assent_onschedule_datetime,
-                
+
             )
 
     def add_on_schedule(self, schedule=None, subject_identifier=None, instance=None,
-                        schedule_name=None, base_appt_datetime=None, child_subject_identifier=None,
+                        schedule_name=None, base_appt_datetime=None,
+                        child_subject_identifier=None,
                         onschedule_model_cls=None, assent_onschedule_datetime=None):
         """Add a mother on a quarterly schedule.
         """
+
         onschedule_datetime = (self.onschedule_datetime
                                or assent_onschedule_datetime
                                or instance.created.replace(microsecond=0))
@@ -119,7 +125,7 @@ class OnScheduleHelper(object):
                 pass
             else:
                 onschedule_obj.child_subject_identifier = (child_subject_identifier
-                                                            or instance.subject_identifier)
+                                                           or instance.subject_identifier)
                 onschedule_obj.save()
 
     def get_onschedule_model(self, cohort, caregiver_visit_count=None, instance=None):
@@ -177,6 +183,6 @@ class OnScheduleHelper(object):
     def get_schedule_sequence(self, instance, onschedule_cls, caregiver_visit_count=None):
         children_count = (caregiver_visit_count or
                           1 + onschedule_cls.objects.filter(
-                              subject_identifier=self.subject_identifier).exclude(
-                                  child_subject_identifier=instance.subject_identifier).count())
+                    subject_identifier=self.subject_identifier).exclude(
+                    child_subject_identifier=instance.subject_identifier).count())
         return children_count
