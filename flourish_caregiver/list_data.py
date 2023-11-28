@@ -296,6 +296,7 @@ list_data = {
         ('nanny', 'Nanny/Babysitter'),
         ('other', 'Other, specify'),
         ('no_one', 'No-one'),
+        ('unknown', 'Unknown'),
         (PNTA, 'Prefer not to answer'),
         (NOT_APPLICABLE, NOT_APPLICABLE),
     ],
