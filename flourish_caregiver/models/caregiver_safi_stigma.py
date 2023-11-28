@@ -303,6 +303,7 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name='Socially',
         max_length=20,
         choices=HAPPENED_DONT_KNOW,
+        null=True,
     )
 
     child_social_effect_period = models.CharField(
@@ -311,12 +312,14 @@ class CaregiverSafiStigma(CrfModelMixin):
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
         null=True,
+
     )
 
     child_emotional_effect = models.CharField(
         verbose_name='Socially',
         max_length=20,
         choices=HAPPENED_DONT_KNOW,
+        null=True,
     )
 
     child_emotional_effect_period = models.CharField(
@@ -331,6 +334,8 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name='In his/her Education ',
         max_length=20,
         choices=HAPPENED_DONT_KNOW,
+        null=True,
+
     )
 
     child_education_effect_period = models.CharField(
@@ -346,6 +351,7 @@ class CaregiverSafiStigma(CrfModelMixin):
         'or future hopes that this child has for himself/herself have changed in a negative way',
         max_length=20,
         choices=HAPPENED_DONT_KNOW,
+
     )
 
     child_future_pespective_changed_period = models.CharField(

@@ -1,11 +1,16 @@
 from django.contrib import admin
+from django.core.exceptions import ObjectDoesNotExist
+
 from edc_senaite_interface.admin import SenaiteResultAdminMixin
 from edc_model_admin import audit_fieldset_tuple
+from edc_fieldsets.fieldlist import Fieldlist, Remove, Insert
+from edc_constants.constants import NEG
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverSafiStigmaForm
 from ..models import CaregiverSafiStigma
 from .modeladmin_mixins import CrfModelAdminMixin
+from ..helper_classes import MaternalStatusHelper
 
 
 @admin.register(CaregiverSafiStigma, site=flourish_caregiver_admin)
@@ -17,6 +22,7 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         ('', {
             'fields': [
                 'maternal_visit',
+                'report_datetime',
                 'judged_negatively',
                 'judged_negatively_period',
                 'isolated',
@@ -93,6 +99,28 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'child_future_pespective_changed_period',
 
             ]}), audit_fieldset_tuple)
+
+    conditional_fieldlists = {
+        NEG: Remove('child_social_effect',
+                    'child_social_effect_period',
+                    'child_emotional_effect',
+                    'child_emotional_effect_period',
+                    'child_education_effect',
+                    'child_education_effect_period'), }
+
+    def get_key(self, request, obj=None):
+        try:
+            model_obj = self.get_instance(request)
+        except ObjectDoesNotExist:
+            return None
+        else:
+            maternal_visit = getattr(model_obj, 'maternalvisit', None)
+
+            subject_identifier = maternal_visit.subject_identifier
+
+            status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
+
+            return status_helper.hiv_status
 
     radio_fields = {
         'judged_negatively': admin.VERTICAL,
