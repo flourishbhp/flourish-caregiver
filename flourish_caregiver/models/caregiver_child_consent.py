@@ -21,6 +21,8 @@ from ..subject_identifier import InfantIdentifier
 
 INFANT = 'infant'
 
+caregiver_config = django_apps.get_app_config('flourish_caregiver')
+
 
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin,
                             IdentityFieldsMixin, ReviewFieldsMixin,
@@ -161,7 +163,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         editable=False)
 
     def save(self, *args, **kwargs):
-        breakpoint()
         self.preg_enroll = self.is_preg
 
         eligibility_criteria = CaregiverChildConsentEligibility(
@@ -178,7 +179,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
-            self.version = self.child_consent_version or '4'
+            self.version = self.child_consent_version or str(
+                child_consent_version.child_consent_version)
 
             if not self.subject_identifier:
                 self.subject_identifier = InfantIdentifier(

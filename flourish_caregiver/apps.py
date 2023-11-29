@@ -17,15 +17,14 @@ class AppConfig(DjangoAppConfig):
     form_versions = {
         'flourish_caregiver.tbinformedconsent': 1.0,
     }
+    consent_version = 4
+    child_consent_version = 4
 
     extra_assignee_choices = ()
     interviewers_group = 'Interviewer'
 
     def ready(self):
-        from .models import antenatal_enrollment_on_post_save
-        from .models import caregiver_child_consent_on_post_save
-        from .models import maternal_dataset_on_post_save
-        from .models import subject_consent_on_post_save
+        pass
 
 
 if settings.APP_NAME == 'flourish_caregiver':
@@ -43,6 +42,7 @@ if settings.APP_NAME == 'flourish_caregiver':
     from edc_visit_tracking.constants import MISSED_VISIT, COMPLETED_PROTOCOL_VISIT
     from edc_visit_tracking.constants import SCHEDULED, UNSCHEDULED, LOST_VISIT
     from edc_constants.constants import FAILED_ELIGIBILITY
+
 
     class EdcAppointmentAppConfig(BaseEdcAppointmentAppConfig):
         configurations = [
@@ -64,6 +64,7 @@ if settings.APP_NAME == 'flourish_caregiver':
                 appt_type='clinic'),
         ]
 
+
     class EdcMetadataAppConfig(BaseEdcMetadataAppConfig):
         reason_field = {
             'pre_flourish.preflourishvisit': 'reason',
@@ -72,6 +73,7 @@ if settings.APP_NAME == 'flourish_caregiver':
             'flourish_facet.facetvisit': 'reason', }
         create_on_reasons = [SCHEDULED, UNSCHEDULED, COMPLETED_PROTOCOL_VISIT]
         delete_on_reasons = [LOST_VISIT, MISSED_VISIT, FAILED_ELIGIBILITY]
+
 
     class EdcProtocolAppConfig(BaseEdcProtocolAppConfigs):
         protocol = 'BHP142'
@@ -82,6 +84,7 @@ if settings.APP_NAME == 'flourish_caregiver':
             2020, 8, 14, 0, 0, 0, tzinfo=gettz('UTC'))
         study_close_datetime = datetime(
             2025, 8, 13, 23, 59, 59, tzinfo=gettz('UTC'))
+
 
     class EdcTimepointAppConfig(BaseEdcTimepointAppConfig):
         timepoints = TimepointCollection(
@@ -118,6 +121,7 @@ if settings.APP_NAME == 'flourish_caregiver':
                     closed_status=COMPLETE_APPT),
             ])
 
+
     class EdcVisitTrackingAppConfig(BaseEdcVisitTrackingAppConfig):
         visit_models = {
             'flourish_caregiver': (
@@ -129,6 +133,7 @@ if settings.APP_NAME == 'flourish_caregiver':
             'flourish_facet': (
                 'facet_visit', 'flourish_facet.facetvisit'),
         }
+
 
     class EdcFacilityAppConfig(BaseEdcFacilityAppConfig):
         country = 'botswana'
