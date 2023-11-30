@@ -30,7 +30,6 @@ class CaregiverSocialWorkReferralMixin(models.Model):
         verbose_name='Current HIV status?',
         choices=HIV_STATUS,
         max_length=14,
-        default=UNKNOWN,
         blank=True,
         null=True)
 
