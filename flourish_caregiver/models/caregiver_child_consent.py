@@ -180,7 +180,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
             self.version = self.child_consent_version or str(
-                child_consent_version.child_consent_version)
+                caregiver_config.child_consent_version)
 
             if not self.subject_identifier:
                 self.subject_identifier = InfantIdentifier(
