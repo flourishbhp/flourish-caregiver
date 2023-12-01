@@ -102,14 +102,14 @@ def get_schedule_names(instance):
     return onschedules
 
 
-def get_previous_by_timepoint_dt(appointment):
+def get_previous_by_appt_datetime(appointment):
     schedule_names = get_schedule_names(appointment)
     try:
         previous_appt = appointment.__class__.objects.filter(
             subject_identifier=appointment.subject_identifier,
-            timepoint_datetime__lt=appointment.timepoint_datetime,
+            appt_datetime__lt=appointment.appt_datetime,
             schedule_name__in=schedule_names,
-            visit_code_sequence=0).latest('timepoint_datetime')
+            visit_code_sequence=0).latest('appt_datetime')
     except appointment.__class__.DoesNotExist:
         return None
     else:

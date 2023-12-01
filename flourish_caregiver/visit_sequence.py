@@ -2,7 +2,7 @@ from django.apps import apps as django_apps
 from django.db import transaction
 from edc_visit_tracking.visit_sequence import VisitSequence
 
-from .helper_classes.utils import get_previous_by_timepoint_dt
+from .helper_classes.utils import get_previous_by_appt_datetime
 
 
 class VisitSequence(VisitSequence):
@@ -22,7 +22,7 @@ class VisitSequence(VisitSequence):
         self.visit_code = self.appointment.visit_code
         previous_visit = self.appointment.schedule.visits.previous(
             self.visit_code)
-        self.previous_appointment = get_previous_by_timepoint_dt(self.appointment)
+        self.previous_appointment = get_previous_by_appt_datetime(self.appointment)
         try:
             self.previous_visit_code = getattr(
                 self.previous_appointment, 'visit_code', None) or previous_visit.code
