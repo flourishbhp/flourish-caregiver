@@ -25,7 +25,7 @@ class FlourishTbReferralOutcomeMixin(models.Model):
     tests_performed = models.ManyToManyField(
         TBTests,
         verbose_name='What diagnostic tests were performed for TB',
-        blank=True, null=True)
+        blank=True, )
 
     other_test_specify = models.TextField(
         verbose_name='If "Other", specify',
