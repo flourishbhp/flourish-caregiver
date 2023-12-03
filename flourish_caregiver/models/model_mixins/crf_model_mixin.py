@@ -6,6 +6,7 @@ from edc_consent.model_mixins import RequiresConsentFieldsModelMixin
 from edc_metadata.model_mixins.updates import UpdatesCrfMetadataModelMixin
 from edc_reference.model_mixins import ReferenceModelMixin
 
+from edc_visit_tracking.managers import CrfModelManager as BaseCrfModelManager
 from edc_visit_schedule.model_mixins import SubjectScheduleCrfModelMixin
 from edc_visit_tracking.model_mixins import CrfModelMixin as BaseCrfModelMixin
 from edc_visit_tracking.model_mixins import PreviousVisitModelMixin
@@ -13,6 +14,10 @@ from edc_visit_tracking.model_mixins import PreviousVisitModelMixin
 from ...visit_sequence import VisitSequence
 from ..maternal_visit import MaternalVisit
 from .consent_version_model_mixin import ConsentVersionModelModelMixin
+
+
+class CrfModelManager(BaseCrfModelManager):
+    use_in_migrations = True
 
 
 class CrfModelMixin(BaseCrfModelMixin, ConsentVersionModelModelMixin,
@@ -27,6 +32,8 @@ class CrfModelMixin(BaseCrfModelMixin, ConsentVersionModelModelMixin,
     maternal_visit = models.OneToOneField(MaternalVisit, on_delete=PROTECT)
     crf_date_validator_cls = None
     visit_sequence_cls = VisitSequence
+
+    objects = CrfModelManager()
 
     @property
     def subject_identifier(self):

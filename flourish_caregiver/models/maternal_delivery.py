@@ -7,14 +7,17 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import YES, POS
-from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin, \
-    UniqueSubjectIdentifierFieldMixin
+from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
 from ..maternal_choices import (
     DELIVERY_HEALTH_FACILITY, DELIVERY_MODE, CSECTION_REASON)
 from ..choices import FEEDING_CHOICES
 from .list_models import DeliveryComplications
+
+
+class MaternalDeliveryManager(models.Manager):
+    use_in_migrations = True
 
 
 class MaternalDelivery(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
@@ -124,6 +127,8 @@ class MaternalDelivery(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
         verbose_name='How was the infant being fed immediately after delivery?',
         choices=FEEDING_CHOICES,
         max_length=100)
+
+    objects = MaternalDeliveryManager()
 
     history = HistoricalRecords()
 
