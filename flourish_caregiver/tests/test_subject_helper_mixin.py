@@ -1,7 +1,7 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.contrib.auth.models import Group, User
-from django.test import TestCase, tag
+from django.test import tag, TestCase
 from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
 from edc_facility.import_holidays import import_holidays
@@ -11,8 +11,8 @@ from model_mommy import mommy
 from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..models import MaternalDataset, ScreeningPriorBhpParticipants, SubjectConsent
 from ..models import OnScheduleCohortBEnrollment, OnScheduleCohortBQuarterly
-from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
 from ..models import OnScheduleCohortBFU, OnScheduleCohortCFU
+from ..models import OnScheduleCohortCEnrollment, OnScheduleCohortCQuarterly
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
@@ -46,19 +46,17 @@ class TestSubjectHelperMixin(TestCase):
             'study_child_identifier': '1234'}
 
     def test_create_antenatal_enrollment(self):
-
         subject_identifier = self.subject_helper.create_antenatal_enrollment()
 
         self.assertEqual(SubjectConsent.objects.filter(
             subject_identifier=subject_identifier).count(), 1)
 
     def test_td_prior_participant_creation(self):
-
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             preg_efv=1,
             screening_identifier='123458',
-            ** self.maternal_dataset_options)
+            **self.maternal_dataset_options)
 
         mommy.make_recipe(
             'flourish_child.childdataset',
@@ -66,7 +64,8 @@ class TestSubjectHelperMixin(TestCase):
             **self.child_dataset_options)
 
         self.subject_helper.create_TD_efv_enrollment(
-            screening_identifier=maternal_dataset_obj.screening_identifier)
+            screening_identifier=maternal_dataset_obj.screening_identifier,
+            study_child_identifier=self.child_dataset_options['study_child_identifier'])
 
         self.assertEqual(
             ScreeningPriorBhpParticipants.objects.all().count(), 1)
@@ -76,7 +75,6 @@ class TestSubjectHelperMixin(TestCase):
         self.assertEqual(SubjectConsent.objects.all().count(), 1)
 
     def test_prepare_prior_participant_enrollmment(self):
-
         self.maternal_dataset_options['mom_hivstatus'] = 'HIV-uninfected'
 
         maternal_dataset_obj = mommy.make_recipe(
@@ -97,9 +95,9 @@ class TestSubjectHelperMixin(TestCase):
         self.assertEqual(logentry_cls.objects.all().count(), 1)
 
     def test_enroll_prior_participant_cohort_b(self):
-
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
                                                                                 months=1)
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -138,7 +136,7 @@ class TestSubjectHelperMixin(TestCase):
             appointment=Appointment.objects.get(visit_code='2001M'),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
-        
+
         helper_cls = FollowUpEnrolmentHelper(
             subject_identifier=subject_identifier, cohort='b', )
         helper_cls.activate_fu_schedule()
@@ -148,10 +146,10 @@ class TestSubjectHelperMixin(TestCase):
             schedule_name='b_fu1_schedule1').count(), 1)
 
     def test_enroll_prior_participant_assent_cohort_b(self):
-
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7,
                                                                                 months=5)
         self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -190,7 +188,7 @@ class TestSubjectHelperMixin(TestCase):
             appointment=Appointment.objects.get(visit_code='2001M'),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
-        
+
         helper_cls = FollowUpEnrolmentHelper(
             subject_identifier=subject_identifier, cohort='b', )
         helper_cls.activate_fu_schedule()
@@ -200,10 +198,10 @@ class TestSubjectHelperMixin(TestCase):
             schedule_name='b_fu1_schedule1').count(), 1)
 
     def test_enroll_prior_participant_assent_cohort_c(self):
-
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=10,
                                                                                 months=5)
         self.maternal_dataset_options['protocol'] = 'Mma Bana'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
 
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
@@ -242,7 +240,7 @@ class TestSubjectHelperMixin(TestCase):
             appointment=Appointment.objects.get(visit_code='2001M'),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
-        
+
         helper_cls = FollowUpEnrolmentHelper(
             subject_identifier=subject_identifier, cohort='c', )
         helper_cls.activate_fu_schedule()

@@ -81,6 +81,8 @@ class TestMedicalHistoryForm(TestCase):
 
         self.medical_history_options = {'chronic_since': YES,
                                         'who_diagnosis': YES,
+                                        'current_illness': YES,
+                                        'current_symptoms': 'cough',
                                         'know_hiv_status': 'Nobody', }
 
         self.mh_visit2000M = MedicalHistory.objects.create(
@@ -110,12 +112,13 @@ class TestMedicalHistoryForm(TestCase):
             med_history_changed=NO, )
         for obj in ChronicConditions.objects.all():
             medical_history_dict.update(
-            caregiver_chronic=str(obj.id))
+                caregiver_chronic=str(obj.id))
 
         mh = MedicalHistoryForm(data=medical_history_dict)
         mh.previous_instance = self.mh_visit2000M
         self.assertFalse(mh.is_valid())
 
+    @tag('tmhcv')
     def test_medhistory_has_changed_valid(self):
         """ Assert form valid if medical history information
             remains the same,and indicated on the field
@@ -126,13 +129,15 @@ class TestMedicalHistoryForm(TestCase):
             **self.medical_history_options,
             report_datetime=get_utcnow(),
             maternal_visit=self.visit2001M,
-            med_history_changed=NO, )
+            symptoms_start_date=get_utcnow(),
+            clinic_visit=YES,
+            med_history_changed=YES, )
         for obj in ChronicConditions.objects.all():
             medical_history_dict.update(
-            caregiver_chronic=str(obj.id))
+                caregiver_chronic=str(obj.id))
         for obj in WcsDxAdult.objects.all():
             medical_history_dict.update(
-            who=str(obj.id))
+                who=str(obj.id))
         mh = MedicalHistoryForm(data=medical_history_dict)
         mh.previous_instance = self.mh_visit2000M
-        self.assertTrue(mh.is_valid())
+        self.assertTrue(mh.is_valid(), mh.errors)

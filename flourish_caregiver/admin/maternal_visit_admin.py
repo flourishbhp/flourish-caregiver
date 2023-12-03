@@ -104,23 +104,17 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
     def get_key(self, request, obj=None):
         key = super().get_key(request, obj)
 
-        subject_identifier = (request.GET.get('subject_identifier', None)
-                              or request.POST.get('subject_identifier', None))
-
+        appointment_id = (request.GET.get('appointment', None)
+                          or request.POST.get('appointment', None))
         try:
 
             enrollment_visit = self.model.objects.get(
-                subject_identifier=subject_identifier,
-                visit_code='1000M',
-                visit_code_sequence='0')
-
+                    appointment_id=appointment_id )
         except self.model.DoesNotExist:
             """
             1000M visit doen't exist, check if the current vist yet to be saved
             is visit 1000M
             """
-            appointment_id = (request.GET.get('appointment', None)
-                              or request.POST.get('appointment', None))
             try:
                 self.appointment_model_cls.objects.get(id=appointment_id,
                                                        visit_code='1000M',

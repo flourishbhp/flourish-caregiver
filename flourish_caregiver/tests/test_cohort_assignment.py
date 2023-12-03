@@ -34,6 +34,7 @@ class TestCohortAssignmentSetup(TestCase):
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
             'study_maternal_identifier': self.study_maternal_identifier,
+            'mom_pregarv_strat': '3-drug ART',
             'protocol': 'Tshilo Dikotla'}
 
         self.child_dataset_options = {
@@ -144,8 +145,9 @@ class TestCohortAssignmentSetup(TestCase):
             subject_identifier=subject_consent.subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 0)
 
+    @tag('cblt10')
     def test_cohort_b_lt10(self):
-        """  Assert that a participant with a child who is less than
+        """ Assert that a participant with a child who is less than
             10 years old at beginning of year 3 goes into cohort b schedule.
         """
         dob_dt = (get_utcnow() - relativedelta(years=9, months=9)).date()

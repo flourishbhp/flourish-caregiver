@@ -1,4 +1,6 @@
 from django.apps import apps as django_apps
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 
 from ..helper_classes.cohort_assignment import CohortAssignment
 
@@ -36,3 +38,79 @@ def cohort_assigned(study_child_identifier, child_dob, enrollment_date):
                 arv_regimen=getattr(
                     maternal_dataset_obj, 'mom_pregarv_strat', None), )
             return cohort.cohort_variable or None
+
+
+def update_preg_screening_obj_child_pid(consent, child_subject_identifier):
+    screening_model_cls = django_apps.get_model('flourish_caregiver.screeningpregwomen')
+    screening_obj = screening_model_cls.objects.filter(
+        screening_identifier=consent.screening_identifier).first()
+
+    if screening_obj:
+        try:
+            screening_obj.screeningpregwomeninline_set.get(
+                child_subject_identifier=child_subject_identifier)
+        except ObjectDoesNotExist:
+            screenings_without_child_pid = (
+                screening_obj.screeningpregwomeninline_set.filter(
+                    child_subject_identifier__isnull=True))
+            if screenings_without_child_pid.count() == 1:
+                child_screening_obj = screenings_without_child_pid.first()
+                child_screening_obj.child_subject_identifier = child_subject_identifier
+                child_screening_obj.save()
+            elif screenings_without_child_pid.count() > 1:
+                raise ValueError('More than one screening without child subject '
+                                 'identifier found.')
+
+
+def get_child_subject_identifier_by_visit(visit):
+    """Returns the child subject identifier by visit."""
+    onschedule_model_cls = django_apps.get_model(
+        visit.schedule.onschedule_model)
+
+    try:
+        onschedule_obj = onschedule_model_cls.objects.get(
+            subject_identifier=visit.subject_identifier,
+            schedule_name=visit.schedule_name)
+    except onschedule_model_cls.DoesNotExist:
+        return None
+    else:
+        return onschedule_obj.child_subject_identifier
+
+
+def get_schedule_names(instance):
+    onschedules = []
+    child_subject_identifier = get_child_subject_identifier_by_visit(instance)
+    subject_schedule_history_model = 'edc_visit_schedule.subjectschedulehistory'
+    subject_schedule_history_cls = django_apps.get_model(
+        subject_schedule_history_model)
+
+    qs = subject_schedule_history_cls.objects.filter(
+        subject_identifier=instance.subject_identifier).exclude(
+            Q(schedule_name__icontains='tb') | Q(
+                schedule_name__icontains='facet')).values_list(
+                    'onschedule_model', flat=True)
+    for model_name in qs:
+        onschedule_model_cls = django_apps.get_model(model_name)
+        try:
+            onschedule_obj = onschedule_model_cls.objects.get(
+                subject_identifier=instance.subject_identifier,
+                child_subject_identifier=child_subject_identifier)
+        except onschedule_model_cls.DoesNotExist:
+            continue
+        else:
+            onschedules.append(onschedule_obj.schedule_name)
+    return onschedules
+
+
+def get_previous_by_appt_datetime(appointment):
+    schedule_names = get_schedule_names(appointment)
+    try:
+        previous_appt = appointment.__class__.objects.filter(
+            subject_identifier=appointment.subject_identifier,
+            appt_datetime__lt=appointment.appt_datetime,
+            schedule_name__in=schedule_names,
+            visit_code_sequence=0).latest('appt_datetime')
+    except appointment.__class__.DoesNotExist:
+        return None
+    else:
+        return previous_appt

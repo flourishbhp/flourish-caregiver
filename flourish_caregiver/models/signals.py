@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
+
 import PIL
-from PIL import Image
 import pyminizip
 import pypdfium2 as pdfium
 from django import forms
@@ -21,6 +21,7 @@ from edc_constants.constants import YES
 from edc_data_manager.models import DataActionItem
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 from edc_visit_tracking.constants import MISSED_VISIT
+from PIL import Image
 
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
@@ -44,8 +45,8 @@ from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
 from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.consent_helper import consent_helper
 from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
-from ..helper_classes.utils import cohort_assigned
 from ..helper_classes.onschedule_helper import OnScheduleHelper
+from ..helper_classes.utils import cohort_assigned, update_preg_screening_obj_child_pid
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
@@ -136,7 +137,6 @@ def subject_consent_on_post_save(sender, instance, raw, created, **kwargs):
 
         # Update subject identifier on the screening obj when created
 
-        screening_obj = None
         try:
             screening_obj = ScreeningPregWomen.objects.get(
                 screening_identifier=instance.screening_identifier)
@@ -251,69 +251,65 @@ def antenatal_enrollment_on_post_save(sender, instance, raw, created, **kwargs):
     """
     - Put subject on cohort a schedule.
     """
-    child_consent = CaregiverChildConsent.objects.filter(
-        preg_enroll=True, subject_consent__subject_identifier=instance.subject_identifier)
+    registered_subject_cls = django_apps.get_model(
+        'edc_registration.registeredsubject')
 
-    child_subject_identifier = None
+    children_count = 1 + registered_subject_cls.objects.filter(
+        relative_identifier=instance.subject_identifier
+    ).exclude(Q(subject_identifier=instance.child_subject_identifier) |
+              Q(subject_identifier__endswith='-35') |
+              Q(subject_identifier__endswith='-46') |
+              Q(subject_identifier__endswith='-56')).count()
 
-    if child_consent:
-        child_subject_identifier = child_consent[0].subject_identifier
-
-        registered_subject_cls = django_apps.get_model(
-            'edc_registration.registeredsubject')
-
-        children_count = 1 + registered_subject_cls.objects.filter(
-            relative_identifier=instance.subject_identifier
-        ).exclude(Q(subject_identifier=child_subject_identifier) |
-                  Q(subject_identifier__endswith='-35') |
-                  Q(subject_identifier__endswith='-46') |
-                  Q(subject_identifier__endswith='-56')).count()
-
-        if not raw and instance.is_eligible:
-            helper_cls = onschedule_helper_cls(instance.subject_identifier, )
-            helper_cls.put_on_schedule(
-                'cohort_a_antenatal',
-                instance=instance,
-                child_subject_identifier=child_subject_identifier,
-                caregiver_visit_count=children_count,
-                base_appt_datetime=instance.report_datetime.replace(microsecond=0))
+    if not raw and instance.is_eligible:
+        helper_cls = onschedule_helper_cls(instance.subject_identifier, )
+        helper_cls.put_on_schedule(
+            'cohort_a_antenatal',
+            instance=instance,
+            child_subject_identifier=instance.child_subject_identifier,
+            caregiver_visit_count=children_count,
+            base_appt_datetime=instance.report_datetime.replace(microsecond=0))
 
 
 @receiver(post_save, weak=False, sender=MaternalDelivery,
           dispatch_uid='maternal_delivery_on_post_save')
 def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     """
-    - Put new born child on schedule
+    - Put newborn child on schedule
     """
     tb_informed_consent_cls = django_apps.get_model(
         'flourish_caregiver.tbinformedconsent')
 
     child_consents = get_child_consents(instance.subject_identifier)
 
-    preg_child_consents = child_consents.filter(preg_enroll=True)
-    if instance.live_infants_to_register == 1:
+    preg_child_consent = child_consents.filter(
+        preg_enroll=True,
+        subject_identifier=instance.child_subject_identifier)
+    if instance.live_infants_to_register == 1 and preg_child_consent.exists():
         helper_cls = onschedule_helper_cls(instance.subject_identifier, )
+        caregiver_visit_count = preg_child_consent.latest(
+            'consent_datetime').caregiver_visit_count
         if not raw and created:
             helper_cls.put_on_schedule(
                 'cohort_a_birth',
                 instance=instance,
-                child_subject_identifier=preg_child_consents[0].subject_identifier,
+                child_subject_identifier=instance.child_subject_identifier,
                 base_appt_datetime=instance.delivery_datetime.replace(
                     microsecond=0),
-                caregiver_visit_count=preg_child_consents[0].caregiver_visit_count)
+                caregiver_visit_count=caregiver_visit_count)
             create_registered_infant(instance)
-        try:
-            tb_informed_consent_cls.objects.get(
-                subject_identifier=instance.subject_identifier)
-        except tb_informed_consent_cls.DoesNotExist:
-            pass
-        else:
-            helper_cls.put_on_schedule(
-                'cohort_a_tb_2_months',
-                instance=instance,
-                child_subject_identifier=preg_child_consents[0].subject_identifier,
-                base_appt_datetime=instance.delivery_datetime.replace(microsecond=0),
-                caregiver_visit_count=preg_child_consents[0].caregiver_visit_count)
+            try:
+                tb_informed_consent_cls.objects.get(
+                    subject_identifier=instance.subject_identifier)
+            except tb_informed_consent_cls.DoesNotExist:
+                pass
+            else:
+                helper_cls.put_on_schedule(
+                    'cohort_a_tb_2_months',
+                    instance=instance,
+                    child_subject_identifier=instance.child_subject_identifier,
+                    base_appt_datetime=instance.delivery_datetime.replace(microsecond=0),
+                    caregiver_visit_count=caregiver_visit_count)
 
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,
@@ -354,6 +350,9 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
     """
     if not raw and instance.is_eligible:
 
+        update_preg_screening_obj_child_pid(instance.subject_consent,
+                                            instance.subject_identifier)
+
         child_dummy_consent_cls = django_apps.get_model(
             'flourish_child.childdummysubjectconsent')
         registered_subject_cls = django_apps.get_model(
@@ -364,7 +363,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         if not children_count:
             children_count = 1 + registered_subject_cls.objects.filter(
                 relative_identifier=instance.subject_consent.subject_identifier
-            ).exclude(subject_identifier=instance.subject_identifier,).count()
+            ).exclude(subject_identifier=instance.subject_identifier, ).count()
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
@@ -377,7 +376,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
         except Cohort.DoesNotExist:
             cohort = cohort_assigned(instance.study_child_identifier,
                                      instance.child_dob,
-                                     instance.subject_consent.created.date())
+                                     instance.subject_consent.consent_datetime.date())
 
             if not cohort and screening_preg_exists(instance):
                 cohort = 'cohort_a'
@@ -397,6 +396,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                         relative_identifier=instance.subject_consent.subject_identifier,
                         cohort=cohort)
             # Put participant into a cohort
+
             cohort_obj = Cohort.objects.create(
                 subject_identifier=instance.subject_identifier,
                 name=cohort,
@@ -502,8 +502,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
                             TB_OFF_STUDY_ACTION,
                             instance.subject_identifier)
 
-    if not raw and created and instance.visit_code in ['2000M', '2000D', '3000M']:
-
+    if not raw and created and instance.visit_code in ['2000M', '2000D', '3000M',
+                                                       '3000A', '3000B', '3000C']:
         base_appt_datetime = instance.report_datetime.replace(microsecond=0)
         helper_cls = onschedule_helper_cls(instance.subject_identifier, )
         helper_cls.put_quarterly_onschedule(
@@ -532,13 +532,13 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
             'flourish_caregiver.tboffstudy')
 
         tb_referral = (
-            instance.have_cough == YES or
-            instance.cough_duration == '=>2 week' or
-            instance.fever == YES or
-            instance.night_sweats == YES or
-            instance.weight_loss == YES or
-            instance.cough_blood == YES or
-            instance.enlarged_lymph_nodes == YES
+                instance.have_cough == YES or
+                instance.cough_duration == '=>2 week' or
+                instance.fever == YES or
+                instance.night_sweats == YES or
+                instance.weight_loss == YES or
+                instance.cough_blood == YES or
+                instance.enlarged_lymph_nodes == YES
         )
 
         if not tb_referral:
@@ -825,20 +825,20 @@ def create_registered_infant(instance):
             ).order_by('version').last()
             try:
                 UltraSound.objects.filter(
-                    maternal_visit__subject_identifier=instance.subject_identifier
+                    maternal_visit__subject_identifier=instance.subject_identifier,
+                    child_subject_identifier=instance.child_subject_identifier
                 ).order_by('report_datetime').last()
             except UltraSound.DoesNotExist:
                 raise ValidationError(
                     'Maternal Ultrasound must exist for {instance.subject_identifier}')
             else:
-                with transaction.atomic():
+                with ((transaction.atomic())):
                     caregiver_child_consent_cls = django_apps.get_model(
                         'flourish_caregiver.caregiverchildconsent')
 
                     # Create caregiver child consent
                     caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
-                        subject_consent__subject_identifier=instance.subject_identifier,
-                        preg_enroll=True)
+                        subject_identifier=instance.child_subject_identifier)
 
                     if not caregiver_child_consent_objs:
                         caregiver_child_consent_cls.objects.create(
@@ -923,7 +923,8 @@ def get_child_consents(subject_identifier):
         'flourish_caregiver.caregiverchildconsent')
 
     return child_consent_cls.objects.filter(
-        subject_consent__subject_identifier=subject_identifier).order_by('-consent_datetime')
+        subject_consent__subject_identifier=subject_identifier).order_by(
+        '-consent_datetime')
 
 
 def stamp_image(instance):
@@ -939,11 +940,10 @@ def stamp_image(instance):
         print_pdf(path)
 
 
-def add_image_stamp(base_image=None, position=(25, 25),
-                    resize=(500, 500)):
+def add_image_stamp(base_image=None, position=(25, 25), resize=(500, 500)):
     """
     Superimpose image of a stamp over copy of the base image
-    @param image_path: dir to base image
+    @param base_image: dir to base image
     @param dont_save: boolean for not saving the image just converting
     @param position: pixels(w,h) to superimpose stamp at
     """
@@ -954,7 +954,7 @@ def add_image_stamp(base_image=None, position=(25, 25),
     width, height = base_image.size
     stamp_width, stamp_height = stamp.size
 
-    # Determine orientation of the base image before pasting stamp
+    # Determine the orientation of the base image before pasting the stamp
     if width < height:
         pos_width = round(width / 2) - round(stamp_width / 2)
         pos_height = height - stamp_height

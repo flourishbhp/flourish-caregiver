@@ -2,7 +2,8 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
-from edc_constants.constants import POS, NEG, UNK, IND
+from edc_constants.constants import IND, NEG, POS, UNK
+
 from .enrollment_helper import EnrollmentHelper
 
 
@@ -38,22 +39,18 @@ class MaternalStatusHelper(object):
         if self.subject_identifier:
             antenatal_enrollment_cls = django_apps.get_model(
                 'flourish_caregiver.antenatalenrollment')
-            try:
-                antenatal_enrollment = antenatal_enrollment_cls.objects.get(
-                    subject_identifier=self.subject_identifier)
-            except antenatal_enrollment_cls.DoesNotExist:
-                status = self.enrollment_hiv_status
-            else:
+            antenatal_enrollments = antenatal_enrollment_cls.objects.filter(
+                    subject_identifier=self.subject_identifier,)
+            for antenatal_enrollment in antenatal_enrollments:
                 status = self._evaluate_status_from_rapid_tests(
                     (antenatal_enrollment, 'enrollment_hiv_status', 'rapid_test_date'))
                 if status == UNK:
                     # Check that the week32_test_date is still within 3 months
                     status = self._evaluate_status_from_rapid_tests(
-                        (antenatal_enrollment, 'enrollment_hiv_status', 'week32_test_date'))
+                        (antenatal_enrollment, 'enrollment_hiv_status',
+                         'week32_test_date'))
                 if status in [POS, NEG, UNK]:
                     return status
-            return status
-
         return self.enrollment_hiv_status
 
     @property
@@ -133,7 +130,8 @@ class MaternalStatusHelper(object):
         except maternal_interim_idcc_cls.DoesNotExist:
             pass
         else:
-            three_month_back = latest_visit.report_datetime.date() - relativedelta(months=3)
+            three_month_back = latest_visit.report_datetime.date() - relativedelta(
+                months=3)
             if latest_interim_idcc.recent_cd4_date:
                 if (three_month_back > latest_interim_idcc.recent_cd4_date
                         and self.hiv_status == POS):
@@ -146,7 +144,7 @@ class MaternalStatusHelper(object):
     def previous_visits(self):
         return self.maternal_visit.__class__.objects.filter(
             subject_identifier=self.maternal_visit.subject_identifier).order_by(
-                '-appointment__timepoint')
+            '-appointment__timepoint')
 
     def _evaluate_status_from_rapid_tests(self, instance_result_date_tuple):
         """Return an HIV status.
@@ -159,8 +157,10 @@ class MaternalStatusHelper(object):
         elif (getattr(instance_result_date_tuple[0], instance_result_date_tuple[1]) == NEG
               and getattr(instance_result_date_tuple[0], instance_result_date_tuple[2])):
             if (self.maternal_visit
-                and getattr(instance_result_date_tuple[0], instance_result_date_tuple[2])
-                    > (self.maternal_visit.report_datetime.date() - relativedelta(months=3))):
+                    and getattr(instance_result_date_tuple[0],
+                                instance_result_date_tuple[2])
+                    > (self.maternal_visit.report_datetime.date() - relativedelta(
+                        months=3))):
                 return NEG
             return NEG
         else:

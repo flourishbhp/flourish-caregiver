@@ -1,5 +1,6 @@
-from edc_constants.constants import NONE, OTHER, NOT_APPLICABLE
+from edc_constants.constants import NONE, NOT_APPLICABLE, OTHER
 from edc_list_data import PreloadData
+
 from flourish_caregiver.constants import PNTA
 
 list_data = {
@@ -233,6 +234,10 @@ list_data = {
          'Difficultly dealing with diagnoses of chronic illness or infectious disease'),
         ('refer_grief', 'Grief counseling (for loss of loved one)'),
         ('refer_adherence', 'Adherence counseling'),
+        ('local_medical_facility', 'Local medical facility (add details under Comments)'),
+        ('pediatrician_support', 'Pediatrician support'),
+        ('schooling_support', 'Schooling support'),
+        ('ophthalmology_eye_care', 'Ophthalmology/Eye care support'),
         ('refer_other', 'Other, specify')
     ],
     'flourish_caregiver.pregnancyinfluencerslist': [
@@ -291,6 +296,7 @@ list_data = {
         ('nanny', 'Nanny/Babysitter'),
         ('other', 'Other, specify'),
         ('no_one', 'No-one'),
+        ('unknown', 'Unknown'),
         (PNTA, 'Prefer not to answer'),
         (NOT_APPLICABLE, NOT_APPLICABLE),
     ],
@@ -314,6 +320,15 @@ list_data = {
         ('mother_in_law', 'Mother-in-law or Father-in-law'),
         ('friend', 'Friend'),
         ('unsure', 'Unsure'), (OTHER, 'Other, specify')
+    ],
+    'flourish_caregiver.tbtests': [
+        ('chest_xray', 'Chest Xray'),
+        ('sputum_sample', 'Sputum sample'),
+        ('stool_sample', 'Stool sample'),
+        ('urine_test', 'Urine test (LAM)'),
+        ('skin_test', 'Skin test (TST/Mantoux)'),
+        ('blood_test', 'Blood test (quantiferon)'),
+        (OTHER, 'other')
     ]
 }
 

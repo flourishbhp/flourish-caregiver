@@ -29,7 +29,7 @@ class TestMaternalVisitFormValidator(TestCase):
             screening_identifier=self.screening_preg.screening_identifier,
             **self.options)
 
-        mommy.make_recipe(
+        child = mommy.make_recipe(
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=self.subject_consent,
             child_dob=None,
@@ -38,6 +38,7 @@ class TestMaternalVisitFormValidator(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=child.subject_identifier,
             subject_identifier=self.subject_consent.subject_identifier,)
 
         self.appointment = Appointment.objects.get(visit_code='1000M')

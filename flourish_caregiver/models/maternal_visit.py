@@ -13,7 +13,7 @@ from edc_reference.model_mixins import ReferenceModelMixin
 
 from edc_appointment.models import Appointment
 from edc_visit_tracking.constants import MISSED_VISIT
-from edc_visit_tracking.managers import VisitModelManager
+from edc_visit_tracking.managers import VisitModelManager as BaseVisitModelManager
 from edc_visit_tracking.model_mixins import VisitModelMixin, CaretakerFieldsMixin
 
 from ..choices import MATERNAL_VISIT_STUDY_STATUS, VISIT_REASON
@@ -21,8 +21,12 @@ from ..choices import VISIT_INFO_SOURCE, ALIVE_DEAD_UNKNOWN
 from ..visit_sequence import VisitSequence
 
 
-class CurrentSiteManager(VisitModelManager, BaseCurrentSiteManager):
+class CurrentSiteManager(BaseVisitModelManager, BaseCurrentSiteManager):
     pass
+
+
+class VisitModelManager(BaseVisitModelManager):
+    use_in_migrations = True
 
 
 class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,

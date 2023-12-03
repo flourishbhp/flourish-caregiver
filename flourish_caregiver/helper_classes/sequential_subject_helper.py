@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
+from edc_base import get_utcnow
 from model_mommy import mommy
 
 from flourish_caregiver.models import CaregiverChildConsent, \
@@ -141,7 +142,7 @@ class SequentialSubjectHelper:
         return maternal_dataset_obj
 
     def get_cohort_a_subj(self):
-        dob = self.year_3_age(4, 1)
+        dob = get_utcnow() - relativedelta(years=2, months=5)
         return self.enrollment_and_cohort_assignment(
             protocol='Tshilo Dikotla',
             age_year=4,

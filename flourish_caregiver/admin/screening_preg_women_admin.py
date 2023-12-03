@@ -3,38 +3,59 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
-from edc_model_admin import audit_fieldset_tuple, ModelAdminNextUrlRedirectError
+from edc_model_admin import audit_fieldset_tuple, ModelAdminFormAutoNumberMixin, \
+    ModelAdminNextUrlRedirectError, \
+    StackedInlineMixin
 
+from .modeladmin_mixins import ModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import ScreeningPregWomenForm
+from ..forms.screening_preg_women_form import ScreeningPregWomenInlineForm
 from ..models import ScreeningPregWomen
-from .modeladmin_mixins import ModelAdminMixin
+from ..models.screening_preg_women import ScreeningPregWomenInline
 
 
-@admin.register(ScreeningPregWomen, site=flourish_caregiver_admin)
-class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
-
-    form = ScreeningPregWomenForm
-
-    search_fields = ['screening_identifier']
-
+# Introducing BaseScreeningPregWomenAdmin class to reduce repetition
+class BaseScreeningPregWomenAdmin:
+    form = ScreeningPregWomenInlineForm
+    extra = 0
     fieldsets = (
         (None, {
-            'fields': ('screening_identifier',
+            'fields': ('child_subject_identifier',
                        'report_datetime',
                        'hiv_testing',
                        'breastfeed_intent',)},
          ),
         audit_fieldset_tuple
     )
-
     radio_fields = {'hiv_testing': admin.VERTICAL,
                     'breastfeed_intent': admin.VERTICAL, }
 
-    list_display = (
-        'screening_identifier', 'report_datetime', 'is_eligible', 'is_consented')
 
-    list_filter = ('report_datetime', 'is_eligible', 'is_consented')
+@admin.register(ScreeningPregWomenInline, site=flourish_caregiver_admin)
+class ScreeningPregWomenInlineAdmin(BaseScreeningPregWomenAdmin, admin.ModelAdmin):
+    pass
+
+
+class ScreeningPregWomenInline(BaseScreeningPregWomenAdmin, StackedInlineMixin,
+                               ModelAdminFormAutoNumberMixin, admin.StackedInline, ):
+    model = ScreeningPregWomenInline
+
+
+@admin.register(ScreeningPregWomen, site=flourish_caregiver_admin)
+class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
+    form = ScreeningPregWomenForm
+
+    search_fields = ['screening_identifier']
+
+    inlines = [ScreeningPregWomenInline, ]
+
+    fieldsets = (
+        (None, {
+            'fields': ('screening_identifier',)},
+         ),
+        audit_fieldset_tuple
+    )
 
     def redirect_url(self, request, obj, post_url_continue=None):
         redirect_url = super().redirect_url(
@@ -81,4 +102,4 @@ class ScreeningPregWomenAdmin(ModelAdminMixin, admin.ModelAdmin):
         except consent_version_cls.DoesNotExist:
             return None
         else:
-            consent_version_obj.version
+            return consent_version_obj.version

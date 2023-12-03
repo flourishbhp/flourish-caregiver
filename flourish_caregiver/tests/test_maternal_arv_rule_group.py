@@ -59,6 +59,7 @@ class TestMaternalARVRuleGroup(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier)
 
         self.status_helper = MaternalStatusHelper(
@@ -81,6 +82,7 @@ class TestMaternalARVRuleGroup(TestCase):
     def test_maternal_arv_during_delivery(self):
         mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
+            child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier, )
         child_consent = ChildDummySubjectConsent.objects.get(
             subject_identifier=self.child_consent.subject_identifier,

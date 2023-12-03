@@ -99,9 +99,9 @@ class TestCohortAssignment(TestCase):
         self.assertEqual(self.helper_cls.cohort_variable, 'cohort_b_sec', )
 
     def test_cohort_b_huu_limit(self):
-        child_dob = (get_utcnow() - relativedelta(years=10, days=2)).date()
+        child_dob = (get_utcnow() - relativedelta(years=8, days=2)).date()
         self.helper_cls.child_dob = child_dob
-        self.helper_cls.child_hiv_exposure = 'unexposed'
+        self.helper_cls.child_hiv_exposure = 'Unexposed'
         self.helper_cls.arv_regimen = None
         self.helper_cls.total_HUU = 325
         self.assertIsNot(self.helper_cls.cohort_variable, 'cohort_b', )

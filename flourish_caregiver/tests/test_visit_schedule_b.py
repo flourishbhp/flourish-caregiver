@@ -57,13 +57,14 @@ class TestVisitScheduleSetupB(TestCase):
         return child_dob
 
     def test_cohort_b_onschedule_invalid1(self):
-        """Assert that a 5.1 year old by year 3 participant's mother who is on
+        """Assert that a 5.1-year-old by year 3-participants mother who is on
          efv regimen from BCPP study is not put on cohort b schedule.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'BCPP'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
         self.maternal_dataset_options['delivdt'] = date(2011, 7, 13)
 
         maternal_dataset_obj = mommy.make_recipe(
@@ -92,13 +93,14 @@ class TestVisitScheduleSetupB(TestCase):
             schedule_name='b_quarterly1_schedule1').count(), 0)
 
     def test_cohort_b_onschedule_valid(self):
-        """Assert that a 5.1 year old by year 3 participant's mother who is on
+        """Assert that a 5.1-year-old by year 3-participants mother who is on
          efv regimen from Mpepu study is put on cohort b schedule.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
         self.maternal_dataset_options['delivdt'] = self.year_3_age(5, 1)
 
         maternal_dataset_obj = mommy.make_recipe(
@@ -142,13 +144,14 @@ class TestVisitScheduleSetupB(TestCase):
             subject_identifier=subject_identifier).count(), 8)
 
     def test_cohort_b_assent_invalid(self):
-        """Assert that a 6 year old whose birthday is within the enrollment month does not get
-         served the assent form.
+        """Assert that a 6-year-old whose birthday is within the enrollment month does not
+         get served the assent form.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=6,
                                                                                 months=11,
                                                                                 days=25)
@@ -176,13 +179,14 @@ class TestVisitScheduleSetupB(TestCase):
             subject_identifier__startswith=subject_identifier).count(), 0)
 
     def test_cohort_b_lt10(self):
-        """Assert that a participant with a child who is lt 10 years old at beginning
+        """Assert that a participant with a child who is lt 10 years old at the beginning
          of year 3 goes into cohort b schedule.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
         self.maternal_dataset_options['delivdt'] = (get_utcnow() - relativedelta(years=9, months=5)).date()
 
         maternal_dataset_obj = mommy.make_recipe(
@@ -222,13 +226,15 @@ class TestVisitScheduleSetupB(TestCase):
             subject_identifier=subject_identifier,
             schedule_name='b_quarterly1_schedule1').count(), 1)
 
+    @tag('tcbos')
     def test_cohort_b_onschedule_sec(self):
-        """Assert that a 5 year old participant's mother who is on efv regimen is NOT put on
-         cohort b schedule.
+        """Assert that a 5-year-old participant's mother on efv regimen is NOT put
+        on cohort b schedule.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['mom_pregarv_strat'] = ''
         self.maternal_dataset_options['delivdt'] = self.year_3_age(5, 5)
 
         maternal_dataset_obj = mommy.make_recipe(
@@ -288,13 +294,13 @@ class TestVisitScheduleSetupB(TestCase):
             schedule_name='b_sec_quart1_schedule1').count(), 1)
 
     def test_cohort_b_assent_onschedule_valid(self):
-        """Assert that a 7 year old participant's mother who is HIV- from Mpepu study
+        """Assert that a 7-year-old participant's mother who is HIV — from Mpepu study
          is put on cohort b schedule after assent.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '3'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['mom_hivstatus'] = 'HIV-uninfected'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=7,
                                                                                 months=2)
 
@@ -338,12 +344,13 @@ class TestVisitScheduleSetupB(TestCase):
             subject_identifier=subject_identifier).count(), 0)
 
     def test_cohort_b_twins_onschedule_valid(self):
-        """Assert that an 8 year old twin participants' mother from  Mpepu study is put on
+        """Assert that an 8-year-old twin participants' mother from Mpepu study is put on
          cohort c with only one visit schedule.
         """
         self.subject_identifier = self.subject_identifier[:-1] + '9'
         self.study_maternal_identifier = '981231'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=8,
                                                                                 months=2)
         maternal_dataset_obj = mommy.make_recipe(
@@ -462,13 +469,14 @@ class TestVisitScheduleSetupB(TestCase):
             subject_identifier=subject_consent.subject_identifier).count(), 0)
 
     def test_cohort_b_triplets_onschedule_valid(self):
-        """Assert that a 5 year old triplet participants' mother from  Mpepu study is put on
+        """Assert that a 5-year-old triplet participants' mother from Mpepu study is put on
          cohort c with only one visit schedule.
         """
 
         self.subject_identifier = self.subject_identifier[:-1] + '7'
         self.study_maternal_identifier = '981237'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
                                                                                 months=2)
 
@@ -571,12 +579,13 @@ class TestVisitScheduleSetupB(TestCase):
             schedule_name='b_quarterly3_schedule1').count(), 0)
 
     def test_cohort_b_multiple_onschedule_valid(self):
-        """Assert that a 4 year old and 5 years participants' mother from  Mpepu study is put
+        """Assert that a 4-year-old and 5-years participants' mother from Mpepu study is put
          on two different visit schedules.
         """
         self.subject_identifier = self.subject_identifier[:-1] + '4'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
+        self.maternal_dataset_options['mom_pregarv_strat'] = '3-drug ART'
         self.maternal_dataset_options['delivdt'] = get_utcnow() - relativedelta(years=5,
                                                                                 months=1)
 

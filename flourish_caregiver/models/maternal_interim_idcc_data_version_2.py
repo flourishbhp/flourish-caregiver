@@ -3,7 +3,7 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO
 
-from ..maternal_choices import SIZE_CHECK_WITHOUT_EQUAL, \
+from ..maternal_choices import SIZE_CHECK,\
     REASON_CD4_RESULT_UNAVAILABLE, REASON_VL_RESULT_UNAVAILABLE
 from .model_mixins import CrfModelMixin
 
@@ -67,10 +67,16 @@ class MaternalInterimIdccVersion2(CrfModelMixin):
 
     reason_vl_not_availiable_other = OtherCharField()
 
+    vl_detectable = models.CharField(
+        verbose_name='Was the viral load detectable?',
+        choices=YES_NO,
+        max_length=3,
+        null=True, blank=True, )
+
     value_vl_size = models.CharField(
         max_length=25,
-        verbose_name="Is the VL value “< or >”",
-        choices=SIZE_CHECK_WITHOUT_EQUAL,
+        verbose_name="Is the VL value “<,= or >”",
+        choices=SIZE_CHECK,
         blank=True,
         null=True)
 

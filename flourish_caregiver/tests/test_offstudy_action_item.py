@@ -64,6 +64,7 @@ class TestOffStudyAction(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
+            child_subject_identifier=self.child_consent.subject_identifier,
             **options)
 
         self.assertEqual(ActionItem.objects.filter(
@@ -86,6 +87,7 @@ class TestOffStudyAction(TestCase):
 
         mommy.make_recipe(
             'flourish_caregiver.ultrasound',
+            child_subject_identifier=self.child_consent.subject_identifier,
             maternal_visit=maternal_visit_1000M,
             report_datetime=get_utcnow(),
             number_of_gestations=1,

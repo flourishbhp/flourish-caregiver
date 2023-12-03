@@ -10,6 +10,10 @@ from edc_visit_schedule.model_mixins import \
     OnScheduleModelMixin as BaseOnScheduleModelMixin
 
 
+class OnScheduleModelManager(SubjectIdentifierManager):
+    use_in_migrations = True
+
+
 class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
     """A model used by the system. Auto-completed by enrollment model.
     """
@@ -26,7 +30,7 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
 
     on_site = CurrentSiteManager()
 
-    objects = SubjectIdentifierManager()
+    objects = OnScheduleModelManager()
 
     history = HistoricalRecords()
 
@@ -65,6 +69,10 @@ class OnScheduleCohortAFU(OnScheduleModelMixin):
     pass
 
 
+class OnScheduleCohortAFUSeq(OnScheduleModelMixin):
+    pass
+
+
 class OnScheduleCohortAFUQuarterly(OnScheduleModelMixin):
     pass
 
@@ -89,6 +97,10 @@ class OnScheduleCohortBFU(OnScheduleModelMixin):
     pass
 
 
+class OnScheduleCohortBFUSeq(OnScheduleModelMixin):
+    pass
+
+
 class OnScheduleCohortBFUQuarterly(OnScheduleModelMixin):
     pass
 
@@ -102,6 +114,10 @@ class OnScheduleCohortCEnrollment(OnScheduleModelMixin):
 
 
 class OnScheduleCohortCFU(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortCFUSeq(OnScheduleModelMixin):
     pass
 
 
@@ -125,6 +141,10 @@ class OnScheduleCohortASecQuart(OnScheduleModelMixin):
     pass
 
 
+class OnScheduleCohortASecSeq(OnScheduleModelMixin):
+    pass
+
+
 class OnScheduleCohortBSec(OnScheduleModelMixin):
     pass
 
@@ -133,11 +153,19 @@ class OnScheduleCohortBSecQuart(OnScheduleModelMixin):
     pass
 
 
+class OnScheduleCohortBSecSeq(OnScheduleModelMixin):
+    pass
+
+
 class OnScheduleCohortCSec(OnScheduleModelMixin):
     pass
 
 
 class OnScheduleCohortCSecQuart(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCohortCSecSeq(OnScheduleModelMixin):
     pass
 
 

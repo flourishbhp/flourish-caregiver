@@ -2,9 +2,8 @@ from django import forms
 from django.apps import apps as django_apps
 
 from flourish_form_validations.form_validators import CaregiverChildConsentFormValidator
-
-from ..models import CaregiverChildConsent
 from .form_mixins import SubjectModelFormMixin
+from ..models import CaregiverChildConsent
 
 
 class CaregiverChildConsentForm(SubjectModelFormMixin):

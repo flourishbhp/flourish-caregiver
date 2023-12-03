@@ -87,6 +87,11 @@ class TestSubjectIdentifier(TestCase):
         subject_consent = mommy.make_recipe('flourish_caregiver.subjectconsent',
                                             **self.eligible_options)
 
+        mommy.make_recipe(
+            'flourish_caregiver.screeningpregwomen',
+            screening_identifier=subject_consent.screening_identifier
+        )
+
         child_consent1 = mommy.make_recipe('flourish_caregiver.caregiverchildconsent',
                                            subject_consent=subject_consent,
                                            identity=None,

@@ -109,9 +109,9 @@ class CohortAssignment:
 
     def cohort_a(self):
         """ Return cohort variable A if the child mother pair meets criteria.
-            Criteria:   0 < age <= 5
-                        450: total HEU
-                        325: total HUU
+            Criteria: 0 < age <= 5
+                    450: total HEU
+                    325: total HUU
         """
         cohort = 'cohort_a'
         if self.child_age <= 5:
@@ -122,11 +122,11 @@ class CohortAssignment:
             return 'cohort_a_sec'
 
     def cohort_b(self):
-        """ Return cohort variable B if child mother pair meets criteria.
-            Criteria:   5 < age <= 10
-                        ART regimen: 3-drug ART for HEU
-                        200: total HEU
-                        100: total HUU
+        """ Return cohort variable B if a child mother pair meets criteria.
+            Criteria: 5 < age <= 10
+                    ART regimen: 3-drug ART for HEU
+                    200: total HEU
+                    100: total HUU
         """
         cohort = 'cohort_b'
         if self.child_age > 5 and self.child_age <= 10:
@@ -138,11 +138,11 @@ class CohortAssignment:
             return 'cohort_b_sec'
 
     def cohort_c(self):
-        """ Return cohort variable C if child mother pair meets criteria.
-            Criteria:   age > 10
-                        ART regimen: 3-drug ART for HEU
-                        100: total HEU
-                        200: total HUU
+        """ Return cohort variable C if a child mother pair meets criteria.
+            Criteria: age > 10
+                    ART regimen: 3-drug ART for HEU
+                    100: total HEU
+                    200: total HUU
         """
         cohort = 'cohort_c'
         if self.child_age > 10:

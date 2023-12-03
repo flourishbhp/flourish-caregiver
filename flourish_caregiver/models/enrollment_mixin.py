@@ -1,16 +1,15 @@
 from django import forms
 from django.apps import apps as django_apps
 from django.db import models
-from edc_base.model_validators import datetime_not_future, date_not_future
+from edc_base.model_validators import date_not_future, datetime_not_future
 from edc_base.utils import get_utcnow
-from edc_constants.choices import (
-    POS_NEG_UNTESTED_REFUSAL, YES_NO_NA, POS_NEG, YES_NO)
+from edc_constants.choices import (POS_NEG, POS_NEG_UNTESTED_REFUSAL, YES_NO, YES_NO_NA)
 from edc_constants.constants import NO
 from edc_protocol.validators import date_not_before_study_start
 from edc_protocol.validators import datetime_not_before_study_start
 
-from ..helper_classes import EnrollmentHelper
 from .eligibility import AntenatalEnrollmentEligibility
+from ..helper_classes import EnrollmentHelper
 
 
 class EnrollmentMixin(models.Model):
@@ -135,11 +134,11 @@ class EnrollmentMixin(models.Model):
             'flourish_caregiver.caregiverchildconsent')
 
         child_consents = child_consent_cls.objects.filter(
-            subject_consent__subject_identifier=self.subject_identifier,
+            subject_identifier=self.child_subject_identifier,
             preg_enroll=True).order_by('consent_datetime')
 
-        if (child_consents and child_consents.values_list(
-                'subject_identifier', flat=True).distinct().count() == 1):
+        if (child_consents and len(set(child_consents.values_list(
+                'subject_identifier', flat=True))) == 1):
             child_consent = child_consents[0]
             return child_consent.consent_datetime.date()
         else:
@@ -152,7 +151,9 @@ class EnrollmentMixin(models.Model):
             'flourish_caregiver.ultrasound')
         try:
             ultra_sound_obj = ultra_sound_cls.objects.get(
-                maternal_visit__subject_identifier=self.subject_identifier)
+                maternal_visit__subject_identifier=self.subject_identifier,
+                child_subject_identifier=self.child_subject_identifier
+            )
         except ultra_sound_cls.DoesNotExist:
             return None
         else:

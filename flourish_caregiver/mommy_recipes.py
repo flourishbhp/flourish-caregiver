@@ -1,15 +1,18 @@
 from dateutil.relativedelta import relativedelta
+from django.apps import apps as django_apps
 from edc_base.utils import get_utcnow
 from edc_constants.constants import ALIVE, FEMALE, NEG, NO, NOT_APPLICABLE, ON_STUDY, \
     PARTICIPANT, POS, YES
 from edc_visit_tracking.constants import SCHEDULED
 from faker import Faker
 from model_mommy.recipe import Recipe, seq
-from django.apps import apps as django_apps
+
 from flourish_caregiver.models.hiv_disclosure_status import HIVDisclosureStatusA
 from flourish_caregiver.models.tb_engagement import TbEngagement
-from .models import AntenatalEnrollment, MaternalDelivery, SubjectConsent, \
-    TbInformedConsent, TbInterview, TbOffStudy, TbStudyEligibility, TbVisitScreeningWomen
+from .models import AntenatalEnrollment, MaternalDelivery, ScreeningPregWomenInline, \
+    SubjectConsent, \
+    TbInformedConsent, TbInterview, TbOffStudy, TBReferralCaregiver, TbStudyEligibility, \
+    TbVisitScreeningWomen
 from .models import CaregiverChildConsent, HIVRapidTestCounseling, LocatorLogEntry
 from .models import CaregiverEdinburghDeprScreening, CaregiverGadAnxietyScreening, \
     CaregiverPhqDeprScreening, TbRoutineHealthScreenV2
@@ -17,10 +20,10 @@ from .models import CaregiverLocator, MaternalDataset, MaternalVisit, \
     RelationshipFatherInvolvement
 from .models import CaregiverPhqReferral, FlourishConsentVersion
 from .models import CaregiverPreviouslyEnrolled
-from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
 from .models import Cohort
-from .models import MaternalInterimIdccVersion2, MedicalHistory
 from .models import InterviewFocusGroupInterestV2
+from .models import MaternalInterimIdccVersion2, MedicalHistory
+from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
 
 fake = Faker()
 
@@ -52,7 +55,10 @@ screeningpriorbhpparticipants = Recipe(
     flourish_participation='interested')
 
 screeningpregwomen = Recipe(
-    ScreeningPregWomen,
+    ScreeningPregWomen, )
+
+screeningpregwomeninline = Recipe(
+    ScreeningPregWomenInline,
     hiv_testing=YES,
     breastfeed_intent=YES)
 
@@ -248,3 +254,7 @@ medicalhistory = Recipe(MedicalHistory, )
 
 interviewfocusgroupinterestv2 = Recipe(
     InterviewFocusGroupInterestV2, )
+
+tbreferralcaregiver = Recipe(
+    TBReferralCaregiver,
+)
