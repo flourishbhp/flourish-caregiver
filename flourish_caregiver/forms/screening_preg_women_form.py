@@ -23,8 +23,16 @@ class ScreeningPregWomenInlineForm(SiteModelFormMixin, FormValidatorMixin,
                                    forms.ModelForm):
     form_validator_cls = None
 
+    child_subject_identifier = forms.CharField(
+        label='Child Subject Identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}),
+        required=False)
+
     def clean(self):
         self.cleaned_data = super().clean()
+
+    def has_changed(self):
+        return True
 
     class Meta:
         model = ScreeningPregWomenInline

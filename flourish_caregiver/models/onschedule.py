@@ -10,6 +10,10 @@ from edc_visit_schedule.model_mixins import \
     OnScheduleModelMixin as BaseOnScheduleModelMixin
 
 
+class OnScheduleModelManager(SubjectIdentifierManager):
+    use_in_migrations = True
+
+
 class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
     """A model used by the system. Auto-completed by enrollment model.
     """
@@ -26,7 +30,7 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
 
     on_site = CurrentSiteManager()
 
-    objects = SubjectIdentifierManager()
+    objects = OnScheduleModelManager()
 
     history = HistoricalRecords()
 

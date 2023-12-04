@@ -22,6 +22,10 @@ from ..subject_identifier import InfantIdentifier
 INFANT = 'infant'
 
 
+class ChildConsentModelManager(models.Manager):
+    use_in_migrations = True
+
+
 class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin,
                             IdentityFieldsMixin, ReviewFieldsMixin,
                             PersonalFieldsMixin, VerificationFieldsMixin, BaseUuidModel):
@@ -159,6 +163,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         max_length=150,
         null=True,
         editable=False)
+
+    objects = ChildConsentModelManager()
 
     def save(self, *args, **kwargs):
         self.preg_enroll = self.is_preg

@@ -14,6 +14,11 @@ from .maternal_delivery import MaternalDelivery
 from .ultrasound import UltraSound
 
 
+
+class AntenatalModelManager(models.Manager):
+    use_in_migrations = True
+
+
 class AntenatalEnrollment(NonUniqueSubjectIdentifierFieldMixin,
                           EnrollmentMixin, BaseUuidModel):
     child_subject_identifier = models.CharField(
@@ -117,6 +122,8 @@ class AntenatalEnrollment(NonUniqueSubjectIdentifierFieldMixin,
             except TypeError:
                 pass
         return ga_weeks
+
+    objects = AntenatalModelManager()
 
     history = HistoricalRecords()
 
