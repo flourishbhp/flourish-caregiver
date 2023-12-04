@@ -49,8 +49,11 @@ class VisitSequence(VisitSequence):
                         visit_code=self.previous_visit_code).order_by(
                             '-visit_code_sequence').first()
                     if previous_appointment:
-                        previous_visit = self.model_cls.objects.get(
-                            appointment=previous_appointment)
+                        try:
+                            previous_visit = self.model_cls.objects.get(
+                                appointment=previous_appointment)
+                        except self.model_cls.DoesNotExist:
+                            pass
                     elif self.previous_appointment:
                         previous_visit = getattr(
                             self.previous_appointment, self.model_cls._meta.model_name, None)
