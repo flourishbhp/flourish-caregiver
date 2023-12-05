@@ -52,7 +52,8 @@ def update_preg_screening_obj_child_pid(consent, child_subject_identifier):
         except ObjectDoesNotExist:
             screenings_without_child_pid = (
                 screening_obj.screeningpregwomeninline_set.filter(
-                    child_subject_identifier__isnull=True))
+                    Q(child_subject_identifier__isnull=True) | Q(
+                        child_subject_identifier='')))
             if screenings_without_child_pid.count() == 1:
                 child_screening_obj = screenings_without_child_pid.first()
                 child_screening_obj.child_subject_identifier = child_subject_identifier
