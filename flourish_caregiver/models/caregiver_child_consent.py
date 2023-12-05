@@ -21,6 +21,8 @@ from ..subject_identifier import InfantIdentifier
 
 INFANT = 'infant'
 
+caregiver_config = django_apps.get_app_config('flourish_caregiver')
+
 
 class ChildConsentModelManager(models.Manager):
     use_in_migrations = True
@@ -183,7 +185,8 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
 
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
-            self.version = self.child_consent_version or '3'
+            self.version = self.child_consent_version or str(
+                caregiver_config.child_consent_version)
 
             if not self.subject_identifier:
                 self.subject_identifier = InfantIdentifier(
