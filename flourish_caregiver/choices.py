@@ -118,14 +118,16 @@ COHORTS = (
 CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
-    ('3', 'Consent version 3')
+    ('3', 'Consent version 3'),
+    ('4', 'Consent version 4'),
 )
 
 CHILD_CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
     ('2.1', 'Consent version 2.1'),
-    ('3', 'Consent version 3')
+    ('3', 'Consent version 3'),
+    ('4', 'Consent version 4')
 )
 
 CONTACT_FAIL_REASON = (
@@ -1237,4 +1239,17 @@ HIV_PERSPECTIVE = (
     ('a_few_people_think_that', 'A few people think that'),
     ('most_people_think_that', 'Most people think that'),
     (NOT_APPLICABLE, 'Not Applicable')
+)
+
+PARTNER_ACTIONS_CHOICES = (
+    ('1', 'Never'),
+    ('2', 'Rarely'),
+    ('3', 'Sometimes'),
+    ('4', 'Fairly Often'),
+    ('5', 'Frequently'),
+)
+
+YES_NO_INT_CHOICES = (
+    ('1', YES),
+    ('2', NO),
 )

@@ -53,6 +53,8 @@ from ..models.tb_informed_consent import TbInformedConsent
 from ..models.tb_off_study import TbOffStudy  # was supposed to be in the prns
 from ..models.tb_visit_screening_women import TbVisitScreeningWomen
 
+caregiver_config = django_apps.get_app_config('flourish_caregiver')
+
 
 class PreFlourishError(Exception):
     pass
@@ -650,7 +652,7 @@ def screening_preg_women(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=3)
+            create_consent_version(instance, version=caregiver_config.consent_version)
 
 
 @receiver(post_save, weak=False, sender=ScreeningPriorBhpParticipants,
@@ -662,7 +664,7 @@ def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=3)
+            create_consent_version(instance, version=caregiver_config.consent_version)
 
 
 @receiver(post_save, weak=False, sender=TbInformedConsent,
@@ -831,37 +833,38 @@ def create_registered_infant(instance):
                 raise ValidationError(
                     'Maternal Ultrasound must exist for {instance.subject_identifier}')
             else:
-                with ((transaction.atomic())):
+                with (((((transaction.atomic()))))):
                     caregiver_child_consent_cls = django_apps.get_model(
                         'flourish_caregiver.caregiverchildconsent')
 
                     # Create caregiver child consent
-                    caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
+                    child_consent_objs = caregiver_child_consent_cls.objects.filter(
                         subject_identifier=instance.child_subject_identifier)
 
-                    if not caregiver_child_consent_objs:
+                    if not child_consent_objs:
                         caregiver_child_consent_cls.objects.create(
                             subject_consent=maternal_consent,
                             child_dob=instance.delivery_datetime.date(),
                             consent_datetime=get_utcnow(),
                             is_eligible=True)
                     else:
-                        caregiver_child_consent_obj = caregiver_child_consent_objs.latest(
+                        caregiver_child_consent_obj = child_consent_objs.latest(
                             'consent_datetime')
                         child_dummy_consent_cls = django_apps.get_model(
                             'flourish_child.childdummysubjectconsent')
                         try:
                             child_dummy_consent_cls.objects.get(
-                                subject_identifier=caregiver_child_consent_obj.subject_identifier,
-                                version=caregiver_child_consent_obj.version)
+                                subject_identifier=child_consent_objs.subject_identifier,
+                                version=child_consent_objs.version)
                         except child_dummy_consent_cls.DoesNotExist:
                             child_dummy_consent_cls.objects.create(
-                                subject_identifier=caregiver_child_consent_obj.subject_identifier,
-                                consent_datetime=caregiver_child_consent_obj.consent_datetime,
-                                dob=caregiver_child_consent_obj.dob,
-                                cohort=caregiver_child_consent_obj.cohort,
-                                version=caregiver_child_consent_obj.version,
-                                relative_identifier=caregiver_child_consent_obj.subject_consent.subject_identifier)
+                                subject_identifier=child_consent_objs.subject_identifier,
+                                consent_datetime=child_consent_objs.consent_datetime,
+                                dob=child_consent_objs.dob,
+                                cohort=child_consent_objs.cohort,
+                                version=child_consent_objs.version,
+                                relative_identifier=child_consent_objs.subject_consent
+                                .subject_identifier)
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
@@ -911,7 +914,7 @@ def create_consent_version(instance, version):
         consent_version = consent_version_cls(
             screening_identifier=instance.screening_identifier,
             version=version,
-            child_version=3,
+            child_version=caregiver_config.child_consent_version,
             user_created=instance.user_modified or instance.user_created,
             created=get_utcnow())
         consent_version.save()
