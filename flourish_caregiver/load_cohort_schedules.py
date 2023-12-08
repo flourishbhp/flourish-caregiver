@@ -253,14 +253,14 @@ flourish_schedules = [
         'child_count': 1,
     },
     {
-        'schedule_name': 'a_tb1_6_months_schedule1',
+        'schedule_name': 'a_tb2_6_months_schedule1',
         'schedule_type': 'tb_6_months',
         'cohort_name': 'cohort_a',
         'onschedule_model': 'flourish_caregiver.onschedulecohortatb6months',
         'child_count': 2,
     },
     {
-        'schedule_name': 'a_tb1_6_months_schedule1',
+        'schedule_name': 'a_tb3_6_months_schedule1',
         'schedule_type': 'tb_6_months',
         'cohort_name': 'cohort_a',
         'onschedule_model': 'flourish_caregiver.onschedulecohortatb6months',
