@@ -3,7 +3,7 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 
-from .list_models import CaregiverMedications, ChronicConditions, WcsDxAdult
+from .list_models import CaregiverMedications, ChronicConditions, WcsDxAdult, GeneralSymptoms
 from .model_mixins import CrfModelMixin
 from ..choices import CLINIC_VISIT_CHOICES, SYMPTOMS_CHOICES
 from ..maternal_choices import KNOW_HIV_STATUS
@@ -91,12 +91,11 @@ class MedicalHistory(CrfModelMixin):
         choices=YES_NO
     )
 
-    current_symptoms = models.CharField(
+    current_symptoms = models.ManyToManyField(
+        GeneralSymptoms,
         verbose_name="What are your current symptoms",
-        max_length=30,
         blank=True,
-        null=True,
-        choices=SYMPTOMS_CHOICES
+        related_name='mmaternal_current_symptoms'
     )
 
     current_symptoms_other = models.TextField(

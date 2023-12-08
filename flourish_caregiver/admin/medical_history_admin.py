@@ -43,12 +43,11 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'who_diagnosis': admin.VERTICAL,
                     'know_hiv_status': admin.VERTICAL,
                     'current_illness': admin.VERTICAL,
-                    'current_symptoms': admin.VERTICAL,
                     'clinic_visit': admin.VERTICAL,
                     'med_history_changed': admin.VERTICAL}
 
     filter_horizontal = (
-        'who', 'caregiver_chronic', 'caregiver_medications')
+        'who', 'caregiver_chronic', 'caregiver_medications', 'current_symptoms')
 
     custom_form_labels = [
         FormLabel(
