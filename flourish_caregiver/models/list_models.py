@@ -91,3 +91,7 @@ class ExpenseContributors(ListModelMixin, BaseUuidModel):
 
 class TBTests(ListModelMixin, BaseUuidModel):
     pass
+
+
+class GeneralSymptoms(ListModelMixin, BaseUuidModel):
+    pass
