@@ -349,8 +349,10 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
     - Put subject on cohort a schedule after consenting on behalf of child.
     """
     if not raw and instance.is_eligible:
-        update_preg_screening_obj_child_pid(instance.subject_consent,
-                                            instance.subject_identifier)
+        if not bool(instance.study_child_identifier):
+            update_preg_screening_obj_child_pid(
+                instance.subject_consent,
+                instance.subject_identifier)
 
         child_dummy_consent_cls = django_apps.get_model(
             'flourish_child.childdummysubjectconsent')
