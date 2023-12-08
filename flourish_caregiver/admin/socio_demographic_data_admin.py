@@ -172,8 +172,6 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                     'stay_with_child': admin.VERTICAL,
                     'socio_demo_changed': admin.VERTICAL}
 
-    conditional_fieldlists = {}
-
     filter_horizontal = ('expense_contributors',)
 
     custom_form_labels = [
@@ -184,39 +182,36 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             previous_appointment=True)
     ]
 
-    quartely_schedules = ['a_quarterly1_schedule1', 'a_quarterly2_schedule1',
-                          'a_quarterly3_schedule1', 'a_sec_quart1_schedule1',
-                          'a_sec_quart2_schedule1', 'a_sec_quart3_schedule1',
-                          'b_quarterly1_schedule1', 'b_quarterly2_schedule1',
-                          'b_quarterly3_schedule1', 'c_quarterly2_schedule1',
-                          'c_quarterly1_schedule1', 'c_quarterly3_schedule1',
-                          'b_sec_quart1_schedule1', 'b_sec_quart2_schedule1',
-                          'b_sec_quart3_schedule1', 'c_sec_quart1_schedule1',
-                          'c_sec_quart2_schedule1', 'c_sec_quart3_schedule1',
-                          'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1']
+    @property
+    def quarterly_schedules(self):
+        schedules = self.cohort_schedules_cls.objects.filter(
+            schedule_type__icontains='quarterly',
+            onschedule_model__startswith='flourish_caregiver').values_list(
+                'schedule_name', flat=True)
+        return schedules
 
-    fu_schedules = ['a_fu1_schedule1', 'a_fu2_schedule1',
-                    'a_fu3_schedule1',
-                    'a_fu_quarterly1_schedule1', 'a_fu_quarterly2_schedule1',
-                    'a_fu_quarterly3_schedule1',
-                    'b_fu1_schedule1',
-                    'b_fu2_schedule1', 'b_fu3_schedule1',
-                    'b_fu_quarterly1_schedule1', 'b_fu_quarterly2_schedule1',
-                    'b_fu_quarterly3_schedule1',
-                    'c_fu1_schedule1',
-                    'c_fu2_schedule1', 'c_fu3_schedule1',
-                    'c_fu_quarterly1_schedule1', 'c_fu_quarterly2_schedule1',
-                    'c_fu_quarterly3_schedule1']
+    @property
+    def fu_schedules(self):
+        schedules = self.cohort_schedules_cls.objects.filter(
+            schedule_type__icontains='followup',
+            onschedule_model__startswith='flourish_caregiver').exclude(
+                schedule_type__icontains='quarterly').values_list(
+                'schedule_name', flat=True)
+        return schedules
 
-    schedules = quartely_schedules + fu_schedules
+    @property
+    def conditional_fieldlists(self):
+        conditional_fieldlists = {}
+        schedules = list(self.quarterly_schedules)
+        schedules.extend(list(self.fu_schedules))
 
-    for schedule in schedules:
-
-        conditional_fieldlists.update(
-            {schedule: Fieldlist(insert_fields=('socio_demo_changed',),
-                                 remove_fields=(
-                                     'number_of_household_members',),
-                                 insert_after='report_datetime')})
+        for schedule in schedules:
+            conditional_fieldlists.update(
+                {schedule: Fieldlist(insert_fields=('socio_demo_changed',),
+                                     remove_fields=(
+                                         'number_of_household_members',),
+                                     insert_after='report_datetime')})
+        return conditional_fieldlists
 
     def get_form(self, request, obj=None, *args, **kwargs):
         form = super().get_form(request, *args, **kwargs)
