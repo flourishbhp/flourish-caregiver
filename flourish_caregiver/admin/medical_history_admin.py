@@ -57,37 +57,34 @@ class MedicalHistoryAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             previous_appointment=True)
     ]
 
-    schedule_names = ['a_quarterly1_schedule1', 'a_quarterly2_schedule1',
-                      'a_quarterly3_schedule1', 'a_sec_quart1_schedule1',
-                      'a_sec_quart2_schedule1', 'a_sec_quart3_schedule1',
-                      'b_quarterly1_schedule1', 'b_quarterly2_schedule1',
-                      'b_quarterly3_schedule1', 'c_quarterly2_schedule1',
-                      'c_quarterly1_schedule1', 'c_quarterly3_schedule1',
-                      'b_sec_quart1_schedule1', 'b_sec_quart2_schedule1',
-                      'b_sec_quart3_schedule1', 'c_sec_quart1_schedule1',
-                      'c_sec_quart2_schedule1', 'c_sec_quart3_schedule1',
-                      'pool1_schedule1', 'pool2_schedule1', 'pool3_schedule1',
-                      'a_birth1_schedule1', ]
+    @property
+    def quarterly_schedules(self):
+        schedules = self.cohort_schedules_cls.objects.filter(
+            schedule_type__icontains='quarterly',
+            onschedule_model__startswith='flourish_caregiver').values_list(
+                'schedule_name', flat=True)
+        return schedules
 
-    fu_schedule_names = ['a_fu1_schedule1', 'a_fu2_schedule1',
-                         'a_fu3_schedule1',
-                         'a_fu_quarterly1_schedule1', 'a_fu_quarterly2_schedule1',
-                         'a_fu_quarterly3_schedule1',
-                         'b_fu1_schedule1',
-                         'b_fu2_schedule1', 'b_fu3_schedule1',
-                         'b_fu_quarterly1_schedule1', 'b_fu_quarterly2_schedule1',
-                         'b_fu_quarterly3_schedule1',
-                         'c_fu1_schedule1',
-                         'c_fu2_schedule1', 'c_fu3_schedule1',
-                         'c_fu_quarterly1_schedule1', 'c_fu_quarterly2_schedule1',
-                         'c_fu_quarterly3_schedule1']
+    @property
+    def fu_schedules(self):
+        schedules = self.cohort_schedules_cls.objects.filter(
+            schedule_type__icontains='followup',
+            onschedule_model__startswith='flourish_caregiver').exclude(
+                schedule_type__icontains='quarterly').values_list(
+                'schedule_name', flat=True)
+        return schedules
 
-    schedules = schedule_names + fu_schedule_names
+    @property
+    def conditional_fieldlists(self):
+        schedules = ['a_birth1_schedule1']
+        schedules.extend(list(self.quarterly_schedules))
+        schedules.extend(list(self.fu_schedules))
 
-    conditional_fieldlists = {}
-    for schedule in schedules:
-        conditional_fieldlists.update(
-            {schedule: Insert('med_history_changed', after='report_datetime')})
+        conditional_fieldlists = {}
+        for schedule in schedules:
+            conditional_fieldlists.update(
+                {schedule: Insert('med_history_changed', after='report_datetime')})
+        return conditional_fieldlists
 
     def get_key(self, request, obj=None):
         return super().get_key(request, obj)

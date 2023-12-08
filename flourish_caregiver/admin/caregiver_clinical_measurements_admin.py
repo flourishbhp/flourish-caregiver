@@ -36,20 +36,26 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'confirm_values': admin.VERTICAL,
         'all_measurements': admin.VERTICAL}
 
-    conditional_fieldlists = {
-        'a_antenatal1_schedule1': Remove('waist_circ', 'hip_circ'),
-        'a_birth1_schedule1': Remove('height', 'waist_circ', 'hip_circ'),
-        'tb_2_months_schedule': Remove('height', 'waist_circ', 'hip_circ'),
-        'a_fu1_schedule1': Remove('height'),
-        'a_fu2_schedule1': Remove('height'),
-        'a_fu3_schedule1': Remove('height'),
-        'b_fu1_schedule1': Remove('height'),
-        'b_fu2_schedule1': Remove('height'),
-        'b_fu3_schedule1': Remove('height'),
-        'c_fu1_schedule1': Remove('height'),
-        'c_fu2_schedule1': Remove('height'),
-        'c_fu3_schedule1': Remove('height'),
-    }
+    @property
+    def fu_schedules(self):
+        schedules = self.cohort_schedules_cls.objects.filter(
+            schedule_type__icontains='followup',
+            onschedule_model__startswith='flourish_caregiver').exclude(
+                schedule_type__icontains='quarterly').values_list(
+                'schedule_name', flat=True)
+        return schedules
+
+    @property 
+    def conditional_fieldlists(self):
+        conditional_fieldlists = {
+            'a_antenatal1_schedule1': Remove('waist_circ', 'hip_circ'),
+            'a_birth1_schedule1': Remove('height', 'waist_circ', 'hip_circ'),
+            'tb_2_months_schedule': Remove('height', 'waist_circ', 'hip_circ'), }
+
+        for schedule in self.fu_schedules:
+            conditional_fieldlists.update(
+                {schedule: Remove('height')})
+        return conditional_fieldlists
 
     def get_key(self, request, obj=None):
         super().get_key(request, obj)
