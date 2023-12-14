@@ -30,6 +30,7 @@ jobs:
           pip uninstall pycrypto -y
           pip uninstall pycryptodome -y
           pip install pycryptodome
+          pip install Django==3.1.14
       - name: Run Tests
         run: |
           python manage.py test
