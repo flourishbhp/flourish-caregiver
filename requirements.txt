@@ -63,3 +63,4 @@ django_tables2
 django_q
 img2pdf
 pyminizip
+requests
