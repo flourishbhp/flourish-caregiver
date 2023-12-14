@@ -33,6 +33,7 @@ git+https://github.com/botswana-harvard/edc-subject-dashboard.git@0.1.11#egg=edc
 git+https://github.com/botswana-harvard/edc-timepoint.git@develop#egg=edc_timepoint
 git+https://github.com/botswana-harvard/edc-visit-tracking.git@develop#egg=edc_visit_tracking
 git+https://github.com/botswana-harvard/edc-visit-schedule.git@develop#egg=edc_visit_schedule
+git+https://github.com/flourishbhp/flourish-calendar.git@develop#egg=flourish_calendar
 git+https://github.com/flourishbhp/flourish-caregiver.git@develop#egg=flourish_caregiver
 git+https://github.com/flourishbhp/flourish-child-validations.git@develop#egg=flourish_child_validations
 git+https://github.com/flourishbhp/flourish-child.git@develop#egg=flourish_child
