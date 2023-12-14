@@ -32,5 +32,5 @@ jobs:
           pip install pycryptodome
       - name: Run Tests
         run: |
-          manage.py test
+          python manage.py test
 
