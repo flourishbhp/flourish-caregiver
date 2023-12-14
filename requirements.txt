@@ -62,3 +62,4 @@ pypdfium2==3.8.0
 django_tables2
 django_q
 img2pdf
+pyminizip
