@@ -43,6 +43,7 @@ git+https://github.com/flourishbhp/flourish-prn.git@develop#egg=flourish_prn
 git+https://github.com/flourishbhp/flourish-reference@develop#egg=flourish_reference
 git+https://github.com/flourishbhp/flourish-visit-schedule.git@develop#egg=flourish_visit_schedule
 git+https://github.com/flourishbhp/pre-flourish.git@develop#egg=pre_flourish
+git+https://github.com/flourishbhp/pre-flourish-follow.git@develop#egg=pre_flourish_follow
 git+https://github.com/flourishbhp/flourish-follow.git@develop#egg=flourish_follow
 git+https://github.com/flourishbhp/flourish-labs.git@develop#egg=flourish_labs
 django_q
