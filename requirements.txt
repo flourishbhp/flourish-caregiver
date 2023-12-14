@@ -38,6 +38,7 @@ git+https://github.com/flourishbhp/flourish-calendar.git@develop#egg=flourish_ca
 git+https://github.com/flourishbhp/flourish-caregiver.git@develop#egg=flourish_caregiver
 git+https://github.com/flourishbhp/flourish-child-validations.git@develop#egg=flourish_child_validations
 git+https://github.com/flourishbhp/flourish-child.git@develop#egg=flourish_child
+git+https://github.com/flourishbhp/flourish-dashboard.git@develop#egg=flourish-dashboard
 git+https://github.com/flourishbhp/flourish-facet.git@develop#egg=flourish_facet
 git+https://github.com/flourishbhp/flourish-form-validations.git@develop#egg=flourish_form_validations
 git+https://github.com/flourishbhp/flourish-metadata-rules@develop#egg=flourish_metadata_rules
