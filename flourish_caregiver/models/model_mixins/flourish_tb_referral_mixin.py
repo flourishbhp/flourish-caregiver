@@ -7,10 +7,7 @@ from flourish_caregiver.choices import CLINIC_NAMES, TB_REASON_CHOICES
 
 
 class TBReferralMixin(models.Model):
-    referred_for_screening = models.CharField(
-        verbose_name='Was the participant referred for TB screening?',
-        choices=YES_NO,
-        max_length=3)
+
     date_of_referral = models.DateField(
         verbose_name='Date of referral:',
         validators=[date_not_future],
