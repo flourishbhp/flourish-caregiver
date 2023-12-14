@@ -26,7 +26,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libcups2-dev
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements_dev.txt
           pip uninstall pycrypto -y
           pip uninstall pycryptodome -y
           pip install pycryptodome
