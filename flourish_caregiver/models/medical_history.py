@@ -5,7 +5,7 @@ from edc_constants.choices import YES_NO, YES_NO_NA
 
 from .list_models import CaregiverMedications, ChronicConditions, WcsDxAdult, GeneralSymptoms
 from .model_mixins import CrfModelMixin
-from ..choices import CLINIC_VISIT_CHOICES, SYMPTOMS_CHOICES
+from ..choices import CLINIC_VISIT_CHOICES
 from ..maternal_choices import KNOW_HIV_STATUS
 
 
