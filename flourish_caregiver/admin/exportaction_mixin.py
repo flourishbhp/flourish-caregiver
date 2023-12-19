@@ -1,13 +1,15 @@
 import datetime
 import uuid
+import xlwt
 
 from django.apps import apps as django_apps
-from django.db.models import ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel
+from django.db.models import (ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel,
+                              FileField, ImageField)
 from django.db.models.fields.reverse_related import OneToOneRel
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-import xlwt
+
 from ..helper_classes import MaternalStatusHelper
 
 
@@ -32,6 +34,7 @@ class ExportActionMixin:
 
         field_names = []
         for field in self.get_model_fields:
+
             if isinstance(field, ManyToManyField):
                 choices = self.m2m_list_data(field.related_model)
                 for choice in choices:
@@ -101,19 +104,24 @@ class ExportActionMixin:
             inline_objs = []
 
             for field in self.get_model_fields:
-
+                if isinstance(field, (FileField, ImageField,)):
+                    file_obj = getattr(obj, field.name, '')
+                    data.append(getattr(file_obj, 'name', ''))
+                    continue
                 if isinstance(field, ManyToManyField):
                     m2m_values = self.get_m2m_values(obj, m2m_field=field)
                     data.extend(m2m_values)
                     continue
                 if isinstance(field, (ForeignKey, OneToOneField,)):
-                    field_value = getattr(obj, field.name)
+                    field_value = getattr(obj, field.name, '')
                     data.append(field_value.id)
                     continue
                 if isinstance(field, OneToOneRel):
                     continue
-                if not self.is_consent(obj) and isinstance(field, ManyToOneRel):
-                    key_manager = getattr(obj, f'{field.name}_set')
+                if not (self.is_consent(obj) or
+                            self.is_visit(obj)) and isinstance(field, ManyToOneRel):
+                    key_manager = getattr(obj, f'{field.name}_set',
+                                          getattr(obj, f'{field.related_name}', None))
                     inline_values = key_manager.all()
                     fields = field.related_model._meta.get_fields()
                     for field in fields:
@@ -141,7 +149,7 @@ class ExportActionMixin:
                 data.append(delivery_dt.date() if delivery_dt else '')
             data.append(self.study_status(subject_identifier) or '')
 
-            if not self.is_consent(obj) and inline_objs:
+            if not (self.is_consent(obj) or self.is_visit(obj)) and inline_objs:
                 # Update header
                 inline_field_names = self.inline_exclude(
                     field_names=inline_field_names)
@@ -155,6 +163,10 @@ class ExportActionMixin:
                         inline_data = []
                         inline_data.extend(data)
                         for field in inline_obj._meta.get_fields():
+                            if isinstance(field, (FileField, ImageField,)):
+                                file_obj = getattr(inline_obj, field.name, '')
+                                inline_data.append(getattr(file_obj, 'name', ''))
+                                continue
                             if field.name in inline_field_names:
                                 inline_data.append(
                                     getattr(inline_obj, field.name, ''))
