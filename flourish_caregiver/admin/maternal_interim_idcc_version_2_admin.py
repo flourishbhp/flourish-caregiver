@@ -86,7 +86,7 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
 
     def get_model_data(self, request, object_id=None):
         subject_identifier = self.subject_identifier(request, object_id)
-        return self.maternal_hiv_interimhx_obj(subject_identifier)
+        return self.maternal_hiv_interimhx_obj(request, subject_identifier)
 
     def subject_identifier(self, request, object_id=None):
         if self.get_instance(request):
@@ -96,11 +96,14 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
                 request, object_id).maternal_visit.subject_identifier
         return None
 
-    def maternal_hiv_interimhx_obj(self, subject_identifier):
+    def maternal_hiv_interimhx_obj(self,request, subject_identifier):
+        appointment = self.get_instance(request)
+        schedule_names = self.get_schedule_names(appointment)
         if subject_identifier:
             try:
                 return MaternalHivInterimHx.objects.get(
-                    maternal_visit__appointment__subject_identifier=subject_identifier)
+                    maternal_visit__appointment__subject_identifier=subject_identifier,
+                    maternal_visit__schedule_name__in=schedule_names)
             except MaternalHivInterimHx.DoesNotExist:
                 pass
 

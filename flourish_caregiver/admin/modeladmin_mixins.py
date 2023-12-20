@@ -2,6 +2,7 @@ from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
 from django.utils.safestring import mark_safe
@@ -119,12 +120,11 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
         else:
             child_count =  getattr(
                 cohort_schedules, 'child_count', None)
-            schedule_type = getattr(
-                cohort_schedules, 'schedule_type', None)
             names = CohortSchedules.objects.filter(
                 child_count=child_count,
-                schedule_type=schedule_type).values_list(
-                    'schedule_name', flat=True)
+                onschedule_model__startswith='flourish_caregiver').values_list(
+                    'schedule_name', flat=True).exclude(
+                        Q(schedule_name__icontains='tb') | Q(schedule_name__icontains='facet'))
             return names
             
 
