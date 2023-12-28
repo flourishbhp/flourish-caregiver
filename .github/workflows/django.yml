@@ -24,10 +24,10 @@ jobs:
       - name: Install Python Development Headers
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-dev 
           sudo apt-get install -y libmpdec-dev
           sudo apt-get install -y libgmp-dev
           sudo apt-get install -y libcups2-dev
+          sudo apt-get install -y python3-dev 
           sudo apt-get install -y build-essential libssl-dev libffi-dev
       - name: Install Dependencies
         run: |
@@ -35,8 +35,6 @@ jobs:
           pip install setuptools wheel
           pip install --upgrade setuptools
           pip install -r requirements.txt
-          pip uninstall pycrypto -y
-          pip uninstall pycryptodome -y
           pip install 'pycryptodome<4.0'
           pip install Django==3.1.14
       - name: Run Tests
