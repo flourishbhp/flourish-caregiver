@@ -35,7 +35,7 @@ jobs:
           pip install -r requirements.txt
           pip uninstall pycrypto -y
           pip uninstall pycryptodome -y
-          pip install pycryptodome
+          pip install 'pycryptodome<4.0'
           pip install Django==3.1.14
       - name: Run Tests
         run: |
