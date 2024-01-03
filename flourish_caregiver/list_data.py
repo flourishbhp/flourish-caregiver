@@ -329,7 +329,17 @@ list_data = {
         ('skin_test', 'Skin test (TST/Mantoux)'),
         ('blood_test', 'Blood test (quantiferon)'),
         (OTHER, 'other')
-    ]
+    ],
+    'flourish_caregiver.generalsymptoms': [
+        ('cough', 'Cough'),
+        ('fever', 'Fever'),
+        ('headache', 'Headache'),
+        ('vomiting', 'Vomiting'),
+        ('diarrhea', 'Diarrhea'),
+        ('fatigue', 'Fatigue'),
+        ('congestion', 'Congestion'),
+        ('enlarged_lymph_nodes', 'Enlarged Lymph nodes'),
+        (OTHER, 'Other'),]
 }
 
 preload_data = PreloadData(
