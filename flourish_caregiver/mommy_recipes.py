@@ -9,7 +9,8 @@ from model_mommy.recipe import Recipe, seq
 
 from flourish_caregiver.models.hiv_disclosure_status import HIVDisclosureStatusA
 from flourish_caregiver.models.tb_engagement import TbEngagement
-from .models import AntenatalEnrollment, MaternalDelivery, ScreeningPregWomenInline, \
+from .models import AntenatalEnrollment, CaregiverTBScreening, MaternalDelivery, \
+    ScreeningPregWomenInline, \
     SubjectConsent, \
     TbInformedConsent, TbInterview, TbOffStudy, TBReferralCaregiver, TbStudyEligibility, \
     TbVisitScreeningWomen
@@ -257,4 +258,8 @@ interviewfocusgroupinterestv2 = Recipe(
 
 tbreferralcaregiver = Recipe(
     TBReferralCaregiver,
+)
+
+caregivertbscreening = Recipe(
+    CaregiverTBScreening,
 )

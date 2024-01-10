@@ -16,7 +16,6 @@ class CaregiverTBReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             'fields': [
                 'maternal_visit',
                 'report_datetime',
-                'referred_for_screening',
                 'date_of_referral',
                 'reason_for_referral',
                 'reason_for_referral_other',
