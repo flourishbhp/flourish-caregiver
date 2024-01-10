@@ -37,7 +37,8 @@ class TBScreeningMixin(models.Model):
         max_length=10, blank=True, null=True)
 
     weight_loss = models.CharField(
-        verbose_name='Since we last spoke with you, have you had any weight loss?',
+        verbose_name='Since the last time you spoke with FLOURISH staff, have you had '
+                     'any weight loss?',
         choices=YES_NO,
         max_length=3, )
 
@@ -47,14 +48,14 @@ class TBScreeningMixin(models.Model):
         max_length=10, blank=True, null=True)
 
     household_diagnosed_with_tb = models.CharField(
-        verbose_name='Since the last time you spoke with us, has someone in your '
-                     'household been diagnosed with TB?',
+        verbose_name='Since the last time you spoke with FLOURISH staff, have you been '
+                     'evaluated in a clinic for TB?',
         choices=YES_NO,
         max_length=3, )
 
     evaluated_for_tb = models.CharField(
-        verbose_name='Since the last time you spoke with us, have you been evaluated in '
-                     'a clinic for TB?',
+        verbose_name='Since the last time you spoke with FLOURISH staff, have you been '
+                     'evaluated in a clinic for TB?',
         choices=YES_NO,
         max_length=3, )
 

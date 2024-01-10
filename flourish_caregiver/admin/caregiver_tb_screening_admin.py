@@ -37,6 +37,9 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'skin_test_results',
                 'blood_test_results',
                 'other_test_results',
+                'diagnosed_with_TB',
+                'started_on_TB_treatment',
+                'started_on_TB_preventative_therapy',
             ]}),
         audit_fieldset_tuple
     )
@@ -62,24 +65,3 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "started_on_TB_treatment": admin.VERTICAL,
         "started_on_TB_preventative_therapy": admin.VERTICAL,
     }
-
-    conditional_fieldlists = {
-        'pending_test': Insert(
-            'diagnosed_with_TB',
-            'started_on_TB_treatment',
-            'started_on_TB_preventative_therapy',
-            after='other_test_results'
-        )
-    }
-
-    def get_key(self, request, obj=None):
-        super().get_key(request, obj)
-        previous_instance = self.get_previous_instance(request, obj)
-        if previous_instance:
-            return 'pending_test' if any(
-                previous_instance.chest_xray_results == PENDING,
-                previous_instance.sputum_sample_results == PENDING,
-                previous_instance.urine_test_results == PENDING,
-                previous_instance.skin_test_results == PENDING,
-                previous_instance.blood_test_results == PENDING,
-            ) else None
