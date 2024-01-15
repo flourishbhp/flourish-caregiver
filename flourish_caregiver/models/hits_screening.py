@@ -26,8 +26,10 @@ class HITSScreening(CrfModelMixin):
         max_length=5)
 
     score = models.IntegerField(
-        verbose_name='Score',
+        verbose_name='Total HITS Score',
         default=0,
+        blank=True,
+        null=True,
         max_length=5)
 
     def save(self, *args, **kwargs):

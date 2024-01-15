@@ -20,6 +20,7 @@ class HITSScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'insults',
                 'threaten',
                 'screem_curse',
+                'score'
             ]}
          ), audit_fieldset_tuple
     )
