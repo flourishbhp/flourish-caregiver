@@ -7,6 +7,7 @@ from ..models import HITSScreening
 class HITSScreeningForm(SubjectModelFormMixin, forms.ModelForm):
     score = forms.CharField(
         label='Total HITS Score',
+        required=False,
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
     class Meta:
