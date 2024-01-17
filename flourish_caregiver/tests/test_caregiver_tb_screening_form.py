@@ -112,3 +112,23 @@ class TestCaregiverTbScreeningForm(TestCase):
             model='flourish_caregiver.caregivertbscreening',
             subject_identifier=self.subject_identifier,
             visit_code='2002M').entry_status, NOT_REQUIRED)
+
+    @tag('ctbro')
+    def test_caregiver_tb_referral_outcone_form_required(self):
+        mommy.make_recipe(
+            'flourish_caregiver.tbreferralcaregiver',
+            maternal_visit=self.visit_2001,
+            report_datetime=get_utcnow() )
+
+        self.visit_2001 = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2002M',
+                subject_identifier=self.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(CrfMetadata.objects.get(
+            model='flourish_caregiver.caregivertbreferraloutcome',
+            subject_identifier=self.subject_identifier,
+            visit_code='2002M').entry_status, REQUIRED)
