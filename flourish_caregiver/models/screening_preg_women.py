@@ -101,8 +101,7 @@ class ScreeningPregWomenInline(BaseUuidModel):
         editable=False)
 
     def save(self, *args, **kwargs):
-        eligibility_criteria = PregWomenEligibility(
-            self.hiv_testing, self.breastfeed_intent)
+        eligibility_criteria = PregWomenEligibility(self.hiv_testing,)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         super().save(*args, **kwargs)

@@ -22,12 +22,20 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
         required=False)
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        initial = kwargs.pop('initial', {})
         instance = getattr(self, 'instance', None)
         subject_identifier = instance.subject_identifier if instance else None
         if subject_identifier:
             for key in self.fields.keys():
                 self.fields[key].disabled = True
+
+        previous_instance = getattr(self, 'previous_instance', None)
+        if not instance and previous_instance:
+            for key in self.base_fields.keys():
+                if key not in ['screening_identifier', 'subject_identifier']:
+                    initial[key] = previous_instance[0].get(key, None)
+        kwargs['initial'] = initial
+        super().__init__(*args, **kwargs)
 
     def clean(self):
         cleaned_data = super().clean()
