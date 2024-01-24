@@ -13,7 +13,8 @@ from ..choices import (YES_NO_PNTA_DNK, YES_NO_PNTA, YES_NO_PNTA_NA,
                        YES_NO_PNTA_UNKNOWN, HIV_STATUS_DISCUSSION, PARTNERS_SUPPORT,
                        CHOICE_FREQUENCY, HAPPINESS_CHOICES, FATHER_VISITS,
                        FUTURE_OF_RELATIONSHIP, FATHERS_FINANCIAL_SUPPORT)
-from .list_models import HouseholdMember
+from .list_models import (MemberReadBooks, MemberChildOutside, MemberNamedWithChild,
+                          MemberPlayedWithChild, MemberSangSongs, MemberToldStories)
 from .model_mixins import CrfModelMixin
 
 
@@ -211,42 +212,42 @@ class RelationshipFatherInvolvement(CrfModelMixin):
         validators=[MinValueValidator(0), MaxValueValidator(7), ],)
 
     read_books = models.ManyToManyField(
-        HouseholdMember,
+        MemberReadBooks,
         related_name='read_books',
         verbose_name='Read books or looked at picture books with your child', )
 
     read_books_other = OtherCharField()
 
     told_stories = models.ManyToManyField(
-        HouseholdMember,
+        MemberToldStories,
         related_name='told_stories',
         verbose_name='Told stories to your child', )
 
     told_stories_other = OtherCharField()
 
     sang_songs = models.ManyToManyField(
-        HouseholdMember,
+        MemberSangSongs,
         related_name='sang_songs',
         verbose_name='Sang songs to or with your child, including lullabies', )
 
     sang_songs_other = OtherCharField()
 
     took_child_outside = models.ManyToManyField(
-        HouseholdMember,
+        MemberChildOutside,
         related_name='took_child_outside',
         verbose_name='Took your child outside the home', )
 
     took_child_outside_other = OtherCharField()
 
     played_with_child = models.ManyToManyField(
-        HouseholdMember,
+        MemberPlayedWithChild,
         related_name='played_with_child',
         verbose_name='Played with your child', )
 
     played_with_child_other = OtherCharField()
 
     named_with_child = models.ManyToManyField(
-        HouseholdMember,
+        MemberNamedWithChild,
         related_name='named_with_child',
         verbose_name='Named, counted, or drew things with or for your child', )
 

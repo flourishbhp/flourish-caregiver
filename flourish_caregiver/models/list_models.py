@@ -1,3 +1,4 @@
+from django.db import models
 from edc_base.model_mixins import BaseUuidModel, ListModelMixin
 
 
@@ -81,6 +82,60 @@ class HouseholdMember(ListModelMixin, BaseUuidModel):
     pass
 
 
+class MemberReadBooks(ListModelMixin, BaseUuidModel):
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
+
+
+class MemberToldStories(ListModelMixin, BaseUuidModel):
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
+
+
+class MemberSangSongs(ListModelMixin, BaseUuidModel):
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
+
+
+class MemberChildOutside(ListModelMixin, BaseUuidModel):
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
+
+
+class MemberPlayedWithChild(ListModelMixin, BaseUuidModel):
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
+
+
+class MemberNamedWithChild(ListModelMixin, BaseUuidModel):
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
+
+
 class ArvInterruptionReasons(ListModelMixin, BaseUuidModel):
     pass
 
@@ -90,4 +145,8 @@ class ExpenseContributors(ListModelMixin, BaseUuidModel):
 
 
 class TBTests(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class GeneralSymptoms(ListModelMixin, BaseUuidModel):
     pass

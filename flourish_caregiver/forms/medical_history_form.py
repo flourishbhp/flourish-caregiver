@@ -21,7 +21,7 @@ class MedicalHistoryForm(SubjectModelFormMixin, forms.ModelForm):
 
         if not instance and previous_instance:
             for key in self.base_fields.keys():
-                if key in ['caregiver_chronic', 'who', 'caregiver_medications']:
+                if key in ['caregiver_chronic', 'who', 'caregiver_medications', 'current_symptoms']:
                     key_manager = getattr(previous_instance, key)
                     initial[key] = [obj.id for obj in key_manager.all()]
                     continue
