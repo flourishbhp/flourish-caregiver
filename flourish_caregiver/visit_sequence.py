@@ -1,5 +1,6 @@
 from django.apps import apps as django_apps
 from django.db import transaction
+from django.db.models import Q
 from edc_visit_tracking.visit_sequence import VisitSequence
 
 from .helper_classes.utils import get_previous_by_appt_datetime
@@ -28,6 +29,11 @@ class VisitSequence(VisitSequence):
                 self.previous_appointment, 'visit_code', None) or previous_visit.code
         except AttributeError:
             self.previous_visit_code = None
+        self.sequence_query = Q()
+        if self.visit_code == self.previous_visit_code:
+            previous_visit_code_sequence = getattr(
+                self.previous_appointment, 'visit_code_sequence', 0)
+            self.sequence_query = Q(visit_code_sequence=previous_visit_code_sequence)
         self.previous_visit_missing = self.previous_visit_code and not self.previous_visit
 
     @property
@@ -45,6 +51,7 @@ class VisitSequence(VisitSequence):
                         visit_code=self.previous_visit_code)
                 except Exception:
                     previous_appointment = self.appointment_model_cls.objects.filter(
+                        self.sequence_query,
                         subject_identifier=self.subject_identifier,
                         visit_code=self.previous_visit_code).order_by(
                             '-visit_code_sequence').first()
