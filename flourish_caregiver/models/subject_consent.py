@@ -109,8 +109,9 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
     breastfeed_intent = models.CharField(
         max_length=3,
         verbose_name='Do you intend on breast feeding your infant?',
-        choices=YES_NO_NA,
-        help_text='If ‘No’ ineligible for study participation')
+        blank=True,
+        null=True,
+        choices=YES_NO_NA,)
 
     future_contact = models.CharField(
         max_length=3,
