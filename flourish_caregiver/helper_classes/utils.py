@@ -1,6 +1,8 @@
 from django.apps import apps as django_apps
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import Q
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from ..helper_classes.cohort_assignment import CohortAssignment
 
@@ -87,9 +89,9 @@ def get_schedule_names(instance):
 
     qs = subject_schedule_history_cls.objects.filter(
         subject_identifier=instance.subject_identifier).exclude(
-            Q(schedule_name__icontains='tb') | Q(
-                schedule_name__icontains='facet')).values_list(
-                    'onschedule_model', flat=True)
+        Q(schedule_name__icontains='tb') | Q(
+            schedule_name__icontains='facet')).values_list(
+        'onschedule_model', flat=True)
     for model_name in qs:
         onschedule_model_cls = django_apps.get_model(model_name)
         try:
@@ -115,3 +117,9 @@ def get_previous_by_appt_datetime(appointment):
         return None
     else:
         return previous_appt
+
+
+def validate_date_not_in_past(value):
+    if value.date() < timezone.now().date():
+        raise ValidationError(_('Invalid datetime - Can not be past date'),
+                              code='creation_in_past')

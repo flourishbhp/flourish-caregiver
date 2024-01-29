@@ -20,6 +20,7 @@ from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsM
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugManager
 
+from ..helper_classes.utils import validate_date_not_in_past
 from ..identifiers import ScreeningIdentifier
 from ..action_items import CAREGIVER_LOCATOR_ACTION
 from .model_mixins import SearchSlugModelMixin
@@ -45,7 +46,11 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
 
     report_datetime = models.DateTimeField(
         default=get_utcnow,
-        validators=[datetime_not_before_study_start, datetime_not_future])
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future,
+            validate_date_not_in_past
+        ])
 
     screening_identifier = models.CharField(
         verbose_name="Eligibility Identifier",
