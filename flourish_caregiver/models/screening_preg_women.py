@@ -64,8 +64,7 @@ class ScreeningPregWomenInline(BaseUuidModel):
         verbose_name='Child Subject Identifier',
         max_length=36,
         blank=True,
-        null=True,
-        unique=True)
+        null=True, )
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date and Time",
@@ -101,7 +100,7 @@ class ScreeningPregWomenInline(BaseUuidModel):
         editable=False)
 
     def save(self, *args, **kwargs):
-        eligibility_criteria = PregWomenEligibility(self.hiv_testing,)
+        eligibility_criteria = PregWomenEligibility(self.hiv_testing, )
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         super().save(*args, **kwargs)
@@ -114,3 +113,5 @@ class ScreeningPregWomenInline(BaseUuidModel):
         app_label = 'flourish_caregiver'
         verbose_name = 'Screening Pregnant Women Inline'
         verbose_name_plural = 'Screening Pregnant Women Inlines'
+        unique_together = ('mother_screening', 'child_subject_identifier',
+                           'report_datetime')
