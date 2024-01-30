@@ -35,7 +35,7 @@ jobs:
           pip install flake8
           pip install coverage
       - name: Flake8 Lint
-        run: flake8 ${{ github.workspace }}/edc_consent
+        run: flake8 ${{ github.workspace }}/flourish_caregiver
       - name: Run Tests
         run: |
           coverage run manage.py test
