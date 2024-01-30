@@ -79,7 +79,7 @@ class RelationshipFatherInvolvementAdmin(CrfModelAdminMixin, admin.ModelAdmin):
          ), audit_fieldset_tuple
     )
 
-    search_fields = ('subject_identifier',)
+    search_fields = ('maternal_visit__subject_identifier',)
 
     radio_fields = {'partner_present': admin.VERTICAL,
                     'biological_father_alive': admin.VERTICAL,
