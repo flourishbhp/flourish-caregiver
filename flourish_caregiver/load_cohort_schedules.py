@@ -197,7 +197,7 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortasecquart',
         'child_count': 3,
     },
-    
+
     # Secondary aims FU Quarterly Sequential enrolment schedules Cohort A
     {
         'schedule_name': 'a_sec_fu_quart1_schedule1',
@@ -220,7 +220,7 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortasecseq',
         'child_count': 3,
     },
-    
+
     # TB 2 months Schedules
     {
         'schedule_name': 'a_tb1_2_months_schedule1',
@@ -358,7 +358,7 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortbquarterly',
         'child_count': 3,
     },
-    
+
     # Sequential Enrolment FU Schedules Cohort B
     {
         'schedule_name': 'b_sq_fu1_schedule1',
@@ -427,7 +427,7 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortbsecquart',
         'child_count': 3,
     },
-    
+
     # Secondary aims FU Quarterly Sequential enrolment schedules Cohort B
     {
         'schedule_name': 'b_sec_fu_quart1_schedule1',
@@ -542,7 +542,7 @@ flourish_schedules = [
         'onschedule_model': 'flourish_caregiver.onschedulecohortcquarterly',
         'child_count': 3,
     },
-    
+
     # Sequential Enrolment FU Schedules Cohort C
     {
         'schedule_name': 'c_sq_fu1_schedule1',

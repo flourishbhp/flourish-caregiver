@@ -1,6 +1,5 @@
 from django.db import models
 from edc_base.model_validators.date import date_not_future
-from edc_constants.choices import YES_NO
 
 from flourish_caregiver.choices import YES_NO_UKN_CHOICES
 from flourish_child.choices import DURATION_OPTIONS, TB_TEST_CHOICES, TEST_RESULTS_CHOICES
