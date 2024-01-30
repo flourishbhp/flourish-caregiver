@@ -34,6 +34,7 @@ jobs:
           pip install pycryptodome
           pip install flake8
           pip install coverage
+          pip install Django==3.1.14
       - name: Flake8 Lint
         run: flake8 ${{ github.workspace }}/flourish_caregiver
       - name: Run Tests
