@@ -284,7 +284,7 @@ list_data = {
         ('opd', 'OPD'),
         (OTHER, 'Other, specify'),
     ],
-     'flourish_caregiver.memberreadbooks': [
+    'flourish_caregiver.memberreadbooks': [
         ('mother', 'Mother'),
         ('father', 'Biological Father'),
         ('mothers_partner', 'Mother’s partner (not biological father)'),
@@ -413,5 +413,5 @@ list_data = {
         ('fatigue', 'Fatigue'),
         ('congestion', 'Congestion'),
         ('enlarged_lymph_nodes', 'Enlarged Lymph nodes'),
-        (OTHER, 'Other'),]
+        (OTHER, 'Other'), ]
 }

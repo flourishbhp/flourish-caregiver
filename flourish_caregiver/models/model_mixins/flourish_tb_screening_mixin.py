@@ -1,15 +1,15 @@
 from django.db import models
 from edc_base.model_validators.date import date_not_future
-from edc_constants.choices import YES_NO
 
+from flourish_caregiver.choices import YES_NO_UKN_CHOICES
 from flourish_child.choices import DURATION_OPTIONS, TB_TEST_CHOICES, TEST_RESULTS_CHOICES
 
 
 class TBScreeningMixin(models.Model):
     cough = models.CharField(
         verbose_name='Do you currently have any cough?',
-        choices=YES_NO,
-        max_length=3)
+        choices=YES_NO_UKN_CHOICES,
+        max_length=20)
 
     cough_duration = models.CharField(
         verbose_name='How long has the cough lasted?',
@@ -18,8 +18,8 @@ class TBScreeningMixin(models.Model):
 
     fever = models.CharField(
         verbose_name='Do you currently have a fever?',
-        choices=YES_NO,
-        max_length=3)
+        choices=YES_NO_UKN_CHOICES,
+        max_length=20)
 
     fever_duration = models.CharField(
         verbose_name='How long has the fever lasted?',
@@ -28,8 +28,8 @@ class TBScreeningMixin(models.Model):
 
     sweats = models.CharField(
         verbose_name='Are you currently experiencing night sweats?',
-        choices=YES_NO,
-        max_length=3)
+        choices=YES_NO_UKN_CHOICES,
+        max_length=20)
 
     sweats_duration = models.CharField(
         verbose_name='How long have the night sweats lasted?',
@@ -39,8 +39,8 @@ class TBScreeningMixin(models.Model):
     weight_loss = models.CharField(
         verbose_name='Since the last time you spoke with FLOURISH staff, have you had '
                      'any weight loss?',
-        choices=YES_NO,
-        max_length=3, )
+        choices=YES_NO_UKN_CHOICES,
+        max_length=20, )
 
     weight_loss_duration = models.CharField(
         verbose_name='How long has the weight loss lasted?',
@@ -50,14 +50,15 @@ class TBScreeningMixin(models.Model):
     household_diagnosed_with_tb = models.CharField(
         verbose_name='Since the last time you spoke with FLOURISH staff, have you been '
                      'evaluated in a clinic for TB?',
-        choices=YES_NO,
-        max_length=3, )
+        choices=YES_NO_UKN_CHOICES,
+        max_length=20, )
 
     evaluated_for_tb = models.CharField(
         verbose_name='Since the last time you spoke with FLOURISH staff, have you been '
                      'evaluated in a clinic for TB?',
-        choices=YES_NO,
-        max_length=3, )
+        choices=YES_NO_UKN_CHOICES,
+        help_text='Only for children',
+        max_length=20, )
 
     clinic_visit_date = models.DateField(
         verbose_name='What was the date of the clinic visit?',

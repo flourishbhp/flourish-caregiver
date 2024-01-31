@@ -1221,3 +1221,9 @@ YES_NO_INT_CHOICES = (
     ('1', YES),
     ('2', NO),
 )
+
+YES_NO_UKN_CHOICES = (
+    (YES, YES),
+    (NO, NO),
+    (UNKNOWN, 'Unknown'),
+)
