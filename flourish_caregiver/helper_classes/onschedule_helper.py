@@ -61,13 +61,13 @@ class OnScheduleHelper(object):
         else:
             child_subject_identifier = onschedule_obj.child_subject_identifier
 
-        self.put_on_schedule(
-            cohort,
-            instance=instance,
-            child_subject_identifier=child_subject_identifier,
-            base_appt_datetime=base_appt_datetime or instance.report_datetime.replace(
-                                   microsecond=0),
-            caregiver_visit_count=caregiver_visit_count)
+        self.put_on_schedule(cohort,
+                             instance=instance,
+                             child_subject_identifier=child_subject_identifier,
+                             base_appt_datetime=base_appt_datetime or
+                                                instance.report_datetime.replace(
+                                                    microsecond=0),
+                             caregiver_visit_count=caregiver_visit_count)
 
     def put_on_schedule(self, cohort, instance=None, child_subject_identifier=None,
                         base_appt_datetime=None, caregiver_visit_count=None):
@@ -181,9 +181,8 @@ class OnScheduleHelper(object):
             return assent_obj.created.replace(microsecond=0)
 
     def get_schedule_sequence(self, instance, onschedule_cls, caregiver_visit_count=None):
-        children_count = (
-                caregiver_visit_count or
-                1 + onschedule_cls.objects.filter(
+        children_count = (caregiver_visit_count or
+                          1 + onschedule_cls.objects.filter(
                     subject_identifier=self.subject_identifier).exclude(
                     child_subject_identifier=instance.subject_identifier).count())
         return children_count

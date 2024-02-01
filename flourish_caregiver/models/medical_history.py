@@ -3,20 +3,20 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 
-from .list_models import CaregiverMedications, ChronicConditions, GeneralSymptoms, \
-    WcsDxAdult
+from .list_models import CaregiverMedications, ChronicConditions, WcsDxAdult, GeneralSymptoms
 from .model_mixins import CrfModelMixin
-from ..choices import CLINIC_VISIT_CHOICES
+from ..choices import CLINIC_VISIT_CHOICES, SYMPTOMS_CHOICES
 from ..maternal_choices import KNOW_HIV_STATUS
 
 
 class MedicalHistory(CrfModelMixin):
+
     """A model completed by the user on Medical History for all care givers."""
 
     chronic_since = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name='Does the caregiver have any chronic conditions?', )
+        verbose_name='Does the caregiver have any chronic conditions?',)
 
     caregiver_chronic = models.ManyToManyField(
         ChronicConditions,
@@ -43,7 +43,7 @@ class MedicalHistory(CrfModelMixin):
     who = models.ManyToManyField(
         WcsDxAdult,
         verbose_name='List any new WHO Stage III/IV diagnoses that are '
-                     'not reported'
+        'not reported'
     )
 
     who_other = OtherCharField(
@@ -55,7 +55,7 @@ class MedicalHistory(CrfModelMixin):
     caregiver_medications = models.ManyToManyField(
         CaregiverMedications,
         verbose_name='Does the caregiver currently take any of the above '
-                     'medications. Tick all that apply',
+        'medications. Tick all that apply',
         blank=True
     )
 

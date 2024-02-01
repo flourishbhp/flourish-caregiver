@@ -1,16 +1,16 @@
 from django.contrib import admin
 from edc_fieldsets.fieldsets_modeladmin_mixin import FormLabel
 from edc_model_admin import audit_fieldset_tuple
-
 from flourish_caregiver.models.maternal_hiv_interim_hx import MaternalHivInterimHx
-from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalInterimIdccFormVersion2
 from ..models import MaternalInterimIdccVersion2
+from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(MaternalInterimIdccVersion2, site=flourish_caregiver_admin)
 class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
+
     form = MaternalInterimIdccFormVersion2
     change_form_template = 'admin/flourish_caregiver/maternalinterimidcc/change_form.html'
     add_form_template = 'admin/flourish_caregiver/maternalinterimidcc/change_form.html'
@@ -96,7 +96,7 @@ class MaternalInterimIdccVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
                 request, object_id).maternal_visit.subject_identifier
         return None
 
-    def maternal_hiv_interimhx_obj(self, request, subject_identifier):
+    def maternal_hiv_interimhx_obj(self,request, subject_identifier):
         appointment = self.get_instance(request)
         schedule_names = self.get_schedule_names(appointment)
         if subject_identifier:

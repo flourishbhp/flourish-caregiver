@@ -48,20 +48,18 @@ class CohortAssignment:
         """
         identifiers = self.cohort_model_cls.objects.filter(
             name=cohort).values_list('subject_identifier', flat=True)
-        study_child_ids = [self.get_study_child_identifier(idx) for idx in identifiers if
-                           self.child_onschedule(idx, cohort)]
+        study_child_ids = [self.get_study_child_identifier(idx) for idx in identifiers if self.child_onschedule(idx, cohort)]
         return study_child_ids
 
-    def child_onschedule(self, subject_identifier=None, cohort=None):
+    def child_onschedule(self,  subject_identifier=None, cohort=None):
         """ Checks if infant/child is onschedule by querying their onschedule
             objects.
             @param subject_identifier: child subject_identifier.
         """
-        cohort_onschedules = [name_dict.get('name') for name_dict in
-                              child_schedule_dict.get(cohort).values()]
+        cohort_onschedules = [name_dict.get('name') for name_dict in child_schedule_dict.get(cohort).values()]
         lastest_onschedule = self.subject_schedule_history_cls.objects.filter(
             subject_identifier=subject_identifier).exclude(
-            schedule_name__icontains='tb_adol').order_by('-onschedule_datetime').first()
+                schedule_name__icontains='tb_adol').order_by('-onschedule_datetime').first()
         return getattr(lastest_onschedule, 'schedule_name', None) in cohort_onschedules
 
     def total_enrolled_HUU(self, cohort):
@@ -89,8 +87,7 @@ class CohortAssignment:
             @return: concat of age and month parsed as decimal.
         """
         child_age = age(self.child_dob, self.enrolment_dt)
-        child_age = round(
-            child_age.years + (child_age.months / 12) + (child_age.days / 365.25), 2)
+        child_age = round(child_age.years + (child_age.months/12) + (child_age.days/365.25), 2)
 
         return child_age
 

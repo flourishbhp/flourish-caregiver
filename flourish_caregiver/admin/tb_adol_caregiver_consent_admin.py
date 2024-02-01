@@ -1,7 +1,7 @@
 from collections import OrderedDict
+from dateutil.relativedelta import relativedelta
 from functools import partialmethod
 
-from dateutil.relativedelta import relativedelta
 from django.contrib import admin
 from django.urls.base import reverse
 from django.urls.exceptions import NoReverseMatch
@@ -9,20 +9,23 @@ from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 from edc_base.utils import get_utcnow
 from edc_consent.actions import (flag_as_verified_against_paper,
                                  unflag_as_verified_against_paper)
-from edc_model_admin import audit_fields, audit_fieldset_tuple, \
-    ModelAdminAuditFieldsMixin, ModelAdminFormAutoNumberMixin, \
-    ModelAdminFormInstructionsMixin, ModelAdminInstitutionMixin, \
-    ModelAdminNextUrlRedirectError, ModelAdminNextUrlRedirectMixin, \
-    ModelAdminReplaceLabelTextMixin
-from edc_model_admin import ModelAdminBasicMixin, ModelAdminReadOnlyMixin
 from edc_model_admin import StackedInlineMixin
+from edc_model_admin import (
+    ModelAdminFormAutoNumberMixin, ModelAdminInstitutionMixin,
+    audit_fieldset_tuple, audit_fields, ModelAdminNextUrlRedirectMixin,
+    ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin,
+    ModelAdminFormInstructionsMixin, ModelAdminAuditFieldsMixin)
+from edc_model_admin import ModelAdminBasicMixin, ModelAdminReadOnlyMixin
 from simple_history.admin import SimpleHistoryAdmin
 
+from ..admin_site import flourish_caregiver_admin
+from ..forms import TbAdolConsentForm, TbAdolChildConsentForm
+from ..models import TbAdolConsent, TbAdolChildConsent, CaregiverChildConsent
 from .exportaction_mixin import ExportActionMixin
 from .modeladmin_mixins import VersionControlMixin
-from ..admin_site import flourish_caregiver_admin
-from ..forms import TbAdolChildConsentForm, TbAdolConsentForm
-from ..models import CaregiverChildConsent, TbAdolChildConsent, TbAdolConsent
+
+
+
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
@@ -99,7 +102,7 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
         if subject_identifier:
             children = CaregiverChildConsent.objects.filter(
                 subject_consent__subject_identifier=subject_identifier, )
-
+            
             for child in children:
                 age = relativedelta(get_utcnow().date(), child.child_dob).years
 
@@ -123,9 +126,10 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
 @admin.register(TbAdolConsent, site=flourish_caregiver_admin)
 class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                          SimpleHistoryAdmin, admin.ModelAdmin):
+
     form = TbAdolConsentForm
 
-    inlines = [TbAdolChildConsentInline, ]
+    inlines = [TbAdolChildConsentInline,]
 
     fieldsets = (
         (None, {

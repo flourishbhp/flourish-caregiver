@@ -10,16 +10,16 @@ from django_revision.modeladmin_mixin import ModelAdminRevisionMixin
 from edc_base.sites.admin import ModelAdminSiteMixin
 from edc_fieldsets import FieldsetsModelAdminMixin
 from edc_metadata import NextFormGetter
-from edc_model_admin import (FormAsJSONModelAdminMixin, ModelAdminAuditFieldsMixin,
-                             ModelAdminFormAutoNumberMixin,
-                             ModelAdminFormInstructionsMixin, ModelAdminInstitutionMixin,
-                             ModelAdminNextUrlRedirectMixin, ModelAdminReadOnlyMixin,
-                             ModelAdminRedirectOnDeleteMixin)
+from edc_model_admin import (
+    ModelAdminNextUrlRedirectMixin, ModelAdminFormInstructionsMixin,
+    ModelAdminFormAutoNumberMixin, ModelAdminAuditFieldsMixin,
+    ModelAdminReadOnlyMixin, ModelAdminInstitutionMixin,
+    FormAsJSONModelAdminMixin, ModelAdminRedirectOnDeleteMixin)
 from edc_visit_tracking.modeladmin_mixins import (
     CrfModelAdminMixin as VisitTrackingCrfModelAdminMixin)
 
-from .exportaction_mixin import ExportActionMixin
 from ..models.cohort_schedules import CohortSchedules
+from .exportaction_mixin import ExportActionMixin
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin,
@@ -118,14 +118,15 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
         except CohortSchedules.DoesNotExist:
             return []
         else:
-            child_count = getattr(
+            child_count =  getattr(
                 cohort_schedules, 'child_count', None)
             names = CohortSchedules.objects.filter(
                 child_count=child_count,
                 onschedule_model__startswith='flourish_caregiver').values_list(
-                'schedule_name', flat=True).exclude(
-                Q(schedule_name__icontains='tb') | Q(schedule_name__icontains='facet'))
+                    'schedule_name', flat=True).exclude(
+                        Q(schedule_name__icontains='tb') | Q(schedule_name__icontains='facet'))
             return names
+            
 
     def get_previous_by_appt_datetime(self, appointment):
         try:
@@ -133,7 +134,7 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
                 subject_identifier=appointment.subject_identifier,
                 schedule_name__in=self.get_schedule_names(appointment),
                 appt_datetime__lt=appointment.appt_datetime).latest(
-                'appt_datetime')
+                    'appt_datetime')
         except appointment.__class__.DoesNotExist:
             return None
         else:

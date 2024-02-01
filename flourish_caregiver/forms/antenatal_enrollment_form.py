@@ -10,8 +10,9 @@ from ..helper_classes import EnrollmentHelper
 from ..models import AntenatalEnrollment
 
 
-class AntenatalEnrollmentForm(SiteModelFormMixin, FormValidatorMixin,
-                              forms.ModelForm):
+class AntenatalEnrollmentForm(
+    SiteModelFormMixin, FormValidatorMixin,
+    forms.ModelForm):
     form_validator_cls = AntenatalEnrollmentFormValidator
 
     subject_identifier = forms.CharField(

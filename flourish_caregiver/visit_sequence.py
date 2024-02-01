@@ -11,7 +11,6 @@ class VisitSequence(VisitSequence):
         or participant's replacing others, appointments continuing off
         where the previous onschedule appts were last done.
     """
-
     def __init__(self, appointment=None):
         self.appointment = appointment
         self.appointment_model_cls = self.appointment.__class__
@@ -55,7 +54,7 @@ class VisitSequence(VisitSequence):
                         self.sequence_query,
                         subject_identifier=self.subject_identifier,
                         visit_code=self.previous_visit_code).order_by(
-                        '-visit_code_sequence').first()
+                            '-visit_code_sequence').first()
                     if previous_appointment:
                         try:
                             previous_visit = self.model_cls.objects.get(
@@ -64,9 +63,7 @@ class VisitSequence(VisitSequence):
                             pass
                     elif self.previous_appointment:
                         previous_visit = getattr(
-                            self.previous_appointment,
-                            self.model_cls._meta.model_name,
-                            None)
+                            self.previous_appointment, self.model_cls._meta.model_name, None)
                     else:
                         subject_identifier = getattr(
                             self.get_prev_onschedule_obj, 'subject_identifier', None)
@@ -80,7 +77,7 @@ class VisitSequence(VisitSequence):
                             previous_visit = None
         return previous_visit
 
-    @property
+    @property  
     def get_prev_onschedule_obj(self):
         onschedule_model = getattr(
             self.appointment.schedule, 'onschedule_model', None)

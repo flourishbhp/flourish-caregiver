@@ -57,6 +57,7 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
         if project_name == 'pre_flourish':
             self.fields['screening_identifier'].required = False
 
+
     def compare_instance_fields(self, prev_instance=None):
         exclude_fields = ['modified', 'created', 'user_created', 'user_modified',
                           'hostname_created', 'hostname_modified', 'device_created',

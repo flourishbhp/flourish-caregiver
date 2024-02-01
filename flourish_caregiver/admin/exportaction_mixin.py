@@ -1,10 +1,10 @@
 import datetime
 import uuid
-
 import xlwt
+
 from django.apps import apps as django_apps
-from django.db.models import (FileField, ForeignKey, ImageField, ManyToManyField,
-                              ManyToOneRel, OneToOneField)
+from django.db.models import (ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel,
+                              FileField, ImageField)
 from django.db.models.fields.reverse_related import OneToOneRel
 from django.http import HttpResponse
 from django.utils import timezone
@@ -79,7 +79,7 @@ class ExportActionMixin:
         for obj in queryset:
             data = []
             inline_field_names = []
-            subject_identifier = getattr(obj, 'subject_identifier', None)
+            subject_identifier=getattr(obj, 'subject_identifier', None)
             # Add subject identifier and visit code
             if getattr(obj, 'maternal_visit', None):
 
@@ -132,7 +132,7 @@ class ExportActionMixin:
                 if isinstance(field, OneToOneRel):
                     continue
                 if not (self.is_consent(obj) or
-                        self.is_visit(obj)) and isinstance(field, ManyToOneRel):
+                            self.is_visit(obj)) and isinstance(field, ManyToOneRel):
                     key_manager = getattr(obj, f'{field.name}_set',
                                           getattr(obj, f'{field.related_name}', None))
                     inline_values = key_manager.all()

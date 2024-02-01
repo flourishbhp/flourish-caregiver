@@ -14,6 +14,7 @@ from .maternal_delivery import MaternalDelivery
 from .ultrasound import UltraSound
 
 
+
 class AntenatalModelManager(models.Manager):
     use_in_migrations = True
 
