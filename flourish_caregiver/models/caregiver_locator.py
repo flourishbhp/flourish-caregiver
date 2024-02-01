@@ -81,7 +81,6 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
     locator_date = models.DateField(
         verbose_name='Date Locator Form signed',
         validators=[
-            datetime_not_future,
             validate_date_not_in_past
         ])
 

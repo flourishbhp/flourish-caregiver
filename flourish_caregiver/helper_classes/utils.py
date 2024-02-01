@@ -1,3 +1,5 @@
+import datetime
+
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import Q
@@ -120,6 +122,8 @@ def get_previous_by_appt_datetime(appointment):
 
 
 def validate_date_not_in_past(value):
+    if isinstance(value, datetime.date):
+        value = datetime.datetime.combine(value, datetime.datetime.min.time())
     if value.date() < timezone.now().date():
         raise ValidationError(_('Invalid datetime - Can not be past date'),
                               code='creation_in_past')
