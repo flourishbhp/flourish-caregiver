@@ -3,11 +3,11 @@ from django.db import models
 from edc_base.model_validators import date_not_future
 from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
-
 from .model_mixins import CrfModelMixin
 
 
 class MaternalHivInterimHx(CrfModelMixin):
+
     """ Laboratory and other clinical information collected during labor
     and delivery.
     for HIV +ve mothers ONLY
@@ -54,7 +54,7 @@ class MaternalHivInterimHx(CrfModelMixin):
         verbose_name="Result of most recent VL test",
         max_length=35,
         validators=[RegexValidator(
-            r'^[><]?[0-9]*$', 'Viral load can only be a number'), ],
+            r'^[><]?[0-9]*$', 'Viral load can only be a number'),],
         blank=True,
         null=True)
 
