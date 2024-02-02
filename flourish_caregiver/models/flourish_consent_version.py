@@ -8,6 +8,7 @@ from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugModelMixin
 
 from ..choices import CHILD_CONSENT_VERSION, CONSENT_VERSION
+from ..helper_classes.utils import validate_date_not_in_past
 
 caregiver_config = django_apps.get_app_config('flourish_caregiver')
 
@@ -39,7 +40,8 @@ class FlourishConsentVersion(SiteModelMixin, SearchSlugModelMixin,
         default=timezone.now,
         validators=[
             datetime_not_before_study_start,
-            datetime_not_future, ])
+            datetime_not_future,
+            validate_date_not_in_past])
 
     class Meta:
         app_label = 'flourish_caregiver'
