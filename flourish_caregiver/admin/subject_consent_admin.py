@@ -103,7 +103,8 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
         if not lst:
             return lst
         unique_subject_identifiers = list(
-            {v['subject_identifier']: v for v in lst}.values())
+            {v['subject_identifier']: v for v in lst if
+             'subject_identifier' in v}.values())
         return unique_subject_identifiers
 
     def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
