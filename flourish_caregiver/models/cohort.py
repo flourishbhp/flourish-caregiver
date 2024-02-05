@@ -6,12 +6,12 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
-from edc_constants.constants import POS, NEG
+from edc_constants.constants import NEG, POS
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
-from .model_mixins import SearchSlugModelMixin
 from .caregiver_child_consent import CaregiverChildConsent
+from .model_mixins import SearchSlugModelMixin
 from ..helper_classes import MaternalStatusHelper
 from ..helper_classes.schedule_dict import child_schedule_dict
 
@@ -53,7 +53,6 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         self.exposure_status = self.check_exposure()
         self.current_cohort = self.check_current_cohort()
         super().save(*args, **kwargs)
-        
 
     @property
     def schedule_history_cls(self):
@@ -74,7 +73,7 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
         antenatal = antenatal_cls.objects.filter(
             subject_identifier=self.caregiver_subject_identifier)
         return antenatal.exists()
-        
+
     def check_exposure(self):
         exposure = {POS: 'EXPOSED', NEG: 'UNEXPOSED', }
         child_dataset = getattr(self.caregiver_child_consent, 'child_dataset', None)
@@ -86,10 +85,11 @@ class Cohort(NonUniqueSubjectIdentifierFieldMixin, SiteModelMixin,
             return exposure.get(maternal_status, maternal_status)
 
     def check_current_cohort(self):
-        cohort_onschedules = [name_dict.get('name') for name_dict in child_schedule_dict.get(self.name).values()]
+        cohort_onschedules = [name_dict.get('name') for name_dict in
+                              child_schedule_dict.get(self.name).values()]
         latest_onschedule = self.schedule_history_cls.objects.filter(
             subject_identifier=self.subject_identifier, ).exclude(
-                schedule_name__icontains='tb_adol').order_by('-onschedule_datetime').first()
+            schedule_name__icontains='tb_adol').order_by('-onschedule_datetime').first()
         if not latest_onschedule:
             return self.check_antenetal_exists()
         return getattr(latest_onschedule, 'schedule_name', None) in cohort_onschedules
