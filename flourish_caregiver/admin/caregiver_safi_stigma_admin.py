@@ -60,53 +60,53 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         (' ', {
             'fields': [
                 'community_hiv_perspective',
-                'child_isolated',
-                'child_isolated_period',
-                'child_insulted',
-                'child_insulted_period'
+                'caregiver_isolated',
+                'caregiver_isolated_period',
+                'caregiver_insulted',
+                'caregiver_insulted_period'
 
             ]}),
-        ('Because of the child’s status, the child has experienced discrimination at:', {
+        ('Because of my HIV status, I have experienced discrimination at', {
             'fields': [
-                'child_home_discrimination',
-                'child_home_discrimination_period',
-                'child_neighborhood_discrimination',
-                'child_neighborhood_discrimination_period',
-                'child_religious_place_discrimination',
-                'child_religious_place_discrimination_period',
-                'child_clinic_discrimination',
-                'child_clinic_discrimination_period',
-                'child_school_discrimination',
-                'child_school_discrimination_period',
-                'child_other_discrimination',
-                'child_other_discrimination_other',
-                'child_other_discrimination_period',
+                'caregiver_home_discrimination',
+                'caregiver_home_discrimination_period',
+                'caregiver_neighborhood_discrimination',
+                'caregiver_neighborhood_discrimination_period',
+                'caregiver_religious_place_discrimination',
+                'caregiver_religious_place_discrimination_period',
+                'caregiver_clinic_discrimination',
+                'caregiver_clinic_discrimination_period',
+                'caregiver_school_discrimination',
+                'caregiver_school_discrimination_period',
+                'caregiver_other_discrimination',
+                'caregiver_other_discrimination_other',
+                'caregiver_other_discrimination_period',
 
             ]}),
 
-        ('Because of the child’s HIV status, discrimination has negatively affected him/her in the following ways:', {
+        ('Because of my HIV status, discrimination has negatively affected me in the following ways', {
             'fields': [
-                'child_social_effect',
-                'child_social_effect_period',
-                'child_emotional_effect',
-                'child_emotional_effect_period',
-                'child_education_effect',
-                'child_education_effect_period',
+                'caregiver_social_effect',
+                'caregiver_social_effect_period',
+                'caregiver_emotional_effect',
+                'caregiver_emotional_effect_period',
+                'caregiver_education_effect',
+                'caregiver_education_effect_period',
             ]}),
         ('   ', {
             'fields': [
-                'child_future_pespective_changed',
-                'child_future_pespective_changed_period',
+                'caregiver_future_pespective_changed',
+                'caregiver_future_pespective_changed_period',
 
             ]}), audit_fieldset_tuple)
 
     conditional_fieldlists = {
-        NEG: Remove('child_social_effect',
-                    'child_social_effect_period',
-                    'child_emotional_effect',
-                    'child_emotional_effect_period',
-                    'child_education_effect',
-                    'child_education_effect_period'), }
+        NEG: Remove('caregiver_social_effect',
+                    'caregiver_social_effect_period',
+                    'caregiver_emotional_effect',
+                    'caregiver_emotional_effect_period',
+                    'caregiver_education_effect',
+                    'caregiver_education_effect_period'), }
 
     def get_key(self, request, obj=None):
         try:
@@ -116,11 +116,13 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         else:
             maternal_visit = getattr(model_obj, 'maternalvisit', None)
 
-            subject_identifier = maternal_visit.subject_identifier
+            if maternal_visit:
 
-            status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
+                subject_identifier = maternal_visit.subject_identifier
 
-            return status_helper.hiv_status
+                status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
+
+                return status_helper.hiv_status
 
     radio_fields = {
         'judged_negatively': admin.VERTICAL,
@@ -148,29 +150,29 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'depressed_or_saddened': admin.VERTICAL,
         'depressed_or_saddened_period': admin.VERTICAL,
         'community_hiv_perspective': admin.VERTICAL,
-        'child_isolated': admin.VERTICAL,
-        'child_isolated_period': admin.VERTICAL,
-        'child_insulted': admin.VERTICAL,
-        'child_insulted_period': admin.VERTICAL,
-        'child_home_discrimination': admin.VERTICAL,
-        'child_home_discrimination_period': admin.VERTICAL,
-        'child_neighborhood_discrimination': admin.VERTICAL,
-        'child_neighborhood_discrimination_period': admin.VERTICAL,
-        'child_religious_place_discrimination': admin.VERTICAL,
-        'child_religious_place_discrimination_period': admin.VERTICAL,
-        'child_clinic_discrimination': admin.VERTICAL,
-        'child_clinic_discrimination_period': admin.VERTICAL,
-        'child_school_discrimination': admin.VERTICAL,
-        'child_school_discrimination_period': admin.VERTICAL,
-        'child_social_effect': admin.VERTICAL,
-        'child_social_effect_period': admin.VERTICAL,
-        'child_emotional_effect': admin.VERTICAL,
-        'child_emotional_effect_period': admin.VERTICAL,
-        'child_education_effect': admin.VERTICAL,
-        'child_education_effect_period': admin.VERTICAL,
-        'child_future_pespective_changed': admin.VERTICAL,
-        'child_future_pespective_changed_period': admin.VERTICAL,
-        'child_other_discrimination': admin.VERTICAL,
-        'child_other_discrimination_period': admin.VERTICAL,
+        'caregiver_isolated': admin.VERTICAL,
+        'caregiver_isolated_period': admin.VERTICAL,
+        'caregiver_insulted': admin.VERTICAL,
+        'caregiver_insulted_period': admin.VERTICAL,
+        'caregiver_home_discrimination': admin.VERTICAL,
+        'caregiver_home_discrimination_period': admin.VERTICAL,
+        'caregiver_neighborhood_discrimination': admin.VERTICAL,
+        'caregiver_neighborhood_discrimination_period': admin.VERTICAL,
+        'caregiver_religious_place_discrimination': admin.VERTICAL,
+        'caregiver_religious_place_discrimination_period': admin.VERTICAL,
+        'caregiver_clinic_discrimination': admin.VERTICAL,
+        'caregiver_clinic_discrimination_period': admin.VERTICAL,
+        'caregiver_school_discrimination': admin.VERTICAL,
+        'caregiver_school_discrimination_period': admin.VERTICAL,
+        'caregiver_social_effect': admin.VERTICAL,
+        'caregiver_social_effect_period': admin.VERTICAL,
+        'caregiver_emotional_effect': admin.VERTICAL,
+        'caregiver_emotional_effect_period': admin.VERTICAL,
+        'caregiver_education_effect': admin.VERTICAL,
+        'caregiver_education_effect_period': admin.VERTICAL,
+        'caregiver_future_pespective_changed': admin.VERTICAL,
+        'caregiver_future_pespective_changed_period': admin.VERTICAL,
+        'caregiver_other_discrimination': admin.VERTICAL,
+        'caregiver_other_discrimination_period': admin.VERTICAL,
 
     }
