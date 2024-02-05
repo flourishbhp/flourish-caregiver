@@ -1,201 +1,101 @@
-import datetime
-import uuid
-
-import xlwt
 from django.apps import apps as django_apps
 from django.db.models import (FileField, ForeignKey, ImageField, ManyToManyField,
                               ManyToOneRel, OneToOneField)
 from django.db.models.fields.reverse_related import OneToOneRel
-from django.http import HttpResponse
-from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from flourish_export.admin_export_helper import AdminExportHelper
 
 from ..helper_classes import MaternalStatusHelper
 from ..helper_classes.utils import get_child_subject_identifier_by_visit
 
 
-class ExportActionMixin:
+class ExportActionMixin(AdminExportHelper):
 
-    def export_as_csv(self, request, queryset):
-
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
-            self.get_export_filename())
-
-        wb = xlwt.Workbook(encoding='utf-8', style_compression=2)
-        ws = wb.add_sheet('%s')
-
-        row_num = 0
-        obj_count = 0
-        self.inline_header = False
-
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-        font_style.num_format_str = 'YYYY/MM/DD h:mm:ss'
-
-        field_names = []
-        for field in self.get_model_fields:
-
-            if isinstance(field, ManyToManyField):
-                choices = self.m2m_list_data(field.related_model)
-                for choice in choices:
-                    field_names.append(choice)
-                continue
-            field_names.append(field.name)
-
+    def update_variables(self, data={}):
+        """ Update study identifiers to desired variable name(s).
+        """
         replace_idx = {'subject_identifier': 'matpid',
                        'child_subject_identifier': 'childpid',
                        'study_maternal_identifier': 'old_matpid',
                        'study_child_identifier': 'old_childpid'}
         for old_idx, new_idx in replace_idx.items():
             try:
-                idx_index = field_names.index(old_idx)
-            except ValueError:
+                data[new_idx] = data.pop(old_idx)
+            except KeyError:
                 continue
-            else:
-                field_names[idx_index] = new_idx
+        return data
 
-        if queryset and self.is_consent(queryset[0]):
-            field_names.insert(0, 'previous_study')
-            field_names.insert(1, 'hiv_status')
-
-        if queryset and getattr(queryset[0], 'maternal_visit', None):
-            field_names.insert(0, 'matpid')
-            field_names.insert(1, 'old_matpid')
-            field_names.insert(2, 'previous_study')
-            field_names.insert(3, 'hiv_status')
-            field_names.insert(4, 'visit_code')
-
-        if ((queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound') and
-                queryset[0].get_current_ga):
-            field_names.append('current_ga')
-            field_names.append('ga_birth_usconfirm')
-            field_names.append('maternal_delivery_date')
-        field_names.append('study_status')
-
-        for col_num in range(len(field_names)):
-            ws.write(row_num, col_num, field_names[col_num], font_style)
-
+    def export_as_csv(self, request, queryset):
+        records = []
+    
         for obj in queryset:
-            data = []
-            inline_field_names = []
+            data = obj.__dict__
+
             subject_identifier = getattr(obj, 'subject_identifier', None)
+            screening_identifier = self.screening_identifier(
+                subject_identifier=subject_identifier)
+            previous_study = self.previous_bhp_study(
+                screening_identifier=screening_identifier)
+            caregiver_hiv_status = self.caregiver_hiv_status(
+                subject_identifier=subject_identifier)
+
             # Add subject identifier and visit code
             if getattr(obj, 'maternal_visit', None):
-
-                subject_identifier = obj.maternal_visit.subject_identifier
-                screening_identifier = self.screening_identifier(
-                    subject_identifier=subject_identifier)
-                previous_study = self.previous_bhp_study(
-                    screening_identifier=screening_identifier)
                 study_maternal_identifier = self.study_maternal_identifier(
                     screening_identifier=screening_identifier)
-                caregiver_hiv_status = self.caregiver_hiv_status(
-                    subject_identifier=subject_identifier)
-                maternal_delivery_obj = self.maternal_delivery_obj(
-                    maternal_visit=obj.maternal_visit)
 
-                data.append(subject_identifier)
-                data.append(study_maternal_identifier)
-                data.append(previous_study)
-                data.append(caregiver_hiv_status)
-                data.append(obj.maternal_visit.visit_code)
+                data.update(
+                    matpid=subject_identifier,
+                    old_matpid=study_maternal_identifier,
+                    visit_code=obj.maternal_visit.visit_code)
 
-            elif self.is_consent(obj):
+            # Update variable names for study identifiers
+            data = self.update_variables(data)
 
-                subject_identifier = getattr(obj, 'subject_identifier')
-                screening_identifier = self.screening_identifier(
-                    subject_identifier=subject_identifier)
-                previous_study = self.previous_bhp_study(
-                    screening_identifier=screening_identifier)
-                caregiver_hiv_status = self.caregiver_hiv_status(
-                    subject_identifier=subject_identifier)
-
-                data.append(previous_study)
-                data.append(caregiver_hiv_status)
-
-            inline_objs = []
+            data.update(previous_study=previous_study,)
+            data.update(hiv_status=caregiver_hiv_status,)
+            data.update(study_status=self.study_status(subject_identifier) or '')
 
             for field in self.get_model_fields:
+                field_name = field.name
+                if (field_name == 'consent_version') and self.is_visit(obj):
+                    data.update({f'{field_name}': self.get_consent_version(obj)})
+                    continue
+                if isinstance(field, (ForeignKey, OneToOneField, OneToOneRel,)):
+                    continue
                 if isinstance(field, (FileField, ImageField,)):
-                    file_obj = getattr(obj, field.name, '')
-                    data.append(getattr(file_obj, 'name', ''))
+                    file_obj = getattr(obj, field_name, '')
+                    data.update({f'{field_name}': getattr(file_obj, 'name', '')})
                     continue
                 if isinstance(field, ManyToManyField):
-                    m2m_values = self.get_m2m_values(obj, m2m_field=field)
-                    data.extend(m2m_values)
+                    data.update(self.m2m_data_dict(obj, field))
                     continue
-                if isinstance(field, (ForeignKey, OneToOneField,)):
-                    field_value = getattr(obj, field.name, '')
-                    data.append(field_value.id)
-                    continue
-                if isinstance(field, OneToOneRel):
-                    continue
-                if not (self.is_consent(obj) or
-                        self.is_visit(obj)) and isinstance(field, ManyToOneRel):
-                    key_manager = getattr(obj, f'{field.name}_set',
-                                          getattr(obj, f'{field.related_name}', None))
-                    inline_values = key_manager.all()
-                    fields = field.related_model._meta.get_fields()
-                    for field in fields:
-                        if not isinstance(field,
-                                          (ForeignKey, OneToOneField, ManyToManyField,)):
-                            inline_field_names.append(field.name)
-                        if isinstance(field, ManyToManyField):
-                            choices = self.m2m_list_data(field.related_model)
-                            inline_field_names.extend(
-                                [choice for choice in choices])
-                    if inline_values:
-                        inline_objs.append(inline_values)
-                if (field.name == 'consent_version') and self.is_visit(obj):
-                    data.append(self.get_consent_version(obj))
-                    continue
-                field_value = getattr(obj, field.name, '')
-                data.append(field_value)
-
-            if queryset[0]._meta.label_lower.split('.')[1] == 'ultrasound':
+                if not (self.is_consent(obj) or self.is_visit(obj)) and isinstance(field, ManyToOneRel):
+                    data.update(self.inline_data_dict(obj, field))
+                    continue   
+            
+            ultrasound_model_cls = django_apps.get_model(
+                'flourish_caregiver.ultrasound')
+            if isinstance(obj, ultrasound_model_cls):
+                maternal_delivery_obj = self.maternal_delivery_obj(
+                    maternal_visit=obj.maternal_visit)
                 field_value = getattr(obj, 'get_current_ga', '')
-                data.append(field_value)
                 delivery_dt = getattr(
                     maternal_delivery_obj, 'delivery_datetime', None)
-                data.append(field_value if delivery_dt else '')
-                data.append(delivery_dt.date() if delivery_dt else '')
-            data.append(self.study_status(subject_identifier) or '')
+                delivery_dt = delivery_dt.date() if delivery_dt else ''
+                ga_birth_usconfirm = field_value if delivery_dt else ''
+                
 
-            if not (self.is_consent(obj) or self.is_visit(obj)) and inline_objs:
-                # Update header
-                inline_field_names = self.inline_exclude(
-                    field_names=inline_field_names)
-                if not self.inline_header:
-                    self.update_headers_inline(
-                        inline_fields=inline_field_names, field_names=field_names,
-                        ws=ws, row_num=0, font_style=font_style)
-
-                for inline_qs in inline_objs:
-                    for inline_obj in inline_qs:
-                        inline_data = []
-                        inline_data.extend(data)
-                        for field in inline_obj._meta.get_fields():
-                            if isinstance(field, (FileField, ImageField,)):
-                                file_obj = getattr(inline_obj, field.name, '')
-                                inline_data.append(getattr(file_obj, 'name', ''))
-                                continue
-                            if field.name in inline_field_names:
-                                inline_data.append(
-                                    getattr(inline_obj, field.name, ''))
-                            if isinstance(field, ManyToManyField):
-                                m2m_values = self.get_m2m_values(inline_obj,
-                                                                 m2m_field=field)
-                                inline_data.extend(m2m_values)
-                        row_num += 1
-                        self.write_rows(data=inline_data,
-                                        row_num=row_num, ws=ws)
-                obj_count += 1
-            else:
-                row_num += 1
-
-                self.write_rows(data=data, row_num=row_num, ws=ws)
-        wb.save(response)
+                data.update(current_ga=field_value,
+                            ga_birth_usconfirm=ga_birth_usconfirm,
+                            maternal_delivery_date=delivery_dt)
+            
+            # Exclude identifying values
+            data = self.remove_exclude_fields(data)
+            # Correct date formats
+            data = self.fix_date_formats(data)
+            records.append(data)
+        response = self.write_to_excel(records)
         return response
 
     export_as_csv.short_description = _(
@@ -217,37 +117,6 @@ class ExportActionMixin:
             return ""
         else:
             return version.version
-
-    def write_rows(self, data=None, row_num=None, ws=None):
-
-        for col_num in range(len(data)):
-            if isinstance(data[col_num], uuid.UUID):
-                ws.write(row_num, col_num, str(data[col_num]))
-            elif isinstance(data[col_num], datetime.datetime):
-                dt = data[col_num]
-                if dt.tzinfo is not None and dt.tzinfo.utcoffset(dt) is not None:
-                    dt = timezone.make_naive(dt)
-                dt = dt.strftime('%Y/%m/%d')
-                ws.write(row_num, col_num, dt, xlwt.easyxf(
-                    num_format_str='YYYY/MM/DD'))
-            elif isinstance(data[col_num], datetime.date):
-                ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
-                    num_format_str='YYYY/MM/DD'))
-            else:
-                ws.write(row_num, col_num, data[col_num])
-
-    def update_headers_inline(self, inline_fields=None, field_names=None,
-                              ws=None, row_num=None, font_style=None):
-        top_num = len(field_names)
-        for col_num in range(len(inline_fields)):
-            ws.write(row_num, top_num, inline_fields[col_num], font_style)
-            top_num += 1
-            self.inline_header = True
-
-    def get_export_filename(self):
-        date_str = datetime.datetime.now().strftime('%Y-%m-%d')
-        filename = "%s-%s" % (self.model.__name__, date_str)
-        return filename
 
     def previous_bhp_study(self, screening_identifier=None):
         dataset_cls = django_apps.get_model(
@@ -319,16 +188,6 @@ class ExportActionMixin:
         return 'off_study' if is_offstudy else 'on_study'
 
     @property
-    def get_model_fields(self):
-        return [field for field in self.model._meta.get_fields()
-                if field.name not in self.exclude_fields and not isinstance(field,
-                                                                            OneToOneRel)]
-
-    def inline_exclude(self, field_names=[]):
-        return [field_name for field_name in field_names
-                if field_name not in self.exclude_fields]
-
-    @property
     def exclude_fields(self):
         return ['created', '_state', 'hostname_created', 'hostname_modified',
                 'revision', 'device_created', 'device_modified', 'id', 'site_id',
@@ -342,7 +201,8 @@ class ExportActionMixin:
                 'identifier_prefix', 'primary_aliquot_identifier', 'clinic_verified',
                 'clinic_verified_datetime', 'drawn_datetime', 'slug', 'confirm_identity',
                 'related_tracking_identifier', 'parent_tracking_identifier', 'site',
-                'subject_consent_id', '_django_version']
+                'subject_consent_id', '_django_version', 'consent_identifier',
+                'subject_identifier_as_pk']
 
     @property
     def maternal_delivery(self):
@@ -363,24 +223,3 @@ class ExportActionMixin:
             return None
         else:
             return maternal_delivery_obj
-
-    def m2m_list_data(self, model_cls=None):
-        qs = model_cls.objects.order_by(
-            'created').values_list('short_name', flat=True)
-        return list(qs)
-
-    def get_m2m_values(self, model_obj, m2m_field=None):
-        m2m_values = []
-        model_cls = m2m_field.related_model
-        choices = self.m2m_list_data(model_cls=model_cls)
-        key_manager = getattr(model_obj, m2m_field.name)
-        for choice in choices:
-            selected = 0
-            try:
-                key_manager.get(short_name=choice)
-            except model_cls.DoesNotExist:
-                pass
-            else:
-                selected = 1
-            m2m_values.append(selected)
-        return m2m_values
