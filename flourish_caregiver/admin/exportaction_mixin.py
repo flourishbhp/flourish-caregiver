@@ -29,7 +29,7 @@ class ExportActionMixin(AdminExportHelper):
         records = []
     
         for obj in queryset:
-            data = obj.__dict__
+            data = obj.__dict__.copy()
 
             subject_identifier = getattr(obj, 'subject_identifier', None)
             screening_identifier = self.screening_identifier(

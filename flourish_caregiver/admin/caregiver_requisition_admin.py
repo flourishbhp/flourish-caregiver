@@ -1,9 +1,6 @@
 import datetime
-import pandas as pd
 
-from io import BytesIO
 from django.contrib import admin
-from django.http import HttpResponse
 from django.utils import timezone
 from edc_lab.admin import RequisitionAdminMixin
 from edc_lab.admin import requisition_verify_fields
@@ -51,32 +48,12 @@ class ExportRequisitionCsvMixin:
     def export_as_csv(self, request, queryset):
         records = []
         for obj in queryset:
-            obj_data = self.fix_date_format(obj.__dict__)
-            # data = [obj_data.get(field, '') for field in field_names]
+            obj_data = self.fix_date_format(obj.__dict__.copy())
             obj_data.update(panel_name=obj.panel.name)
             records.append(obj_data)
 
-        excel_buffer = BytesIO()
-        writer = pd.ExcelWriter(excel_buffer, engine='openpyxl')
-
-        df = pd.DataFrame(records)
-        df.to_excel(writer, sheet_name=f'{self.model.__name__}', index=False)
-
-        # Close the workbook
-        writer.close()
-
-        excel_buffer.seek(0)
-
-        workbook = excel_buffer.read()
-
-        # Create an HTTP response with the Excel file as an attachment
-        response = HttpResponse(
-            workbook,
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-
-        response['Content-Disposition'] = f'attachment; filename={self.get_export_filename()}.xlsx'
-
+        # Inherinted from the Admin Export Helper on the parent export mixin
+        response = self.write_to_excel(records)
         return response
 
     export_as_csv.short_description = 'Export with panel name'
