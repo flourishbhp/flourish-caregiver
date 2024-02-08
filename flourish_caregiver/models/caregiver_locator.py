@@ -1,31 +1,32 @@
 from django.apps import apps as django_apps
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.safestring import mark_safe
-from django.core.exceptions import ValidationError
 from django_crypto_fields.fields import EncryptedCharField
 from django_crypto_fields.fields import FirstnameField, LastnameField
-from edc_action_item.model_mixins import ActionModelMixin
 from edc_action_item.action import ActionItemGetter
+from edc_action_item.model_mixins import ActionModelMixin
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
 from edc_base.model_validators.date import date_not_future, datetime_is_future, \
-    datetime_not_future, datetime_is_future
+    datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK, YES_NO_NA
-from edc_locator.model_mixins.subject_contact_fields_mixin import SubjectContactFieldsMixin
-from edc_locator.model_mixins.subject_indirect_contact_fields_mixin import SubjectIndirectContactFieldsMixin
-from edc_locator.model_mixins.subject_work_fields_mixin import SubjectWorkFieldsMixin
 from edc_locator.model_mixins.locator_methods_model_mixin import LocatorMethodsModelMixin
+from edc_locator.model_mixins.subject_contact_fields_mixin import \
+    SubjectContactFieldsMixin
+from edc_locator.model_mixins.subject_indirect_contact_fields_mixin import \
+    SubjectIndirectContactFieldsMixin
+from edc_locator.model_mixins.subject_work_fields_mixin import SubjectWorkFieldsMixin
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_search.model_mixins import SearchSlugManager
 
-from ..helper_classes.utils import validate_date_not_in_past
-from ..identifiers import ScreeningIdentifier
-from ..action_items import CAREGIVER_LOCATOR_ACTION
-from .model_mixins import SearchSlugModelMixin
 from .dataset_action_item import DataSetActionItem
+from .model_mixins import SearchSlugModelMixin
+from ..action_items import CAREGIVER_LOCATOR_ACTION
+from ..identifiers import ScreeningIdentifier
 
 
 class LocatorManager(SearchSlugManager, models.Manager):
@@ -82,7 +83,8 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
     locator_date = models.DateField(
         verbose_name='Date Locator Form signed',
         validators=[
-            validate_date_not_in_past
+            date_not_future,
+            date_is_future
         ])
 
     health_care_infant = models.CharField(
