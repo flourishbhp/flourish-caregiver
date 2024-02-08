@@ -9,7 +9,8 @@ from edc_action_item.action import ActionItemGetter
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
-from edc_base.model_validators.date import date_not_future, datetime_not_future
+from edc_base.model_validators.date import date_not_future, datetime_is_future, \
+    datetime_not_future, datetime_is_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO, YES_NO_DOESNT_WORK, YES_NO_NA
@@ -49,7 +50,7 @@ class CaregiverLocator(SiteModelMixin, SubjectContactFieldsMixin,
         validators=[
             datetime_not_before_study_start,
             datetime_not_future,
-            validate_date_not_in_past
+            datetime_is_future
         ])
 
     screening_identifier = models.CharField(
