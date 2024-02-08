@@ -57,3 +57,11 @@ class ConsentMixin:
             return None
         else:
             return consent_version_obj
+
+    def get_subject_identifier(self, screening_identifier):
+        try:
+            return self.consent_cls.objects.filter(
+                screening_identifier=screening_identifier).latest(
+                'consent_datetime').subject_identifier
+        except self.consent_cls.DoesNotExist:
+            return None

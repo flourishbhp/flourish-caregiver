@@ -74,6 +74,8 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
         'flourish_caregiver.screeningpregwomen')
     consent_cls = django_apps.get_model(
         'flourish_caregiver.caregiverchildconsent')
+    caregiver_consent_cls = django_apps.get_model(
+        'flourish_caregiver.subjectconsent')
 
     def save_model(self, request, obj, form, change):
         super(CaregiverChildConsentInline, self).save_model(
@@ -81,7 +83,13 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
 
     def get_formset(self, request, obj=None, **kwargs):
         study_maternal_id = request.GET.get('study_maternal_identifier')
-        subject_identifier = request.GET.get('subject_identifier')
+        subject_identifier = None
+
+        if request.GET.get('subject_identifier'):
+            subject_identifier = request.GET.get('subject_identifier')
+        else:
+            screening_identifier = request.GET.get('screening_identifier')
+            subject_identifier = self.get_subject_identifier(screening_identifier)
 
         if subject_identifier:
             initial = self.prepare_initial_values_based_on_subject(
@@ -102,9 +110,11 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
     def filter_for_unique_identifiers(self, lst):
         if not lst:
             return lst
+
         unique_subject_identifiers = list(
-            {v['subject_identifier']: v for v in lst if
-             'subject_identifier' in v}.values())
+            {v.get('subject_identifier', v.get('study_child_identifier')): v for v in lst
+             if 'subject_identifier' in v or 'study_child_identifier' in v}.values())
+
         return unique_subject_identifiers
 
     def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
@@ -223,6 +233,14 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
             return self.pre_flourish_child_consent_cls.objects.get(
                 subject_identifier=study_child_identifier)
         except self.pre_flourish_child_consent_cls.DoesNotExist:
+            return None
+
+    def get_subject_identifier(self, screening_identifier):
+        try:
+            return self.caregiver_consent_cls.objects.filter(
+                screening_identifier=screening_identifier).latest(
+                'consent_datetime').subject_identifier
+        except self.caregiver_consent_cls.DoesNotExist:
             return None
 
 
@@ -369,12 +387,17 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj=obj, **kwargs)
+        subject_identifier = None
         if request.method == 'GET':
-            if 'subject_identifier' in request.GET:
+            if request.GET.get('subject_identifier'):
                 subject_identifier = request.GET.get('subject_identifier')
-                initial_values = self.prepare_initial_values_based_on_subject(
-                    obj=obj, subject_identifier=subject_identifier)
-                form.previous_instance = initial_values
+            else:
+                screening_identifier = request.GET.get('screening_identifier')
+                subject_identifier = self.get_subject_identifier(screening_identifier)
+        initial_values = self.prepare_initial_values_based_on_subject(
+            obj=obj, subject_identifier=subject_identifier)
+
+        form.previous_instance = initial_values
         return form
 
     def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
