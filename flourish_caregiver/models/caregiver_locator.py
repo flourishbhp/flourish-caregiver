@@ -9,7 +9,8 @@ from edc_action_item.model_mixins import ActionModelMixin
 from edc_base.model_managers import HistoricalRecords
 from edc_base.model_mixins import BaseUuidModel
 from edc_base.model_validators import CellNumber, TelephoneNumber
-from edc_base.model_validators.date import date_not_future, datetime_is_future, \
+from edc_base.model_validators.date import date_is_future, date_not_future, \
+    datetime_is_future, \
     datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
