@@ -109,8 +109,9 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
     breastfeed_intent = models.CharField(
         max_length=3,
         verbose_name='Do you intend on breast feeding your infant?',
-        choices=YES_NO_NA,
-        help_text='If ‘No’ ineligible for study participation')
+        blank=True,
+        null=True,
+        choices=YES_NO_NA,)
 
     future_contact = models.CharField(
         max_length=3,
@@ -163,10 +164,11 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
 
         self.biological_caregiver = self.is_biological_mother()
         eligibility_criteria = ConsentEligibility(
-            self.remain_in_study, self.hiv_testing, self.breastfeed_intent,
-            self.consent_reviewed, self.citizen, self.study_questions,
-            self.assessment_score, self.consent_signature, self.consent_copy,
-            self.child_consent)
+            remain_in_study=self.remain_in_study, hiv_testing=self.hiv_testing,
+            consent_reviewed=self.consent_reviewed, citizen=self.citizen,
+            study_questions=self.study_questions, assessment_score=self.assessment_score,
+            consent_signature=self.consent_signature, consent_copy=self.consent_copy,
+            child_consent=self.child_consent)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         if self.multiple_births in ['twins', 'triplets']:

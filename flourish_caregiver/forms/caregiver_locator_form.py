@@ -61,7 +61,7 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
     def compare_instance_fields(self, prev_instance=None):
         exclude_fields = ['modified', 'created', 'user_created', 'user_modified',
                           'hostname_created', 'hostname_modified', 'device_created',
-                          'device_modified', 'report_datetime', 'subject_identifier',
+                          'device_modified', 'subject_identifier',
                           'is_locator_updated', 'action_identifier',
                           'tracking_identifier', 'related_tracking_identifier',
                           'parent_tracking_identifier', 'study_maternal_identifier',
@@ -86,6 +86,9 @@ class CaregiverLocatorForm(SiteModelFormMixin, FormValidatorMixin, forms.ModelFo
                 continue
             data[f.name] = f.value_from_object(instance) or None
         return data
+
+    def has_changed(self):
+        return True
 
     def clean(self):
         self.cleaned_data = super().clean()

@@ -4,9 +4,9 @@ from ..constants import MAX_GA_LMP_ENROL_WEEKS, MIN_GA_LMP_ENROL_WEEKS
 
 class AntenatalEnrollmentEligibility:
 
-    def __init__(self, will_breastfeed=None, ga_lmp_enrollment_wks=None,
-                 enrollment_hiv_status=None, will_get_arvs=None, ultrasound=None,
-                 pending_ultrasound=None, rapid_test_done=None):
+    def __init__(self, ga_lmp_enrollment_wks=None, enrollment_hiv_status=None,
+                 will_get_arvs=None, ultrasound=None, pending_ultrasound=None,
+                 rapid_test_done=None):
 
         self.error_message = []
         self.is_eligible = True
@@ -24,9 +24,6 @@ class AntenatalEnrollmentEligibility:
                                or lmp_to_use > MAX_GA_LMP_ENROL_WEEKS):
                 self.error_message.append(f'Gestation not {MIN_GA_LMP_ENROL_WEEKS} '
                                           f'to {MAX_GA_LMP_ENROL_WEEKS} weeks.')
-                self.is_eligible = False
-            if will_breastfeed == NO:
-                self.error_message.append('Will not breastfeed.')
                 self.is_eligible = False
             if enrollment_hiv_status == POS and will_get_arvs == NO:
                 self.error_message.append(
@@ -58,31 +55,25 @@ class BHPPriorEligibilty:
 
 class PregWomenEligibility:
 
-    def __init__(self, hiv_testing=None, breastfeed_intent=None):
+    def __init__(self, hiv_testing=None,):
         """checks if pregnant women enrolling is eligible otherwise error message is
         the reason for eligibility test failed."""
         self.error_message = []
         self.hiv_testing = hiv_testing
-        self.breastfeed_intent = breastfeed_intent
         if self.hiv_testing == NO:
             self.error_message.append(
                 'Participant is not willing to undergo HIV testing and counseling.')
-        if self.breastfeed_intent == NO:
-            self.error_message.append(
-                'Participant does not intend on breastfeeding.')
         self.is_eligible = False if self.error_message else True
 
 
 class ConsentEligibility:
 
-    def __init__(self, remain_in_study=None, hiv_testing=None, breastfeed_intent=None,
-                 consent_reviewed=None, citizen=None, study_questions=None,
-                 assessment_score=None, consent_signature=None, consent_copy=None,
-                 child_consent=None):
+    def __init__(self, remain_in_study=None, hiv_testing=None, consent_reviewed=None,
+                 citizen=None, study_questions=None, assessment_score=None,
+                 consent_signature=None, consent_copy=None, child_consent=None):
         self.error_message = []
         self.remain_in_study = remain_in_study
         self.hiv_testing = hiv_testing
-        self.breastfeed_intent = breastfeed_intent
         self.consent_reviewed = consent_reviewed
         self.study_questions = study_questions
         self.assessment_score = assessment_score
@@ -95,9 +86,6 @@ class ConsentEligibility:
         if self.hiv_testing == NO:
             self.error_message.append(
                 'Participant is not willing to undergo HIV testing and counseling.')
-        if self.breastfeed_intent == NO:
-            self.error_message.append(
-                'Participant does not intend on breastfeeding.')
         if self.consent_reviewed == NO:
             self.error_message.append(
                 'Consent was not reviewed with the participant.')
