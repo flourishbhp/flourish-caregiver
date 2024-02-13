@@ -62,3 +62,5 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "started_on_TB_treatment": admin.VERTICAL,
         "started_on_TB_preventative_therapy": admin.VERTICAL,
     }
+
+    filter_horizontal = ('tb_tests',)
