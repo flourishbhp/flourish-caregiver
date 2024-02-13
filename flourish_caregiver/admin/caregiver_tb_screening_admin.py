@@ -1,6 +1,4 @@
 from django.contrib import admin
-from edc_constants.constants import PENDING
-from edc_fieldsets import Insert
 from edc_model_admin.model_admin_audit_fields_mixin import audit_fieldset_tuple
 
 from .modeladmin_mixins import CrfModelAdminMixin

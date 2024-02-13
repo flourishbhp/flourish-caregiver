@@ -285,6 +285,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     preg_child_consent = child_consents.filter(
         preg_enroll=True,
         subject_identifier=instance.child_subject_identifier)
+
     if instance.live_infants_to_register == 1 and preg_child_consent.exists():
         helper_cls = onschedule_helper_cls(instance.subject_identifier, )
         caregiver_visit_count = preg_child_consent.latest(
@@ -533,13 +534,13 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
             'flourish_caregiver.tboffstudy')
 
         tb_referral = (
-                instance.have_cough == YES or
-                instance.cough_duration == '=>2 week' or
-                instance.fever == YES or
-                instance.night_sweats == YES or
-                instance.weight_loss == YES or
-                instance.cough_blood == YES or
-                instance.enlarged_lymph_nodes == YES
+            instance.have_cough == YES or
+            instance.cough_duration == '=>2 week' or
+            instance.fever == YES or
+            instance.night_sweats == YES or
+            instance.weight_loss == YES or
+            instance.cough_blood == YES or
+            instance.enlarged_lymph_nodes == YES
         )
 
         if not tb_referral:
@@ -556,11 +557,13 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
             else:
                 onschedule_dt = instance.report_datetime.replace(microsecond=0)
                 helper_cls = onschedule_helper_cls(instance.subject_identifier, )
+
                 helper_cls.put_on_schedule(
                     'cohort_a_tb_6_months',
                     instance=instance,
                     child_subject_identifier=child_consent.subject_identifier,
-                    base_appt_datetime=onschedule_dt)
+                    base_appt_datetime=onschedule_dt,
+                    caregiver_visit_count=child_consent.caregiver_visit_count)
 
 
 @receiver(post_save, weak=False, sender=TbOffStudy,
