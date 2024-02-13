@@ -1,6 +1,4 @@
 from django.contrib import admin
-from edc_constants.constants import PENDING
-from edc_fieldsets import Insert
 from edc_model_admin.model_admin_audit_fields_mixin import audit_fieldset_tuple
 
 from .modeladmin_mixins import CrfModelAdminMixin
@@ -55,7 +53,6 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "weight_loss_duration": admin.VERTICAL,
         "household_diagnosed_with_tb": admin.VERTICAL,
         "evaluated_for_tb": admin.VERTICAL,
-        "tb_tests": admin.VERTICAL,
         "chest_xray_results": admin.VERTICAL,
         "sputum_sample_results": admin.VERTICAL,
         "urine_test_results": admin.VERTICAL,
