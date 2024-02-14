@@ -24,7 +24,7 @@ from edc_visit_tracking.constants import MISSED_VISIT
 from PIL import Image
 
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
-from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
+from flourish_prn.action_items import CHILDOFF_STUDY_ACTION
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -625,8 +625,12 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
 @receiver(post_save, weak=False, sender=UltraSound,
           dispatch_uid='ultrasound_on_post_save')
 def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
-    caregiver_offstudy_cls = django_apps.get_model(
-        'flourish_prn.caregiveroffstudy')
+    """ Triggers child off study, to remove mother on related schedules. This
+        is to account for multiple enrolment, can not take caregiver/mother offstudy.
+        If only child, child offstudy will trigger caregiver offstudy form.
+    """
+    child_offstudy_cls = django_apps.get_model(
+        'flourish_prn.childoffstudy')
 
     registration_datetime = get_registration_date(instance.subject_identifier)
 
@@ -639,13 +643,13 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
         if (ga_confirmed_after < MIN_GA_LMP_ENROL_WEEKS
                 or ga_confirmed_after > MAX_GA_LMP_ENROL_WEEKS):
 
-            trigger_action_item(caregiver_offstudy_cls,
-                                CAREGIVEROFF_STUDY_ACTION,
-                                instance.subject_identifier)
+            trigger_action_item(child_offstudy_cls,
+                                CHILDOFF_STUDY_ACTION,
+                                instance.child_subject_identifier)
         else:
-            trigger_action_item(caregiver_offstudy_cls,
-                                CAREGIVEROFF_STUDY_ACTION,
-                                instance.subject_identifier,
+            trigger_action_item(child_offstudy_cls,
+                                CHILDOFF_STUDY_ACTION,
+                                instance.child_subject_identifier,
                                 opt_trigger=False)
 
 
