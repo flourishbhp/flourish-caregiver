@@ -2,7 +2,8 @@ from django.db import models
 from edc_base.model_validators.date import date_not_future
 
 from flourish_caregiver.choices import YES_NO_UKN_CHOICES
-from flourish_child.choices import DURATION_OPTIONS, TB_TEST_CHOICES, TEST_RESULTS_CHOICES
+from flourish_caregiver.models.list_models import TBTests
+from flourish_child.choices import DURATION_OPTIONS, TEST_RESULTS_CHOICES
 
 
 class TBScreeningMixin(models.Model):
@@ -65,9 +66,9 @@ class TBScreeningMixin(models.Model):
         validators=[date_not_future, ],
         blank=True, null=True)
 
-    tb_tests = models.CharField(
+    tb_tests = models.ManyToManyField(
+        TBTests,
         verbose_name='What diagnostic tests were performed for TB?',
-        choices=TB_TEST_CHOICES,
         max_length=15, )
 
     other_test = models.TextField(verbose_name='If "Other", specify test and result',

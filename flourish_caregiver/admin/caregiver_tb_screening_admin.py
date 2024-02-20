@@ -53,7 +53,6 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "weight_loss_duration": admin.VERTICAL,
         "household_diagnosed_with_tb": admin.VERTICAL,
         "evaluated_for_tb": admin.VERTICAL,
-        "tb_tests": admin.VERTICAL,
         "chest_xray_results": admin.VERTICAL,
         "sputum_sample_results": admin.VERTICAL,
         "urine_test_results": admin.VERTICAL,
@@ -63,3 +62,5 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "started_on_TB_treatment": admin.VERTICAL,
         "started_on_TB_preventative_therapy": admin.VERTICAL,
     }
+
+    filter_horizontal = ('tb_tests',)
