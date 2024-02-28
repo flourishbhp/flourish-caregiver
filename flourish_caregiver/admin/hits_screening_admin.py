@@ -16,6 +16,7 @@ class HITSScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             'fields': [
                 'maternal_visit',
                 'report_datetime',
+                'in_relationship',
                 'physical_hurt',
                 'insults',
                 'threaten',
