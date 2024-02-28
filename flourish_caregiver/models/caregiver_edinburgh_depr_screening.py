@@ -1,15 +1,9 @@
-from django.db import models
-
+from .model_mixins import CaregiverEdinburghDeprScreeningMixin
 from .model_mixins import CrfModelMixin
 
-from ..choices import (ABLE_TO_LAUGH, ANXIOUS, CRYING, ENJOYMENT_TO_THINGS,
-                       HARM, MISERABLE_FEELING, PANICK, SELF_BLAME,
-                       SLEEPING_DIFFICULTY, TOP)
 
-from .model_mixins import CaregiverEdinburghDeprScreeningMixin
-
-
-class CaregiverEdinburghDeprScreening(CaregiverEdinburghDeprScreeningMixin, CrfModelMixin):
+class CaregiverEdinburghDeprScreening(CaregiverEdinburghDeprScreeningMixin,
+                                      CrfModelMixin):
 
     def save(self, *args, **kwargs):
         self.depression_score = self.calculate_depression_score()

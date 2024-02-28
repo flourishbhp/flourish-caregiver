@@ -9,19 +9,17 @@ from edc_base.sites.admin import ModelAdminSiteMixin
 from edc_constants.constants import NO, NOT_APPLICABLE
 from edc_fieldsets import FieldsetsModelAdminMixin
 from edc_fieldsets.fieldlist import Insert
-from edc_model_admin import (
-    ModelAdminFormAutoNumberMixin, ModelAdminInstitutionMixin,
-    ModelAdminNextUrlRedirectMixin, ModelAdminAuditFieldsMixin,
-    ModelAdminNextUrlRedirectError, ModelAdminReplaceLabelTextMixin)
 from edc_model_admin import audit_fieldset_tuple
-
+from edc_model_admin import ModelAdminAuditFieldsMixin, ModelAdminFormAutoNumberMixin, \
+    ModelAdminInstitutionMixin, ModelAdminNextUrlRedirectError, \
+    ModelAdminNextUrlRedirectMixin, ModelAdminReplaceLabelTextMixin
 from edc_visit_schedule.fieldsets import visit_schedule_fieldset_tuple
 from edc_visit_tracking.modeladmin_mixins import VisitModelAdminMixin
 
+from .exportaction_mixin import ExportActionMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalVisitForm
 from ..models import MaternalVisit
-from .exportaction_mixin import ExportActionMixin
 
 
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
@@ -29,7 +27,6 @@ class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMi
                       ModelAdminInstitutionMixin, ExportActionMixin,
                       ModelAdminAuditFieldsMixin, FieldsetsModelAdminMixin,
                       ModelAdminSiteMixin):
-
     list_per_page = 10
     date_hierarchy = 'modified'
     empty_value_display = '-'
@@ -109,7 +106,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         try:
 
             enrollment_visit = self.model.objects.get(
-                    appointment_id=appointment_id )
+                appointment_id=appointment_id)
         except self.model.DoesNotExist:
             """
             1000M visit doen't exist, check if the current vist yet to be saved
@@ -133,7 +130,6 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
 
             if (enrollment_visit.brain_scan in [NO, NOT_APPLICABLE]
                     and enrollment_visit.visit_code in ['2000D', '1000M']):
-
                 key = 'interested_in_brain_scan'
 
         return key

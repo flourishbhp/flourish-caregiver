@@ -3,16 +3,15 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO
 
-from ..maternal_choices import SIZE_CHECK
 from .model_mixins import CrfModelMixin
+from ..maternal_choices import SIZE_CHECK
 
 
 class MaternalInterimIdcc(CrfModelMixin):
-
     info_since_lastvisit = models.CharField(
         max_length=25,
         verbose_name="Is there new laboratory information available on the "
-        "mother since last visit",
+                     "mother since last visit",
         choices=YES_NO)
 
     recent_cd4 = models.DecimalField(
@@ -31,7 +30,7 @@ class MaternalInterimIdcc(CrfModelMixin):
     value_vl_size = models.CharField(
         max_length=25,
         verbose_name="Is the value for the most recent VL available “=” ,"
-        "“<”, or “>” a number? ",
+                     "“<”, or “>” a number? ",
         choices=SIZE_CHECK,
         blank=True,
         null=True)
@@ -52,7 +51,7 @@ class MaternalInterimIdcc(CrfModelMixin):
     other_diagnoses = OtherCharField(
         max_length=25,
         verbose_name="Please specify any other diagnoses found in the IDCC "
-        "since the last visit ",
+                     "since the last visit ",
         blank=True,
         null=True)
 

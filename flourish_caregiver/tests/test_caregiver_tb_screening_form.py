@@ -2,7 +2,7 @@ from dateutil.relativedelta import relativedelta
 from django.test import tag, TestCase
 from edc_appointment.models import Appointment
 from edc_base import get_utcnow
-from edc_constants.constants import MALE, PENDING, YES
+from edc_constants.constants import PENDING, YES
 from edc_facility.import_holidays import import_holidays
 from edc_metadata import NOT_REQUIRED, REQUIRED
 from edc_metadata.models import CrfMetadata
@@ -47,7 +47,7 @@ class TestCaregiverTbScreeningForm(TestCase):
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
-                visit_code='2000D',
+                visit_code='1000M',
                 subject_identifier=self.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
@@ -55,7 +55,7 @@ class TestCaregiverTbScreeningForm(TestCase):
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
-                visit_code='1000M',
+                visit_code='2000D',
                 subject_identifier=self.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
@@ -69,7 +69,6 @@ class TestCaregiverTbScreeningForm(TestCase):
             reason=SCHEDULED)
 
     def test_child_tb_screening_form_required(self):
-
         self.assertEqual(CrfMetadata.objects.get(
             model='flourish_caregiver.caregivertbscreening',
             subject_identifier=self.subject_identifier,
@@ -110,5 +109,66 @@ class TestCaregiverTbScreeningForm(TestCase):
 
         self.assertEqual(CrfMetadata.objects.get(
             model='flourish_caregiver.caregivertbscreening',
+            subject_identifier=self.subject_identifier,
+            visit_code='2002M').entry_status, NOT_REQUIRED)
+
+    @tag('ctbro')
+    def test_caregiver_tb_referral_outcone_form_required(self):
+        mommy.make_recipe(
+            'flourish_caregiver.tbreferralcaregiver',
+            maternal_visit=self.visit_2001,
+            report_datetime=get_utcnow())
+
+        self.visit_2001 = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2002M',
+                subject_identifier=self.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        self.assertEqual(CrfMetadata.objects.get(
+            model='flourish_caregiver.caregivertbreferraloutcome',
+            subject_identifier=self.subject_identifier,
+            visit_code='2002M').entry_status, REQUIRED)
+
+    def test_tb_referral_required(self):
+
+        self.visit_2001 = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2002M',
+                subject_identifier=self.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregivertbscreening',
+            maternal_visit=self.visit_2001,
+            fever=YES,
+            report_datetime=get_utcnow())
+
+        self.assertEqual(CrfMetadata.objects.get(
+            model='flourish_caregiver.caregivertbreferraloutcome',
+            subject_identifier=self.subject_identifier,
+            visit_code='2002M').entry_status, REQUIRED)
+
+    def test_tb_referral_not_required(self):
+
+        self.visit_2001 = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='2002M',
+                subject_identifier=self.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregivertbscreening',
+            maternal_visit=self.visit_2001,
+            report_datetime=get_utcnow())
+
+        self.assertEqual(CrfMetadata.objects.get(
+            model='flourish_caregiver.caregivertbreferraloutcome',
             subject_identifier=self.subject_identifier,
             visit_code='2002M').entry_status, NOT_REQUIRED)
