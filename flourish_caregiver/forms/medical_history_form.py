@@ -59,7 +59,7 @@ class MedicalHistoryForm(SubjectModelFormMixin, forms.ModelForm):
                           'hostname_created', 'hostname_modified', 'device_created',
                           'device_modified', 'report_datetime', 'maternal_visit',
                           'med_history_changed', ]
-        m2m_fields = ['who', 'caregiver_chronic', 'caregiver_medications']
+        m2m_fields = ['who', 'caregiver_chronic', 'caregiver_medications', 'current_symptoms']
         if prev_instance:
             other_values = self.model_to_dict(
                 prev_instance, exclude=exclude_fields)
