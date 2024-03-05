@@ -477,13 +477,13 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         return status_helper.hiv_status
 
     def export_as_csv(self, request, queryset):
-        queryset = queryset.defer('site_id', 'initials', 'dob',
+        queryset = queryset.defer('site_id', 'initials', 'dob', 'id',
                                   'is_dob_estimated', 'guardian_name',
                                   'subject_type', 'consent_reviewed',
                                   'study_questions', 'assessment_score',
                                   'consent_signature', 'consent_copy',
                                   'first_name', 'last_name', 'identity',
-                                  'confirm_identity')
+                                  'confirm_identity', 'subject_consent_id')
 
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
@@ -505,9 +505,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         field_names.append('hiv_exposure')
         field_names.append('protocol')
         field_names.append('study_maternal_identifier')
-
-        for col_num in range(len(field_names)):
-            ws.write(row_num, col_num, field_names[col_num], font_style)
+        field_names.append('study_status')
 
         for obj in queryset:
             obj_data = obj.__dict__
@@ -521,10 +519,11 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             caregiver_sid = getattr(parent_obj, 'subject_identifier', None)
             extra_data.update({'hiv_exposure': self.caregiver_hiv_status(
                 subject_identifier=caregiver_sid)})
+            extra_data.update({'study_status': self.study_status(obj.subject_identifier)})
 
             data = [
                 obj_data[field] if field not in ['protocol', 'study_maternal_identifier',
-                                                 'hiv_exposure']
+                                                 'hiv_exposure', 'study_status']
                 else extra_data.get(field, '') for field in field_names]
 
             row_num += 1
@@ -540,6 +539,21 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                         num_format_str='YYYY/MM/DD'))
                 else:
                     ws.write(row_num, col_num, data[col_num])
+
+        replace_idx = {'subject_identifier': 'childpid',
+                       'study_maternal_identifier': 'old_matpid',
+                       'study_child_identifier': 'old_childpid'}
+        for old_idx, new_idx in replace_idx.items():
+            try:
+                idx_index = field_names.index(old_idx)
+            except ValueError:
+                continue
+            else:
+                field_names[idx_index] = new_idx
+
+        for col_num in range(len(field_names)):
+            ws.write(0, col_num, field_names[col_num], font_style)
+
         wb.save(response)
         return response
 
@@ -598,3 +612,13 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             else:
                 return dataset_obj
         return None
+
+    def study_status(self, subject_identifier=None):
+        if not subject_identifier:
+            return ''
+        child_offstudy_cls = django_apps.get_model(
+            'flourish_prn.childoffstudy')
+        is_offstudy = child_offstudy_cls.objects.filter(
+            subject_identifier=subject_identifier).exists()
+
+        return 'off_study' if is_offstudy else 'on_study'

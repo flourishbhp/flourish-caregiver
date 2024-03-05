@@ -1,14 +1,17 @@
 import datetime
 import uuid
+import xlwt
 
 from django.apps import apps as django_apps
-from django.db.models import ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel
+from django.db.models import (ManyToManyField, ForeignKey, OneToOneField, ManyToOneRel,
+                              FileField, ImageField)
 from django.db.models.fields.reverse_related import OneToOneRel
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-import xlwt
+
 from ..helper_classes import MaternalStatusHelper
+from ..helper_classes.utils import get_child_subject_identifier_by_visit
 
 
 class ExportActionMixin:
@@ -32,6 +35,7 @@ class ExportActionMixin:
 
         field_names = []
         for field in self.get_model_fields:
+
             if isinstance(field, ManyToManyField):
                 choices = self.m2m_list_data(field.related_model)
                 for choice in choices:
@@ -39,13 +43,25 @@ class ExportActionMixin:
                 continue
             field_names.append(field.name)
 
+        replace_idx = {'subject_identifier': 'matpid',
+                       'child_subject_identifier': 'childpid',
+                       'study_maternal_identifier': 'old_matpid',
+                       'study_child_identifier': 'old_childpid'}
+        for old_idx, new_idx in replace_idx.items():
+            try:
+                idx_index = field_names.index(old_idx)
+            except ValueError:
+                continue
+            else:
+                field_names[idx_index] = new_idx
+
         if queryset and self.is_consent(queryset[0]):
             field_names.insert(0, 'previous_study')
             field_names.insert(1, 'hiv_status')
 
         if queryset and getattr(queryset[0], 'maternal_visit', None):
-            field_names.insert(0, 'subject_identifier')
-            field_names.insert(1, 'study_maternal_identifier')
+            field_names.insert(0, 'matpid')
+            field_names.insert(1, 'old_matpid')
             field_names.insert(2, 'previous_study')
             field_names.insert(3, 'hiv_status')
             field_names.insert(4, 'visit_code')
@@ -77,7 +93,7 @@ class ExportActionMixin:
                 caregiver_hiv_status = self.caregiver_hiv_status(
                     subject_identifier=subject_identifier)
                 maternal_delivery_obj = self.maternal_delivery_obj(
-                    subject_identifier=subject_identifier)
+                    maternal_visit=obj.maternal_visit)
 
                 data.append(subject_identifier)
                 data.append(study_maternal_identifier)
@@ -101,19 +117,24 @@ class ExportActionMixin:
             inline_objs = []
 
             for field in self.get_model_fields:
-
+                if isinstance(field, (FileField, ImageField,)):
+                    file_obj = getattr(obj, field.name, '')
+                    data.append(getattr(file_obj, 'name', ''))
+                    continue
                 if isinstance(field, ManyToManyField):
                     m2m_values = self.get_m2m_values(obj, m2m_field=field)
                     data.extend(m2m_values)
                     continue
                 if isinstance(field, (ForeignKey, OneToOneField,)):
-                    field_value = getattr(obj, field.name)
+                    field_value = getattr(obj, field.name, '')
                     data.append(field_value.id)
                     continue
                 if isinstance(field, OneToOneRel):
                     continue
-                if not self.is_consent(obj) and isinstance(field, ManyToOneRel):
-                    key_manager = getattr(obj, f'{field.name}_set')
+                if not (self.is_consent(obj) or
+                            self.is_visit(obj)) and isinstance(field, ManyToOneRel):
+                    key_manager = getattr(obj, f'{field.name}_set',
+                                          getattr(obj, f'{field.related_name}', None))
                     inline_values = key_manager.all()
                     fields = field.related_model._meta.get_fields()
                     for field in fields:
@@ -141,7 +162,7 @@ class ExportActionMixin:
                 data.append(delivery_dt.date() if delivery_dt else '')
             data.append(self.study_status(subject_identifier) or '')
 
-            if not self.is_consent(obj) and inline_objs:
+            if not (self.is_consent(obj) or self.is_visit(obj)) and inline_objs:
                 # Update header
                 inline_field_names = self.inline_exclude(
                     field_names=inline_field_names)
@@ -155,6 +176,10 @@ class ExportActionMixin:
                         inline_data = []
                         inline_data.extend(data)
                         for field in inline_obj._meta.get_fields():
+                            if isinstance(field, (FileField, ImageField,)):
+                                file_obj = getattr(inline_obj, field.name, '')
+                                inline_data.append(getattr(file_obj, 'name', ''))
+                                continue
                             if field.name in inline_field_names:
                                 inline_data.append(
                                     getattr(inline_obj, field.name, ''))
@@ -315,21 +340,25 @@ class ExportActionMixin:
                 'maternal_visit_id', 'processed', 'processed_datetime', 'packed',
                 'packed_datetime', 'shipped', 'shipped_datetime', 'received_datetime',
                 'identifier_prefix', 'primary_aliquot_identifier', 'clinic_verified',
-                'clinic_verified_datetime', 'drawn_datetime',
-                'related_tracking_identifier',
-                'parent_tracking_identifier']
+                'clinic_verified_datetime', 'drawn_datetime', 'slug', 'confirm_identity',
+                'related_tracking_identifier', 'parent_tracking_identifier', 'site',
+                'subject_consent_id', '_django_version']
 
     @property
     def maternal_delivery(self):
         return django_apps.get_model('flourish_caregiver.maternaldelivery')
 
-    def maternal_delivery_obj(self, subject_identifier):
+    def maternal_delivery_obj(self, maternal_visit=None):
         """
         Takes subject identifier and return a maternal delivery objects
         """
+        subject_identifier = getattr(
+            maternal_visit, 'subject_identifier', None)
+        child_subject_identifier = get_child_subject_identifier_by_visit(maternal_visit)
         try:
             maternal_delivery_obj = self.maternal_delivery.objects.get(
-                subject_identifier=subject_identifier)
+                subject_identifier=subject_identifier,
+                child_subject_identifier=child_subject_identifier)
         except self.maternal_delivery.DoesNotExist:
             return None
         else:
