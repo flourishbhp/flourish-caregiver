@@ -85,6 +85,12 @@ class CaregiverContact(NonUniqueSubjectIdentifierFieldMixin, BaseUuidModel):
     )
     reason_rescheduled_other = OtherCharField()
 
+    study_name = models.CharField(
+        verbose_name="Study name",
+        max_length=20,
+        default='flourish'
+    )
+
     history = HistoricalRecords()
 
     objects = CaregiverContactManager()
