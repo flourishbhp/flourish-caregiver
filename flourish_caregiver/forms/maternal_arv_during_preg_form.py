@@ -4,10 +4,12 @@ from django import forms
 from django.apps import apps as django_apps
 from edc_constants.constants import YES, NO
 
+from ..helper_classes.utils import get_child_subject_identifier_by_visit
 from ..models import MaternalArvDuringPreg, MaternalArvTableDuringPreg
 from .form_mixins import SubjectModelFormMixin, InlineSubjectModelFormMixin
 
 from flourish_form_validations.form_validators import MaternalArvDuringPregFormValidator
+from flourish_caregiver.helper_classes.utils import get_schedule_names
 
 
 class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
@@ -36,6 +38,8 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        self.maternal_visit = self.cleaned_data.get('maternal_visit', None)
+        self.schedule_names = get_schedule_names(self.maternal_visit)
 
         if (cleaned_data.get('took_arv') == YES
                 and cleaned_data.get('is_interrupt' == NO)):
@@ -78,10 +82,11 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
                 'Patient should have atleast 3 arv\'s with no stop date')
 
     def validate_arv_date_start_after_enrollment(self):
+        child_subject_identifier = get_child_subject_identifier_by_visit(self.maternal_visit)
         try:
             antenatal_enrollment = self.antenatal_enrollment_cls.objects.get(
-                subject_identifier=self.cleaned_data.get(
-                    'maternal_visit').subject_identifier)
+                subject_identifier=getattr(self.maternal_visit, 'subject_identifier', None),
+                child_subject_identifier=child_subject_identifier)
         except self.antenatal_enrollment_cls.DoesNotExist:
             raise forms.ValidationError(
                 'Date of HIV test required, complete Antenatal Enrollment'
@@ -170,6 +175,7 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
     def get_previous_arv_preg(self, subject_identifier, report_datetime):
         prev_arv_preg = self.maternal_preg_cls.objects.filter(
             maternal_visit__subject_identifier=subject_identifier,
+            maternal_visit__schedule_name__in=self.schedule_names,
             report_datetime__lt=report_datetime).order_by('-created').first()
         if prev_arv_preg:
             return prev_arv_preg
@@ -232,6 +238,7 @@ class MaternalArvDuringPregForm(SubjectModelFormMixin, forms.ModelForm):
     def get_previous_stopped_arv_date(self, subject_identifier, arv_code):
         previous_arv_preg = self.maternal_arv_cls.objects.filter(
             maternal_arv_durg_preg__maternal_visit__appointment__subject_identifier=subject_identifier,
+            maternal_arv_durg_preg__maternal_visit__schedule_name__in=self.schedule_names,
             arv_code=arv_code,
             stop_date__isnull=False)
 

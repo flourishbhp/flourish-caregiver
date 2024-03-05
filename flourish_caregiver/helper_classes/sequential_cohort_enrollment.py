@@ -57,25 +57,34 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         except self.subject_schedule_cls.DoesNotExist:
             raise SequentialCohortEnrollmentError(
                 f'{self.child_consent_obj.subject_identifier} : was never been on '
-                f'quartarly schedule')
+                f'quarterly schedule')
         else:
             return schedule_obj
 
     @property
     def caregiver_last_qt_subject_schedule_obj(self):
-        try:
-            schedule_obj = self.subject_schedule_cls.objects.filter(
-                Q(schedule_name__icontains='qt') | Q(
-                    schedule_name__icontains='quart'),
+        """ Get the latest quarterly schedule for caregiver, taking into
+            consideration multiple children enrollment. Get only schedule
+            for relate child.
+        """
+        quart_schedules = self.subject_schedule_cls.objects.filter(
+             Q(schedule_name__icontains='qt') | Q(
+                 schedule_name__icontains='quart'),
+             subject_identifier=self.caregiver_subject_identifier).order_by(
+                 '-onschedule_datetime')
+        for schedule in quart_schedules:
+            onschedule_model_cls = django_apps.get_model(
+                schedule.onschedule_model)
+            obj_exists = onschedule_model_cls.objects.filter(
                 subject_identifier=self.caregiver_subject_identifier,
+                child_subject_identifier=self.child_subject_identifier,
+                schedule_name=schedule.schedule_name).exists()
+            if obj_exists:
+                return schedule
 
-            ).latest('onschedule_datetime')
-        except self.subject_schedule_cls.DoesNotExist:
-            raise SequentialCohortEnrollmentError(
-                f'{self.caregiver_subject_identifier} : was never been on quartarly '
-                f'schedule')
-        else:
-            return schedule_obj
+        raise SequentialCohortEnrollmentError(
+            f'{self.caregiver_subject_identifier} : was never been on quarterly '
+            f'schedule')
 
     @property
     def cohort_obj(self):
@@ -107,8 +116,8 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             ).only('child_dob', 'caregiver_visit_count').latest('version')
         except self.child_consent_cls.DoesNotExist:
             raise SequentialCohortEnrollmentError(
-                f"The subject: {self.child_subject_identifier} does not "
-                "have a caregiver child consent")
+                f'The subject: {self.child_subject_identifier} does not '
+                'have a caregiver child consent')
         else:
             return consent_obj
 
@@ -189,24 +198,27 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
                     return True
         return False
 
+    def create_cohort_instance(self, ):
+        defaults = {
+            'assign_datetime': get_utcnow(),
+            'enrollment_cohort': False }
+        obj, _ = self.cohort_model_cls.objects.get_or_create(
+           subject_identifier=self.child_subject_identifier,
+           name=self.evaluated_cohort,
+           defaults=defaults, )
+        return obj
+
+
     def age_up_enrollment(self):
         """Checks if a child has aged up and put the on a new cohort and schedule.
         """
         # Check if a child has aged up
-
         try:
 
             with transaction.atomic():
                 if self.aged_up and self.current_cohort != self.evaluated_cohort:
                     # put them on a new aged up cohort
-
-                    defaults = {
-                        'assign_datetime': get_utcnow(),
-                        'enrollment_cohort': False
-                    }
-                    cohort_obj, _ = self.cohort_model_cls.objects.get_or_create(
-                        defaults=defaults, subject_identifier=self.child_subject_identifier,
-                        name=self.evaluated_cohort, )
+                    cohort_obj = self.create_cohort_instance()
                     # Put caregiver and child off and on schedule
                     if cohort_obj:
                         self.put_onschedule()
