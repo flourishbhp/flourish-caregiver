@@ -1,8 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
-from edc_constants.constants import ALIVE, DEAD, DONT_KNOW, DWTA, FAILED_ELIGIBILITY, \
-    FEMALE, IND, MALE, NEG, NEVER, NOT_APPLICABLE, OFF_STUDY, ON_STUDY, OTHER, \
-    PARTICIPANT, PENDING, POS, UNKNOWN
-from edc_constants.constants import NO, YES
+from edc_constants.constants import (ALIVE, DEAD, DONT_KNOW, DWTA, FAILED_ELIGIBILITY,
+                                     FEMALE, IND, MALE, NEG, NEVER, NOT_APPLICABLE, OFF_STUDY, ON_STUDY, OTHER,
+                                     PARTICIPANT, PENDING, POS, UNKNOWN, NO, YES)
 from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT, MISSED_VISIT
 from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, UNSCHEDULED
 
@@ -1232,6 +1231,13 @@ HAPPENED_DONT_KNOW = (
     ('never_happened', 'Never Happened'),
     ('ever_happened', 'Ever Happened'),
     (DONT_KNOW, "Don't know")
+)
+
+HAPPENED_DONT_KNOW_WITH_NA = (
+    ('never_happened', 'Never Happened'),
+    ('ever_happened', 'Ever Happened'),
+    (DONT_KNOW, "Don't know"),
+    (NOT_APPLICABLE, 'Not Applicable'),
 )
 
 HIV_PERSPECTIVE = (
