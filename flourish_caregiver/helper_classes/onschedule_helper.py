@@ -45,7 +45,10 @@ class OnScheduleHelper(object):
         else:
             cohort = '_'.join(['cohort', cohort_list[0], 'quarterly'])
 
-        caregiver_visit_count = cohort_list[1][-1:]
+        if 'sq' in instance.schedule_name:
+            caregiver_visit_count = cohort_list[2][-1:]
+        else:
+            caregiver_visit_count = cohort_list[1][-1:]
 
         onschedule_model = django_apps.get_model(
             instance.schedule.onschedule_model)
