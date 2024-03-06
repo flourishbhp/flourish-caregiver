@@ -1198,7 +1198,6 @@ CLINIC_NAMES = (
     (OTHER, 'Other'),
 )
 
-
 TB_REASON_CHOICES = (
     ('temporarily', 'Temporarily out of study area'),
     ('transport', 'Participant does not have transport fares'),
@@ -1208,4 +1207,17 @@ TB_REASON_CHOICES = (
     ('isolation', 'Participant is in isolation due to COVID-19 or another infection'),
     ('not_well', 'Participant/caregiver is not well'),
     ('other', 'Other'),
+)
+
+PARTNER_ACTIONS_CHOICES = (
+    ('1', 'Never'),
+    ('2', 'Rarely'),
+    ('3', 'Sometimes'),
+    ('4', 'Fairly Often'),
+    ('5', 'Frequently'),
+)
+
+YES_NO_INT_CHOICES = (
+    ('1', YES),
+    ('2', NO),
 )
