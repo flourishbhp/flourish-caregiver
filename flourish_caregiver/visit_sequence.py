@@ -58,6 +58,7 @@ class VisitSequence(VisitSequence):
             schedule_name=self.appointment.schedule_name,
             visit_code=self.previous_visit_code
         )
+        previous_visits = previous_visits.order_by('-visit_code_sequence')
 
         return previous_visits.first() if previous_visits.exists() else None
 
