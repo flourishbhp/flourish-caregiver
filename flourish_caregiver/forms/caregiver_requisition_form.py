@@ -46,7 +46,7 @@ class CaregiverRequisitionForm(SubjectModelFormMixin, RequisitionFormMixin,
 
         if panel.name == 'breast_milk':
             if 4 > estimated_volume or estimated_volume > 20:
-                raise forms.ValidationError({'estimated_volume': 'The estimated volume should be between 0 & 20 ml'})
+                raise forms.ValidationError({'estimated_volume': 'The estimated volume should be between 4 & 20 ml'})
 
     class Meta:
         model = CaregiverRequisition
