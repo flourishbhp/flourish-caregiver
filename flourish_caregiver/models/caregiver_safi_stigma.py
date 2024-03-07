@@ -4,7 +4,8 @@ from edc_base.model_fields import OtherCharField
 
 from .model_mixins import CrfModelMixin
 from ..choices import (PERIOD_HAPPENED, HAPPENED,
-                       PERIOD_HAPPENED_DONT_KNOW, HAPPENED_DONT_KNOW, HIV_PERSPECTIVE)
+                       PERIOD_HAPPENED_DONT_KNOW, HAPPENED_DONT_KNOW,
+                       HAPPENED_DONT_KNOW_WITH_NA, HIV_PERSPECTIVE)
 
 
 class CaregiverSafiStigma(CrfModelMixin):
@@ -19,7 +20,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     judged_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -33,7 +34,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     avoided_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -47,7 +48,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     discriminated_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -61,7 +62,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     at_home_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -75,7 +76,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     at_neigborhood_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -89,7 +90,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     at_religious_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -103,7 +104,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     at_clinic_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -117,7 +118,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     at_workplace_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -131,7 +132,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     finacial_support_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -145,7 +146,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     social_support_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -160,7 +161,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     stressed_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -174,7 +175,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     saddened_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
         blank=True,
@@ -194,7 +195,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     isolated_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
@@ -208,7 +209,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     insulted_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
@@ -218,11 +219,11 @@ class CaregiverSafiStigma(CrfModelMixin):
     home_discr = models.CharField(
         verbose_name='Home',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
     )
 
     home_discr_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
@@ -232,11 +233,11 @@ class CaregiverSafiStigma(CrfModelMixin):
     neighborhood_discr = models.CharField(
         verbose_name='Neighborhood',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
     )
 
     neighborhood_discr_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
@@ -246,11 +247,11 @@ class CaregiverSafiStigma(CrfModelMixin):
     religious_place_discr = models.CharField(
         verbose_name=' A Religious Place (e.g. church)',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
     )
 
     religious_place_discr_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
@@ -260,11 +261,11 @@ class CaregiverSafiStigma(CrfModelMixin):
     clinic_discr = models.CharField(
         verbose_name=' A Religious Place (e.g. church)',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
     )
 
     clinic_discr_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
@@ -274,11 +275,11 @@ class CaregiverSafiStigma(CrfModelMixin):
     school_discr = models.CharField(
         verbose_name=' A Religious Place (e.g. church)',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
     )
 
     school_discr_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
@@ -288,7 +289,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     other_discr = models.CharField(
         verbose_name='Other Place',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
         blank=True,
         null=True,
     )
@@ -296,7 +297,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     other_discr_other = OtherCharField()
 
     other_discr_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW
     )
@@ -304,12 +305,12 @@ class CaregiverSafiStigma(CrfModelMixin):
     social_effect = models.CharField(
         verbose_name='Socially',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
         null=True,
     )
 
     social_effect_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
@@ -318,30 +319,14 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     emotional_effect = models.CharField(
-        verbose_name='Socially',
+        verbose_name='Emotionally (for example, you feel stressed, down, or depressed)',
         max_length=20,
         choices=HAPPENED_DONT_KNOW,
         null=True,
     )
 
     emotional_effect_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
-        max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW,
-        blank=True,
-        null=True,
-    )
-
-    education_effect = models.CharField(
-        verbose_name='In his/her Education ',
-        max_length=20,
-        choices=HAPPENED_DONT_KNOW,
-        null=True,
-
-    )
-
-    education_effect_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,
@@ -349,15 +334,15 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     pespective_changed = models.CharField(
-        verbose_name='Because of the child’s HIV status, how the future is viewed by him/her '
-        'or future hopes that this child has for himself/herself have changed in a negative way',
+        verbose_name=(' Because of my HIV status, how the future is viewed by myself'
+                      ' or future hopes that I have has changed in a negative way'),
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
 
     )
 
     pespective_changed_period = models.CharField(
-        verbose_name='If “Even Happened”: When?',
+        verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED_DONT_KNOW,
         blank=True,

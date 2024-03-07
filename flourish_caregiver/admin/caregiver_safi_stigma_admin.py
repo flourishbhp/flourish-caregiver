@@ -66,7 +66,7 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'insulted_period'
 
             ]}),
-        ('Because of my HIV status, I have experienced discr at', {
+        ('Because of my HIV status, I have experienced discrimination', {
             'fields': [
                 'home_discr',
                 'home_discr_period',
@@ -90,8 +90,6 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'social_effect_period',
                 'emotional_effect',
                 'emotional_effect_period',
-                'education_effect',
-                'education_effect_period',
             ]}),
         ('   ', {
             'fields': [
@@ -104,9 +102,7 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         NEG: Remove('social_effect',
                     'social_effect_period',
                     'emotional_effect',
-                    'emotional_effect_period',
-                    'education_effect',
-                    'education_effect_period'), }
+                    'emotional_effect_period',), }
 
     def get_key(self, request, obj=None):
         try:
@@ -168,8 +164,6 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'social_effect_period': admin.VERTICAL,
         'emotional_effect': admin.VERTICAL,
         'emotional_effect_period': admin.VERTICAL,
-        'education_effect': admin.VERTICAL,
-        'education_effect_period': admin.VERTICAL,
         'pespective_changed': admin.VERTICAL,
         'pespective_changed_period': admin.VERTICAL,
         'other_discr': admin.VERTICAL,
