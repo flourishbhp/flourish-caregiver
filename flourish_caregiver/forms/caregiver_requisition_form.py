@@ -23,6 +23,7 @@ class CaregiverRequisitionForm(SubjectModelFormMixin, RequisitionFormMixin,
         self.visit_obj = self.cleaned_data.get('maternal_visit')
         self.subject_identifier = self.cleaned_data.get(
             'maternal_visit').subject_identifier
+        self.validate_estimated_volume()
         super().clean()
 
     def validate_requisition_datetime(self):
@@ -37,6 +38,15 @@ class CaregiverRequisitionForm(SubjectModelFormMixin, RequisitionFormMixin,
                 raise forms.ValidationError({
                     'requisition_datetime':
                     f'Invalid. Cannot be before date of visit {formatted}.'})
+
+    def validate_estimated_volume(self):
+        # required fields
+        panel = self.cleaned_data.get('panel')
+        estimated_volume = self.cleaned_data.get('estimated_volume')
+
+        if panel.name == 'breast_milk':
+            if 0 > estimated_volume or estimated_volume > 20:
+                raise forms.ValidationError({'estimated_volume': 'The estimated volume should be between 0 & 20 ml'})
 
     class Meta:
         model = CaregiverRequisition
