@@ -185,13 +185,16 @@ class CaregiverSafiStigma(CrfModelMixin):
     hiv_perspective = models.CharField(
         verbose_name='People in the community think that HIV is a “dirty,” “immoral,” or “shameful” disease ',
         choices=HIV_PERSPECTIVE,
-        max_length=25
+        max_length=25,
+        null=True,
+
     )
 
     isolated = models.CharField(
         verbose_name='Because of my HIV status, I am isolated or avoided by other children or adults',
         max_length=20,
         choices=HAPPENED_DONT_KNOW,
+        null=True,
     )
 
     isolated_period = models.CharField(
@@ -206,6 +209,8 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name='Because of my HIV status, I have been called names, insulted, or bullied ',
         max_length=20,
         choices=HAPPENED_DONT_KNOW,
+        null=True,
+
     )
 
     insulted_period = models.CharField(
@@ -220,6 +225,8 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name='Home',
         max_length=20,
         choices=HAPPENED_DONT_KNOW_WITH_NA,
+        null=True,
+
     )
 
     home_discr_period = models.CharField(
@@ -234,6 +241,8 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name='Neighborhood',
         max_length=20,
         choices=HAPPENED_DONT_KNOW_WITH_NA,
+        null=True,
+
     )
 
     neighborhood_discr_period = models.CharField(
@@ -248,6 +257,8 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name=' A Religious Place (e.g. church)',
         max_length=20,
         choices=HAPPENED_DONT_KNOW_WITH_NA,
+        null=True,
+
     )
 
     religious_place_discr_period = models.CharField(
@@ -262,6 +273,8 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name=' A Religious Place (e.g. church)',
         max_length=20,
         choices=HAPPENED_DONT_KNOW_WITH_NA,
+        null=True,
+
     )
 
     clinic_discr_period = models.CharField(
@@ -276,6 +289,8 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name=' A Religious Place (e.g. church)',
         max_length=20,
         choices=HAPPENED_DONT_KNOW_WITH_NA,
+        null=True,
+
     )
 
     school_discr_period = models.CharField(
@@ -299,7 +314,9 @@ class CaregiverSafiStigma(CrfModelMixin):
     other_discr_period = models.CharField(
         verbose_name='If “Ever Happened”: When?',
         max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW
+        choices=PERIOD_HAPPENED_DONT_KNOW,
+        null=True,
+
     )
 
     social_effect = models.CharField(
