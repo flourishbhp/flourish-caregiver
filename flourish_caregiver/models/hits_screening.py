@@ -1,5 +1,6 @@
 from django.db import models
 from edc_constants.choices import YES_NO
+from edc_constants.constants import YES
 
 from flourish_caregiver.choices import PARTNER_ACTIONS_CHOICES
 from flourish_caregiver.models.model_mixins import CrfModelMixin
@@ -45,10 +46,9 @@ class HITSScreening(CrfModelMixin):
         max_length=5)
 
     def save(self, *args, **kwargs):
-        self.score = (int(self.physical_hurt) if self.physical_hurt is not None else 0) \
-                     + (int(self.insults) if self.insults is not None else 0) \
-                     + (int(self.threaten) if self.threaten is not None else 0) \
-                     + (int(self.screem_curse) if self.screem_curse is not None else 0)
+        if self.in_relationship == YES:
+            self.score = (int(self.physical_hurt) + int(self.insults) +
+                          int(self.threaten) + int(self.screem_curse))
         super().save(*args, **kwargs)
 
     class Meta:
