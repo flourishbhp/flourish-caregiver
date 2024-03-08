@@ -46,6 +46,7 @@ class HITSScreening(CrfModelMixin):
         max_length=5)
 
     def save(self, *args, **kwargs):
+        self.score = 0
         if self.in_relationship == YES:
             self.score = (int(self.physical_hurt) + int(self.insults) +
                           int(self.threaten) + int(self.screem_curse))
