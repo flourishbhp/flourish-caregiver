@@ -4,7 +4,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from edc_senaite_interface.admin import SenaiteResultAdminMixin
 from edc_model_admin import audit_fieldset_tuple
 from edc_fieldsets.fieldlist import Fieldlist, Remove, Insert
-from edc_constants.constants import NEG
+from edc_fieldsets.fieldsets import Fieldsets
+from edc_constants.constants import POS
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverSafiStigmaForm
@@ -18,7 +19,7 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     form = CaregiverSafiStigmaForm
 
-    fieldsets = (
+    fieldsets = [
         ('', {
             'fields': [
                 'maternal_visit',
@@ -57,6 +58,9 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'saddened_period'
 
             ]}),
+    ]
+
+    hiv_fieldsets = (
         (' ', {
             'fields': [
                 'hiv_perspective',
@@ -84,7 +88,7 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
             ]}),
 
-        ('Because of my HIV status, discr has negatively affected me in the following ways', {
+        ('Because of my HIV status, discrimination has negatively affected me in the following ways', {
             'fields': [
                 'social_effect',
                 'social_effect_period',
@@ -96,29 +100,64 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'pespective_changed',
                 'pespective_changed_period',
 
-            ]}), audit_fieldset_tuple)
+            ]}),
+    )
 
-    conditional_fieldlists = {
-        NEG: Remove('social_effect',
-                    'social_effect_period',
-                    'emotional_effect',
-                    'emotional_effect_period',), }
+    def get_fieldsets(self, request, obj=None):
+        """Returns fieldsets after modifications declared in
+        "conditional" dictionaries.
+        """
+        fieldsets = list(super().get_fieldsets(request, obj=obj))
 
-    def get_key(self, request, obj=None):
+        status = self.hiv_status
+
+        if status == POS:
+            fieldsets = fieldsets.append(*self.hiv_fieldsets)
+
+        fieldsets.append(audit_fieldset_tuple)
+
+        fieldsets = Fieldsets(fieldsets=fieldsets)
+        key = self.get_key(request, obj)
+        fieldset = self.conditional_fieldsets.get(key)
+        if fieldset:
+            try:
+                fieldset = tuple(fieldset)
+            except TypeError:
+                fieldset = (fieldset, )
+            for f in fieldset:
+                fieldsets.add_fieldset(fieldset=f)
+        fieldlist = self.conditional_fieldlists.get(key)
+        if fieldlist:
+            try:
+                fieldsets.insert_fields(
+                    *fieldlist.insert_fields,
+                    insert_after=fieldlist.insert_after,
+                    section=fieldlist.section)
+            except AttributeError:
+                pass
+            try:
+                fieldsets.remove_fields(
+                    *fieldlist.remove_fields,
+                    section=fieldlist.section)
+            except AttributeError:
+                pass
+        fieldsets = self.update_fieldset_for_form(
+            fieldsets, request)
+        fieldsets.move_to_end(self.fieldsets_move_to_end)
+        return fieldsets.fieldsets
+
+    def hiv_status(self, request):
         try:
-            model_obj = self.get_instance(request)
+            appointment_obj = self.get_instance(request)
         except ObjectDoesNotExist:
             return None
         else:
-            maternal_visit = getattr(model_obj, 'maternalvisit', None)
 
-            if maternal_visit:
+            subject_identifier = appointment_obj.subject_identifier
 
-                subject_identifier = maternal_visit.subject_identifier
+            status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
 
-                status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
-
-                return status_helper.hiv_status
+            return status_helper.hiv_status
 
     radio_fields = {
         'judged': admin.VERTICAL,
