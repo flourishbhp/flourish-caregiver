@@ -3,7 +3,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from edc_senaite_interface.admin import SenaiteResultAdminMixin
 from edc_model_admin import audit_fieldset_tuple
-from edc_fieldsets.fieldlist import Fieldlist, Remove, Insert
 from edc_fieldsets.fieldsets import Fieldsets
 from edc_constants.constants import POS
 
@@ -20,7 +19,7 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     form = CaregiverSafiStigmaForm
 
     fieldsets = [
-        ('', {
+        (None, {
             'fields': [
                 'maternal_visit',
                 'report_datetime',
@@ -32,17 +31,23 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'discriminated_period'
             ]}
          ),
-        ('Because someone else in my family has HIV or because I have HIV, I have experienced discr at:', {
+        ('Because someone else in my family has HIV or because I have HIV, I have experienced discrimination at:', {
             'fields': [
                 'at_home',
                 'at_home_period',
                 'at_neigborhood',
                 'at_neigborhood_period',
                 'at_religious',
-                'at_religious_period'
+                'at_religious_period',
+                'at_clinic',
+                'at_clinic_period',
+                'at_workplace',
+                'at_workplace_period',
+                'other_place',
+                'other_place_period'
             ]}),
 
-        (' Because someone else in my family has HIV or because I have HIV, discr has led my family to: ', {
+        ('Because someone else in my family has HIV or because I have HIV, discrimination has led my family to: ', {
             'fields': [
                 'finacial_support',
                 'finacial_support_period',
@@ -50,26 +55,27 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'social_support_period',
 
             ]}),
-        ('Because someone else in my family has HIV or because I have HIV, discr has made me feel:', {
+        ('Because someone else in my family has HIV or because I have HIV, discrimination has made me feel:', {
             'fields': [
                 'stressed',
                 'stressed_period',
                 'saddened',
-                'saddened_period'
-
+                'saddened_period',
+                'hiv_perspective'
             ]}),
     ]
 
-    hiv_fieldsets = (
-        (' ', {
+    hiv_fieldsets = [
+        ('The questions below also ask about stigma and discrimination, but we are now going to ask '
+         'about stigma and discrimination that you experience.', {
             'fields': [
-                'hiv_perspective',
                 'isolated',
                 'isolated_period',
                 'insulted',
                 'insulted_period'
 
-            ]}),
+            ]},
+         ),
         ('Because of my HIV status, I have experienced discrimination', {
             'fields': [
                 'home_discr',
@@ -80,28 +86,22 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'religious_place_discr_period',
                 'clinic_discr',
                 'clinic_discr_period',
-                'school_discr',
-                'school_discr_period',
                 'other_discr',
-                'other_discr_other',
                 'other_discr_period',
 
-            ]}),
-
+            ]},
+        ),
         ('Because of my HIV status, discrimination has negatively affected me in the following ways', {
             'fields': [
                 'social_effect',
                 'social_effect_period',
                 'emotional_effect',
                 'emotional_effect_period',
-            ]}),
-        ('   ', {
-            'fields': [
                 'pespective_changed',
                 'pespective_changed_period',
-
-            ]}),
-    )
+        ]},
+        ),
+    ]
 
     def get_fieldsets(self, request, obj=None):
         """Returns fieldsets after modifications declared in
@@ -109,41 +109,13 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         """
         fieldsets = list(super().get_fieldsets(request, obj=obj))
 
-        status = self.hiv_status
-
+        status = self.hiv_status(request)
         if status == POS:
-            fieldsets = fieldsets.append(*self.hiv_fieldsets)
+            fieldsets.extend(self.hiv_fieldsets)
 
         fieldsets.append(audit_fieldset_tuple)
-
         fieldsets = Fieldsets(fieldsets=fieldsets)
-        key = self.get_key(request, obj)
-        fieldset = self.conditional_fieldsets.get(key)
-        if fieldset:
-            try:
-                fieldset = tuple(fieldset)
-            except TypeError:
-                fieldset = (fieldset, )
-            for f in fieldset:
-                fieldsets.add_fieldset(fieldset=f)
-        fieldlist = self.conditional_fieldlists.get(key)
-        if fieldlist:
-            try:
-                fieldsets.insert_fields(
-                    *fieldlist.insert_fields,
-                    insert_after=fieldlist.insert_after,
-                    section=fieldlist.section)
-            except AttributeError:
-                pass
-            try:
-                fieldsets.remove_fields(
-                    *fieldlist.remove_fields,
-                    section=fieldlist.section)
-            except AttributeError:
-                pass
-        fieldsets = self.update_fieldset_for_form(
-            fieldsets, request)
-        fieldsets.move_to_end(self.fieldsets_move_to_end)
+
         return fieldsets.fieldsets
 
     def hiv_status(self, request):
@@ -197,15 +169,13 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'religious_place_discr_period': admin.VERTICAL,
         'clinic_discr': admin.VERTICAL,
         'clinic_discr_period': admin.VERTICAL,
-        'school_discr': admin.VERTICAL,
-        'school_discr_period': admin.VERTICAL,
         'social_effect': admin.VERTICAL,
         'social_effect_period': admin.VERTICAL,
         'emotional_effect': admin.VERTICAL,
         'emotional_effect_period': admin.VERTICAL,
         'pespective_changed': admin.VERTICAL,
         'pespective_changed_period': admin.VERTICAL,
-        'other_discr': admin.VERTICAL,
         'other_discr_period': admin.VERTICAL,
+        'other_place_period': admin.VERTICAL,
 
     }
