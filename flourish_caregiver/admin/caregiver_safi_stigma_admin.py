@@ -119,17 +119,10 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         return fieldsets.fieldsets
 
     def hiv_status(self, request):
-        try:
-            appointment_obj = self.get_instance(request)
-        except ObjectDoesNotExist:
-            return None
-        else:
-
-            subject_identifier = appointment_obj.subject_identifier
-
-            status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
-
-            return status_helper.hiv_status
+        appointment_obj = self.get_instance(request)
+        subject_identifier = getattr(appointment_obj, 'subject_identifier', None)
+        status_helper = MaternalStatusHelper(subject_identifier=subject_identifier)
+        return getattr(status_helper, 'hiv_status', None)
 
     radio_fields = {
         'judged': admin.VERTICAL,
