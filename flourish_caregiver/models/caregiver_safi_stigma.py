@@ -1,6 +1,4 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from edc_base.model_fields import OtherCharField
 
 from .model_mixins import CrfModelMixin
 from ..choices import (PERIOD_HAPPENED, HAPPENED,
@@ -243,7 +241,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     home_discr = models.CharField(
         verbose_name='Home',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW_WITH_NA,
+        choices=HAPPENED_DONT_KNOW,
         null=True,
 
     )
@@ -259,7 +257,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     neighborhood_discr = models.CharField(
         verbose_name='Neighborhood',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW_WITH_NA,
+        choices=HAPPENED_DONT_KNOW,
         null=True,
 
     )
@@ -275,7 +273,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     religious_place_discr = models.CharField(
         verbose_name='A Religious Place (e.g. church)',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW_WITH_NA,
+        choices=HAPPENED_DONT_KNOW,
         null=True,
 
     )
@@ -291,7 +289,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     clinic_discr = models.CharField(
         verbose_name='Clinic',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW_WITH_NA,
+        choices=HAPPENED_DONT_KNOW,
         null=True,
 
     )
@@ -322,7 +320,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     social_effect = models.CharField(
         verbose_name='Socially',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW_WITH_NA,
+        choices=HAPPENED_DONT_KNOW,
         null=True,
     )
 
@@ -354,7 +352,7 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name=('Because of my HIV status, how the future is viewed by myself'
                       ' or future hopes that I have has changed in a negative way'),
         max_length=20,
-        choices=HAPPENED_DONT_KNOW_WITH_NA,
+        choices=HAPPENED_DONT_KNOW,
 
     )
 

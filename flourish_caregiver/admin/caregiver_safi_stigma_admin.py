@@ -1,10 +1,8 @@
 from django.contrib import admin
-from django.core.exceptions import ObjectDoesNotExist
 
-from edc_senaite_interface.admin import SenaiteResultAdminMixin
-from edc_model_admin import audit_fieldset_tuple
-from edc_fieldsets.fieldsets import Fieldsets
 from edc_constants.constants import POS
+from edc_fieldsets.fieldsets import Fieldsets
+from edc_model_admin import audit_fieldset_tuple
 
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverSafiStigmaForm
