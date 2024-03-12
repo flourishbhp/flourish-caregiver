@@ -1,8 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
-from edc_constants.constants import ALIVE, DEAD, DONT_KNOW, DWTA, FAILED_ELIGIBILITY, \
-    FEMALE, IND, MALE, NEG, NEVER, NOT_APPLICABLE, OFF_STUDY, ON_STUDY, OTHER, \
-    PARTICIPANT, PENDING, POS, UNKNOWN
-from edc_constants.constants import NO, YES
+from edc_constants.constants import (ALIVE, DEAD, DONT_KNOW, DWTA, FAILED_ELIGIBILITY,
+                                     FEMALE, IND, MALE, NEG, NEVER, NOT_APPLICABLE, OFF_STUDY, ON_STUDY, OTHER,
+                                     PARTICIPANT, PENDING, POS, UNKNOWN, NO, YES)
 from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT, MISSED_VISIT
 from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, UNSCHEDULED
 
@@ -118,14 +117,16 @@ COHORTS = (
 CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
-    ('3', 'Consent version 3')
+    ('3', 'Consent version 3'),
+    ('4', 'Consent version 4'),
 )
 
 CHILD_CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
     ('2.1', 'Consent version 2.1'),
-    ('3', 'Consent version 3')
+    ('3', 'Consent version 3'),
+    ('4', 'Consent version 4')
 )
 
 CONTACT_FAIL_REASON = (
@@ -1207,6 +1208,43 @@ TB_REASON_CHOICES = (
     ('isolation', 'Participant is in isolation due to COVID-19 or another infection'),
     ('not_well', 'Participant/caregiver is not well'),
     ('other', 'Other'),
+)
+
+PERIOD_HAPPENED = (
+    ('past_6_months', 'Past 6 months'),
+    ('more_than_6_months', 'Longer than 6 months ago')
+)
+
+HAPPENED = (
+    ('never_happened', 'Never Happened'),
+    ('ever_happened', 'Ever Happened'),
+    (NOT_APPLICABLE, 'Not Applicable')
+)
+
+PERIOD_HAPPENED_DONT_KNOW = (
+    ('past_6_months', 'Past 6 months'),
+    ('more_than_6_months', 'Longer than 6 months ago'),
+    (DONT_KNOW, "Don't know")
+)
+
+HAPPENED_DONT_KNOW = (
+    ('never_happened', 'Never Happened'),
+    ('ever_happened', 'Ever Happened'),
+    (DONT_KNOW, "Don't know")
+)
+
+HAPPENED_DONT_KNOW_WITH_NA = (
+    ('never_happened', 'Never Happened'),
+    ('ever_happened', 'Ever Happened'),
+    (DONT_KNOW, "Don't know"),
+    (NOT_APPLICABLE, 'Not Applicable'),
+)
+
+HIV_PERSPECTIVE = (
+    ('no_one_thinks_that', 'No one thinks that'),
+    ('a_few_people_think_that', 'A few people think that'),
+    ('most_people_think_that', 'Most people think that'),
+    (NOT_APPLICABLE, 'Not Applicable')
 )
 
 PARTNER_ACTIONS_CHOICES = (

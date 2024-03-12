@@ -11,17 +11,19 @@ from edc_consent.field_mixins import IdentityFieldsMixin
 from edc_consent.field_mixins import PersonalFieldsMixin
 from edc_consent.managers import ConsentManager
 from edc_consent.model_mixins import ConsentModelMixin
-from edc_constants.choices import YES_NO, GENDER, YES_NO_NA
-from edc_constants.constants import NO, YES, FEMALE
+from edc_constants.choices import GENDER, YES_NO, YES_NO_NA
+from edc_constants.constants import FEMALE, NO, YES
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierModelMixin
 from edc_registration.model_mixins import UpdatesOrCreatesRegistrationModelMixin
 from edc_search.model_mixins import SearchSlugManager
 
-from ..choices import IDENTITY_TYPE
-from ..maternal_choices import RECRUIT_SOURCE, RECRUIT_CLINIC
-from ..subject_identifier import SubjectIdentifier
 from .eligibility import ConsentEligibility
 from .model_mixins import ReviewFieldsMixin, SearchSlugModelMixin
+from ..choices import IDENTITY_TYPE
+from ..maternal_choices import RECRUIT_CLINIC, RECRUIT_SOURCE
+from ..subject_identifier import SubjectIdentifier
+
+caregiver_config = django_apps.get_app_config('flourish_caregiver')
 
 
 class SubjectConsentManager(SearchSlugManager, models.Manager):
@@ -83,7 +85,7 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         max_length=100,
         verbose_name="if other recruitment, specify...",
         blank=True,
-        null=True,)
+        null=True, )
 
     remain_in_study = models.CharField(
         max_length=3,
@@ -107,8 +109,9 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
     breastfeed_intent = models.CharField(
         max_length=3,
         verbose_name='Do you intend on breast feeding your infant?',
-        choices=YES_NO_NA,
-        help_text='If ‘No’ ineligible for study participation')
+        blank=True,
+        null=True,
+        choices=YES_NO_NA,)
 
     future_contact = models.CharField(
         max_length=3,
@@ -117,7 +120,8 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
 
     child_consent = models.CharField(
         max_length=3,
-        verbose_name='Are you willing to consent for your child’s participation in FLOURISH?',
+        verbose_name='Are you willing to consent for your child’s participation in '
+                     'FLOURISH?',
         choices=YES_NO_NA,
         help_text='If ‘No’ ineligible for study participation')
 
@@ -154,16 +158,17 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
                 consent_version_obj = consent_version_cls.objects.get(
                     screening_identifier=self.screening_identifier)
             except consent_version_cls.DoesNotExist:
-                self.version = '3'
+                self.version = str(caregiver_config.consent_version)
             else:
                 self.version = consent_version_obj.version
 
         self.biological_caregiver = self.is_biological_mother()
         eligibility_criteria = ConsentEligibility(
-            self.remain_in_study, self.hiv_testing, self.breastfeed_intent,
-            self.consent_reviewed, self.citizen, self.study_questions,
-            self.assessment_score, self.consent_signature, self.consent_copy,
-            self.child_consent)
+            remain_in_study=self.remain_in_study, hiv_testing=self.hiv_testing,
+            consent_reviewed=self.consent_reviewed, citizen=self.citizen,
+            study_questions=self.study_questions, assessment_score=self.assessment_score,
+            consent_signature=self.consent_signature, consent_copy=self.consent_copy,
+            child_consent=self.child_consent)
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
         if self.multiple_births in ['twins', 'triplets']:
@@ -176,7 +181,8 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
             self.update_locator_subject_identifier()
 
         if self.caregiver_locator_obj:
-            if not self.caregiver_locator_obj.first_name and not self.caregiver_locator_obj.last_name:
+            if (not self.caregiver_locator_obj.first_name and not
+            self.caregiver_locator_obj.last_name):
                 self.caregiver_locator_obj.first_name = self.first_name
                 self.caregiver_locator_obj.last_name = self.last_name
                 self.caregiver_locator_obj.save()
@@ -184,7 +190,7 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         super().save(*args, **kwargs)
 
     def natural_key(self):
-        return (self.subject_identifier, self.version)
+        return self.subject_identifier, self.version
 
     @property
     def multiple_births(self):
