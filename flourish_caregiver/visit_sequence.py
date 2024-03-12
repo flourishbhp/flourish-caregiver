@@ -1,16 +1,11 @@
 from django.apps import apps as django_apps
-from django.db import transaction
 from django.db.models import Q
-from edc_visit_tracking.visit_sequence import VisitSequence
+from edc_visit_tracking.visit_sequence import VisitSequence, VisitSequenceError
 
 from .helper_classes.utils import get_previous_by_appt_datetime
 
 
 class VisitSequence(VisitSequence):
-    """ Override property for previous_visit for sequential enrollment
-        or participant's replacing others, appointments continuing off
-        where the previous onschedule appts were last done.
-    """
     def __init__(self, appointment=None):
         self.appointment = appointment
         self.appointment_model_cls = self.appointment.__class__
@@ -24,6 +19,7 @@ class VisitSequence(VisitSequence):
         previous_visit = self.appointment.schedule.visits.previous(
             self.visit_code)
         self.previous_appointment = get_previous_by_appt_datetime(self.appointment)
+
         try:
             self.previous_visit_code = getattr(
                 self.previous_appointment, 'visit_code', None) or previous_visit.code
@@ -37,47 +33,78 @@ class VisitSequence(VisitSequence):
         self.previous_visit_missing = self.previous_visit_code and not self.previous_visit
 
     @property
+    def exclude_visit_codes(self):
+        return ['2002S']
+
+    def enforce_sequence(self):
+        if (self.previous_visit_missing and self.visit_code not in
+                self.exclude_visit_codes):
+            raise VisitSequenceError(
+                'Previous visit report required. Enter report for '
+                f'\'{self.previous_visit_code}\' before completing this report.')
+
+    @property
     def previous_visit(self):
-        """Returns the previous visit model instance if it exists.
+        if not self.previous_visit_code:
+            return None
+
+        prev_visit = self.get_previous_visit()
+        return prev_visit if prev_visit else self.get_previous_visit_by_appt()
+
+    def get_previous_visit(self):
+        previous_visits = self.model_cls.objects.filter(
+            appointment__subject_identifier=self.subject_identifier,
+            visit_schedule_name=self.visit_schedule_name,
+            schedule_name=self.appointment.schedule_name,
+            visit_code=self.previous_visit_code
+        )
+        previous_visits = previous_visits.order_by('-visit_code_sequence')
+
+        return previous_visits.first() if previous_visits.exists() else None
+
+    def get_previous_visit_by_appt(self):
         """
-        previous_visit = None
-        if self.previous_visit_code:
-            with transaction.atomic():
+        Returns the previous visit by an appointment if the visit code does not exist
+        in the exclude visit codes
+        """
+        prev_visit = None
+
+        if self.visit_code not in self.exclude_visit_codes:
+            prev_appointment = self.get_previous_appointment()
+
+            if prev_appointment:
+                prev_visit = self.get_visit_for_appointment(prev_appointment)
+
+            elif self.previous_appointment:
+                prev_visit = getattr(
+                    self.previous_appointment, self.model_cls._meta.model_name, None)
+            else:
                 try:
-                    previous_visit = self.model_cls.objects.get(
-                        appointment__subject_identifier=self.subject_identifier,
+                    prev_visit = self.model_cls.objects.get(
+                        subject_identifier=self.get_prev_onschedule_obj
+                        .subject_identifier,
                         visit_schedule_name=self.visit_schedule_name,
                         schedule_name=self.appointment.schedule_name,
                         visit_code=self.previous_visit_code)
-                except Exception:
-                    previous_appointment = self.appointment_model_cls.objects.filter(
-                        self.sequence_query,
-                        subject_identifier=self.subject_identifier,
-                        visit_code=self.previous_visit_code).order_by(
-                            '-visit_code_sequence').first()
-                    if previous_appointment:
-                        try:
-                            previous_visit = self.model_cls.objects.get(
-                                appointment=previous_appointment)
-                        except self.model_cls.DoesNotExist:
-                            pass
-                    elif self.previous_appointment:
-                        previous_visit = getattr(
-                            self.previous_appointment, self.model_cls._meta.model_name, None)
-                    else:
-                        subject_identifier = getattr(
-                            self.get_prev_onschedule_obj, 'subject_identifier', None)
-                        try:
-                            previous_visit = self.model_cls.objects.get(
-                                subject_identifier=subject_identifier,
-                                visit_schedule_name=self.visit_schedule_name,
-                                schedule_name=self.appointment.schedule_name,
-                                visit_code=self.previous_visit_code)
-                        except self.model_cls.DoesNotExist:
-                            previous_visit = None
-        return previous_visit
+                except self.model_cls.DoesNotExist:
+                    pass
 
-    @property  
+        return prev_visit
+
+    def get_previous_appointment(self):
+        return self.appointment_model_cls.objects.filter(
+            self.sequence_query,
+            subject_identifier=self.subject_identifier,
+            visit_code=self.previous_visit_code).order_by(
+            '-visit_code_sequence').first()
+
+    def get_visit_for_appointment(self, appointment):
+        try:
+            return self.model_cls.objects.get(appointment=appointment)
+        except self.model_cls.DoesNotExist:
+            return None
+
+    @property
     def get_prev_onschedule_obj(self):
         onschedule_model = getattr(
             self.appointment.schedule, 'onschedule_model', None)
@@ -92,5 +119,5 @@ class VisitSequence(VisitSequence):
             prev_onschedule_obj = onschedule_model_cls.objects.filter(
                 child_subject_identifier=onschedule_obj.child_subject_identifier,
                 schedule_name=self.appointment.schedule_name)
-            if prev_onschedule_obj.exists():
-                return prev_onschedule_obj.earliest('onschedule_datetime')
+            return prev_onschedule_obj.earliest(
+                'onschedule_datetime') if prev_onschedule_obj.exists() else None

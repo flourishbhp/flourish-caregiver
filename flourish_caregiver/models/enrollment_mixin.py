@@ -55,7 +55,7 @@ class EnrollmentMixin(models.Model):
         verbose_name="What is your current HIV status?",
         choices=POS_NEG_UNTESTED_REFUSAL,
         max_length=30,
-        help_text=("if POS or NEG, ask for documentation."))
+        help_text="if POS or NEG, ask for documentation.")
 
     week32_test = models.CharField(
         verbose_name=(
@@ -121,7 +121,6 @@ class EnrollmentMixin(models.Model):
         if not self.ultrasound:
             self.pending_ultrasound = enrollment_helper.pending
         eligibility_criteria = AntenatalEnrollmentEligibility(
-            will_breastfeed=self.will_breastfeed,
             ga_lmp_enrollment_wks=self.ga_lmp_enrollment_wks,
             # enrollment_hiv_status=self.enrollment_hiv_status,
             will_get_arvs=self.will_get_arvs)

@@ -41,7 +41,7 @@ class OnScheduleModelMixin(BaseOnScheduleModelMixin, BaseUuidModel):
             'flourish_caregiver.subjectconsent')
 
         subject_consents = caregiver_consent_cls.objects.filter(
-            subject_identifier=self.subject_identifier,)
+            subject_identifier=self.subject_identifier, )
         if subject_consents:
             latest_consent = subject_consents.latest('consent_datetime')
             return latest_consent.version
@@ -174,4 +174,8 @@ class OnScheduleCohortATb2Months(OnScheduleModelMixin):
 
 
 class OnScheduleCohortATb6Months(OnScheduleModelMixin):
+    pass
+
+
+class OnScheduleCaregiverBrainUltrasound(OnScheduleModelMixin):
     pass

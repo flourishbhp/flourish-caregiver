@@ -23,13 +23,11 @@ class BaseScreeningPregWomenAdmin:
         (None, {
             'fields': ('child_subject_identifier',
                        'report_datetime',
-                       'hiv_testing',
-                       'breastfeed_intent',)},
+                       'hiv_testing',)},
          ),
         audit_fieldset_tuple
     )
-    radio_fields = {'hiv_testing': admin.VERTICAL,
-                    'breastfeed_intent': admin.VERTICAL, }
+    radio_fields = {'hiv_testing': admin.VERTICAL, }
 
 
 @admin.register(ScreeningPregWomenInline, site=flourish_caregiver_admin)

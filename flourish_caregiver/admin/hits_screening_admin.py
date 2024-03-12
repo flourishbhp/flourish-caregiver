@@ -16,15 +16,18 @@ class HITSScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             'fields': [
                 'maternal_visit',
                 'report_datetime',
+                'in_relationship',
                 'physical_hurt',
                 'insults',
                 'threaten',
                 'screem_curse',
+                'score',
             ]}
          ), audit_fieldset_tuple
     )
 
     radio_fields = {
+        'in_relationship': admin.VERTICAL,
         'physical_hurt': admin.VERTICAL,
         'insults': admin.VERTICAL,
         'threaten': admin.VERTICAL,
