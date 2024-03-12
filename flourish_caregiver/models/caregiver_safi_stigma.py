@@ -3,7 +3,7 @@ from django.db import models
 from .model_mixins import CrfModelMixin
 from ..choices import (PERIOD_HAPPENED, HAPPENED,
                        PERIOD_HAPPENED_DONT_KNOW, HAPPENED_DONT_KNOW,
-                       HAPPENED_DONT_KNOW_WITH_NA, HIV_PERSPECTIVE)
+                       HIV_PERSPECTIVE)
 
 
 class CaregiverSafiStigma(CrfModelMixin):
@@ -134,7 +134,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     other_place_period = models.CharField(
         verbose_name='If “Ever Happened” at Other Place: When?',
         max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW,
+        choices=PERIOD_HAPPENED,
         null=True,
         blank=True
     )
