@@ -150,3 +150,7 @@ class TBTests(ListModelMixin, BaseUuidModel):
 
 class GeneralSymptoms(ListModelMixin, BaseUuidModel):
     pass
+
+
+class MestitisActions(ListModelMixin, BaseUuidModel):
+    pass
