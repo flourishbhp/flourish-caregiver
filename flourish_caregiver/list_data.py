@@ -1,8 +1,6 @@
 from edc_constants.constants import NONE, NOT_APPLICABLE, OTHER
 from edc_list_data import PreloadData
 
-from flourish_caregiver.constants import PNTA
-
 list_data = {
     'flourish_caregiver.chronicconditions': [
         ('mhist_asthma', 'Asthma'),
@@ -285,7 +283,7 @@ list_data = {
         ('opd', 'OPD'),
         (OTHER, 'Other, specify'),
     ],
-     'flourish_caregiver.memberreadbooks': [
+    'flourish_caregiver.memberreadbooks': [
         ('read_mother', 'Mother'),
         ('read_father', 'Biological Father'),
         ('read_mpartner', 'Mother’s partner (not biological father)'),
@@ -414,7 +412,17 @@ list_data = {
         ('fatigue', 'Fatigue'),
         ('congestion', 'Congestion'),
         ('enlarged_lymph_nodes', 'Enlarged Lymph nodes'),
-        (OTHER, 'Other'),]
+        (OTHER, 'Other'), ],
+    'flourish_caregiver.mestitisactions': [
+        ('both_breasts', 'Breastfeed from both breasts'),
+        ('uninfected_breast',
+         'Breastfed from uninfected breast and pumped and dumped from the affected '
+         'breast'),
+        ('stopped_breastfeeding', 'Stopped breastfeeding'),
+        ('temp_stopped',
+         'Stopped breastfeeding temporarily but resumed once breast healed'),
+        (OTHER, 'Other')
+    ]
 }
 
 preload_data = PreloadData(

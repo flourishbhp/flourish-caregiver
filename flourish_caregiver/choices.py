@@ -1,7 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
 from edc_constants.constants import (ALIVE, DEAD, DONT_KNOW, DWTA, FAILED_ELIGIBILITY,
-                                     FEMALE, IND, MALE, NEG, NEVER, NOT_APPLICABLE, OFF_STUDY, ON_STUDY, OTHER,
-                                     PARTICIPANT, PENDING, POS, UNKNOWN, NO, YES)
+                                     FEMALE, IND, MALE, NEG, NEVER, NO, NOT_APPLICABLE,
+                                     OFF_STUDY, ON_STUDY, OTHER, PARTICIPANT, PENDING,
+                                     POS, UNKNOWN, YES)
 from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT, MISSED_VISIT
 from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, UNSCHEDULED
 
@@ -1258,4 +1259,37 @@ PARTNER_ACTIONS_CHOICES = (
 YES_NO_INT_CHOICES = (
     ('1', YES),
     ('2', NO),
+)
+
+YES_RESOLVED_NO = (
+    ('yes_currently', 'Yes currently'),
+    ('yes_resolved', 'Yes but it has resolved'),
+    (NO, 'No'),
+)
+
+MASTITIS_TYPE_CHOICES = (
+    ('unilateral', 'Unilateral'),
+    ('bilateral', 'Bilateral')
+)
+
+EXP_COUNT_CHOICES = (
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5_greater', '5 or Greater'),
+)
+
+NOT_COLLECTED_REASONS_CHOICES = (
+    ('trying_to_breastfeed', 'Participant could not produce sufficient quantity but is '
+                             'still trying to breastfeed. '),
+    ('no_longer_breastfeeding', ' Participant could not produce sufficient quantity but '
+                                'is also no longer  breastfeeding'),
+    ('no_milk', ' No milk let down  since delivery ')
+)
+
+BREAST_COLLECTED_CHOICES = (
+    ('right', 'Right'),
+    ('left', 'Left'),
+    ('both', 'Both')
 )
