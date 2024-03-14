@@ -205,7 +205,6 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
                 extra = child_count
             else:
                 extra = len(self.get_difference(child_datasets, obj))
-
         return extra
 
     def get_child_reconsent_extra(self, request):
@@ -213,12 +212,13 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
         subject_identifier = request.GET.get('subject_identifier')
 
         consent_version_obj = self.consent_version_obj(screening_identifier)
-        if consent_version_obj and getattr(consent_version_obj, 'child_version', None):
-            child_consent_objs = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier,
-                version=consent_version_obj.child_version)
-            if not child_consent_objs:
-                return 1
+        child_version = getattr(consent_version_obj, 'child_version', None)
+        if consent_version_obj and child_version:
+            child_consent_objs = self.get_caregiver_child_consents(subject_identifier,)
+            child_consents_by_version = self.get_caregiver_child_consents(
+                subject_identifier, child_version)
+
+            return len(child_consent_objs - child_consents_by_version)
         return 0
 
     pre_flourish_child_consent_model = 'pre_flourish.preflourishcaregiverchildconsent'
@@ -387,21 +387,21 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj=obj, **kwargs)
         subject_identifier = None
+        initial_values = []
         if request.method == 'GET':
             if request.GET.get('subject_identifier'):
                 subject_identifier = request.GET.get('subject_identifier')
             else:
                 screening_identifier = request.GET.get('screening_identifier')
                 subject_identifier = self.get_subject_identifier(screening_identifier)
-        initial_values = self.prepare_initial_values_based_on_subject(
-            obj=obj, subject_identifier=subject_identifier)
-
+            initial_values = self.prepare_initial_values_based_on_subject(
+                subject_identifier=subject_identifier)
+    
         form.previous_instance = initial_values
         return form
 
-    def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
-        return [self.prepare_subject_consent(consent) for consent in
-                self.consents_filtered_by_subject(obj, subject_identifier)]
+    def prepare_initial_values_based_on_subject(self, subject_identifier):
+        return [self.prepare_subject_consent(subject_identifier)]
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
