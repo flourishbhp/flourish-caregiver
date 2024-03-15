@@ -1265,3 +1265,13 @@ YES_NO_UKN_CHOICES = (
     (NO, NO),
     (UNKNOWN, 'Unknown'),
 )
+
+REFERRAL_LOCATION = (
+    ('hospital_based_sw', 'Hospital-based Social Worker'),
+    ('community_sw', 'Community Social Worker'),
+    ('bonmeh', 'BONMEH (Botswana Network for Mental Health)'),
+    ('bofwa', 'BOFWA (Botswana Family Welfare Association)'),
+    ('bosanet', 'BOSANET (Botswana Substance Abuse Support Network'),
+    ('bonela', 'BONELA (Botswana Network on Ethics, Law, and HIV/AIDS)'),
+    (OTHER, 'Other, specify'),
+)
