@@ -53,7 +53,7 @@ class ExportRequisitionCsvMixin:
             records.append(obj_data)
 
         # Inherinted from the Admin Export Helper on the parent export mixin
-        response = self.write_to_excel(records)
+        response = self.write_to_csv(records)
         return response
 
     export_as_csv.short_description = 'Export with panel name'

@@ -95,7 +95,7 @@ class ExportActionMixin(AdminExportHelper):
             # Correct date formats
             data = self.fix_date_formats(data)
             records.append(data)
-        response = self.write_to_excel(records)
+        response = self.write_to_csv(records)
         return response
 
     export_as_csv.short_description = _(
