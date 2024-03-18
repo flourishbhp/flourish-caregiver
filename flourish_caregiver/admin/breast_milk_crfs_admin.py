@@ -1,4 +1,6 @@
 from django.contrib import admin
+from edc_constants.constants import OTHER
+from edc_list_data import PreloadData, PreloadDataError
 from edc_model_admin import audit_fieldset_tuple
 
 from flourish_caregiver.admin.modeladmin_mixins import CrfModelAdminMixin
@@ -99,6 +101,44 @@ class BreastMilkAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
         'cracked_nipples_4_action',
         'cracked_nipples_5_action',
     )
+
+    def extract_actions(self, field):
+        action_key = ''
+        if field.startswith("mastitis_"):
+            action_number = field.split("_")[1]
+            action_key = f"m{action_number}"
+        elif field.startswith("cracked_nipples_"):
+            action_number = field.split("_")[2]
+            action_key = f"cn{action_number}"
+
+        return action_key
+
+    def generate_data(self, action_key):
+        return [
+            (f'{action_key}_both_breasts', 'Breastfeed from both breasts'),
+            (f'{action_key}_uninfected_breast',
+             'Breastfed from uninfected breast and pumped and dumped from the '
+             'affected breast'),
+            (f'{action_key}_stopped_breastfeeding', 'Stopped breastfeeding'),
+            (f'{action_key}_temp_stopped',
+             'Stopped breastfeeding temporarily but resumed once breast healed'),
+            (f'{action_key}_{OTHER}', 'Other')
+        ]
+
+    def add_view(self, request, form_url='', extra_context=None):
+        self.load_list_data(request)
+        return super().add_view(request, form_url, extra_context)
+
+    def load_list_data(self, request):
+        for field in self.filter_horizontal:
+            list_data = {}
+            action = self.extract_actions(field)
+            list_data[f'flourish_caregiver.mestitis{action}actions'] = (
+                self.generate_data(action))
+            try:
+                PreloadData(list_data=list_data)
+            except PreloadDataError:
+                continue
 
 
 @admin.register(BreastMilkBirth, site=flourish_caregiver_admin)
