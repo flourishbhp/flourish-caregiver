@@ -3,13 +3,12 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_validators.date import date_not_future
 from edc_constants.choices import YES_NO
 
-from ..maternal_choices import SIZE_CHECK,\
-    REASON_CD4_RESULT_UNAVAILABLE, REASON_VL_RESULT_UNAVAILABLE
 from .model_mixins import CrfModelMixin
+from ..maternal_choices import REASON_CD4_RESULT_UNAVAILABLE, \
+    REASON_VL_RESULT_UNAVAILABLE, SIZE_CHECK
 
 
 class MaternalInterimIdccVersion2(CrfModelMixin):
-
     info_since_lastvisit = models.CharField(
         max_length=3,
         verbose_name="Since the last visit (VISIT DATE) did you go for IDCC review?",
