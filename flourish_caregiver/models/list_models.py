@@ -152,5 +152,41 @@ class GeneralSymptoms(ListModelMixin, BaseUuidModel):
     pass
 
 
-class MestitisActions(ListModelMixin, BaseUuidModel):
+class MestitisM1Actions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MestitisM2Actions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MestitisM3Actions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MestitisM4Actions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MestitisM5Actions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MestitisCN1Actions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MestitisCN2Actions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MestitisCN3Actions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MestitisCN4Actions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MestitisCN5Actions(ListModelMixin, BaseUuidModel):
     pass

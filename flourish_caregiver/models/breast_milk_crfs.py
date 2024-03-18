@@ -1,6 +1,11 @@
 from django.db import models
 
-from .list_models import MestitisActions
+from .list_models import MestitisCN1Actions, MestitisCN2Actions, MestitisCN3Actions, \
+    MestitisCN4Actions, MestitisCN5Actions, MestitisM1Actions, \
+    MestitisM2Actions, \
+    MestitisM3Actions, \
+    MestitisM4Actions, \
+    MestitisM5Actions
 from .model_mixins.breast_milk_field_mixin import \
     BreastMilkFieldsMixin
 
@@ -14,7 +19,7 @@ class BreastMilkBirth(BreastMilkFieldsMixin, models.Model):
 
 class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     mastitis_1_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisM1Actions,
         verbose_name='What did the mother do (first instance)? ',
         max_length=20,
         related_name='mastitis_1_actions_6months',
@@ -22,7 +27,7 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     )
 
     mastitis_2_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisM2Actions,
         verbose_name='What did the mother do (second instance)? ',
         max_length=20,
         related_name='mastitis_2_actions_6months',
@@ -30,7 +35,7 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     )
 
     mastitis_3_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisM3Actions,
         verbose_name='What did the mother do (third instance)? ',
         max_length=20,
         related_name='mastitis_3_actions_6months',
@@ -38,7 +43,7 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     )
 
     mastitis_4_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisM4Actions,
         verbose_name='What did the mother do (fourth instance)? ',
         max_length=20,
         related_name='mastitis_4_actions_6months',
@@ -46,7 +51,7 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     )
 
     mastitis_5_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisM5Actions,
         related_name='mastitis_5_actions_6months',
         verbose_name='What did the mother do (fifth instance)? ',
         max_length=20,
@@ -54,7 +59,7 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     )
 
     cracked_nipples_1_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisCN1Actions,
         verbose_name='What did the mother do when experiencing cracked nipples (first '
                      'instance)? ',
         max_length=20,
@@ -63,7 +68,7 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     )
 
     cracked_nipples_2_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisCN2Actions,
         verbose_name='What did the mother do when experiencing cracked nipples (second '
                      'instance)? ',
         max_length=20,
@@ -72,7 +77,7 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     )
 
     cracked_nipples_3_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisCN3Actions,
         verbose_name='What did the mother do when experiencing cracked nipples (third '
                      'instance)? ',
         max_length=20,
@@ -81,7 +86,7 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     )
 
     cracked_nipples_4_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisCN4Actions,
         verbose_name='What did the mother do when experiencing cracked nipples (fourth '
                      'instance)? ',
         max_length=20,
@@ -90,7 +95,7 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
     )
 
     cracked_nipples_5_action = models.ManyToManyField(
-        MestitisActions,
+        MestitisCN5Actions,
         verbose_name='What did the mother do when experiencing cracked nipples (fifth '
                      'instance)? ',
         max_length=20,
