@@ -1,14 +1,14 @@
 from django import forms
 from edc_constants.choices import YES_NO
 
-from flourish_form_validations.form_validators import BreastMilkCRFFormValidator
+# from flourish_form_validations.form_validators import BreastMilkCRFFormValidator
 from .form_mixins import SubjectModelFormMixin
 from ..choices import EXP_COUNT_CHOICES, YES_RESOLVED_NO
 from ..models.breast_milk_crfs import BreastMilk6Months, BreastMilkBirth
 
 
 class BreastMilkBirthForms(SubjectModelFormMixin, forms.ModelForm):
-    form_validator_cls = BreastMilkCRFFormValidator
+    # form_validator_cls = BreastMilkCRFFormValidator
     exp_mastitis = forms.ChoiceField(
         label='Since the mother started breastfeeding, has she experienced mastitis?',
         choices=YES_RESOLVED_NO,
@@ -36,7 +36,7 @@ class BreastMilkBirthForms(SubjectModelFormMixin, forms.ModelForm):
 
 
 class BreastMilk6MonthsForms(SubjectModelFormMixin, forms.ModelForm):
-    form_validator_cls = BreastMilkCRFFormValidator
+    # form_validator_cls = BreastMilkCRFFormValidator
     class Meta:
         model = BreastMilk6Months
         fields = '__all__'
