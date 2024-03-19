@@ -1309,5 +1309,5 @@ NOT_COLLECTED_REASONS_CHOICES = (
 BREAST_COLLECTED_CHOICES = (
     ('right', 'Right'),
     ('left', 'Left'),
-    ('both', 'Both')
+    ('both', 'Both'),
 )
