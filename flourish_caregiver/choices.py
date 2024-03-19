@@ -1292,6 +1292,7 @@ BREAST_COLLECTED_CHOICES = (
     ('right', 'Right'),
     ('left', 'Left'),
     ('both', 'Both')
+)
 
   
 YES_NO_UKN_CHOICES = (
