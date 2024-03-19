@@ -339,7 +339,7 @@ class BreastMilkFieldsMixin(CrfModelMixin, models.Model):
     milk_collected_volume = models.IntegerField(
         verbose_name='Approximately how much breast milk was collected?(mL)',
         help_text='range from 1mL to 20mL',
-        validators=[MinValueValidator(1), MaxValueValidator(4), ],
+        validators=[MinValueValidator(4), MaxValueValidator(20), ],
         null=True,
         blank=True
     )
