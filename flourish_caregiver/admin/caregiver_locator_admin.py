@@ -99,6 +99,6 @@ class CaregiverLocatorAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj=obj, **kwargs)
-        if 'pre_flourish' in request.GET.get('next', None):
+        if 'pre_flourish' in request.GET.get('next', ''):
             form.project_name = 'pre_flourish'
         return form

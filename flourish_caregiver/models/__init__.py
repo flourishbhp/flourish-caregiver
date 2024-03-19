@@ -1,5 +1,6 @@
 from .antenatal_enrollment import AntenatalEnrollment
 from .arvs_pre_pregnancy import ArvsPrePregnancy
+from .breast_milk_crfs import BreastMilk6Months, BreastMilkBirth
 from .breastfeeding_questionnaire import BreastFeedingQuestionnaire
 from .brief_danger_assessment import BriefDangerAssessment
 from .caregiver_child_consent import CaregiverChildConsent
@@ -28,6 +29,7 @@ from .caregiver_previously_enrolled import CaregiverPreviouslyEnrolled
 from .caregiver_requisition import CaregiverRequisition
 from .caregiver_requisition_result import CaregiverRequisitionResult
 from .caregiver_requisition_result import CaregiverResultValue
+from .caregiver_safi_stigma import CaregiverSafiStigma
 from .caregiver_social_work_referral import CaregiverSocialWorkReferral
 from .caregiver_tb_referral import TBReferralCaregiver
 from .caregiver_tb_referral_outcome import CaregiverTBReferralOutcome

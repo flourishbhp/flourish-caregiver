@@ -1,8 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
-from edc_constants.constants import ALIVE, DEAD, DONT_KNOW, DWTA, FAILED_ELIGIBILITY, \
-    FEMALE, IND, MALE, NEG, NEVER, NOT_APPLICABLE, OFF_STUDY, ON_STUDY, OTHER, \
-    PARTICIPANT, PENDING, POS, UNKNOWN
-from edc_constants.constants import NO, YES
+from edc_constants.constants import (ALIVE, DEAD, DONT_KNOW, DWTA, FAILED_ELIGIBILITY,
+                                     FEMALE, IND, MALE, NEG, NEVER, NO, NOT_APPLICABLE,
+                                     OFF_STUDY, ON_STUDY, OTHER, PARTICIPANT, PENDING,
+                                     POS, UNKNOWN, YES)
 from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT, MISSED_VISIT
 from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, UNSCHEDULED
 
@@ -118,14 +118,16 @@ COHORTS = (
 CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
-    ('3', 'Consent version 3')
+    ('3', 'Consent version 3'),
+    ('4', 'Consent version 4'),
 )
 
 CHILD_CONSENT_VERSION = (
     ('1', 'Consent version 1'),
     ('2', 'Consent version 2'),
     ('2.1', 'Consent version 2.1'),
-    ('3', 'Consent version 3')
+    ('3', 'Consent version 3'),
+    ('4', 'Consent version 4')
 )
 
 CONTACT_FAIL_REASON = (
@@ -1209,6 +1211,43 @@ TB_REASON_CHOICES = (
     ('other', 'Other'),
 )
 
+PERIOD_HAPPENED = (
+    ('past_6_months', 'Past 6 months'),
+    ('more_than_6_months', 'Longer than 6 months ago')
+)
+
+HAPPENED = (
+    ('never_happened', 'Never Happened'),
+    ('ever_happened', 'Ever Happened'),
+    (NOT_APPLICABLE, 'Not Applicable')
+)
+
+PERIOD_HAPPENED_DONT_KNOW = (
+    ('past_6_months', 'Past 6 months'),
+    ('more_than_6_months', 'Longer than 6 months ago'),
+    (DONT_KNOW, "Don't know")
+)
+
+HAPPENED_DONT_KNOW = (
+    ('never_happened', 'Never Happened'),
+    ('ever_happened', 'Ever Happened'),
+    (DONT_KNOW, "Don't know")
+)
+
+HAPPENED_DONT_KNOW_WITH_NA = (
+    ('never_happened', 'Never Happened'),
+    ('ever_happened', 'Ever Happened'),
+    (DONT_KNOW, "Don't know"),
+    (NOT_APPLICABLE, 'Not Applicable'),
+)
+
+HIV_PERSPECTIVE = (
+    ('no_one_thinks_that', 'No one thinks that'),
+    ('a_few_people_think_that', 'A few people think that'),
+    ('most_people_think_that', 'Most people think that'),
+    (NOT_APPLICABLE, 'Not Applicable')
+)
+
 PARTNER_ACTIONS_CHOICES = (
     ('1', 'Never'),
     ('2', 'Rarely'),
@@ -1222,8 +1261,52 @@ YES_NO_INT_CHOICES = (
     ('2', NO),
 )
 
+YES_RESOLVED_NO = (
+    ('yes_currently', 'Yes currently'),
+    ('yes_resolved', 'Yes but it has resolved'),
+    (NO, 'No'),
+)
+
+MASTITIS_TYPE_CHOICES = (
+    ('unilateral', 'Unilateral'),
+    ('bilateral', 'Bilateral')
+)
+
+EXP_COUNT_CHOICES = (
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5_greater', '5 or Greater'),
+)
+
+NOT_COLLECTED_REASONS_CHOICES = (
+    ('trying_to_breastfeed', 'Participant could not produce sufficient quantity but is '
+                             'still trying to breastfeed. '),
+    ('no_longer_breastfeeding', ' Participant could not produce sufficient quantity but '
+                                'is also no longer  breastfeeding'),
+    ('no_milk', ' No milk let down  since delivery ')
+)
+
+BREAST_COLLECTED_CHOICES = (
+    ('right', 'Right'),
+    ('left', 'Left'),
+    ('both', 'Both')
+)
+
+  
 YES_NO_UKN_CHOICES = (
     (YES, YES),
     (NO, NO),
     (UNKNOWN, 'Unknown'),
+)
+
+REFERRAL_LOCATION = (
+    ('hospital_based_sw', 'Hospital-based Social Worker'),
+    ('community_sw', 'Community Social Worker'),
+    ('bonmeh', 'BONMEH (Botswana Network for Mental Health)'),
+    ('bofwa', 'BOFWA (Botswana Family Welfare Association)'),
+    ('bosanet', 'BOSANET (Botswana Substance Abuse Support Network'),
+    ('bonela', 'BONELA (Botswana Network on Ethics, Law, and HIV/AIDS)'),
+    (OTHER, 'Other, specify'),
 )
