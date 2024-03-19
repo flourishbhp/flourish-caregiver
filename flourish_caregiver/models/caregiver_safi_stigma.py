@@ -1,4 +1,6 @@
 from django.db import models
+from edc_constants.choices import YES_NO
+from edc_constants.constants import NOT_APPLICABLE
 
 from .model_mixins import CrfModelMixin
 from ..choices import (PERIOD_HAPPENED, HAPPENED,
@@ -7,14 +9,21 @@ from ..choices import (PERIOD_HAPPENED, HAPPENED,
 
 
 class CaregiverSafiStigma(CrfModelMixin):
-    """ A model completed by the user on Height, Weight details
-    for all caregivers. """
+    """ The model is based off form for caregivers not living with HIV. Some
+        questions are updated on the admin for caregivers LWHIV."""
+
+    member_lwhiv = models.CharField(
+        verbose_name=('Do you have a family member or someone who you are '
+                      'close with who is living with HIV?'),
+        max_length=3,
+        choices=YES_NO)
 
     judged = models.CharField(
-        verbose_name=('Because someone else in my family has HIV or '
-                      'because I have HIV, I am judged negatively by others '),
+        verbose_name=('Because someone else in my family or a close friend '
+                      'has HIV, I am judged negatively by others'),
         max_length=20,
-        choices=HAPPENED
+        choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     judged_period = models.CharField(
@@ -26,10 +35,11 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     avoided = models.CharField(
-        verbose_name=('Because someone else in my family has HIV or because '
-                      'I have HIV, I am isolated or avoided by others'),
+        verbose_name=('Because someone else in my family or a close friend '
+                      'has HIV, I am isolated or avoided by others'),
         choices=HAPPENED,
-        max_length=20
+        max_length=20,
+        default=NOT_APPLICABLE
     )
 
     avoided_period = models.CharField(
@@ -41,10 +51,11 @@ class CaregiverSafiStigma(CrfModelMixin):
     )
 
     discriminated = models.CharField(
-        verbose_name=('Because someone else in my family has HIV or because '
-                      'I have HIV, I have been called names or insulted'),
+        verbose_name=('Because someone else in my family or a close friend '
+                      'has HIV, I have been called names or insulted'),
         max_length=20,
-        choices=HAPPENED
+        choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     discriminated_period = models.CharField(
@@ -58,7 +69,8 @@ class CaregiverSafiStigma(CrfModelMixin):
     at_home = models.CharField(
         verbose_name='Home',
         max_length=20,
-        choices=HAPPENED
+        choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     at_home_period = models.CharField(
@@ -72,7 +84,8 @@ class CaregiverSafiStigma(CrfModelMixin):
     at_neigborhood = models.CharField(
         verbose_name='Neighborhood',
         max_length=20,
-        choices=HAPPENED
+        choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     at_neigborhood_period = models.CharField(
@@ -86,7 +99,8 @@ class CaregiverSafiStigma(CrfModelMixin):
     at_religious = models.CharField(
         verbose_name='A Religious Place (e.g. church)',
         max_length=20,
-        choices=HAPPENED
+        choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     at_religious_period = models.CharField(
@@ -100,7 +114,8 @@ class CaregiverSafiStigma(CrfModelMixin):
     at_clinic = models.CharField(
         verbose_name='Clinic',
         max_length=20,
-        choices=HAPPENED
+        choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     at_clinic_period = models.CharField(
@@ -114,7 +129,8 @@ class CaregiverSafiStigma(CrfModelMixin):
     at_workplace = models.CharField(
         verbose_name='Workplace',
         max_length=20,
-        choices=HAPPENED
+        choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     at_workplace_period = models.CharField(
@@ -142,7 +158,8 @@ class CaregiverSafiStigma(CrfModelMixin):
     finacial_support = models.CharField(
         verbose_name='Lose Financial Support/Work',
         max_length=20,
-        choices=HAPPENED
+        choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     finacial_support_period = models.CharField(
@@ -156,7 +173,8 @@ class CaregiverSafiStigma(CrfModelMixin):
     social_support = models.CharField(
         verbose_name='Lose Social Support',
         max_length=20,
-        choices=HAPPENED
+        choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     social_support_period = models.CharField(
@@ -171,7 +189,7 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name='Stressed or anxious',
         max_length=20,
         choices=HAPPENED,
-
+        default=NOT_APPLICABLE
     )
 
     stressed_period = models.CharField(
@@ -186,6 +204,7 @@ class CaregiverSafiStigma(CrfModelMixin):
         verbose_name='Depressed, feeling down, saddened ',
         max_length=20,
         choices=HAPPENED,
+        default=NOT_APPLICABLE
     )
 
     saddened_period = models.CharField(
@@ -205,117 +224,9 @@ class CaregiverSafiStigma(CrfModelMixin):
 
     )
 
-    isolated = models.CharField(
-        verbose_name=('Because of my HIV status, I am isolated or avoided by other '
-                      'children or adults'),
-        max_length=20,
-        choices=HAPPENED_DONT_KNOW,
-        null=True,
-    )
-
-    isolated_period = models.CharField(
-        verbose_name='If “Ever Happened”: When?',
-        max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW,
-        blank=True,
-        null=True,
-    )
-
-    insulted = models.CharField(
-        verbose_name=('Because of my HIV status, I have been called names, insulted, '
-                      'or bullied '),
-        max_length=20,
-        choices=HAPPENED_DONT_KNOW,
-        null=True,
-
-    )
-
-    insulted_period = models.CharField(
-        verbose_name='If “Ever Happened”: When?',
-        max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW,
-        blank=True,
-        null=True,
-    )
-
-    home_discr = models.CharField(
-        verbose_name='Home',
-        max_length=20,
-        choices=HAPPENED_DONT_KNOW,
-        null=True,
-
-    )
-
-    home_discr_period = models.CharField(
-        verbose_name='If “Ever Happened”: When?',
-        max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW,
-        blank=True,
-        null=True,
-    )
-
-    neighborhood_discr = models.CharField(
-        verbose_name='Neighborhood',
-        max_length=20,
-        choices=HAPPENED_DONT_KNOW,
-        null=True,
-
-    )
-
-    neighborhood_discr_period = models.CharField(
-        verbose_name='If “Ever Happened”: When?',
-        max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW,
-        blank=True,
-        null=True,
-    )
-
-    religious_place_discr = models.CharField(
-        verbose_name='A Religious Place (e.g. church)',
-        max_length=20,
-        choices=HAPPENED_DONT_KNOW,
-        null=True,
-
-    )
-
-    religious_place_discr_period = models.CharField(
-        verbose_name='If “Ever Happened”: When?',
-        max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW,
-        blank=True,
-        null=True,
-    )
-
-    clinic_discr = models.CharField(
-        verbose_name='Clinic',
-        max_length=20,
-        choices=HAPPENED_DONT_KNOW,
-        null=True,
-
-    )
-
-    clinic_discr_period = models.CharField(
-        verbose_name='If “Ever Happened”: When?',
-        max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW,
-        blank=True,
-        null=True,
-    )
-
-    other_discr = models.CharField(
-        verbose_name='Other Place, (please specify)',
-        max_length=100,
-        blank=True,
-        null=True,
-    )
-
-    other_discr_period = models.CharField(
-        verbose_name='If “Ever Happened” at Other Place: When?',
-        max_length=20,
-        choices=PERIOD_HAPPENED_DONT_KNOW,
-        null=True,
-        blank=True
-    )
+    """ The following section is questions ONLY to be shown for participants
+        living with HIV.
+    """
 
     social_effect = models.CharField(
         verbose_name='Socially',

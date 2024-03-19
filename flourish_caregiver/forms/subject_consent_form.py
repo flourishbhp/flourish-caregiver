@@ -23,20 +23,20 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.pop('initial', {})
-        instance = getattr(self, 'instance', None)
-        subject_identifier = instance.subject_identifier if instance else None
-        if not subject_identifier:
-            subject_identifier = initial.get('subject_identifier', None)
-        if subject_identifier:
-            for key in self.fields.keys():
-                self.fields[key].disabled = True
+        instance = kwargs.get('instance', None)
+        subject_identifier = getattr(
+            instance, 'subject_identifier', initial.get('subject_identifier', None))
 
         previous_instance = getattr(self, 'previous_instance', None)
         if not instance and previous_instance:
             for key in self.base_fields.keys():
                 initial[key] = previous_instance[0].get(key, None)
-        kwargs['initial'] = initial
+            kwargs['initial'] = initial
+
         super().__init__(*args, **kwargs)
+        if instance and subject_identifier:
+            for key in self.fields.keys():
+                self.fields[key].disabled = True
 
     def clean(self):
         cleaned_data = super().clean()
@@ -45,10 +45,10 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
             'caregiverchildconsent_set-TOTAL_FORMS')
 
         if child_consent == NO and int(caregiver_child_consent) != 0:
-            msg = {'child_consent':
-                       'Participant is not willing to consent on behalf of child.'
-                       'Caregiver child consent should not be completed. To proceed,'
-                       ' close Caregiver Child Consent.'}
+            msg = {
+                'child_consent': 'Participant is not willing to consent on behalf of '
+                                 'child. Caregiver child consent should not be '
+                                 'completed. To proceed, close Caregiver Child Consent.'}
 
             raise forms.ValidationError(msg)
         elif child_consent == YES and int(caregiver_child_consent) == 0:

@@ -1,18 +1,18 @@
 from django.db import models
-from edc_protocol.validators import datetime_not_before_study_start
-from edc_base.model_validators import datetime_not_future
 from edc_base.model_fields import OtherCharField
+from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
-from edc_constants.choices import YES_NO, UNKNOWN
+from edc_constants.choices import YES_NO
+from edc_protocol.validators import datetime_not_before_study_start
 
-from ...choices import HIV_STATUS, CAREGIVER_OR_CHILD, HIV_EXPOSURE_STATUS
+from ...choices import CAREGIVER_OR_CHILD, HIV_EXPOSURE_STATUS, HIV_STATUS, REFERRAL_LOCATION
 
 
 class CaregiverSocialWorkReferralMixin(models.Model):
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
         default=get_utcnow,
-        validators=[datetime_not_future, datetime_not_before_study_start],)
+        validators=[datetime_not_future, datetime_not_before_study_start], )
 
     referral_for = models.CharField(
         verbose_name='Referral For ',
@@ -53,6 +53,14 @@ class CaregiverSocialWorkReferralMixin(models.Model):
         max_length=250,
         blank=True,
         null=True)
+
+    referral_loc = models.CharField(
+        verbose_name='Please indicate the referral location',
+        max_length=50,
+        choices=REFERRAL_LOCATION,
+        default='hospital_based_sw')
+
+    referral_loc_other = OtherCharField()
 
     class Meta:
         abstract = True
