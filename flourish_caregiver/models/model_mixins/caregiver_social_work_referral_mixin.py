@@ -3,6 +3,7 @@ from edc_base.model_fields import OtherCharField
 from edc_base.model_validators import datetime_not_future
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
+from edc_constants.constants import NO
 from edc_protocol.validators import datetime_not_before_study_start
 
 from ...choices import CAREGIVER_OR_CHILD, HIV_EXPOSURE_STATUS, HIV_STATUS, REFERRAL_LOCATION
@@ -20,11 +21,10 @@ class CaregiverSocialWorkReferralMixin(models.Model):
         choices=CAREGIVER_OR_CHILD)
 
     is_preg = models.CharField(
-        verbose_name='Is the caregiver pregnant? ',
+        verbose_name='Is this participant currently pregnant? ',
         max_length=3,
         choices=YES_NO,
-        blank=True,
-        null=True)
+        default=NO)
 
     current_hiv_status = models.CharField(
         verbose_name='Current HIV status?',
