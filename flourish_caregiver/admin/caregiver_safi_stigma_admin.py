@@ -28,8 +28,8 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'judged_period',
                 'avoided',
                 'avoided_period',
-                'discriminated',
-                'discriminated_period'
+                'insulted',
+                'insulted_period'
             ]}
          ),
         ('Because someone else in my family or a close friend has HIV, I have experienced discrimination at:', {
@@ -85,8 +85,8 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         'judged_period': admin.VERTICAL,
         'avoided': admin.VERTICAL,
         'avoided_period': admin.VERTICAL,
-        'discriminated': admin.VERTICAL,
-        'discriminated_period': admin.VERTICAL,
+        'insulted': admin.VERTICAL,
+        'insulted_period': admin.VERTICAL,
         'at_home': admin.VERTICAL,
         'at_home_period': admin.VERTICAL,
         'at_neigborhood': admin.VERTICAL,
@@ -151,13 +151,14 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     def update_form_labels(self, request, form):
         """ Update field labels for fields that are common between participant's
             LWHIV and not-LWHIV, respective to the HIV status of the participant.
+            NOTE: Applicable to fields on the first section only.
         """
         form = super().update_form_labels(request, form)
 
         if self.hiv_status(request) == POS:
             for fieldset in self.fieldsets:
-                _, fields_dict = fieldset
-                fields = fields_dict.get('fields', [])
+                section, fields_dict = fieldset
+                fields = fields_dict.get('fields', []) if not bool(section) else []
                 for field in fields:
                     self.update_field_labels(form, field)
         return form
