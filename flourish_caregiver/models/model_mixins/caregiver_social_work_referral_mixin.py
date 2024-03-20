@@ -24,7 +24,8 @@ class CaregiverSocialWorkReferralMixin(models.Model):
         verbose_name='Is this participant currently pregnant? ',
         max_length=3,
         choices=YES_NO,
-        default=NO)
+        blank=True,
+        null=True)
 
     current_hiv_status = models.CharField(
         verbose_name='Current HIV status?',
