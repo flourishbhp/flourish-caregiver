@@ -1244,6 +1244,7 @@ HIV_PERSPECTIVE = (
     ('no_one_thinks_that', 'No one thinks that'),
     ('a_few_people_think_that', 'A few people think that'),
     ('most_people_think_that', 'Most people think that'),
+    (DONT_KNOW, 'Don\'t know'),
     (NOT_APPLICABLE, 'Not Applicable')
 )
 
