@@ -4,7 +4,9 @@ from edc_constants.constants import NOT_APPLICABLE
 
 from .model_mixins import CrfModelMixin
 from ..choices import (PERIOD_HAPPENED, HAPPENED,
-                       PERIOD_HAPPENED_DONT_KNOW, HAPPENED_DONT_KNOW,
+                       PERIOD_HAPPENED_DONT_KNOW,
+                       HAPPENED_DONT_KNOW_WITH_NA,
+                       HAPPENED_DONT_KNOW,
                        HIV_PERSPECTIVE)
 
 
@@ -50,7 +52,7 @@ class CaregiverSafiStigma(CrfModelMixin):
         null=True,
     )
 
-    discriminated = models.CharField(
+    insulted = models.CharField(
         verbose_name=('Because someone else in my family or a close friend '
                       'has HIV, I have been called names or insulted'),
         max_length=20,
@@ -58,7 +60,7 @@ class CaregiverSafiStigma(CrfModelMixin):
         default=NOT_APPLICABLE
     )
 
-    discriminated_period = models.CharField(
+    insulted_period = models.CharField(
         verbose_name='If “Ever Happened”: When?',
         max_length=20,
         choices=PERIOD_HAPPENED,
@@ -231,7 +233,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     social_effect = models.CharField(
         verbose_name='Socially',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
         null=True,
     )
 
@@ -247,7 +249,7 @@ class CaregiverSafiStigma(CrfModelMixin):
     emotional_effect = models.CharField(
         verbose_name='Emotionally (for example, you feel stressed, down, or depressed)',
         max_length=20,
-        choices=HAPPENED_DONT_KNOW,
+        choices=HAPPENED_DONT_KNOW_WITH_NA,
         null=True,
     )
 
