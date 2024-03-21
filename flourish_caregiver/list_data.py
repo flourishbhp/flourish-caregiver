@@ -412,7 +412,27 @@ list_data = {
         ('fatigue', 'Fatigue'),
         ('congestion', 'Congestion'),
         ('enlarged_lymph_nodes', 'Enlarged Lymph nodes'),
-        (OTHER, 'Other'), ]
+        (OTHER, 'Other'), ],
+    'flourish_caregiver.mastitisactions': [
+        ('both_breasts', 'Breastfeed from both breasts'),
+        ('uninfected_breast',
+         'Breastfed from uninfected breast and pumped and dumped from the affected '
+         'breast'),
+        ('stopped_breastfeeding', 'Stopped breastfeeding'),
+        ('temp_stopped',
+         'Stopped breastfeeding temporarily but resumed once breast healed'),
+        (OTHER, 'Other')
+    ],
+    'flourish_caregiver.crackednipplesactions': [
+        ('both_breasts', 'Breastfeed from both breasts'),
+        ('uninfected_breast',
+         'Breastfed from uninfected breast and pumped and dumped from the affected '
+         'breast'),
+        ('stopped_breastfeeding', 'Stopped breastfeeding'),
+        ('temp_stopped',
+         'Stopped breastfeeding temporarily but resumed once breast healed'),
+        (OTHER, 'Other')
+    ]
 }
 
 preload_data = PreloadData(
