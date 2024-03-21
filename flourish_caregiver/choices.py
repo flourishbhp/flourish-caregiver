@@ -1263,22 +1263,6 @@ YES_NO_INT_CHOICES = (
     ('2', NO),
 )
 
-YES_NO_UKN_CHOICES = (
-    (YES, YES),
-    (NO, NO),
-    (UNKNOWN, 'Unknown'),
-)
-
-REFERRAL_LOCATION = (
-    ('hospital_based_sw', 'Hospital-based Social Worker'),
-    ('community_sw', 'Community Social Worker'),
-    ('bonmeh', 'BONMEH (Botswana Network for Mental Health)'),
-    ('bofwa', 'BOFWA (Botswana Family Welfare Association)'),
-    ('bosanet', 'BOSANET (Botswana Substance Abuse Support Network'),
-    ('bonela', 'BONELA (Botswana Network on Ethics, Law, and HIV/AIDS)'),
-    (OTHER, 'Other, specify'),
-)
-
 YES_RESOLVED_NO = (
     ('yes_currently', 'Yes currently'),
     ('yes_resolved', 'Yes but it has resolved'),
@@ -1298,6 +1282,15 @@ EXP_COUNT_CHOICES = (
     ('5_greater', '5 or Greater'),
 )
 
+EXP_COUNT_CHOICES_NONE = (
+    (None, 'None'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5_greater', '5 or Greater'),
+)
+
 NOT_COLLECTED_REASONS_CHOICES = (
     ('trying_to_breastfeed', 'Participant could not produce sufficient quantity but is '
                              'still trying to breastfeed. '),
@@ -1309,5 +1302,27 @@ NOT_COLLECTED_REASONS_CHOICES = (
 BREAST_COLLECTED_CHOICES = (
     ('right', 'Right'),
     ('left', 'Left'),
-    ('both', 'Both'),
+    ('both', 'Both')
+)
+
+YES_NO_UKN_CHOICES = (
+    (YES, YES),
+    (NO, NO),
+    (UNKNOWN, 'Unknown'),
+)
+
+REFERRAL_LOCATION = (
+    ('hospital_based_sw', 'Hospital-based Social Worker'),
+    ('community_sw', 'Community Social Worker'),
+    ('bonmeh', 'BONMEH (Botswana Network for Mental Health)'),
+    ('bofwa', 'BOFWA (Botswana Family Welfare Association)'),
+    ('bosanet', 'BOSANET (Botswana Substance Abuse Support Network'),
+    ('bonela', 'BONELA (Botswana Network on Ethics, Law, and HIV/AIDS)'),
+    (OTHER, 'Other, specify'),
+)
+
+YES_NO_NONE = (
+    (None, 'None'),
+    (YES, YES),
+    (NO, NO),
 )
