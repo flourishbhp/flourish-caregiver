@@ -1281,6 +1281,15 @@ EXP_COUNT_CHOICES = (
     ('5_greater', '5 or Greater'),
 )
 
+EXP_COUNT_CHOICES_NONE = (
+    (None, 'None'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5_greater', '5 or Greater'),
+)
+
 NOT_COLLECTED_REASONS_CHOICES = (
     ('trying_to_breastfeed', 'Participant could not produce sufficient quantity but is '
                              'still trying to breastfeed. '),
@@ -1295,7 +1304,6 @@ BREAST_COLLECTED_CHOICES = (
     ('both', 'Both')
 )
 
-  
 YES_NO_UKN_CHOICES = (
     (YES, YES),
     (NO, NO),
@@ -1310,4 +1318,10 @@ REFERRAL_LOCATION = (
     ('bosanet', 'BOSANET (Botswana Substance Abuse Support Network'),
     ('bonela', 'BONELA (Botswana Network on Ethics, Law, and HIV/AIDS)'),
     (OTHER, 'Other, specify'),
+)
+
+YES_NO_NONE = (
+    (None, 'None'),
+    (YES, YES),
+    (NO, NO),
 )

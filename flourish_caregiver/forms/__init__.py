@@ -1,7 +1,8 @@
 from .antenatal_enrollment_form import AntenatalEnrollmentForm
 from .appointment_form import AppointmentForm
 from .arvs_pre_pregnancy_form import ArvsPrePregnancyForm
-from .breast_milk_crf_forms import BreastMilk6MonthsForms, BreastMilkBirthForms
+from .breast_milk_crf_forms import BreastMilk6MonthsForms, BreastMilkBirthForms, \
+    CrackedNipplesInlineForm, MastitisInlineForm
 from .breastfeeding_questionnaire_form import BreastFeedingQuestionnaireForm
 from .brief_danger_assessment_form import BriefDangerAssessmentForm
 from .caregiver_child_consent_form import CaregiverChildConsentForm
