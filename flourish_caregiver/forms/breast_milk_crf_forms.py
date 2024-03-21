@@ -57,7 +57,7 @@ class BreastMilkBirthFormsMixin(forms.ModelForm):
     def _validate_mastitis_actions(self, mastitis_inline_count):
         exp_cracked_nipples = self.cleaned_data.get('exp_cracked_nipples')
         for x in range(0, mastitis_inline_count):
-            if 0 < x < (mastitis_inline_count - 1):
+            if x < (mastitis_inline_count - 1):
                 mastitis_actions = self.data.get(
                     f'mastitisinline_set-{x}-mastitis_action')
                 if str(self._get_mastitis_action.id) in mastitis_actions:
@@ -84,7 +84,7 @@ class BreastMilkBirthFormsMixin(forms.ModelForm):
     def _validate_cracked_nipples_actions(self, cracked_nipples_inline_count):
         milk_collected = self.cleaned_data.get('milk_collected')
         for x in range(0, cracked_nipples_inline_count):
-            if 0 < x < (cracked_nipples_inline_count - 1):
+            if x < (cracked_nipples_inline_count - 1):
                 cracked_nipples_actions = self.data.get(
                     f'crackednipplesinline_set-{x}-cracked_nipples_action')
                 if str(self._get_cracked_nipples_action.id) in cracked_nipples_actions:
