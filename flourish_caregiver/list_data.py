@@ -418,7 +418,7 @@ list_data = {
         ('uninfected_breast',
          'Breastfed from uninfected breast and pumped and dumped from the affected '
          'breast'),
-        ('stopped_breastfeeding', 'Stopped breastfeeding'),
+        ('stopped_breastfeeding', 'Stopped breastfeeding and did not resume '),
         ('temp_stopped',
          'Stopped breastfeeding temporarily but resumed once breast healed'),
         (OTHER, 'Other')
@@ -428,7 +428,7 @@ list_data = {
         ('uninfected_breast',
          'Breastfed from uninfected breast and pumped and dumped from the affected '
          'breast'),
-        ('stopped_breastfeeding', 'Stopped breastfeeding'),
+        ('stopped_breastfeeding', 'Stopped breastfeeding and did not resume '),
         ('temp_stopped',
          'Stopped breastfeeding temporarily but resumed once breast healed'),
         (OTHER, 'Other')
