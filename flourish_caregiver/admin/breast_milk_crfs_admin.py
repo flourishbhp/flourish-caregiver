@@ -1,5 +1,6 @@
 from django.contrib import admin
-from edc_model_admin import audit_fieldset_tuple, StackedInlineMixin, TabularInlineMixin
+from edc_fieldsets import Remove
+from edc_model_admin import audit_fieldset_tuple, StackedInlineMixin
 
 from flourish_caregiver.admin.modeladmin_mixins import CrfModelAdminMixin
 from flourish_caregiver.admin_site import flourish_caregiver_admin
@@ -66,6 +67,7 @@ class BreastMilkAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
                 'exp_cracked_nipples_count',
                 'milk_collected',
                 'not_collected_reasons',
+                'recently_ate',
                 'breast_collected',
                 'milk_collected_volume',
                 'last_breastfed',
@@ -79,10 +81,21 @@ class BreastMilkAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
         'exp_mastitis_count': admin.VERTICAL,
         'exp_cracked_nipples': admin.VERTICAL,
         'exp_cracked_nipples_count': admin.VERTICAL,
+        'recently_ate': admin.VERTICAL,
         'milk_collected': admin.VERTICAL,
         'not_collected_reasons': admin.VERTICAL,
         'breast_collected': admin.VERTICAL,
     }
+
+    search_fields = 'maternal_visit__subject_identifier',
+
+    conditional_fieldlists = {
+        '2002S': Remove('recently_ate')
+    }
+
+    def get_key(self, request, obj=None):
+        model_obj = self.get_instance(request)
+        return model_obj.visit_code
 
 
 @admin.register(BreastMilkBirth, site=flourish_caregiver_admin)

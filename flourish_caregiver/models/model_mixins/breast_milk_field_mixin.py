@@ -1,10 +1,8 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
 from flourish_caregiver.choices import BREAST_COLLECTED_CHOICES, EXP_COUNT_CHOICES, \
-    MASTITIS_TYPE_CHOICES, \
     NOT_COLLECTED_REASONS_CHOICES, YES_RESOLVED_NO
 from . import CrfModelMixin
 
@@ -82,9 +80,16 @@ class BreastMilkFieldsMixin(CrfModelMixin, models.Model):
         blank=True
     )
 
+    recently_ate = models.CharField(
+        verbose_name="Did the mother have a meal in the past two hours ",
+        max_length=10,
+        choices=YES_NO,
+        blank=True,
+        null=True
+    )
+
     add_comments = models.TextField(
         verbose_name='Any additional comments ',
         null=True,
         blank=True
     )
-
