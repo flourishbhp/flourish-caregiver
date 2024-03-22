@@ -1,14 +1,11 @@
 import datetime
-import uuid
 
 from django.contrib import admin
-from django.http import HttpResponse
 from django.utils import timezone
 from edc_lab.admin import RequisitionAdminMixin
 from edc_lab.admin import requisition_verify_fields
 from edc_lab.admin import requisition_verify_fieldset, requisition_status_fieldset
 from edc_model_admin import audit_fieldset_tuple
-import xlwt
 
 from edc_senaite_interface.admin import SenaiteRequisitionAdminMixin
 
@@ -49,47 +46,14 @@ class ExportRequisitionCsvMixin:
         return result_dict_obj
 
     def export_as_csv(self, request, queryset):
-
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
-            self.get_export_filename())
-
-        wb = xlwt.Workbook(encoding='utf-8', style_compression=2)
-        ws = wb.add_sheet('%s')
-
-        row_num = 0
-
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-        font_style.num_format_str = 'YYYY/MM/DD h:mm:ss'
-
-        field_names = self.fix_date_format(queryset[0].__dict__)
-        field_names = [a for a in field_names.keys()]
-        field_names += ['panel_name']
-        field_names.remove('_state')
-
-        for col_num in range(len(field_names)):
-            ws.write(row_num, col_num, field_names[col_num], font_style)
-
-        field_names.remove('panel_name')
+        records = []
         for obj in queryset:
-            obj_data = self.fix_date_format(obj.__dict__)
-            data = [obj_data[field] for field in field_names]
-            data += [obj.panel.name]
+            obj_data = self.fix_date_format(obj.__dict__.copy())
+            obj_data.update(panel_name=obj.panel.name)
+            records.append(obj_data)
 
-            row_num += 1
-            for col_num in range(len(data)):
-                if isinstance(data[col_num], uuid.UUID):
-                    ws.write(row_num, col_num, str(data[col_num]))
-                elif isinstance(data[col_num], datetime.date):
-                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
-                        num_format_str='YYYY/MM/DD'))
-                elif isinstance(data[col_num], datetime.time):
-                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
-                        num_format_str='h:mm:ss'))
-                else:
-                    ws.write(row_num, col_num, data[col_num])
-        wb.save(response)
+        # Inherinted from the Admin Export Helper on the parent export mixin
+        response = self.write_to_csv(records)
         return response
 
     export_as_csv.short_description = 'Export with panel name'

@@ -1,16 +1,15 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
-from flourish_caregiver.models.maternal_hiv_interim_hx import MaternalHivInterimHx
 
+from flourish_caregiver.models.maternal_hiv_interim_hx import MaternalHivInterimHx
+from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import MaternalInterimIdccForm
 from ..models import MaternalInterimIdcc
-from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(MaternalInterimIdcc, site=flourish_caregiver_admin)
 class MaternalInterimIdccAdmin(CrfModelAdminMixin, admin.ModelAdmin):
-
     form = MaternalInterimIdccForm
     change_form_template = 'admin/flourish_caregiver/maternalinterimidcc/change_form.html'
     add_form_template = 'admin/flourish_caregiver/maternalinterimidcc/change_form.html'

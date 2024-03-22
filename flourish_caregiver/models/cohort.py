@@ -6,7 +6,7 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
-from edc_constants.constants import POS, NEG
+from edc_constants.constants import NEG, POS
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
@@ -54,7 +54,6 @@ class Cohort(MatrixMatchVariablesMixin,
         self.exposure_status = self.check_exposure()
         self.current_cohort = self.check_current_cohort()
         super().save(*args, **kwargs)
-        
 
     @property
     def schedule_history_cls(self):
@@ -79,7 +78,7 @@ class Cohort(MatrixMatchVariablesMixin,
         antenatal = antenatal_cls.objects.filter(
             subject_identifier=self.caregiver_subject_identifier)
         return antenatal.exists()
-        
+
     def check_exposure(self):
         exposure = {POS: 'EXPOSED', NEG: 'UNEXPOSED', }
         child_dataset = getattr(self.caregiver_child_consent, 'child_dataset', None)

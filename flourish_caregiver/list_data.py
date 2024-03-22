@@ -1,8 +1,6 @@
 from edc_constants.constants import NONE, NOT_APPLICABLE, OTHER
 from edc_list_data import PreloadData
 
-from flourish_caregiver.constants import PNTA
-
 list_data = {
     'flourish_caregiver.chronicconditions': [
         ('mhist_asthma', 'Asthma'),
@@ -241,41 +239,41 @@ list_data = {
         ('refer_other', 'Other, specify')
     ],
     'flourish_caregiver.pregnancyinfluencerslist': [
-        ('the_father', 'The father of the child'),
-        ('maternal_family_members', 'Members of my family '),
-        ('paternal_family_members', 'Family members of the father of my child'),
-        ('anc_staff', 'The ANC staff'),
-        ('no_one', 'No other individual influenced my feeding choice decision'),
-        (OTHER, 'Other, specify'),
+        ('dur_influ_father', 'The father of the child'),
+        ('dur_influ_matmembers', 'Members of my family '),
+        ('dur_influ_patmembers', 'Family members of the father of my child'),
+        ('dur_infl_staff', 'The ANC staff'),
+        ('dur_i_one', 'No other individual influenced my feeding choice decision'),
+        ('dur__other', 'Other, specify'),
     ],
     'flourish_caregiver.afterpregnancyinfluencerslist': [
-        ('the_father', 'The father of the child'),
-        ('maternal_family_members', 'Members of my family '),
-        ('paternal_family_members', 'Family members of the father of my child'),
-        ('anc_staff', 'The ANC staff'),
-        ('no_one', 'No other individual influenced my feeding choice decision'),
-        (OTHER, 'Other, specify'),
+        ('aft_influ_father', 'The father of the child'),
+        ('aft_influ_members', 'Members of my family '),
+        ('aft_influ_members', 'Family members of the father of my child'),
+        ('aft_influ_staff', 'The ANC staff'),
+        ('aft_influ_one', 'No other individual influenced my feeding choice decision'),
+        ('aft_influ_other', 'Other, specify'),
     ],
     'flourish_caregiver.receivedtrainingonfeedinglist': [
-        ('antenatal_clinic', 'ANC'),
-        ('labour_delivery_ward', 'Labour and Delivery Ward'),
-        ('maternatiy_ward', 'Maternity Ward after delivery'),
-        ('flourish_team', 'The FLOURISH study team'),
-        (NONE, 'None'),
+        ('training_clinic', 'ANC'),
+        ('training_lbw', 'Labour and Delivery Ward'),
+        ('training_matward', 'Maternity Ward after delivery'),
+        ('training_flourish', 'The FLOURISH study team'),
+        ('training_none', 'None'),
     ],
     'flourish_caregiver.reasonsforinfantfeedinglist': [
-        ('no_time_for_breastfeeding', 'I did not have time to breastfeed'),
-        ('returned_work_school', 'I had to return to school/work'),
-        ('unable_to_produce_enough_milk',
+        ('feeding_notime', 'I did not have time to breastfeed'),
+        ('feeding_workschool', 'I had to return to school/work'),
+        ('feeding_nomilk',
          'I was not able to produce enough breastmilk to keep my infant satisfied'),
-        ('infant_refused_breastmilk', 'My infant refused breastmilk'),
-        ('painfull_breastfeeding', 'Breastfeeding was too painful'),
-        ('cracked_bleeding_nipples', 'My nipples were cracked and/or bleeding'),
-        ('did_not_like_breast_shape',
+        ('feeding_refusedmilk', 'My infant refused breastmilk'),
+        ('feeding_painful', 'Breastfeeding was too painful'),
+        ('feeding_cracked', 'My nipples were cracked and/or bleeding'),
+        ('feeding_shape',
          'I did not like the way breastfeeding changed my breast shape'),
-        ('wanted_to_give_infant_traditional_medicine',
+        ('feeding_traditional',
          'I wanted to give traditional medicines to my infant'),
-        (OTHER, 'Other, specify'),
+        ('feeding_oth', 'Other, specify'),
     ],
     'flourish_caregiver.tbvisitcarelocation': [
         ('antenatal_visit', 'Antenatal Visit'),
@@ -285,7 +283,7 @@ list_data = {
         ('opd', 'OPD'),
         (OTHER, 'Other, specify'),
     ],
-     'flourish_caregiver.memberreadbooks': [
+    'flourish_caregiver.memberreadbooks': [
         ('read_mother', 'Mother'),
         ('read_father', 'Biological Father'),
         ('read_mpartner', 'Mother’s partner (not biological father)'),
@@ -414,7 +412,27 @@ list_data = {
         ('fatigue', 'Fatigue'),
         ('congestion', 'Congestion'),
         ('enlarged_lymph_nodes', 'Enlarged Lymph nodes'),
-        (OTHER, 'Other'),]
+        (OTHER, 'Other'), ],
+    'flourish_caregiver.mastitisactions': [
+        ('both_breasts', 'Breastfeed from both breasts'),
+        ('uninfected_breast',
+         'Breastfed from uninfected breast and pumped and dumped from the affected '
+         'breast'),
+        ('stopped_breastfeeding', 'Stopped breastfeeding and did not resume '),
+        ('temp_stopped',
+         'Stopped breastfeeding temporarily but resumed once breast healed'),
+        (OTHER, 'Other')
+    ],
+    'flourish_caregiver.crackednipplesactions': [
+        ('both_breasts', 'Breastfeed from both breasts'),
+        ('uninfected_breast',
+         'Breastfed from uninfected breast and pumped and dumped from the affected '
+         'breast'),
+        ('stopped_breastfeeding', 'Stopped breastfeeding and did not resume '),
+        ('temp_stopped',
+         'Stopped breastfeeding temporarily but resumed once breast healed'),
+        (OTHER, 'Other')
+    ]
 }
 
 preload_data = PreloadData(

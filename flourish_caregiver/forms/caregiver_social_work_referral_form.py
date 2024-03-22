@@ -8,6 +8,10 @@ class CaregiverSocialWorkReferralForm(SubjectModelFormMixin, forms.ModelForm):
 
     form_validator_cls = CaregiverSocialWorkReferralFormValidator
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['referral_for'].disabled = True
+
     class Meta:
         model = CaregiverSocialWorkReferral
         fields = '__all__'

@@ -6,6 +6,11 @@ from .helper_classes.utils import get_previous_by_appt_datetime
 
 
 class VisitSequence(VisitSequence):
+    """ Override property for previous_visit for sequential enrollment
+        or participant's replacing others, appointments continuing off
+        where the previous onschedule appts were last done.
+    """
+
     def __init__(self, appointment=None):
         self.appointment = appointment
         self.appointment_model_cls = self.appointment.__class__

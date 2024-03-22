@@ -1,6 +1,7 @@
 from .antenatal_enrollment_admin import AntenatalEnrollmentAdmin
 from .appointment_admin import AppointmentAdmin
 from .arvs_pre_pregnancy_admin import ArvsPrePregnancyAdmin
+from .breast_milk_crfs_admin import BreastMilk6MonthsAdmin, BreastMilkBirthAdmin
 from .breastfeeding_questionnaire_admin import BreastFeedingQuestionnaireAdmin
 from .brief_danger_assessment_admin import BriefDangerAssessmentAdmin
 from .caregiver_clinical_measurements_admin import CaregiverClinicalMeasurementsAdmin

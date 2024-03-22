@@ -1,16 +1,15 @@
-import datetime
-import uuid
+import pandas as pd
+
+from io import BytesIO
 from _collections import OrderedDict
 from functools import partialmethod
 
-import xlwt
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import OuterRef, Subquery
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from edc_consent.actions import (
     flag_as_verified_against_paper, unflag_as_verified_against_paper)
@@ -206,7 +205,6 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
                 extra = child_count
             else:
                 extra = len(self.get_difference(child_datasets, obj))
-
         return extra
 
     def get_child_reconsent_extra(self, request):
@@ -214,12 +212,13 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
         subject_identifier = request.GET.get('subject_identifier')
 
         consent_version_obj = self.consent_version_obj(screening_identifier)
-        if consent_version_obj and getattr(consent_version_obj, 'child_version', None):
-            child_consent_objs = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier,
-                version=consent_version_obj.child_version)
-            if not child_consent_objs:
-                return 1
+        child_version = getattr(consent_version_obj, 'child_version', None)
+        if consent_version_obj and child_version:
+            child_consent_objs = self.get_caregiver_child_consents(subject_identifier,)
+            child_consents_by_version = self.get_caregiver_child_consents(
+                subject_identifier, child_version)
+
+            return len(child_consent_objs - child_consents_by_version)
         return 0
 
     pre_flourish_child_consent_model = 'pre_flourish.preflourishcaregiverchildconsent'
@@ -388,21 +387,21 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj=obj, **kwargs)
         subject_identifier = None
+        initial_values = []
         if request.method == 'GET':
             if request.GET.get('subject_identifier'):
                 subject_identifier = request.GET.get('subject_identifier')
             else:
                 screening_identifier = request.GET.get('screening_identifier')
                 subject_identifier = self.get_subject_identifier(screening_identifier)
-        initial_values = self.prepare_initial_values_based_on_subject(
-            obj=obj, subject_identifier=subject_identifier)
-
+            initial_values = self.prepare_initial_values_based_on_subject(
+                subject_identifier=subject_identifier)
+    
         form.previous_instance = initial_values
         return form
 
-    def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
-        return [self.prepare_subject_consent(consent) for consent in
-                self.consents_filtered_by_subject(obj, subject_identifier)]
+    def prepare_initial_values_based_on_subject(self, subject_identifier):
+        return [self.prepare_subject_consent(subject_identifier)]
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
@@ -485,32 +484,12 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                                   'first_name', 'last_name', 'identity',
                                   'confirm_identity', 'subject_consent_id')
 
-        response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=%s.xls' % (
-            self.get_export_filename())
-
-        wb = xlwt.Workbook(encoding='utf-8', style_compression=2)
-        ws = wb.add_sheet('%s')
-
-        row_num = 0
-
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-        font_style.num_format_str = 'YYYY/MM/DD h:mm:ss'
-
-        field_names = queryset[0].__dict__
-        field_names = [a for a in field_names.keys()]
-        field_names.remove('_state')
-
-        field_names.append('hiv_exposure')
-        field_names.append('protocol')
-        field_names.append('study_maternal_identifier')
-        field_names.append('study_status')
-
+        records = []
         for obj in queryset:
             obj_data = obj.__dict__
+
             maternal_dataset_qs = self.related_maternal_dataset(
-                identifier=obj_data['study_child_identifier'])
+                identifier=getattr(obj, 'study_child_identifier', None))
             extra_data = {}
             if maternal_dataset_qs:
                 extra_data = maternal_dataset_qs.__dict__
@@ -521,40 +500,17 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 subject_identifier=caregiver_sid)})
             extra_data.update({'study_status': self.study_status(obj.subject_identifier)})
 
-            data = [
-                obj_data[field] if field not in ['protocol', 'study_maternal_identifier',
-                                                 'hiv_exposure', 'study_status']
-                else extra_data.get(field, '') for field in field_names]
+            obj_data.update(extra_data)
 
-            row_num += 1
-            for col_num in range(len(data)):
-                if isinstance(data[col_num], uuid.UUID):
-                    ws.write(row_num, col_num, str(data[col_num]))
-                elif isinstance(data[col_num], datetime.datetime):
-                    data[col_num] = timezone.make_naive(data[col_num])
-                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
-                        num_format_str='YYYY/MM/DD h:mm:ss'))
-                elif isinstance(data[col_num], datetime.date):
-                    ws.write(row_num, col_num, data[col_num], xlwt.easyxf(
-                        num_format_str='YYYY/MM/DD'))
-                else:
-                    ws.write(row_num, col_num, data[col_num])
-
-        replace_idx = {'subject_identifier': 'childpid',
-                       'study_maternal_identifier': 'old_matpid',
-                       'study_child_identifier': 'old_childpid'}
-        for old_idx, new_idx in replace_idx.items():
-            try:
-                idx_index = field_names.index(old_idx)
-            except ValueError:
-                continue
-            else:
-                field_names[idx_index] = new_idx
-
-        for col_num in range(len(field_names)):
-            ws.write(0, col_num, field_names[col_num], font_style)
-
-        wb.save(response)
+            # Update variable names for study identifiers
+            obj_data = self.update_variables(obj_data)
+            # Exclude identifying values
+            obj_data = self.remove_exclude_fields(obj_data)
+            # Correct date formats
+            obj_data = self.fix_date_formats(obj_data)
+            records.append(obj_data)
+        
+        response = self.write_to_csv(records)
         return response
 
     export_as_csv.short_description = _(
@@ -586,6 +542,19 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             super_actions.update(actions)
 
         return super_actions
+
+    def update_variables(self, data={}):
+        """ Update study identifiers to desired variable name(s).
+        """
+        replace_idx = {'subject_identifier': 'childpid',
+                       'study_maternal_identifier': 'old_matpid',
+                       'study_child_identifier': 'old_childpid'}
+        for old_idx, new_idx in replace_idx.items():
+            try:
+                data[new_idx] = data.pop(old_idx)
+            except KeyError:
+                continue
+        return data
 
     def previous_study_dataset(self, identifier=None):
         childdataset_cls = django_apps.get_model('flourish_child.childdataset')

@@ -1,9 +1,8 @@
-from .model_mixins import CrfModelMixin
 from .model_mixins import CaregiverPhqDeprScreeningMixin
+from .model_mixins import CrfModelMixin
+
 
 class CaregiverPhqDeprScreening(CaregiverPhqDeprScreeningMixin, CrfModelMixin):
-
-   
 
     def save(self, *args, **kwargs):
         self.depression_score = self.calculate_depression_score()
