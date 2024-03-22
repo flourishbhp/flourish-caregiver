@@ -95,7 +95,7 @@ class BreastMilkAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
 
     def get_key(self, request, obj=None):
         model_obj = self.get_instance(request)
-        return model_obj.visit_code
+        return getattr(model_obj, 'visit_code', None)
 
 
 @admin.register(BreastMilkBirth, site=flourish_caregiver_admin)
