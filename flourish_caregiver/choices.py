@@ -1244,6 +1244,7 @@ HIV_PERSPECTIVE = (
     ('no_one_thinks_that', 'No one thinks that'),
     ('a_few_people_think_that', 'A few people think that'),
     ('most_people_think_that', 'Most people think that'),
+    (DONT_KNOW, 'Don\'t know'),
     (NOT_APPLICABLE, 'Not Applicable')
 )
 
@@ -1258,4 +1259,20 @@ PARTNER_ACTIONS_CHOICES = (
 YES_NO_INT_CHOICES = (
     ('1', YES),
     ('2', NO),
+)
+
+YES_NO_UKN_CHOICES = (
+    (YES, YES),
+    (NO, NO),
+    (UNKNOWN, 'Unknown'),
+)
+
+REFERRAL_LOCATION = (
+    ('hospital_based_sw', 'Hospital-based Social Worker'),
+    ('community_sw', 'Community Social Worker'),
+    ('bonmeh', 'BONMEH (Botswana Network for Mental Health)'),
+    ('bofwa', 'BOFWA (Botswana Family Welfare Association)'),
+    ('bosanet', 'BOSANET (Botswana Substance Abuse Support Network'),
+    ('bonela', 'BONELA (Botswana Network on Ethics, Law, and HIV/AIDS)'),
+    (OTHER, 'Other, specify'),
 )
