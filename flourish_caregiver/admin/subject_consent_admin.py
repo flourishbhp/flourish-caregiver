@@ -1,6 +1,3 @@
-import pandas as pd
-
-from io import BytesIO
 from _collections import OrderedDict
 from functools import partialmethod
 
@@ -8,7 +5,6 @@ from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import OuterRef, Subquery
-from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from edc_consent.actions import (
@@ -394,9 +390,10 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
             else:
                 screening_identifier = request.GET.get('screening_identifier')
                 subject_identifier = self.get_subject_identifier(screening_identifier)
-            initial_values = self.prepare_initial_values_based_on_subject(
-                subject_identifier=subject_identifier)
-    
+            if subject_identifier:
+                initial_values = self.prepare_initial_values_based_on_subject(
+                    subject_identifier=subject_identifier)
+
         form.previous_instance = initial_values
         return form
 
@@ -509,7 +506,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             # Correct date formats
             obj_data = self.fix_date_formats(obj_data)
             records.append(obj_data)
-        
+
         response = self.write_to_csv(records)
         return response
 
