@@ -13,6 +13,10 @@ class CaregiverContactForm(FormValidatorMixin, forms.ModelForm):
         label='Subject Identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
+    study_name = forms.CharField(
+        label='Study Name',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+
     class Meta:
         model = CaregiverContact
         fields = '__all__'
