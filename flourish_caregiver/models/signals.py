@@ -24,7 +24,7 @@ from edc_visit_tracking.constants import MISSED_VISIT
 from PIL import Image
 
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
-from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
+from flourish_prn.action_items import CHILDOFF_STUDY_ACTION
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -52,6 +52,8 @@ from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
 from ..models.tb_off_study import TbOffStudy  # was supposed to be in the prns
 from ..models.tb_visit_screening_women import TbVisitScreeningWomen
+
+caregiver_config = django_apps.get_app_config('flourish_caregiver')
 
 
 class PreFlourishError(Exception):
@@ -285,6 +287,7 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     preg_child_consent = child_consents.filter(
         preg_enroll=True,
         subject_identifier=instance.child_subject_identifier)
+
     if instance.live_infants_to_register == 1 and preg_child_consent.exists():
         helper_cls = onschedule_helper_cls(instance.subject_identifier, )
         caregiver_visit_count = preg_child_consent.latest(
@@ -533,13 +536,13 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
             'flourish_caregiver.tboffstudy')
 
         tb_referral = (
-                instance.have_cough == YES or
-                instance.cough_duration == '=>2 week' or
-                instance.fever == YES or
-                instance.night_sweats == YES or
-                instance.weight_loss == YES or
-                instance.cough_blood == YES or
-                instance.enlarged_lymph_nodes == YES
+            instance.have_cough == YES or
+            instance.cough_duration == '=>2 week' or
+            instance.fever == YES or
+            instance.night_sweats == YES or
+            instance.weight_loss == YES or
+            instance.cough_blood == YES or
+            instance.enlarged_lymph_nodes == YES
         )
 
         if not tb_referral:
@@ -556,11 +559,13 @@ def tb_visit_screening_women_post_save(sender, instance, raw, created, **kwargs)
             else:
                 onschedule_dt = instance.report_datetime.replace(microsecond=0)
                 helper_cls = onschedule_helper_cls(instance.subject_identifier, )
+
                 helper_cls.put_on_schedule(
                     'cohort_a_tb_6_months',
                     instance=instance,
                     child_subject_identifier=child_consent.subject_identifier,
-                    base_appt_datetime=onschedule_dt)
+                    base_appt_datetime=onschedule_dt,
+                    caregiver_visit_count=child_consent.caregiver_visit_count)
 
 
 @receiver(post_save, weak=False, sender=TbOffStudy,
@@ -620,8 +625,12 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
 @receiver(post_save, weak=False, sender=UltraSound,
           dispatch_uid='ultrasound_on_post_save')
 def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
-    caregiver_offstudy_cls = django_apps.get_model(
-        'flourish_prn.caregiveroffstudy')
+    """ Triggers child off study, to remove mother on related schedules. This
+        is to account for multiple enrolment, can not take caregiver/mother offstudy.
+        If only child, child offstudy will trigger caregiver offstudy form.
+    """
+    child_offstudy_cls = django_apps.get_model(
+        'flourish_prn.childoffstudy')
 
     registration_datetime = get_registration_date(instance.subject_identifier)
 
@@ -634,13 +643,13 @@ def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
         if (ga_confirmed_after < MIN_GA_LMP_ENROL_WEEKS
                 or ga_confirmed_after > MAX_GA_LMP_ENROL_WEEKS):
 
-            trigger_action_item(caregiver_offstudy_cls,
-                                CAREGIVEROFF_STUDY_ACTION,
-                                instance.subject_identifier)
+            trigger_action_item(child_offstudy_cls,
+                                CHILDOFF_STUDY_ACTION,
+                                instance.child_subject_identifier)
         else:
-            trigger_action_item(caregiver_offstudy_cls,
-                                CAREGIVEROFF_STUDY_ACTION,
-                                instance.subject_identifier,
+            trigger_action_item(child_offstudy_cls,
+                                CHILDOFF_STUDY_ACTION,
+                                instance.child_subject_identifier,
                                 opt_trigger=False)
 
 
@@ -652,7 +661,7 @@ def screening_preg_women(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=3)
+            create_consent_version(instance, version=caregiver_config.consent_version)
 
 
 @receiver(post_save, weak=False, sender=ScreeningPriorBhpParticipants,
@@ -664,7 +673,7 @@ def screening_prior_bhp_participants(sender, instance, raw, created, **kwargs):
             screening_identifier=instance.screening_identifier)
 
         if not subject_consents:
-            create_consent_version(instance, version=3)
+            create_consent_version(instance, version=caregiver_config.consent_version)
 
 
 @receiver(post_save, weak=False, sender=TbInformedConsent,
@@ -819,51 +828,52 @@ def get_registration_date(subject_identifier):
 
 def create_registered_infant(instance):
     #  Create infant registered subject
-    if isinstance(instance, MaternalDelivery):
-        if instance.live_infants_to_register == 1:
-            maternal_consent = SubjectConsent.objects.filter(
-                subject_identifier=instance.subject_identifier
-            ).order_by('version').last()
-            try:
-                UltraSound.objects.filter(
-                    maternal_visit__subject_identifier=instance.subject_identifier,
-                    child_subject_identifier=instance.child_subject_identifier
-                ).order_by('report_datetime').last()
-            except UltraSound.DoesNotExist:
-                raise ValidationError(
-                    'Maternal Ultrasound must exist for {instance.subject_identifier}')
-            else:
-                with ((transaction.atomic())):
-                    caregiver_child_consent_cls = django_apps.get_model(
-                        'flourish_caregiver.caregiverchildconsent')
+    if (isinstance(instance, MaternalDelivery) and
+        getattr(instance, 'live_infants_to_register', None) == 1):
+        maternal_consent = SubjectConsent.objects.filter(
+            subject_identifier=instance.subject_identifier
+        ).order_by('version').last()
 
+        ultrasound = UltraSound.objects.filter(
+            maternal_visit__subject_identifier=instance.subject_identifier,
+            child_subject_identifier=instance.child_subject_identifier
+        ).order_by('report_datetime').last()
+    
+        if not ultrasound:
+            raise ValidationError(
+                f'Maternal Ultrasound must exist for {instance.subject_identifier}')
+        else:
+            with transaction.atomic():
+                caregiver_child_consent_cls = django_apps.get_model(
+                    'flourish_caregiver.caregiverchildconsent')
+
+                child_consent_objs = caregiver_child_consent_cls.objects.filter(
+                    subject_identifier=instance.child_subject_identifier)
+
+                if not child_consent_objs.exists():
                     # Create caregiver child consent
-                    caregiver_child_consent_objs = caregiver_child_consent_cls.objects.filter(
-                        subject_identifier=instance.child_subject_identifier)
-
-                    if not caregiver_child_consent_objs:
-                        caregiver_child_consent_cls.objects.create(
-                            subject_consent=maternal_consent,
-                            child_dob=instance.delivery_datetime.date(),
-                            consent_datetime=get_utcnow(),
-                            is_eligible=True)
-                    else:
-                        caregiver_child_consent_obj = caregiver_child_consent_objs.latest(
-                            'consent_datetime')
-                        child_dummy_consent_cls = django_apps.get_model(
-                            'flourish_child.childdummysubjectconsent')
-                        try:
-                            child_dummy_consent_cls.objects.get(
-                                subject_identifier=caregiver_child_consent_obj.subject_identifier,
-                                version=caregiver_child_consent_obj.version)
-                        except child_dummy_consent_cls.DoesNotExist:
-                            child_dummy_consent_cls.objects.create(
-                                subject_identifier=caregiver_child_consent_obj.subject_identifier,
-                                consent_datetime=caregiver_child_consent_obj.consent_datetime,
-                                dob=caregiver_child_consent_obj.dob,
-                                cohort=caregiver_child_consent_obj.cohort,
-                                version=caregiver_child_consent_obj.version,
-                                relative_identifier=caregiver_child_consent_obj.subject_consent.subject_identifier)
+                    caregiver_child_consent_cls.objects.create(
+                        subject_consent=maternal_consent,
+                        child_dob=instance.delivery_datetime.date(),
+                        consent_datetime=get_utcnow(),
+                        is_eligible=True)
+                else:
+                    caregiver_child_consent_obj = child_consent_objs.latest(
+                        'consent_datetime')
+                    child_dummy_consent_cls = django_apps.get_model(
+                        'flourish_child.childdummysubjectconsent')
+                    try:
+                        child_dummy_consent_cls.objects.get(
+                            subject_identifier=caregiver_child_consent_obj.subject_identifier,
+                            version=caregiver_child_consent_obj.version)
+                    except child_dummy_consent_cls.DoesNotExist:
+                        child_dummy_consent_cls.objects.create(
+                            subject_identifier=caregiver_child_consent_obj.subject_identifier,
+                            consent_datetime=caregiver_child_consent_obj.consent_datetime,
+                            dob=caregiver_child_consent_obj.dob,
+                            cohort=caregiver_child_consent_obj.cohort,
+                            version=caregiver_child_consent_obj.version,
+                            relative_identifier=caregiver_child_consent_obj.subject_consent.subject_identifier)
 
 
 def trigger_action_item(model_cls, action_name, subject_identifier,
@@ -913,7 +923,7 @@ def create_consent_version(instance, version):
         consent_version = consent_version_cls(
             screening_identifier=instance.screening_identifier,
             version=version,
-            child_version=3,
+            child_version=caregiver_config.child_consent_version,
             user_created=instance.user_modified or instance.user_created,
             created=get_utcnow())
         consent_version.save()
