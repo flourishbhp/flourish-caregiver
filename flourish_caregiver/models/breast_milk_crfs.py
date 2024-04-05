@@ -26,15 +26,16 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
 
 
 class MastitisInline(BaseUuidModel):
-    breast_milk_crf = models.ForeignKey(BreastMilkFieldsMixin, on_delete=PROTECT)
+    breast_milk_crf = models.ForeignKey(
+        BreastMilkFieldsMixin, on_delete=PROTECT)
 
     mastitis_date_onset = models.DateField(
-        verbose_name='Approximate date of onset of mastitis (first instance): ',
+        verbose_name='Approximate date of onset of mastitis: ',
         null=True,
     )
 
     mastitis_type = models.CharField(
-        verbose_name='Is the mastitis(first instance):',
+        verbose_name='Is the mastitis:',
         max_length=20,
         choices=MASTITIS_TYPE_CHOICES,
         null=True,
@@ -42,13 +43,13 @@ class MastitisInline(BaseUuidModel):
 
     mastitis_action = models.ManyToManyField(
         MastitisActions,
-        verbose_name='What did the mother do (first instance)? ',
+        verbose_name='What did the mother do? ',
         max_length=20,
         related_name='mastitis_actions',
     )
 
     mastitis_action_other = OtherCharField(
-        verbose_name='If Other, specify (first instance)'
+        verbose_name='If Other, specify'
     )
 
     class Meta:
@@ -58,7 +59,8 @@ class MastitisInline(BaseUuidModel):
 
 
 class CrackedNipplesInline(BaseUuidModel):
-    breast_milk_crf = models.ForeignKey(BreastMilkFieldsMixin, on_delete=PROTECT)
+    breast_milk_crf = models.ForeignKey(
+        BreastMilkFieldsMixin, on_delete=PROTECT)
 
     cracked_nipples_date_onset = models.DateField(
         verbose_name='Approximate date of onset of cracked nipples: ',
