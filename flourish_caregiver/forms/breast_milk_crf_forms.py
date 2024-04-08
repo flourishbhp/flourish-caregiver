@@ -16,15 +16,18 @@ class BreastMilkBirthFormsMixin(forms.ModelForm):
 
     def clean(self):
         super().clean()
-        mastitis_inline_count = int(self.data.get('mastitisinline_set-TOTAL_FORMS'))
+        mastitis_inline_count = int(
+            self.data.get('mastitisinline_set-TOTAL_FORMS'))
         cracked_nipples_inline_count = int(
             self.data.get('crackednipplesinline_set-TOTAL_FORMS'))
         exp_mastitis_count = self.cleaned_data.get('exp_mastitis_count', '')
-        exp_cracked_nipples_count = self.cleaned_data.get('exp_cracked_nipples_count', '')
+        exp_cracked_nipples_count = self.cleaned_data.get(
+            'exp_cracked_nipples_count', '')
 
-        self._validate_count(mastitis_inline_count, exp_mastitis_count, 'Mastitis')
+        self._validate_count(mastitis_inline_count,
+                             exp_mastitis_count, 'Mastitis')
         self._validate_count(cracked_nipples_inline_count, exp_cracked_nipples_count,
-                             'Cracked Nipples')
+                             'Cracked_Nipples')
 
         self._validate_mastitis_actions(mastitis_inline_count)
         self._validate_cracked_nipples_actions(cracked_nipples_inline_count)
@@ -49,7 +52,7 @@ class BreastMilkBirthFormsMixin(forms.ModelForm):
             if inline_count != int(exp_count):
                 raise ValidationError(
                     {f'exp_{field_name.lower()}_count': f'Ensure that you have the same '
-                                                        f'number of {field_name} inlines'}
+                                                        f'number of {field_name.lower()} inlines'}
                 )
         elif inline_count > 0:
             raise ValidationError(f'{field_name} inlines are not required')

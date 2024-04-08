@@ -425,8 +425,8 @@ list_data = {
     ],
     'flourish_caregiver.crackednipplesactions': [
         ('both_breasts', 'Breastfeed from both breasts'),
-        ('uninfected_breast',
-         'Breastfed from uninfected breast and pumped and dumped from the affected '
+        ('non_cracked_breast',
+         'Breastfed from non-cracked nipple breast and pumped and dumped from the affected '
          'breast'),
         ('stopped_breastfeeding', 'Stopped breastfeeding and did not resume '),
         ('temp_stopped',
