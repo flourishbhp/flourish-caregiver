@@ -20,6 +20,7 @@ from edc_model_admin import ModelAdminBasicMixin
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
 
+from .consent_amin_mixin import ConsentMixin
 from .modeladmin_mixins import ModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
@@ -27,8 +28,8 @@ from ..helper_classes import MaternalStatusHelper
 from ..models import CaregiverChildConsent, CaregiverLocator, SubjectConsent
 
 
-class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin,
-                                  admin.StackedInline):
+class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
+                                  ModelAdminFormAutoNumberMixin, admin.StackedInline):
     model = CaregiverChildConsent
     form = CaregiverChildConsentForm
 
@@ -72,6 +73,8 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         'flourish_caregiver.screeningpregwomen')
     consent_cls = django_apps.get_model(
         'flourish_caregiver.caregiverchildconsent')
+    caregiver_consent_cls = django_apps.get_model(
+        'flourish_caregiver.subjectconsent')
 
     def save_model(self, request, obj, form, change):
         super(CaregiverChildConsentInline, self).save_model(
@@ -79,7 +82,13 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
     def get_formset(self, request, obj=None, **kwargs):
         study_maternal_id = request.GET.get('study_maternal_identifier')
-        subject_identifier = request.GET.get('subject_identifier')
+        subject_identifier = None
+
+        if request.GET.get('subject_identifier'):
+            subject_identifier = request.GET.get('subject_identifier')
+        else:
+            screening_identifier = request.GET.get('screening_identifier')
+            subject_identifier = self.get_subject_identifier(screening_identifier)
 
         if subject_identifier:
             initial = self.prepare_initial_values_based_on_subject(
@@ -90,19 +99,22 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         else:
             initial = []
 
+        initial = self.filter_for_unique_identifiers(initial)
+
         formset = super().get_formset(request, obj=obj, **kwargs)
         formset.form = self.auto_number(formset.form)
         formset.__init__ = partialmethod(formset.__init__, initial=initial)
         return formset
 
-    def prepare_subject_consent(self, consent):
-        child_consent_obj = self.consent_cls.objects.filter(
-            subject_identifier=consent if isinstance(
-                consent, str) else consent.subject_identifier).latest(
-            'consent_datetime')
+    def filter_for_unique_identifiers(self, lst):
+        if not lst:
+            return lst
 
-        return self.prepare_consent_dict(
-            child_consent_obj.__dict__)
+        unique_subject_identifiers = list(
+            {v.get('subject_identifier', v.get('study_child_identifier')): v for v in lst
+             if 'subject_identifier' in v or 'study_child_identifier' in v}.values())
+
+        return unique_subject_identifiers
 
     def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
         return [self.prepare_subject_consent(consent) for consent in
@@ -140,12 +152,6 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
         return initial
 
-    def prepare_consent_dict(self, original_dict):
-        exclude_options = ['consent_datetime', 'id', '_state',
-                           'created', 'modified', 'user_created',
-                           'user_modified', 'version']
-        return self.remove_dict_options(original_dict, exclude_options)
-
     def prepare_child_dict(self, obj, child):
         child_dict = {
             'study_child_identifier': child.study_child_identifier,
@@ -176,12 +182,6 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
         return child_dict
 
-    def remove_dict_options(self, input_dict, options):
-        input_dict = dict(input_dict)
-        for option in options:
-            del input_dict[option]
-        return input_dict
-
     def get_extra(self, request, obj=None, **kwargs):
 
         extra = (super().get_extra(request, obj, **kwargs) +
@@ -208,16 +208,6 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
         return extra
 
-    def get_difference(self, model_objs, obj=None):
-        cc_ids = obj.caregiverchildconsent_set.values_list(
-            'subject_identifier', 'version')
-        consent_version_obj = self.consent_version_obj(
-            obj.screening_identifier)
-
-        child_version = getattr(consent_version_obj, 'child_version', None)
-        return [x for x in model_objs if (
-            x.subject_identifier, x.version) not in cc_ids or x.version != child_version]
-
     def get_child_reconsent_extra(self, request):
         screening_identifier = request.GET.get('screening_identifier')
         subject_identifier = request.GET.get('subject_identifier')
@@ -230,17 +220,6 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
             if not child_consent_objs:
                 return 1
         return 0
-
-    def consent_version_obj(self, screening_identifier=None):
-        consent_version_cls = django_apps.get_model(
-            'flourish_caregiver.flourishconsentversion')
-        try:
-            consent_version_obj = consent_version_cls.objects.get(
-                screening_identifier=screening_identifier)
-        except consent_version_cls.DoesNotExist:
-            return None
-        else:
-            return consent_version_obj
 
     pre_flourish_child_consent_model = 'pre_flourish.preflourishcaregiverchildconsent'
 
@@ -255,12 +234,23 @@ class CaregiverChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMi
         except self.pre_flourish_child_consent_cls.DoesNotExist:
             return None
 
+    def get_subject_identifier(self, screening_identifier):
+        try:
+            return self.caregiver_consent_cls.objects.filter(
+                screening_identifier=screening_identifier).latest(
+                'consent_datetime').subject_identifier
+        except self.caregiver_consent_cls.DoesNotExist:
+            return None
+
 
 @admin.register(SubjectConsent, site=flourish_caregiver_admin)
-class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
+class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
                           SimpleHistoryAdmin, admin.ModelAdmin):
     form = SubjectConsentForm
     inlines = [CaregiverChildConsentInline, ]
+
+    consent_cls = django_apps.get_model(
+        'flourish_caregiver.subjectconsent')
 
     fieldsets = (
         (None, {
@@ -287,7 +277,6 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'confirm_identity',
                 'remain_in_study',
                 'hiv_testing',
-                'breastfeed_intent',
                 'child_consent')}),
         ('Review Questions', {
             'fields': (
@@ -317,7 +306,6 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'study_questions': admin.VERTICAL,
         'remain_in_study': admin.VERTICAL,
         'hiv_testing': admin.VERTICAL,
-        'breastfeed_intent': admin.VERTICAL,
         'future_contact': admin.VERTICAL,
         'biological_caregiver': admin.VERTICAL,
         'child_consent': admin.VERTICAL}
@@ -395,6 +383,25 @@ class SubjectConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         else:
             return redirect(settings.DASHBOARD_URL_NAMES.get(
                 'maternal_screening_listboard_url'))
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj=obj, **kwargs)
+        subject_identifier = None
+        if request.method == 'GET':
+            if request.GET.get('subject_identifier'):
+                subject_identifier = request.GET.get('subject_identifier')
+            else:
+                screening_identifier = request.GET.get('screening_identifier')
+                subject_identifier = self.get_subject_identifier(screening_identifier)
+        initial_values = self.prepare_initial_values_based_on_subject(
+            obj=obj, subject_identifier=subject_identifier)
+
+        form.previous_instance = initial_values
+        return form
+
+    def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
+        return [self.prepare_subject_consent(consent) for consent in
+                self.consents_filtered_by_subject(obj, subject_identifier)]
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
@@ -503,7 +510,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             obj_data = self.fix_date_formats(obj_data)
             records.append(obj_data)
         
-        response = self.write_to_excel(records)
+        response = self.write_to_csv(records)
         return response
 
     export_as_csv.short_description = _(
