@@ -1,6 +1,5 @@
 import pandas as pd
 
-from io import BytesIO
 from _collections import OrderedDict
 from functools import partialmethod
 
@@ -8,7 +7,6 @@ from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import OuterRef, Subquery
-from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from edc_consent.actions import (
