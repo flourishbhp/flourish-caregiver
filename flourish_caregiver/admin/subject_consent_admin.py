@@ -214,7 +214,7 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
         consent_version_obj = self.consent_version_obj(screening_identifier)
         child_version = getattr(consent_version_obj, 'child_version', None)
         if consent_version_obj and child_version:
-            child_consent_objs = self.get_caregiver_child_consents(subject_identifier,)
+            child_consent_objs = self.get_caregiver_child_consents(subject_identifier, )
             child_consents_by_version = self.get_caregiver_child_consents(
                 subject_identifier, child_version)
 
@@ -389,6 +389,7 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
         subject_identifier = None
         initial_values = []
         if request.method == 'GET':
+            study_maternal_identifier = request.GET.get('study_maternal_identifier')
             if request.GET.get('subject_identifier'):
                 subject_identifier = request.GET.get('subject_identifier')
             else:
@@ -397,12 +398,18 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
             if subject_identifier:
                 initial_values = self.prepare_initial_values_based_on_subject(
                     subject_identifier=subject_identifier)
+            elif study_maternal_identifier:
+                initial_values = self.prepare_initial_values_from_locator(
+                    study_maternal_identifier)
 
         form.previous_instance = initial_values
         return form
 
     def prepare_initial_values_based_on_subject(self, subject_identifier):
         return [self.prepare_subject_consent(subject_identifier)]
+
+    def prepare_initial_values_from_locator(self, study_maternal_identifier):
+        return [self.prepare_subject_consent(study_maternal_identifier)]
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
