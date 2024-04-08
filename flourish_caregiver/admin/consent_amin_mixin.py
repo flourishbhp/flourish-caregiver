@@ -1,9 +1,13 @@
 from django.apps import apps as django_apps
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import OuterRef, Subquery
 
 
 class ConsentMixin:
     consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+
+    bhp_prior_screening_model_cls = django_apps.get_model(
+        'flourish_caregiver.screeningpriorbhpparticipants')
 
     def prepare_subject_consent(self, consent):
         child_consent_obj = self.consent_cls.objects.filter(
@@ -64,4 +68,13 @@ class ConsentMixin:
                 screening_identifier=screening_identifier).latest(
                 'consent_datetime').subject_identifier
         except self.consent_cls.DoesNotExist:
+            return None
+
+    def bhp_prior_screening_model_obj(self, screening_identifier):
+        """Returns a bhp prior model instance or None.
+        """
+        try:
+            return self.bhp_prior_screening_cls.objects.get(
+                screening_identifier=screening_identifier)
+        except ObjectDoesNotExist:
             return None
