@@ -47,6 +47,19 @@ class ConsentMixin:
             del input_dict[option]
         return input_dict
 
+    def get_caregiver_child_consents(self, subject_identifier, version=None):
+        """ Query for caregiver consent objects related to a specific parent
+            `subject_identifier` and optionally by `child_version`.
+            @param subject_identifier: child identifier
+            @param version: child consent version
+            @return: unique filtered child_subject_identifier's
+        """
+        consents = self.consent_cls.objects.filter(
+            subject_consent__subject_identifier=subject_identifier)
+        if version:
+            consents = consents.filter(version=version)
+        return set(consents.values_list('subject_identifier', flat=True))
+
     def consent_version_obj(self, screening_identifier=None):
         consent_version_cls = django_apps.get_model(
             'flourish_caregiver.flourishconsentversion')

@@ -150,3 +150,11 @@ class TBTests(ListModelMixin, BaseUuidModel):
 
 class GeneralSymptoms(ListModelMixin, BaseUuidModel):
     pass
+
+
+class MastitisActions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class CrackedNipplesActions(ListModelMixin, BaseUuidModel):
+    pass
