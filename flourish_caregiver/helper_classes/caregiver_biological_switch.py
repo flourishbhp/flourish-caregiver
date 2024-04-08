@@ -6,6 +6,7 @@ from edc_constants.constants import OTHER, FEMALE
 
 from .onschedule_helper import OnScheduleHelper
 from ..identifiers import ScreeningIdentifier
+from .utils import set_initials
 
 
 class CaregiverBiologicalSwitch:
@@ -166,7 +167,7 @@ class CaregiverBiologicalSwitch:
             'first_name', self.biological_mother_locator.first_name)
         last_name = kwargs.pop(
             'last_name', self.biological_mother_locator.last_name)
-        initials = self.set_initials(first_name, last_name)
+        initials = set_initials(first_name, last_name)
 
         subject_identifier = self.caregiver_sid.replace(
             sid_swap[0], sid_swap[1])
@@ -286,14 +287,3 @@ class CaregiverBiologicalSwitch:
             onschedule_datetime=onschedule_dt,
             cohort=cohort)
         return onschedule_helper
-
-    def set_initials(self, first_name=None, last_name=None):
-        initials = ''
-        if first_name and last_name:
-            if (len(first_name.split(' ')) > 1):
-                first = first_name.split(' ')[0]
-                middle = first_name.split(' ')[1]
-                initials = f'{first[:1]}{middle[:1]}{last_name[:1]}'
-            else:
-                initials = f'{first_name[:1]}{last_name[:1]}'
-        return initials

@@ -127,3 +127,15 @@ def validate_date_not_in_past(value):
     if value.date() < timezone.now().date():
         raise ValidationError(_('Invalid datetime - Can not be past date'),
                               code='creation_in_past')
+
+
+def set_initials(first_name=None, last_name=None):
+    initials = ''
+    if first_name and last_name:
+        if (len(first_name.split(' ')) > 1):
+            first = first_name.split(' ')[0]
+            middle = first_name.split(' ')[1]
+            initials = f'{first[:1]}{middle[:1]}{last_name[:1]}'
+        else:
+            initials = f'{first_name[:1]}{last_name[:1]}'
+    return initials
