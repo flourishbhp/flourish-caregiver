@@ -13,14 +13,6 @@ class InterviewFocusGroupInterestAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     instructions = ''
 
-    additional_instructions = (
-        'The questions I will ask are designed solely for data collection purposes and '
-        'the purpose of these questions is to explore your topic of interest for '
-        'discussion in case we are to have interviews or focus group settings, '
-        'in our future studies. At this time, there are no ongoing or upcoming studies '
-        'to address these interests however, your responses will help to identify '
-        'future study topics. ')
-
     fieldsets = (
         (
             None, {
@@ -89,3 +81,16 @@ class InterviewFocusGroupInterestAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     }
 
     search_fields = ('subject_identifier',)
+
+    def add_view(self, request, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+
+        extra_context['special_instructions'] = (
+            '***INSTRUCTIONS CLINIC STAFF: The questions I will ask are designed solely'
+            ' for data collection purposes and the purpose of these questions is to '
+            'explore your topic of interest for discussion in case we are to have '
+            'interviews or focus group settings, in our future studies. At this time, '
+            'there are no ongoing or upcoming studies to address these interests '
+            'however, your responses will help to identify future study topics. ')
+
+        return super().add_view(request, form_url, extra_context)
