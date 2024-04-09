@@ -1,15 +1,61 @@
 from django.contrib import admin
-from edc_constants.constants import OTHER
-from edc_list_data import PreloadData, PreloadDataError
-from edc_model_admin import audit_fieldset_tuple
+from edc_fieldsets import Remove
+from edc_model_admin import audit_fieldset_tuple, StackedInlineMixin
 
 from flourish_caregiver.admin.modeladmin_mixins import CrfModelAdminMixin
 from flourish_caregiver.admin_site import flourish_caregiver_admin
-from flourish_caregiver.forms import BreastMilk6MonthsForms, BreastMilkBirthForms
+from flourish_caregiver.forms import BreastMilk6MonthsForms, BreastMilkBirthForms, \
+    CrackedNipplesInlineForm, MastitisInlineForm
 from flourish_caregiver.models import BreastMilk6Months, BreastMilkBirth
+from flourish_caregiver.models.breast_milk_crfs import CrackedNipplesInline, \
+    MastitisInline
+
+
+class MastitisInlineAdmin(StackedInlineMixin, admin.StackedInline):
+    model = MastitisInline
+    form = MastitisInlineForm
+    extra = 0
+
+    fieldsets = (
+        (None, {
+            'fields': [
+                'mastitis_date_onset',
+                'mastitis_type',
+                'mastitis_action',
+                'mastitis_action_other']}
+         ),)
+
+    radio_fields = {
+        'mastitis_type': admin.VERTICAL,
+    }
+
+    filter_horizontal = ('mastitis_action',)
+
+
+class CrackedNipplesInlineAdmin(StackedInlineMixin, admin.StackedInline):
+    model = CrackedNipplesInline
+    form = CrackedNipplesInlineForm
+    extra = 0
+
+    fieldsets = (
+        (None, {
+            'fields': (
+                'cracked_nipples_date_onset',
+                'cracked_nipples_type',
+                'cracked_nipples_action',
+                'cracked_nipples_action_other')}
+         ),)
+
+    radio_fields = {
+        'cracked_nipples_type': admin.VERTICAL,
+    }
+
+    filter_horizontal = ('cracked_nipples_action',)
 
 
 class BreastMilkAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
+    inlines = [MastitisInlineAdmin, CrackedNipplesInlineAdmin]
+
     fieldsets = (
         (None, {
             'fields': (
@@ -17,50 +63,11 @@ class BreastMilkAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
                 'report_datetime',
                 'exp_mastitis',
                 'exp_mastitis_count',
-                'mastitis_1_date_onset',
-                'mastitis_1_type',
-                'mastitis_1_action',
-                'mastitis_1_action_other',
-                'mastitis_2_date_onset',
-                'mastitis_2_type',
-                'mastitis_2_action',
-                'mastitis_2_action_other',
-                'mastitis_3_date_onset',
-                'mastitis_3_type',
-                'mastitis_3_action',
-                'mastitis_3_action_other',
-                'mastitis_4_date_onset',
-                'mastitis_4_type',
-                'mastitis_4_action',
-                'mastitis_4_action_other',
-                'mastitis_5_date_onset',
-                'mastitis_5_type',
-                'mastitis_5_action',
-                'mastitis_5_action_other',
                 'exp_cracked_nipples',
                 'exp_cracked_nipples_count',
-                'cracked_nipples_1_date_onset',
-                'cracked_nipples_1_type',
-                'cracked_nipples_1_action',
-                'cracked_nipples_1_action_other',
-                'cracked_nipples_2_date_onset',
-                'cracked_nipples_2_type',
-                'cracked_nipples_2_action',
-                'cracked_nipples_2_action_other',
-                'cracked_nipples_3_date_onset',
-                'cracked_nipples_3_type',
-                'cracked_nipples_3_action',
-                'cracked_nipples_3_action_other',
-                'cracked_nipples_4_date_onset',
-                'cracked_nipples_4_type',
-                'cracked_nipples_4_action',
-                'cracked_nipples_4_action_other',
-                'cracked_nipples_5_date_onset',
-                'cracked_nipples_5_type',
-                'cracked_nipples_5_action',
-                'cracked_nipples_5_action_other',
                 'milk_collected',
                 'not_collected_reasons',
+                'recently_ate',
                 'breast_collected',
                 'milk_collected_volume',
                 'last_breastfed',
@@ -72,73 +79,23 @@ class BreastMilkAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
     radio_fields = {
         'exp_mastitis': admin.VERTICAL,
         'exp_mastitis_count': admin.VERTICAL,
-        'mastitis_1_type': admin.VERTICAL,
-        'mastitis_2_type': admin.VERTICAL,
-        'mastitis_3_type': admin.VERTICAL,
-        'mastitis_4_type': admin.VERTICAL,
-        'mastitis_5_type': admin.VERTICAL,
         'exp_cracked_nipples': admin.VERTICAL,
         'exp_cracked_nipples_count': admin.VERTICAL,
-        'cracked_nipples_1_type': admin.VERTICAL,
-        'cracked_nipples_2_type': admin.VERTICAL,
-        'cracked_nipples_3_type': admin.VERTICAL,
-        'cracked_nipples_4_type': admin.VERTICAL,
-        'cracked_nipples_5_type': admin.VERTICAL,
+        'recently_ate': admin.VERTICAL,
         'milk_collected': admin.VERTICAL,
         'not_collected_reasons': admin.VERTICAL,
         'breast_collected': admin.VERTICAL,
     }
 
-    filter_horizontal = (
-        'mastitis_1_action',
-        'mastitis_2_action',
-        'mastitis_3_action',
-        'mastitis_4_action',
-        'mastitis_5_action',
-        'cracked_nipples_1_action',
-        'cracked_nipples_2_action',
-        'cracked_nipples_3_action',
-        'cracked_nipples_4_action',
-        'cracked_nipples_5_action',
-    )
+    search_fields = 'maternal_visit__subject_identifier',
 
-    def extract_actions(self, field):
-        action_key = ''
-        if field.startswith("mastitis_"):
-            action_number = field.split("_")[1]
-            action_key = f"m{action_number}"
-        elif field.startswith("cracked_nipples_"):
-            action_number = field.split("_")[2]
-            action_key = f"cn{action_number}"
+    conditional_fieldlists = {
+        '2002S': Remove('recently_ate')
+    }
 
-        return action_key
-
-    def generate_data(self, action_key):
-        return [
-            (f'{action_key}_both_breasts', 'Breastfeed from both breasts'),
-            (f'{action_key}_uninfected_breast',
-             'Breastfed from uninfected breast and pumped and dumped from the '
-             'affected breast'),
-            (f'{action_key}_stopped_breastfeeding', 'Stopped breastfeeding'),
-            (f'{action_key}_temp_stopped',
-             'Stopped breastfeeding temporarily but resumed once breast healed'),
-            (f'{action_key}_{OTHER}', 'Other')
-        ]
-
-    def add_view(self, request, form_url='', extra_context=None):
-        self.load_list_data(request)
-        return super().add_view(request, form_url, extra_context)
-
-    def load_list_data(self, request):
-        for field in self.filter_horizontal:
-            list_data = {}
-            action = self.extract_actions(field)
-            list_data[f'flourish_caregiver.mestitis{action}actions'] = (
-                self.generate_data(action))
-            try:
-                PreloadData(list_data=list_data)
-            except PreloadDataError:
-                continue
+    def get_key(self, request, obj=None):
+        model_obj = self.get_instance(request)
+        return getattr(model_obj, 'visit_code', None)
 
 
 @admin.register(BreastMilkBirth, site=flourish_caregiver_admin)
