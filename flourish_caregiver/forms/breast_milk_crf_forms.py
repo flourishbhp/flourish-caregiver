@@ -2,10 +2,8 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from edc_constants.constants import NO
-
-from flourish_form_validations.form_validators import BreastMilkCRFFormValidator
 from flourish_form_validations.form_validators.breast_milk_crf_form_validator import \
-    CrackedNipplesInlineFormValidator, MastitisInlineFormValidator
+    CrackedNipplesInlineFormValidator, MastitisInlineFormValidator, BreastMilkCRFFormValidator, BreastMilk6MonthsCRFFormValidator
 from .form_mixins import InlineSubjectModelFormMixin, SubjectModelFormMixin
 from ..choices import EXP_COUNT_CHOICES_NONE, YES_NO_NONE, YES_RESOLVED_NO
 from ..models.breast_milk_crfs import BreastMilk6Months, BreastMilkBirth, \
@@ -156,7 +154,7 @@ class BreastMilkBirthForms(BreastMilkBirthFormsMixin, SubjectModelFormMixin,
 
 class BreastMilk6MonthsForms(BreastMilkBirthFormsMixin, SubjectModelFormMixin,
                              forms.ModelForm):
-    form_validator_cls = BreastMilkCRFFormValidator
+    form_validator_cls = BreastMilk6MonthsCRFFormValidator
 
     class Meta:
         model = BreastMilk6Months
