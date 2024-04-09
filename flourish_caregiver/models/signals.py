@@ -834,12 +834,12 @@ def create_registered_infant(instance):
             subject_identifier=instance.subject_identifier
         ).order_by('version').last()
 
-        ultrasound = UltraSound.objects.filter(
+        ultrasound_exists = UltraSound.objects.filter(
             maternal_visit__subject_identifier=instance.subject_identifier,
             child_subject_identifier=instance.child_subject_identifier
-        ).order_by('report_datetime').last()
+        ).exists()
     
-        if not ultrasound:
+        if ultrasound_exists:
             raise ValidationError(
                 f'Maternal Ultrasound must exist for {instance.subject_identifier}')
         else:

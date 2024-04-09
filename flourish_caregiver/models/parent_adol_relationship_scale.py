@@ -81,3 +81,8 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         question_14 = int(self.change_attitude)
 
         return (question_7 + question_9 + question_11 + question_13 + question_14) / 5
+    
+
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Parent-Adolescent Relationship Scale'
