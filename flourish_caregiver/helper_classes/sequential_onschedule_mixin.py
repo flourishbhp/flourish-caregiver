@@ -1,13 +1,12 @@
 from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.db.models import Q
-from edc_appointment.constants import NEW_APPT
 from edc_appointment.models import Appointment
+from edc_appointment.constants import NEW_APPT
 from edc_base import get_utcnow
 from edc_visit_schedule import site_visit_schedules
-
-from flourish_caregiver.helper_classes.schedule_dict import caregiver_schedule_dict, \
-    child_schedule_dict
+from flourish_caregiver.helper_classes.schedule_dict import child_schedule_dict, \
+    caregiver_schedule_dict
 
 
 class SeqEnrolOnScheduleMixin:
@@ -23,8 +22,7 @@ class SeqEnrolOnScheduleMixin:
         cohort = self.evaluated_cohort
         schedule_type = self.schedule_type
         child_count = str(self.child_consent_obj.caregiver_visit_count)
-        onschedule_datetime = (
-            self.caregiver_last_qt_subject_schedule_obj.onschedule_datetime)
+        onschedule_datetime = self.caregiver_last_qt_subject_schedule_obj.onschedule_datetime
 
         # TODO: To get variables needed from the model
         onschedule_model = caregiver_schedule_dict[cohort][schedule_type][
@@ -99,8 +97,10 @@ class SeqEnrolOnScheduleMixin:
         return fu_onschedule_model, fu_schedule_name
 
     def put_on_schedule(self, onschedule_model, schedule_name,
-                        subject_identifier, base_appt_datetime=None, is_caregiver=False,
-                        onschedule_datetime=get_utcnow()):
+                        subject_identifier, base_appt_datetime=None, is_caregiver=False, 
+                        onschedule_datetime = get_utcnow()):
+        
+        
 
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model,
@@ -114,7 +114,7 @@ class SeqEnrolOnScheduleMixin:
         if is_caregiver:
             self.update_onschedule_model(onschedule_model=onschedule_model,
                                          schedule_name=schedule_name, schedule=schedule)
-
+            
     def update_onschedule_model(self, onschedule_model, schedule_name, schedule):
 
         onschedule_model_cls = django_apps.get_model(onschedule_model)
@@ -136,7 +136,7 @@ class SeqEnrolOnScheduleMixin:
 
     @classmethod
     def delete_completed_appointments(cls, appointment_model_cls, subject_identifier,
-                                      schedule_name):
+                                      schedule_name ):
         """Deletes completed appointments from previous schedules which are present in
         new schedules.
 
@@ -150,8 +150,8 @@ class SeqEnrolOnScheduleMixin:
         complete_appts = appointment_model_cls.objects.filter(
             Q(schedule_name__icontains='quart') | Q(schedule_name__icontains='qt'),
             subject_identifier=subject_identifier, ).exclude(
-            appt_status=NEW_APPT).values_list('visit_code', flat=True).distinct()
-
+                appt_status=NEW_APPT).values_list('visit_code', flat=True).distinct()
+        
         new_appts = appointment_model_cls.objects.filter(
             subject_identifier=subject_identifier,
             schedule_name=schedule_name,
@@ -159,22 +159,19 @@ class SeqEnrolOnScheduleMixin:
         if new_appts.exists():
             new_appts.delete()
 
-    def enrol_fu_schedule(self, cohort, subject_identifier, schedule_name,
-                          onschedule_model, is_caregiver=False,
-                          onschedule_datetime=get_utcnow()):
+    def enrol_fu_schedule(self, cohort, subject_identifier, schedule_name, onschedule_model,
+                          is_caregiver=False, onschedule_datetime=get_utcnow()):
         """ Put participant on FU schedule for sequential cohort, based on age criteria:
-            Cohort A → B: Follow-up visit occurs at 7 years, if already 7 years occur 6
+            Cohort A → B: Follow-up visit occurs at 7 years, if already 7 years occurs 6
             months after.
-            Cohort B → C: A follow-up visit occurs at 12 years, if already 12 years occur
+            Cohort B → C: Follow-up visit occurs at 12 years, if already 12 years occurs
             6 months after.
             @param cohort: sequentially enrolled cohort
             @param subject_identifier: participant sid
             @param schedule_name: schedule name for sequentially enrolled cohort
-            @param onschedule_model: onschedule model name for sequentially enrolled
-            cohort
-            @param is_caregiver: bool representing caregiver/child participant
+            @param onschedule_model: onschedule model name for sequentially enrolled cohort
+            @param is_caregiver: bool representing caregiver/child participant   
         """
-
         cohort_ages = {'cohort_b': 7, 'cohort_c': 12}
         base_appt_datetime = None
         closeout_dt = django_apps.get_app_config('edc_protocol').study_close_datetime
@@ -188,7 +185,7 @@ class SeqEnrolOnScheduleMixin:
 
         if base_appt_datetime:
             base_appt_datetime = (closeout_dt if base_appt_datetime > closeout_dt
-                                  else base_appt_datetime)
+                                   else base_appt_datetime)
             self.put_on_schedule(onschedule_model=onschedule_model,
                                  schedule_name=schedule_name,
                                  base_appt_datetime=base_appt_datetime,
