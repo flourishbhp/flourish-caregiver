@@ -31,7 +31,7 @@ class BreastMilkFieldsMixin(CrfModelMixin, models.Model):
         choices=YES_NO,
         max_length=10,
         null=True,
-        blank=True
+        blank=False
     )
 
     exp_cracked_nipples_count = models.CharField(
