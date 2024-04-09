@@ -1276,3 +1276,11 @@ REFERRAL_LOCATION = (
     ('bonela', 'BONELA (Botswana Network on Ethics, Law, and HIV/AIDS)'),
     (OTHER, 'Other, specify'),
 )
+
+RELATIONSHIP_SCALE = (
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5', '5'),
+)
