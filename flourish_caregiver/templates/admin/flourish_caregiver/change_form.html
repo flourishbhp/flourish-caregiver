@@ -41,6 +41,9 @@
         </div>
         <br>
     {% endif %}
+    {% if special_instructions %}
+    <p><b>{{ special_instructions|safe }}</b></p>
+    {% endif %}
     {{ block.super }}
 {% endblock field_sets %}
 
