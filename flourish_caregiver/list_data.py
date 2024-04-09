@@ -401,6 +401,7 @@ list_data = {
         ('urine_test', 'Urine test (LAM)'),
         ('skin_test', 'Skin test (TST/Mantoux)'),
         ('blood_test', 'Blood test (quantiferon)'),
+        ('None', 'None'),
         (OTHER, 'other')
     ],
     'flourish_caregiver.generalsymptoms': [
@@ -425,8 +426,8 @@ list_data = {
     ],
     'flourish_caregiver.crackednipplesactions': [
         ('both_breasts', 'Breastfeed from both breasts'),
-        ('uninfected_breast',
-         'Breastfed from uninfected breast and pumped and dumped from the affected '
+        ('non_cracked_breast',
+         'Breastfed from non-cracked nipple breast and pumped and dumped from the affected '
          'breast'),
         ('stopped_breastfeeding', 'Stopped breastfeeding and did not resume '),
         ('temp_stopped',

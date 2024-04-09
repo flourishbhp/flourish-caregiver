@@ -13,7 +13,7 @@ class CaregiverSocialWorkReferralMixin(models.Model):
     report_datetime = models.DateTimeField(
         verbose_name='Report Time and Date',
         default=get_utcnow,
-        validators=[datetime_not_future, datetime_not_before_study_start], )
+        validators=[datetime_not_future, datetime_not_before_study_start],)
 
     referral_for = models.CharField(
         verbose_name='Referral For ',
