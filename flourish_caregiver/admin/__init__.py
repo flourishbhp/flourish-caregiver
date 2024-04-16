@@ -93,3 +93,4 @@ from .tb_screen_preg_admin import TbScreenPregAdmin
 from .tb_study_screening_admin import TbStudyEligibilityAdmin
 from .tb_visit_screening_women_admin import TbVisitScreeningWomenAdmin
 from .ultrasound_admin import UltraSoundAdmin
+from .cage_aid_crf_admin import CaregiverCageAidFormAdmin
