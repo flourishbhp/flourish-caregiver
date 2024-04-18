@@ -93,7 +93,8 @@ class Cohort(MatrixMatchVariablesMixin,
         cohort_onschedules = [name_dict.get('name') for name_dict in
                               child_schedule_dict.get(self.name).values()]
 
-        ignore_schedule = ['tb_adol', 'child_bu', 'facet']
+        ignore_schedule = ['tb_adol_followup_schedule', 'tb_adol_schedule',
+                           'child_bu_schedule', 'child_facet_schedule']
         try:
             latest_onschedule = self.schedule_history_cls.objects.filter(
                 subject_identifier=self.subject_identifier, ).exclude(
