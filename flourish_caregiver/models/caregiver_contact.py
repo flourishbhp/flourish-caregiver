@@ -1,9 +1,5 @@
 from django.db import models
 from edc_base.model_managers import HistoricalRecords
-from edc_constants.choices import YES_NO
-from edc_base.model_fields import OtherCharField
-
-from ..maternal_choices import CALL_REASON, REASONS_FOR_RESCHEDULING
 from .model_mixins import CaregiverContactFieldsMixin
 from .subject_consent import SubjectConsent
 
@@ -18,12 +14,6 @@ class CaregiverContactManager(models.Manager):
 class CaregiverContact(CaregiverContactFieldsMixin):
     consent_model = SubjectConsent
 
-    call_reason = models.CharField(
-        verbose_name='Reason for call',
-        max_length=30,
-        choices=CALL_REASON,
-    )
-
     call_reason_other = models.CharField(
         verbose_name='Other, specify',
         max_length=70,
@@ -37,24 +27,6 @@ class CaregiverContact(CaregiverContactFieldsMixin):
         null=True,
         blank=True
     )
-
-    call_rescheduled = models.CharField(
-        verbose_name='Was the visit rescheduled',
-        max_length=10,
-        choices=YES_NO,
-        null=True,
-        blank=True
-    )
-
-    reason_rescheduled = models.CharField(
-        verbose_name='Please indicate reason for re-scheduling',
-        max_length=50,
-        choices=REASONS_FOR_RESCHEDULING,
-        null=True,
-        blank=True
-    )
-    reason_rescheduled_other = OtherCharField()
-
     study_name = models.CharField(
         verbose_name="Study name",
         max_length=20,
