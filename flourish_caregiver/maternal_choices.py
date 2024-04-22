@@ -485,14 +485,32 @@ CALL_REASON = (
     ('follow_up_delivery', 'Follow up on delivery status'),
     ('follow_up_labs', 'Follow up on abnormal labs'),
     ('re_appointment', 'Re-appointment or reschedule'),
+<<<<<<< HEAD
     (OTHER, 'Other, specify')
+=======
+    ('recruitment', 'Recruitement'),
+    ('focus_group', 'Focus group invitation'),
+    ('participant_eae_report', 'Participant\'s clinical notes for EAE reporting'),
+>>>>>>> 05f747b (Refactor caregiver contact)
 )
+
+OUTCOME_CALL = (('successful_confirmed', 'Successful, appointment confirmed'),
+                ('successful_rescheduled', 'Successful, appointment rescheduled'),
+                ('successful_scheduled', 'Successful, appointment scheduled'),
+                ('successful_next_kin',
+                 'Successful, talked to next of kin to relay message'),
+                ('test_message_pat', 'Text message sent to participant'),
+                ('test_message_next_kin', 'Text message sent to next of kin'),
+                ('unsuccessful', 'Unsuccessful'),
+                (OTHER, 'Other, specify'))
 
 CONTACT_TYPE = (
     ('phone_call', 'Phone Call'),
     ('in_person', 'In person (Home visit)'),
     ('text_message', 'Text Message')
 )
+STUDY_NAME = (('flourish', 'Flourish'),
+              ('flourish_facet', 'Flourish Facet'))
 
 KHAT_USAGE_FREQUENCY = (
     ('daily', 'Daily'),
