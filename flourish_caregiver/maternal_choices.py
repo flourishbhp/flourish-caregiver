@@ -505,8 +505,6 @@ CONTACT_TYPE = (
     ('in_person', 'In person (Home visit)'),
     ('text_message', 'Text Message')
 )
-STUDY_NAME = (('flourish', 'Flourish'),
-              ('flourish_facet', 'Flourish Facet'))
 
 KHAT_USAGE_FREQUENCY = (
     ('daily', 'Daily'),
