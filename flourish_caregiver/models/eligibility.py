@@ -113,12 +113,14 @@ class ConsentEligibility:
 class CaregiverChildConsentEligibility:
 
     def __init__(self, child_test=None, child_remain_in_study=None,
-                 child_preg_test=None, child_knows_status=None):
+                 child_preg_test=None, child_knows_status=None,
+                 subject_identifier=None, child_age_at_consent=None):
         self.error_message = []
         self.child_test = child_test
         self.child_remain_in_study = child_remain_in_study
         self.child_preg_test = child_preg_test
         self.child_knows_status = child_knows_status
+        self.subject_identifier = subject_identifier
         if self.child_test == NO:
             self.error_message.append(
                 'Participant is not willing to allow for HIV testing and '
@@ -129,7 +131,13 @@ class CaregiverChildConsentEligibility:
         if self.child_preg_test == NO:
             self.error_message.append(
                 'Participant will not allow the child to undergo pregnancy testing.')
-        if self.child_knows_status == NO:
+
+        # Child is ineligible if not disclosed at on initial consent, or
+        # if older than 18 years of age on re-consent and still not disclosed to.
+        undisclosed = self.child_knows_status == NO
+        initial_undisclosed = (not self.subject_identifier and undisclosed)
+        undisclosed_gt_18yrs = (self.subject_identifier and child_age_at_consent > 18 and undisclosed)
+        if initial_undisclosed or undisclosed_gt_18yrs:
             self.error_message.append(
                 'Child has not been told about the mother\'s HIV status.')
         self.is_eligible = False if self.error_message else True

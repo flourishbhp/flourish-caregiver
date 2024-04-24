@@ -111,7 +111,7 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
                      'your HIV?',
         max_length=5,
         choices=YES_NO_NA,
-        help_text='If no, participant is not eligible.')
+        help_text='If no at initial consenting participant is ineligible')
 
     future_studies_contact = models.CharField(
         verbose_name=('Do you give us permission for us to contact you or your child'
@@ -171,17 +171,17 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
     def save(self, *args, **kwargs):
         self.preg_enroll = self.is_preg
 
+        self.child_age_at_enrollment = (
+            self.get_child_age_at_enrollment() if self.child_dob else 0)
+
         eligibility_criteria = CaregiverChildConsentEligibility(
             self.child_test, self.child_remain_in_study, self.child_preg_test,
-            self.child_knows_status)
+            self.child_knows_status, self.subject_identifier, self.child_age_at_enrollment)
 
         self.is_eligible = eligibility_criteria.is_eligible
         self.ineligibility = eligibility_criteria.error_message
 
         self.set_defaults()
-
-        self.child_age_at_enrollment = (
-            self.get_child_age_at_enrollment() if self.child_dob else 0)
 
         if self.is_eligible and (not self.subject_identifier or not self.version):
 
@@ -365,9 +365,12 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
             identity=self.identity).count() + 1
 
     def get_child_age_at_enrollment(self):
+        """ Age at enrolment has to use consent_datetime, since model instance
+            can be created later than date consented.
+        """
         return Cohort().age_at_enrollment(
             child_dob=self.child_dob,
-            check_date=self.created.date())
+            check_date=self.consent_datetime.date())
 
     @property
     def relative_identifier(self):
