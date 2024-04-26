@@ -236,6 +236,7 @@ list_data = {
         ('pediatrician_support', 'Pediatrician support'),
         ('schooling_support', 'Schooling support'),
         ('ophthalmology_eye_care', 'Ophthalmology/Eye care support'),
+        ('substance_abuse_counselling', 'Substance abuse counselling'),
         ('refer_other', 'Other, specify')
     ],
     'flourish_caregiver.pregnancyinfluencerslist': [
