@@ -140,7 +140,7 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
     def prepare_initial_values_based_on_study(self, obj, study_maternal_id):
         initial = []
         child_datasets = self.child_dataset_cls.objects.filter(
-            study_maternal_identifier=study_maternal_id)
+            study_maternal_identifier=study_maternal_id).order_by('study_child_identifier')
 
         if obj:
             child_datasets = self.get_difference(child_datasets, obj)
