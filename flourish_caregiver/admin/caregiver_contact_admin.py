@@ -28,6 +28,7 @@ class CaregiverContactAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'call_rescheduled',
                 'reason_rescheduled',
                 'reason_rescheduled_other',
+                'study_name',
             )}
          ), audit_fieldset_tuple)
 
@@ -35,7 +36,7 @@ class CaregiverContactAdmin(ModelAdminMixin, admin.ModelAdmin):
         'subject_identifier', 'contact_type',
         'contact_datetime', 'call_reason', 'contact_success']
 
-    list_filter = ['contact_type', 'call_reason', 'contact_success']
+    list_filter = ['contact_type', 'call_reason', 'contact_success', 'study_name']
 
     radio_fields = {
         'contact_type': admin.VERTICAL,
