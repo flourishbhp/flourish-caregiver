@@ -1,18 +1,25 @@
 from django.contrib import admin
 from edc_model_admin import audit_fieldset_tuple
 
+from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import InterviewFocusGroupInterestVersion2Form
 from ..models import InterviewFocusGroupInterestV2
-from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(InterviewFocusGroupInterestV2, site=flourish_caregiver_admin)
 class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
-
     form = InterviewFocusGroupInterestVersion2Form
 
-    instructions = ''
+    instructions = None
+
+    add_instructions = (
+        '<p><b>***INSTRUCTIONS CLINIC STAFF: The questions I will ask are designed'
+        'solely for data collection purposes and the purpose of these questions is '
+        'to explore your topic of interest for discussion in case we are to have '
+        'interviews or focus group settings, in our future studies. At this time, '
+        'there are no ongoing or upcoming studies to address these interests '
+        'however, your responses will help to identify future study topics.</b></p>')
 
     fieldsets = (
         (None, {
@@ -24,10 +31,13 @@ class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAd
             ), }
          ),
 
-        ("Some people feel more comfortable talking one-on-one rather than in a group about certain topics. "
-         "Do while others may feel more comfortable talking in groups. "
-         "We would like to understand your preference in participating in the following topic discussions",
-         {
+        (
+        "Some people feel more comfortable talking one-on-one rather than in a group "
+        "about certain topics. "
+        "Do while others may feel more comfortable talking in groups. "
+        "We would like to understand your preference in participating in the following "
+        "topic discussions",
+        {
             "fields": (
                 'infant_feeding',
                 'school_performance',
@@ -45,14 +55,14 @@ class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAd
                 'same_status_comfort',
                 'diff_status_comfort',
             ), }
-         ),
+        ),
 
         ("Additional Topics",
          {
-            "fields": (
-                'women_discussion_topics',
-                'adolescent_discussion_topics',
-            ), }
+             "fields": (
+                 'women_discussion_topics',
+                 'adolescent_discussion_topics',
+             ), }
          ), audit_fieldset_tuple
     )
 
@@ -77,16 +87,3 @@ class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAd
     }
 
     search_fields = ('subject_identifier',)
-
-    def add_view(self, request, form_url='', extra_context=None):
-        extra_context = extra_context or {}
-
-        extra_context['special_instructions'] = (
-            '***INSTRUCTIONS CLINIC STAFF: The questions I will ask are designed solely'
-            ' for data collection purposes and the purpose of these questions is to '
-            'explore your topic of interest for discussion in case we are to have '
-            'interviews or focus group settings, in our future studies. At this time, '
-            'there are no ongoing or upcoming studies to address these interests '
-            'however, your responses will help to identify future study topics. ')
-
-        return super().add_view(request, form_url, extra_context)
