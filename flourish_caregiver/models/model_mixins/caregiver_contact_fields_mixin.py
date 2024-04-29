@@ -6,9 +6,8 @@ from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
 from edc_protocol.validators import datetime_not_before_study_start
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
-from edc_base.model_fields import OtherCharField
-from ...maternal_choices import CONTACT_TYPE, CALL_REASON, OUTCOME_CALL, \
-    REASONS_FOR_RESCHEDULING
+
+from ...maternal_choices import CONTACT_TYPE
 
 
 class CaregiverContactFieldsMixin(NonUniqueSubjectIdentifierFieldMixin,
@@ -34,42 +33,11 @@ class CaregiverContactFieldsMixin(NonUniqueSubjectIdentifierFieldMixin,
         validators=[datetime_not_future, datetime_not_before_study_start],
         help_text='This date can be modified.')
 
-    call_reason = models.CharField(
-        verbose_name='Reason for call',
-        max_length=30,
-        choices=CALL_REASON,
-    )
-
     contact_success = models.CharField(
         verbose_name='Were you able to reach the participant?',
         max_length=5,
         choices=YES_NO
     )
-
-    call_outcome = models.CharField(
-        verbose_name='Outcome of a phone call or Home visit',
-        max_length=30,
-        choices=OUTCOME_CALL)
-
-    call_outcome_other = OtherCharField()
-
-    call_rescheduled = models.CharField(
-        verbose_name='Was the caregiver contatct rescheduled',
-        max_length=10,
-        choices=YES_NO,
-        null=True,
-        blank=True
-    )
-
-    reason_rescheduled = models.CharField(
-        verbose_name='Please indicate reason for re-scheduling',
-        max_length=50,
-        choices=REASONS_FOR_RESCHEDULING,
-        null=True,
-        blank=True
-    )
-
-    reason_rescheduled_other = OtherCharField()
 
     class Meta:
         abstract = True
