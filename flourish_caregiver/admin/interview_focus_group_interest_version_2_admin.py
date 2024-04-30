@@ -11,9 +11,7 @@ from ..models import InterviewFocusGroupInterestV2
 class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
     form = InterviewFocusGroupInterestVersion2Form
 
-    instructions = None
-
-    add_instructions = (
+    instructions = (
         '<p><b>***INSTRUCTIONS CLINIC STAFF: The questions I will ask are designed'
         'solely for data collection purposes and the purpose of these questions is '
         'to explore your topic of interest for discussion in case we are to have '
