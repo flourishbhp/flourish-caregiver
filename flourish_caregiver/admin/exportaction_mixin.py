@@ -14,16 +14,18 @@ class ExportActionMixin(AdminExportHelper):
     def update_variables(self, data={}):
         """ Update study identifiers to desired variable name(s).
         """
+        new_data_dict = {}
         replace_idx = {'subject_identifier': 'matpid',
                        'child_subject_identifier': 'childpid',
                        'study_maternal_identifier': 'old_matpid',
                        'study_child_identifier': 'old_childpid'}
         for old_idx, new_idx in replace_idx.items():
             try:
-                data[new_idx] = data.pop(old_idx)
+                new_data_dict[new_idx] = data.pop(old_idx)
             except KeyError:
                 continue
-        return data
+        new_data_dict.update(data)
+        return new_data_dict
 
     def export_as_csv(self, request, queryset):
         records = []
@@ -41,13 +43,16 @@ class ExportActionMixin(AdminExportHelper):
 
             # Add subject identifier and visit code
             if getattr(obj, 'maternal_visit', None):
+                data_copy = data.copy()
+                data.clear()
                 study_maternal_identifier = self.study_maternal_identifier(
                     screening_identifier=screening_identifier)
 
                 data.update(
                     matpid=subject_identifier,
                     old_matpid=study_maternal_identifier,
-                    visit_code=obj.maternal_visit.visit_code)
+                    visit_code=obj.maternal_visit.visit_code,
+                    **data_copy)
 
             # Update variable names for study identifiers
             data = self.update_variables(data)
