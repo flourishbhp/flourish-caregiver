@@ -212,7 +212,7 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
         consent_version_obj = self.consent_version_obj(screening_identifier)
         child_version = getattr(consent_version_obj, 'child_version', None)
         if consent_version_obj and child_version:
-            child_consent_objs = self.get_caregiver_child_consents(subject_identifier, )
+            child_consent_objs = self.get_caregiver_child_consents(subject_identifier,)
             child_consents_by_version = self.get_caregiver_child_consents(
                 subject_identifier, child_version)
 
@@ -399,7 +399,6 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
             elif study_maternal_identifier:
                 initial_values = self.prepare_initial_values_from_locator(
                     study_maternal_identifier, screening_identifier)
-
         form.previous_instance = initial_values
         return form
 
