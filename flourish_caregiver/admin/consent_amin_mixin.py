@@ -1,9 +1,20 @@
 from django.apps import apps as django_apps
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import OuterRef, Subquery
+from edc_constants.constants import FEMALE
+
+from flourish_caregiver.helper_classes.utils import set_initials
 
 
 class ConsentMixin:
     consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+
+    bhp_prior_screening_cls = django_apps.get_model(
+        'flourish_caregiver.screeningpriorbhpparticipants')
+
+    caregiver_locator_cls = django_apps.get_model('flourish_caregiver.caregiverlocator')
+
+    pre_flourish_consent_cls = django_apps.get_model('pre_flourish.preflourishconsent')
 
     def prepare_subject_consent(self, consent):
         child_consent_obj = self.consent_cls.objects.filter(
@@ -78,3 +89,61 @@ class ConsentMixin:
                 'consent_datetime').subject_identifier
         except self.consent_cls.DoesNotExist:
             return None
+
+    def bhp_prior_screening_model_obj(self, screening_identifier):
+        """Returns a bhp prior model instance or None.
+        """
+        try:
+            return self.bhp_prior_screening_cls.objects.get(
+                screening_identifier=screening_identifier)
+        except ObjectDoesNotExist:
+            return None
+
+    def locator_model_obj(self, study_maternal_identifier):
+        try:
+            return self.caregiver_locator_cls.objects.get(
+                study_maternal_identifier=study_maternal_identifier)
+        except ObjectDoesNotExist:
+            return None
+
+    def pre_flourish_consent_model_obj(self, screening_identifier):
+        try:
+            return self.pre_flourish_consent_cls.objects.filter(
+                screening_identifier=screening_identifier
+            ).latest('consent_datetime')
+        except ObjectDoesNotExist:
+            return None
+
+    def generate_participant_options(
+            self, bhp_prior_screening_model_obj, locator_model_obj,
+            pre_flourish_consent_model_obj):
+        options = {
+            'screening_identifier': getattr(bhp_prior_screening_model_obj, 'screening_identifier', None),
+        }
+
+        if (bhp_prior_screening_model_obj and
+                bhp_prior_screening_model_obj.flourish_participation == 'interested'
+                and locator_model_obj):
+            first_name = locator_model_obj.first_name.upper() if (
+                locator_model_obj.first_name) else None
+            last_name = locator_model_obj.last_name.upper() if (
+                locator_model_obj.last_name) else None
+
+            options.update(
+                first_name=first_name,
+                last_name=last_name,
+                initials=set_initials(first_name, last_name),
+                gender=FEMALE,
+            )
+
+            properties_to_fetch = ['language', 'dob', 'citizen', 'identity',
+                                   'identity_type', 'confirm_identity',
+                                   'biological_caregiver', 'recruit_source',
+                                   'recruit_source_other', 'recruitment_clinic',
+                                   'recruitment_clinic_other', 'is_literate']
+
+            options.update(
+                {prop: getattr(pre_flourish_consent_model_obj, prop, None) for prop in
+                 properties_to_fetch})
+
+        return options
