@@ -839,7 +839,7 @@ def create_registered_infant(instance):
             child_subject_identifier=instance.child_subject_identifier
         ).exists()
     
-        if ultrasound_exists:
+        if not ultrasound_exists:
             raise ValidationError(
                 f'Maternal Ultrasound must exist for {instance.subject_identifier}')
         else:
