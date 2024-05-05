@@ -182,7 +182,7 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
 
         if self.caregiver_locator_obj:
             if (not self.caregiver_locator_obj.first_name and not
-            self.caregiver_locator_obj.last_name):
+                    self.caregiver_locator_obj.last_name):
                 self.caregiver_locator_obj.first_name = self.first_name
                 self.caregiver_locator_obj.last_name = self.last_name
                 self.caregiver_locator_obj.save()
@@ -196,26 +196,29 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
     def multiple_births(self):
         """Returns value of births if the mother has twins/triplets.
         """
+        twin_triplet = {2: 'twins',
+                        3: 'triplets'}
         dataset_cls = django_apps.get_model(
             'flourish_caregiver.maternaldataset')
-
         try:
             dataset_obj = dataset_cls.objects.get(
                 screening_identifier=self.screening_identifier)
         except dataset_cls.DoesNotExist:
             pass
         else:
+            if getattr(dataset_obj, 'protocol', None) == 'BCPP':
+                return twin_triplet.get(dataset_obj.twin_triplet, None)
+
             child_dataset_cls = django_apps.get_model(
                 'flourish_child.childdataset')
             children = child_dataset_cls.objects.filter(
                 study_maternal_identifier=dataset_obj.study_maternal_identifier)
-            if children.count() == 2:
-                return 'twins'
-            elif children.count() == 3:
-                return 'triplets'
-            elif children.count() > 3:
+
+            if children.count() > 3:
                 raise ValidationError(
                     'We do not expect more than triplets to exist.')
+            return twin_triplet.get(children.count(), None)
+
         return None
 
     @property

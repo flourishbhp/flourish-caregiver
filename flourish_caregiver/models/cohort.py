@@ -54,7 +54,6 @@ class Cohort(MatrixMatchVariablesMixin,
         self.exposure_status = self.check_exposure()
         self.current_cohort = self.check_current_cohort()
         super().save(*args, **kwargs)
-        
 
     @property
     def schedule_history_cls(self):
@@ -73,13 +72,27 @@ class Cohort(MatrixMatchVariablesMixin,
     def screening_identifier(self):
         return self.caregiver_child_consent.subject_consent.screening_identifier
 
+    @property
+    def get_latest_schedule_obj(self):
+        ignore_schedule = ['tb_adol_followup_schedule', 'tb_adol_schedule',
+                           'child_bu_schedule', 'child_facet_schedule']
+        try:
+            latest_onschedule = self.schedule_history_cls.objects.filter(
+                subject_identifier=self.subject_identifier, ).exclude(
+                schedule_name__in=ignore_schedule).latest(
+                'onschedule_datetime', 'created')
+        except self.schedule_history_cls.DoesNotExist:
+            return None
+        else:
+            return latest_onschedule
+
     def check_antenetal_exists(self):
         antenatal_cls = django_apps.get_model(
             'flourish_caregiver.antenatalenrollment')
         antenatal = antenatal_cls.objects.filter(
             subject_identifier=self.caregiver_subject_identifier)
         return antenatal.exists()
-        
+
     def check_exposure(self):
         exposure = {POS: 'EXPOSED', NEG: 'UNEXPOSED', }
         child_dataset = getattr(self.caregiver_child_consent, 'child_dataset', None)
@@ -93,14 +106,12 @@ class Cohort(MatrixMatchVariablesMixin,
     def check_current_cohort(self):
         cohort_onschedules = [name_dict.get('name') for name_dict in
                               child_schedule_dict.get(self.name).values()]
-        try:
-            latest_onschedule = self.schedule_history_cls.objects.filter(
-                subject_identifier=self.subject_identifier, ).exclude(
-                    schedule_name__icontains='tb_adol').latest('onschedule_datetime', 'created')
-        except self.schedule_history_cls.DoesNotExist:
-            return self.check_antenetal_exists()
-        else:     
+
+        latest_onschedule = self.get_latest_schedule_obj
+        if latest_onschedule:
             return getattr(latest_onschedule, 'schedule_name', None) in cohort_onschedules
+        else:
+            return self.check_antenetal_exists()
 
     class Meta:
         app_label = 'flourish_caregiver'

@@ -291,7 +291,6 @@ class CaregiverChildConsent(SiteModelMixin, NonUniqueSubjectIdentifierFieldMixin
         """
         caregiver_child_consent_cls = django_apps.get_model(self._meta.label_lower)
         child_identifier_postfix = ''
-
         if self.child_dataset:
             if self.subject_consent.multiple_birth:
                 if self.child_dataset.twin_triplet:
