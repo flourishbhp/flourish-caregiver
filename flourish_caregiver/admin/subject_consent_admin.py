@@ -1,5 +1,3 @@
-import pandas as pd
-
 from _collections import OrderedDict
 from functools import partialmethod
 
@@ -17,6 +15,7 @@ from edc_model_admin import audit_fields, audit_fieldset_tuple, \
 from edc_model_admin import ModelAdminBasicMixin
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
+from pre_flourish.helper_classes.utils import is_flourish_eligible
 
 from .consent_amin_mixin import ConsentMixin
 from .modeladmin_mixins import ModelAdminMixin
@@ -196,14 +195,38 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
                 extra = len(caregiver_child_consents)
 
         elif study_maternal_id:
-            child_datasets = self.child_dataset_cls.objects.filter(
-                study_maternal_identifier=study_maternal_id)
+            child_datasets = self.get_child_datasets(study_maternal_id)
             if not obj:
                 child_count = child_datasets.count()
                 extra = child_count
             else:
                 extra = len(self.get_difference(child_datasets, obj))
         return extra
+
+    def get_child_datasets(self, study_maternal_identifier):
+        """ Returns child dataset instances for specific maternal identifier
+            if participant is not from Pre-flourish otherwise check eligibility
+            first.
+        """
+        maternaldataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
+        maternaldataset_exists = maternaldataset_cls.objects.filter(
+            study_maternal_identifier=study_maternal_identifier,
+            protocol='BCPP').exists()
+        eligible_idxs = []
+
+        child_datasets = self.child_dataset_cls.objects.filter(
+                study_maternal_identifier=study_maternal_identifier)
+
+        for child_dataset in child_datasets:
+            is_eligible, _ = is_flourish_eligible(child_dataset.study_child_identifier)
+            if is_eligible:
+                eligible_idxs.append(child_dataset.study_child_identifier)
+
+        if maternaldataset_exists:
+            child_datasets = child_datasets.filter(study_child_identifier__in=eligible_idxs)
+
+        return child_datasets
 
     def get_child_reconsent_extra(self, request):
         screening_identifier = request.GET.get('screening_identifier')
@@ -389,6 +412,7 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
         if request.method == 'GET':
             study_maternal_identifier = request.GET.get('study_maternal_identifier')
             screening_identifier = request.GET.get('screening_identifier')
+
             if request.GET.get('subject_identifier'):
                 subject_identifier = request.GET.get('subject_identifier')
             else:
@@ -412,7 +436,7 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
             screening_identifier)
         locator_model_obj = self.locator_model_obj(study_maternal_identifier)
         pre_flourish_consent_model_obj = self.pre_flourish_consent_model_obj(
-            study_maternal_identifier)
+            screening_identifier)
 
         return [self.generate_participant_options(
             bhp_prior_screening_model_obj=bhp_prior_screening_model_obj,
