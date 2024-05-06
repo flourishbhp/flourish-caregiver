@@ -144,7 +144,7 @@ class BreastMilkBirthForms(BreastMilkBirthFormsMixin, SubjectModelFormMixin,
         label='Has the participant experienced cracked nipples?',
         choices=YES_NO_NONE,
         widget=forms.RadioSelect,
-        required=False,
+        required=True,
     )
 
     class Meta:
