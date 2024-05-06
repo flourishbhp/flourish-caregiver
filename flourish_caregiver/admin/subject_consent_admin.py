@@ -1,6 +1,5 @@
 import pandas as pd
 
-from io import BytesIO
 from _collections import OrderedDict
 from functools import partialmethod
 
@@ -8,7 +7,6 @@ from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import OuterRef, Subquery
-from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from edc_consent.actions import (
@@ -140,7 +138,7 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
     def prepare_initial_values_based_on_study(self, obj, study_maternal_id):
         initial = []
         child_datasets = self.child_dataset_cls.objects.filter(
-            study_maternal_identifier=study_maternal_id)
+            study_maternal_identifier=study_maternal_id).order_by('study_child_identifier')
 
         if obj:
             child_datasets = self.get_difference(child_datasets, obj)
@@ -205,7 +203,6 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
                 extra = child_count
             else:
                 extra = len(self.get_difference(child_datasets, obj))
-
         return extra
 
     def get_child_reconsent_extra(self, request):
@@ -213,12 +210,13 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
         subject_identifier = request.GET.get('subject_identifier')
 
         consent_version_obj = self.consent_version_obj(screening_identifier)
-        if consent_version_obj and getattr(consent_version_obj, 'child_version', None):
-            child_consent_objs = self.consent_cls.objects.filter(
-                subject_consent__subject_identifier=subject_identifier,
-                version=consent_version_obj.child_version)
-            if not child_consent_objs:
-                return 1
+        child_version = getattr(consent_version_obj, 'child_version', None)
+        if consent_version_obj and child_version:
+            child_consent_objs = self.get_caregiver_child_consents(subject_identifier,)
+            child_consents_by_version = self.get_caregiver_child_consents(
+                subject_identifier, child_version)
+
+            return len(child_consent_objs - child_consents_by_version)
         return 0
 
     pre_flourish_child_consent_model = 'pre_flourish.preflourishcaregiverchildconsent'
@@ -387,21 +385,39 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj=obj, **kwargs)
         subject_identifier = None
+        initial_values = []
         if request.method == 'GET':
+            study_maternal_identifier = request.GET.get('study_maternal_identifier')
+            screening_identifier = request.GET.get('screening_identifier')
             if request.GET.get('subject_identifier'):
                 subject_identifier = request.GET.get('subject_identifier')
             else:
-                screening_identifier = request.GET.get('screening_identifier')
                 subject_identifier = self.get_subject_identifier(screening_identifier)
-        initial_values = self.prepare_initial_values_based_on_subject(
-            obj=obj, subject_identifier=subject_identifier)
-
+            if subject_identifier:
+                initial_values = self.prepare_initial_values_based_on_subject(
+                    subject_identifier=subject_identifier)
+            elif study_maternal_identifier:
+                initial_values = self.prepare_initial_values_from_locator(
+                    study_maternal_identifier, screening_identifier)
         form.previous_instance = initial_values
         return form
 
-    def prepare_initial_values_based_on_subject(self, obj, subject_identifier):
-        return [self.prepare_subject_consent(consent) for consent in
-                self.consents_filtered_by_subject(obj, subject_identifier)]
+    def prepare_initial_values_based_on_subject(self, subject_identifier):
+        return [self.prepare_subject_consent(subject_identifier)]
+
+    def prepare_initial_values_from_locator(
+            self, study_maternal_identifier, screening_identifier):
+        bhp_prior_screening_model_obj = self.bhp_prior_screening_model_obj(
+            screening_identifier)
+        locator_model_obj = self.locator_model_obj(study_maternal_identifier)
+        pre_flourish_consent_model_obj = self.pre_flourish_consent_model_obj(
+            study_maternal_identifier)
+
+        return [self.generate_participant_options(
+            bhp_prior_screening_model_obj=bhp_prior_screening_model_obj,
+            locator_model_obj=locator_model_obj,
+            pre_flourish_consent_model_obj=pre_flourish_consent_model_obj
+        )]
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
@@ -509,7 +525,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             # Correct date formats
             obj_data = self.fix_date_formats(obj_data)
             records.append(obj_data)
-        
+
         response = self.write_to_csv(records)
         return response
 
@@ -546,15 +562,17 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
     def update_variables(self, data={}):
         """ Update study identifiers to desired variable name(s).
         """
+        new_data_dict = {}
         replace_idx = {'subject_identifier': 'childpid',
                        'study_maternal_identifier': 'old_matpid',
                        'study_child_identifier': 'old_childpid'}
         for old_idx, new_idx in replace_idx.items():
             try:
-                data[new_idx] = data.pop(old_idx)
+                new_data_dict[new_idx] = data.pop(old_idx)
             except KeyError:
                 continue
-        return data
+        new_data_dict.update(data)
+        return new_data_dict
 
     def previous_study_dataset(self, identifier=None):
         childdataset_cls = django_apps.get_model('flourish_child.childdataset')
