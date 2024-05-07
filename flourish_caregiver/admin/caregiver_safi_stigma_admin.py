@@ -78,7 +78,7 @@ class CaregiverSafiStigmaAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         ]},
         ),
     ]
-    
+
     radio_fields = {
         'member_lwhiv': admin.VERTICAL,
         'judged': admin.VERTICAL,

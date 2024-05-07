@@ -30,11 +30,10 @@ class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAd
          ),
 
         (
-        "Some people feel more comfortable talking one-on-one rather than in a group "
-        "about certain topics. "
-        "Do while others may feel more comfortable talking in groups. "
-        "We would like to understand your preference in participating in the following "
-        "topic discussions",
+            "Some people feel more comfortable talking one-on-one rather than in a group "
+            "about certain topics. Do while others may feel more comfortable talking in groups. "
+            "We would like to understand your preference in participating in the following "
+            "topic discussions",
         {
             "fields": (
                 'infant_feeding',

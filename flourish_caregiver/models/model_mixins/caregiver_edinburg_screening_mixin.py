@@ -61,7 +61,7 @@ class CaregiverEdinburghDeprScreeningMixin(models.Model):
         verbose_name='Depression score',
         null=True,
         blank=True)
-    
+
     def calculate_depression_score(self):
         score = 0
         for f in self._meta.get_fields():
