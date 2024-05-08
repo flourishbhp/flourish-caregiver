@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import PROTECT
 from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
-
+from edc_base.model_validators import date_not_future, datetime_not_future
 from .list_models import CrackedNipplesActions, MastitisActions
 from .model_mixins.breast_milk_field_mixin import \
     BreastMilkFieldsMixin
@@ -32,6 +32,7 @@ class MastitisInline(BaseUuidModel):
     mastitis_date_onset = models.DateField(
         verbose_name='Approximate date of onset of mastitis: ',
         null=True,
+        validators=[date_not_future, ],
     )
 
     mastitis_type = models.CharField(
@@ -65,6 +66,7 @@ class CrackedNipplesInline(BaseUuidModel):
     cracked_nipples_date_onset = models.DateField(
         verbose_name='Approximate date of onset of cracked nipples: ',
         null=True,
+        validators=[date_not_future, ],
     )
 
     cracked_nipples_type = models.CharField(

@@ -1,7 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from edc_constants.choices import YES_NO
-
+from edc_base.model_validators import datetime_not_future
 from flourish_caregiver.choices import BREAST_COLLECTED_CHOICES, EXP_COUNT_CHOICES, \
     NOT_COLLECTED_REASONS_CHOICES, YES_RESOLVED_NO
 from . import CrfModelMixin
@@ -77,7 +77,8 @@ class BreastMilkFieldsMixin(CrfModelMixin, models.Model):
     last_breastfed = models.DateTimeField(
         verbose_name='What date and time was the infant last breastfed ',
         null=True,
-        blank=True
+        blank=True,
+        validators=[datetime_not_future, ],
     )
 
     recently_ate = models.CharField(
