@@ -490,6 +490,7 @@ CALL_REASON = (
 =======
     ('recruitment', 'Recruitement'),
     ('focus_group', 'Focus group invitation'),
+    ('6_month_visit_facet', '6th month visit(FACET)'),
     ('participant_eae_report', 'Participant\'s clinical notes for EAE reporting'),
 >>>>>>> 05f747b (Refactor caregiver contact)
 )
