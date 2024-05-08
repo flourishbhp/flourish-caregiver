@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import PROTECT
 from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
-from edc_base.model_validators import date_not_future, datetime_not_future
+from edc_base.model_validators import date_not_future
 from .list_models import CrackedNipplesActions, MastitisActions
 from .model_mixins.breast_milk_field_mixin import \
     BreastMilkFieldsMixin
