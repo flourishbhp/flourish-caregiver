@@ -14,3 +14,4 @@ from .caregiver_edinburg_screening_mixin import CaregiverEdinburghDeprScreeningM
 from .caregiver_gad_anxiety_screening_mixin import CaregiverGadAnxietyScreeningMixin
 from .relationship_father_involvement_mixin import RelationshipFatherInvolvementMixin
 from .caregiver_social_work_referral_mixin import CaregiverSocialWorkReferralMixin
+from .care_aid_mixin import CageAidFieldsMixin
