@@ -31,7 +31,7 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
         if not instance and previous_instance:
             for key in self.base_fields.keys():
                 initial[key] = previous_instance[0].get(key, None)
-            kwargs['initial'] = initial
+        kwargs['initial'] = initial
 
         super().__init__(*args, **kwargs)
         if instance and subject_identifier:

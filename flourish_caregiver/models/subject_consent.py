@@ -22,6 +22,7 @@ from .model_mixins import ReviewFieldsMixin, SearchSlugModelMixin
 from ..choices import IDENTITY_TYPE
 from ..maternal_choices import RECRUIT_CLINIC, RECRUIT_SOURCE
 from ..subject_identifier import SubjectIdentifier
+from ..helper_classes.utils import get_pre_flourish_consent
 
 caregiver_config = django_apps.get_app_config('flourish_caregiver')
 
@@ -198,14 +199,8 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         """
         twin_triplet = {2: 'twins',
                         3: 'triplets'}
-        dataset_cls = django_apps.get_model(
-            'flourish_caregiver.maternaldataset')
-        try:
-            dataset_obj = dataset_cls.objects.get(
-                screening_identifier=self.screening_identifier)
-        except dataset_cls.DoesNotExist:
-            pass
-        else:
+        dataset_obj = self.get_maternal_dataset()
+        if dataset_obj:
             if getattr(dataset_obj, 'protocol', None) == 'BCPP':
                 return twin_triplet.get(dataset_obj.twin_triplet, None)
 
@@ -218,7 +213,6 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
                 raise ValidationError(
                     'We do not expect more than triplets to exist.')
             return twin_triplet.get(children.count(), None)
-
         return None
 
     @property
@@ -236,25 +230,61 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
 
         Override this if needed.
         """
+        identifier_kwargs = {
+            'caregiver_type': self.caregiver_type,
+            'identifier_type': 'subject',
+            'requesting_model': self._meta.label_lower,
+            'site': self.site}
+
         if not self.is_eligible:
             return None
+        pf_identifier = self.pre_flourish_identifier()
+        if pf_identifier:
+            identifier_kwargs.update(
+                {'pf_identifier': pf_identifier})
+
         subject_identifier = SubjectIdentifier(
-            caregiver_type=self.caregiver_type,
-            identifier_type='subject',
-            requesting_model=self._meta.label_lower,
-            site=self.site)
+            **identifier_kwargs)
         return subject_identifier.identifier
 
-    def update_dataset_identifier(self):
+    def pre_flourish_identifier(self):
+        """ For participant enrolling from pre-flourish try:
+            reuse identifier from pre-flourish and remove 'P'
+            or generate a new identifier for them.
+        """
+        dataset_obj = self.get_maternal_dataset()
+        if getattr(dataset_obj, 'protocol', None) == 'BCPP':
+            pf_consent = get_pre_flourish_consent(self.screening_identifier)
+            subject_identifier = getattr(pf_consent, 'subject_identifier', '')
+            if subject_identifier and not self.check_identifier_exists(subject_identifier):
+                return subject_identifier.replace('P', '')
+        return None
+
+    def check_identifier_exists(self, subject_identifier):
+        """ Check if a subject consent with the subject_identifier exists
+            already.
+        """
+        model_obj_exists = self.__class__.objects.filter(
+            subject_identifier=subject_identifier).exists()
+        return model_obj_exists
+
+    def get_maternal_dataset(self):
+        """ Get a dataset object for the related screening identifier
+        """
         dataset_cls = django_apps.get_model(
             'flourish_caregiver.maternaldataset')
-
         try:
             dataset_obj = dataset_cls.objects.get(
                 screening_identifier=self.screening_identifier)
         except dataset_cls.DoesNotExist:
-            pass
+            return None
         else:
+            return dataset_obj
+
+    def update_dataset_identifier(self):
+        dataset_obj = self.get_maternal_dataset()
+
+        if dataset_obj:
             dataset_obj.subject_identifier = self.subject_identifier
             dataset_obj.save()
 

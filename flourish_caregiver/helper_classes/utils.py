@@ -139,3 +139,14 @@ def set_initials(first_name=None, last_name=None):
         else:
             initials = f'{first_name[:1]}{last_name[:1]}'
     return initials
+
+
+def get_pre_flourish_consent(screening_identifier):
+    pf_consent_cls = django_apps.get_model('pre_flourish.preflourishconsent')
+    try:
+        pf_consent_obj = pf_consent_cls.objects.filter(
+            screening_identifier=screening_identifier).latest('consent_datetime')
+    except pf_consent_cls.DoesNotExist:
+        return None
+    else:
+        return pf_consent_obj
