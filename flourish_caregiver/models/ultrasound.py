@@ -8,6 +8,7 @@ from .model_mixins import CrfModelMixin, UltraSoundModelMixin
 from ..action_items import ULTRASOUND_ACTION
 from ..choices import GESTATIONS_NUMBER, ZERO_ONE
 from ..validators import validate_fetal_weight, validate_ga_by_ultrasound
+from ..helper_classes.utils import get_registration_date
 
 
 class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
@@ -176,6 +177,14 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
     @property
     def action_item_reason(self):
         return 'Number of gestations is ' + self.number_of_gestations
+
+    @property
+    def ga_confirmed_after(self):
+        registration_datetime = get_registration_date(self.subject_identifier)
+
+        if registration_datetime:
+            weeks_diff = (self.report_datetime - registration_datetime).days / 7
+            return self.ga_confirmed - weeks_diff
 
     class Meta:
         app_label = 'flourish_caregiver'
