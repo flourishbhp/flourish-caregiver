@@ -1,5 +1,6 @@
 import datetime
 
+from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import Q
@@ -150,3 +151,54 @@ def get_pre_flourish_consent(screening_identifier):
         return None
     else:
         return pf_consent_obj
+
+
+def get_related_child_count(subject_identifier, child_subject_identifier):
+    """ Return total number of children associated to the specific subject_identifier
+        excluding the current `child_subject_identifier` provided.
+        @param subject_identifier: parent participant identifier
+        @param child_subject_identifier: child participant
+        @return: total count of related children
+    """
+    registered_subject_cls = django_apps.get_model('edc_registration.registeredsubject')
+    return registered_subject_cls.objects.filter(
+        relative_identifier=subject_identifier).exclude(
+            subject_identifier=child_subject_identifier, ).count()
+
+
+def get_child_consents(subject_identifier):
+    child_consent_cls = django_apps.get_model(
+        'flourish_caregiver.caregiverchildconsent')
+
+    return child_consent_cls.objects.filter(
+        subject_consent__subject_identifier=subject_identifier).order_by(
+        '-consent_datetime')
+
+
+def get_registration_date(subject_identifier):
+    child_consents = get_child_consents(subject_identifier)
+
+    '''
+    To cater for empty names, and unborn babies
+     have neither first_name nor last_name,
+     used a built-in filter instead since is_preg is not
+    '''
+    unborn_baby_consents = list(filter(
+        lambda child: child.is_preg, child_consents.filter(
+            study_child_identifier__isnull=True)))
+
+    if (child_consents and child_consents.values_list(
+            'subject_identifier', flat=True).distinct().count() == 1):
+        child_consent = child_consents[0]
+        return child_consent.consent_datetime
+
+    elif child_consents and unborn_baby_consents:
+        '''
+        Catering for unborn baby, if twins, the consent_datetime
+         of the first child is relavent
+        '''
+        return unborn_baby_consents[0].consent_datetime
+
+    else:
+        raise forms.ValidationError(
+            'Missing matching Child Subject Consent form, cannot proceed.')

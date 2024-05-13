@@ -190,3 +190,19 @@ class OnScheduleHelper(object):
                     subject_identifier=self.subject_identifier).exclude(
                     child_subject_identifier=instance.subject_identifier).count())
         return children_count
+
+    def create_caregiver_offschedule(self, schedule_name, offschedule_datetime=get_utcnow()):
+        """ Take participant offschedule for a specific `schedule_name`
+        """
+        caregiver_offschedule_cls = 'flourish_caregiver.caregiveroffschedule'
+        try:
+            offschedule_obj = caregiver_offschedule_cls.objects.get(
+                 subject_identifier=self.subject_identifier,
+                 schedule_name=schedule_name)
+        except caregiver_offschedule_cls.DoesNotExist:
+            caregiver_offschedule_cls.objects.create(
+                subject_identifier=self.subject_identifier,
+                schedule_name=schedule_name,
+                offschedule_datetime=offschedule_datetime)
+        else:
+            offschedule_obj.save()
