@@ -829,7 +829,7 @@ def get_registration_date(subject_identifier):
 def create_registered_infant(instance):
     #  Create infant registered subject
     if (isinstance(instance, MaternalDelivery) and
-        getattr(instance, 'live_infants_to_register', None) == 1):
+            getattr(instance, 'live_infants_to_register', None) == 1):
         maternal_consent = SubjectConsent.objects.filter(
             subject_identifier=instance.subject_identifier
         ).order_by('version').last()
@@ -837,8 +837,8 @@ def create_registered_infant(instance):
         ultrasound_exists = UltraSound.objects.filter(
             maternal_visit__subject_identifier=instance.subject_identifier,
             child_subject_identifier=instance.child_subject_identifier
-        ).order_by('report_datetime').exists()
-    
+        ).exists()
+
         if not ultrasound_exists:
             raise ValidationError(
                 f'Maternal Ultrasound must exist for {instance.subject_identifier}')
