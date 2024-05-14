@@ -1,18 +1,5 @@
 from django.db import models
-from edc_base.model_mixins import BaseUuidModel
-from edc_base.model_mixins import ListModelMixin as BaseListModelMixin
-
-
-class ListModelMixin(BaseListModelMixin):
-    name = models.CharField(
-        verbose_name='Name',
-        max_length=250,
-        db_index=True,
-        help_text='(suggest 40 characters max.)',
-    )
-
-    class Meta:
-        abstract = True
+from edc_base.model_mixins import BaseUuidModel, ListModelMixin
 
 
 class ChronicConditions(ListModelMixin, BaseUuidModel):
@@ -96,27 +83,57 @@ class HouseholdMember(ListModelMixin, BaseUuidModel):
 
 
 class MemberReadBooks(ListModelMixin, BaseUuidModel):
-    pass
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
 
 
 class MemberToldStories(ListModelMixin, BaseUuidModel):
-    pass
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
 
 
 class MemberSangSongs(ListModelMixin, BaseUuidModel):
-    pass
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
 
 
 class MemberChildOutside(ListModelMixin, BaseUuidModel):
-    pass
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
 
 
 class MemberPlayedWithChild(ListModelMixin, BaseUuidModel):
-    pass
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
 
 
 class MemberNamedWithChild(ListModelMixin, BaseUuidModel):
-    pass
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
 
 
 class ArvInterruptionReasons(ListModelMixin, BaseUuidModel):

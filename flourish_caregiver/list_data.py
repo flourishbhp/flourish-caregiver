@@ -286,7 +286,7 @@ list_data = {
         ('opd', 'OPD'),
         (OTHER, 'Other, specify'),
     ],
-    'flourish_caregiver.memberreadbooks': [
+     'flourish_caregiver.memberreadbooks': [
         ('read_mother', 'Mother'),
         ('read_father', 'Biological Father'),
         ('read_mpartner', 'Mother’s partner (not biological father)'),
@@ -415,27 +415,7 @@ list_data = {
         ('fatigue', 'Fatigue'),
         ('congestion', 'Congestion'),
         ('enlarged_lymph_nodes', 'Enlarged Lymph nodes'),
-        (OTHER, 'Other'), ],
-    'flourish_caregiver.mastitisactions': [
-        ('both_breasts', 'Breastfeed from both breasts'),
-        ('uninfected_breast',
-         'Breastfed from uninfected breast and pumped and dumped from the affected '
-         'breast'),
-        ('stopped_breastfeeding', 'Stopped breastfeeding and did not resume '),
-        ('temp_stopped',
-         'Stopped breastfeeding temporarily but resumed once breast healed'),
-        (OTHER, 'Other')
-    ],
-    'flourish_caregiver.crackednipplesactions': [
-        ('both_breasts', 'Breastfeed from both breasts'),
-        ('non_cracked_breast',
-         'Breastfed from non-cracked nipple breast and pumped and dumped from the affected '
-         'breast'),
-        ('stopped_breastfeeding', 'Stopped breastfeeding and did not resume '),
-        ('temp_stopped',
-         'Stopped breastfeeding temporarily but resumed once breast healed'),
-        (OTHER, 'Other')
-    ]
+        (OTHER, 'Other'),]
 }
 
 preload_data = PreloadData(
