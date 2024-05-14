@@ -1324,5 +1324,13 @@ REFERRAL_LOCATION = (
 YES_NO_NONE = (
     (None, 'None'),
     (YES, YES),
-    (NO, NO),
+    (NO, NO))
+
+RELATIONSHIP_SCALE = (
+    ('0', '0'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5', '5'),
 )
