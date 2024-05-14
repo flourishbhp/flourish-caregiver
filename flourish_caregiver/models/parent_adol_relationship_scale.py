@@ -89,7 +89,9 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         question_3 = int(self.family_events_together)
         question_10 = int(self.play_sport)
 
-        return (question_1 + question_2 + question_3 + question_10) / 4
+        result =  (question_1 + question_2 + question_3 + question_10) / 4
+
+        return round(result, 4)
 
     @property
     def connectedness(self):
@@ -100,8 +102,12 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         question_6 = int(self.comfort)
         question_8 = int(self.compassion)
         question_12 = int(self.encourage)
+        question_15 = int(self.encourage_expression)
 
-        return (question_4 + question_5 + question_6 + question_8 + question_12) / 6
+        result =  (question_4 + question_5 + question_6 + 
+                question_8 + question_12 + question_15) / 6
+        
+        return round(result, 4)
 
     @property
     def hostility(self):
@@ -113,8 +119,9 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         question_11 = int(self.complains_about_me)
         question_13 = int(self.criticize_child)
         question_14 = int(self.change_attitude)
+        result =  (question_7 + question_9 + question_11 + question_13 + question_14) / 5
 
-        return (question_7 + question_9 + question_11 + question_13 + question_14) / 5
+        return round(result, 4)
 
     class Meta:
         app_label = 'flourish_caregiver'
