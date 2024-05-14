@@ -2,10 +2,8 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from edc_constants.constants import NO
-
-from flourish_form_validations.form_validators import BreastMilkCRFFormValidator
 from flourish_form_validations.form_validators.breast_milk_crf_form_validator import \
-    CrackedNipplesInlineFormValidator, MastitisInlineFormValidator
+    CrackedNipplesInlineFormValidator, MastitisInlineFormValidator, BreastMilkCRFFormValidator, BreastMilk6MonthsCRFFormValidator
 from .form_mixins import InlineSubjectModelFormMixin, SubjectModelFormMixin
 from ..choices import EXP_COUNT_CHOICES_NONE, YES_NO_NONE, YES_RESOLVED_NO
 from ..models.breast_milk_crfs import BreastMilk6Months, BreastMilkBirth, \
@@ -16,15 +14,18 @@ class BreastMilkBirthFormsMixin(forms.ModelForm):
 
     def clean(self):
         super().clean()
-        mastitis_inline_count = int(self.data.get('mastitisinline_set-TOTAL_FORMS'))
+        mastitis_inline_count = int(
+            self.data.get('mastitisinline_set-TOTAL_FORMS'))
         cracked_nipples_inline_count = int(
             self.data.get('crackednipplesinline_set-TOTAL_FORMS'))
         exp_mastitis_count = self.cleaned_data.get('exp_mastitis_count', '')
-        exp_cracked_nipples_count = self.cleaned_data.get('exp_cracked_nipples_count', '')
+        exp_cracked_nipples_count = self.cleaned_data.get(
+            'exp_cracked_nipples_count', '')
 
-        self._validate_count(mastitis_inline_count, exp_mastitis_count, 'Mastitis')
+        self._validate_count(mastitis_inline_count,
+                             exp_mastitis_count, 'Mastitis')
         self._validate_count(cracked_nipples_inline_count, exp_cracked_nipples_count,
-                             'Cracked Nipples')
+                             'Cracked_Nipples')
 
         self._validate_mastitis_actions(mastitis_inline_count)
         self._validate_cracked_nipples_actions(cracked_nipples_inline_count)
@@ -49,7 +50,7 @@ class BreastMilkBirthFormsMixin(forms.ModelForm):
             if inline_count != int(exp_count):
                 raise ValidationError(
                     {f'exp_{field_name.lower()}_count': f'Ensure that you have the same '
-                                                        f'number of {field_name} inlines'}
+                                                        f'number of {field_name.lower()} inlines'}
                 )
         elif inline_count > 0:
             raise ValidationError(f'{field_name} inlines are not required')
@@ -143,7 +144,7 @@ class BreastMilkBirthForms(BreastMilkBirthFormsMixin, SubjectModelFormMixin,
         label='Has the participant experienced cracked nipples?',
         choices=YES_NO_NONE,
         widget=forms.RadioSelect,
-        required=False,
+        required=True,
     )
 
     class Meta:
@@ -153,7 +154,7 @@ class BreastMilkBirthForms(BreastMilkBirthFormsMixin, SubjectModelFormMixin,
 
 class BreastMilk6MonthsForms(BreastMilkBirthFormsMixin, SubjectModelFormMixin,
                              forms.ModelForm):
-    form_validator_cls = BreastMilkCRFFormValidator
+    form_validator_cls = BreastMilk6MonthsCRFFormValidator
 
     class Meta:
         model = BreastMilk6Months

@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import PROTECT
 from edc_base.model_fields import OtherCharField
 from edc_base.model_mixins import BaseUuidModel
-
+from edc_base.model_validators import date_not_future
 from .list_models import CrackedNipplesActions, MastitisActions
 from .model_mixins.breast_milk_field_mixin import \
     BreastMilkFieldsMixin
@@ -26,15 +26,17 @@ class BreastMilk6Months(BreastMilkFieldsMixin, models.Model):
 
 
 class MastitisInline(BaseUuidModel):
-    breast_milk_crf = models.ForeignKey(BreastMilkFieldsMixin, on_delete=PROTECT)
+    breast_milk_crf = models.ForeignKey(
+        BreastMilkFieldsMixin, on_delete=PROTECT)
 
     mastitis_date_onset = models.DateField(
-        verbose_name='Approximate date of onset of mastitis (first instance): ',
+        verbose_name='Approximate date of onset of mastitis: ',
         null=True,
+        validators=[date_not_future, ],
     )
 
     mastitis_type = models.CharField(
-        verbose_name='Is the mastitis(first instance):',
+        verbose_name='Is the mastitis:',
         max_length=20,
         choices=MASTITIS_TYPE_CHOICES,
         null=True,
@@ -42,13 +44,13 @@ class MastitisInline(BaseUuidModel):
 
     mastitis_action = models.ManyToManyField(
         MastitisActions,
-        verbose_name='What did the mother do (first instance)? ',
+        verbose_name='What did the mother do? ',
         max_length=20,
         related_name='mastitis_actions',
     )
 
     mastitis_action_other = OtherCharField(
-        verbose_name='If Other, specify (first instance)'
+        verbose_name='If Other, specify'
     )
 
     class Meta:
@@ -58,11 +60,13 @@ class MastitisInline(BaseUuidModel):
 
 
 class CrackedNipplesInline(BaseUuidModel):
-    breast_milk_crf = models.ForeignKey(BreastMilkFieldsMixin, on_delete=PROTECT)
+    breast_milk_crf = models.ForeignKey(
+        BreastMilkFieldsMixin, on_delete=PROTECT)
 
     cracked_nipples_date_onset = models.DateField(
         verbose_name='Approximate date of onset of cracked nipples: ',
         null=True,
+        validators=[date_not_future, ],
     )
 
     cracked_nipples_type = models.CharField(
