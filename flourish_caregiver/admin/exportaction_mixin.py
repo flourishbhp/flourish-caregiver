@@ -29,7 +29,7 @@ class ExportActionMixin(AdminExportHelper):
 
     def export_as_csv(self, request, queryset):
         records = []
-    
+
         for obj in queryset:
             data = obj.__dict__.copy()
 
