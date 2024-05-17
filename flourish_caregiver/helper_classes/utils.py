@@ -185,11 +185,11 @@ def get_registration_date(subject_identifier):
     '''
     unborn_baby_consents = list(filter(
         lambda child: child.is_preg, child_consents.filter(
-            study_child_identifier__isnull=True)))
+            study_child_identifier__isnull=True).order_by('consent_datetime')))
 
-    if (child_consents and child_consents.values_list(
-            'subject_identifier', flat=True).distinct().count() == 1):
-        child_consent = child_consents[0]
+    if (child_consents and len(set(child_consents.values_list(
+            'subject_identifier', flat=True))) == 1):
+        child_consent = child_consents.earliest('consent_datetime')
         return child_consent.consent_datetime
 
     elif child_consents and unborn_baby_consents:
