@@ -1209,7 +1209,7 @@ TB_REASON_CHOICES = (
     ('work', 'Participant/caregiver cannot be released from work'),
     ('isolation', 'Participant is in isolation due to COVID-19 or another infection'),
     ('not_well', 'Participant/caregiver is not well'),
-    ('other', 'Other'),
+    (OTHER, 'Other'),
 )
 
 PERIOD_HAPPENED = (
