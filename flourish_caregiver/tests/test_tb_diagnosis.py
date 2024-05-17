@@ -32,7 +32,7 @@ class TestTBDiagnosis(TestCase):
         self.assertEqual(self.tb_diagnosis.evaluate_for_tb(screening), False)
 
     def test_evaluate_for_tb_hiv_POS_caregiver(self):
-        self.tb_diagnosis.hiv_status = POS
+        self.tb_diagnosis.hiv_status = NEG
         screening = lambda: None
         screening.cough_duration = '>= 2 weeks'
         screening.fever_duration = '>= 2 weeks'
@@ -42,7 +42,7 @@ class TestTBDiagnosis(TestCase):
         self.assertEqual(self.tb_diagnosis.evaluate_for_tb(screening), True)
 
     def test_evaluate_for_tb_hiv_NEG_caregiver(self):
-        self.tb_diagnosis.hiv_status = NEG
+        self.tb_diagnosis.hiv_status = POS
         screening = lambda: None
         screening.cough = YES
         screening.fever = NO
