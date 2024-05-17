@@ -68,6 +68,7 @@ class TBScreeningMixin(models.Model):
 
     tb_tests = models.ManyToManyField(
         TBTests,
+        blank=True,
         verbose_name='What diagnostic tests were performed for TB?',
         max_length=15, )
 
@@ -101,6 +102,11 @@ class TBScreeningMixin(models.Model):
 
     other_test_results = models.TextField(verbose_name='Other Test Result', blank=True,
                                           null=True)
+
+    tb_diagnoses = models.BooleanField(
+        blank=True,
+        null=True
+    )
 
     class Meta:
         abstract = True
