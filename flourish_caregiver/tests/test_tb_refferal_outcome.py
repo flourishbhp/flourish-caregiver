@@ -79,6 +79,7 @@ class TestTBReferralOutcome(TestCase):
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
+    @tag('posr')
     def test_tb_referral_hiv_pos_required(self):
         self.assertEqual(CrfMetadata.objects.get(
             subject_identifier=self.subject_consent.subject_identifier,
@@ -88,6 +89,7 @@ class TestTBReferralOutcome(TestCase):
         mommy.make_recipe(
             'flourish_caregiver.caregivertbscreening',
             maternal_visit=self.caregiver_visit_2000M,
+            cough_duration='>= 2 weeks',
             cough=YES,
             fever=YES,
             sweats=YES, )

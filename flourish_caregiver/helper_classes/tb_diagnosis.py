@@ -1,4 +1,4 @@
-from edc_constants.constants import NO, POS, YES
+from edc_constants.constants import NEG, NO, POS, YES
 
 
 class TBDiagnosis:
@@ -20,7 +20,7 @@ class TBDiagnosis:
                              screening.sweats_duration == '>= 2 weeks',
                              screening.weight_loss_duration == '>= 2 weeks',
                              screening.evaluated_for_tb == NO]) >= 1)
-        if self.hiv_status == POS:
+        if self.hiv_status == NEG:
             return (sum([screening.cough_duration == '>= 2 weeks',
                          screening.fever_duration == '>= 2 weeks',
                          screening.sweats_duration == '>= 2 weeks',
