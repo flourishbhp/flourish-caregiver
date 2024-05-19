@@ -175,30 +175,15 @@ def get_child_consents(subject_identifier):
         '-consent_datetime')
 
 
-def get_registration_date(subject_identifier):
-    child_consents = get_child_consents(subject_identifier)
+def get_registration_date(subject_identifier, child_subject_identifier):
+    """ Get date and time child was consented or registered to the study.
+    """
+    child_consents = get_child_consents(subject_identifier).filter(
+        subject_identifier=child_subject_identifier,)
 
-    '''
-    To cater for empty names, and unborn babies
-     have neither first_name nor last_name,
-     used a built-in filter instead since is_preg is not
-    '''
-    unborn_baby_consents = list(filter(
-        lambda child: child.is_preg, child_consents.filter(
-            study_child_identifier__isnull=True).order_by('consent_datetime')))
-
-    if (child_consents and len(set(child_consents.values_list(
-            'subject_identifier', flat=True))) == 1):
-        child_consent = child_consents.earliest('consent_datetime')
-        return child_consent.consent_datetime
-
-    elif child_consents and unborn_baby_consents:
-        '''
-        Catering for unborn baby, if twins, the consent_datetime
-         of the first child is relavent
-        '''
-        return unborn_baby_consents[0].consent_datetime
-
-    else:
+    if not child_consents.exists():
         raise forms.ValidationError(
             'Missing matching Child Subject Consent form, cannot proceed.')
+    else:
+        earliest_consent = child_consents.earliest('consent_datetime')
+        return earliest_consent.consent_datetime
