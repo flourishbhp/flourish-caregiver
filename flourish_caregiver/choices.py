@@ -1327,7 +1327,6 @@ YES_NO_NONE = (
     (NO, NO),
 )
 
-
 RELATIONSHIP_SCALE = (
     ('0', '0'),
     ('1', '1'),

@@ -118,7 +118,8 @@ class ConsentMixin:
             self, bhp_prior_screening_model_obj, locator_model_obj,
             pre_flourish_consent_model_obj):
         options = {
-            'screening_identifier': bhp_prior_screening_model_obj.screening_identifier,
+            'screening_identifier': getattr(
+                bhp_prior_screening_model_obj, 'screening_identifier', None),
         }
 
         if (bhp_prior_screening_model_obj and
