@@ -1,22 +1,27 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from edc_model_admin import audit_fieldset_tuple
 
+from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import InterviewFocusGroupInterestVersion2Form
 from ..models import InterviewFocusGroupInterestV2
-from .modeladmin_mixins import CrfModelAdminMixin
 
 
 @admin.register(InterviewFocusGroupInterestV2, site=flourish_caregiver_admin)
 class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAdmin):
-
     form = InterviewFocusGroupInterestVersion2Form
 
+    additional_instructions = mark_safe(
+        '<b>***INSTRUCTIONS CLINIC STAFF: The questions I will ask are designed'
+        'solely for data collection purposes and the purpose of these questions is '
+        'to explore your topic of interest for discussion in case we are to have '
+        'interviews or focus group settings, in our future studies. At this time, '
+        'there are no ongoing or upcoming studies to address these interests '
+        'however, your responses will help to identify future study topics.</b>')
+
     fieldsets = (
-        ("In the future, we may conduct smaller studies within FLOURISH that involve discussions. Discussions could "
-         "either be one-on-one with a study staff member or in a group with other study participants. We would like "
-         "to understand whether you would be interested in participating in discussions, and if so, whether you would "
-         "prefer a one-on-one or group discussion. ", {
+        (None, {
             "fields": (
                 'maternal_visit',
                 'report_datetime',
@@ -25,10 +30,13 @@ class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAd
             ), }
          ),
 
-        ("Some people feel more comfortable talking one-on-one rather than in a group about certain topics. "
-         "Do while others may feel more comfortable talking in groups. "
-         "We would like to understand your preference in participating in the following topic discussions",
-         {
+        (
+        "Some people feel more comfortable talking one-on-one rather than in a group "
+        "about certain topics. "
+        "Do while others may feel more comfortable talking in groups. "
+        "We would like to understand your preference in participating in the following "
+        "topic discussions",
+        {
             "fields": (
                 'infant_feeding',
                 'school_performance',
@@ -46,14 +54,14 @@ class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAd
                 'same_status_comfort',
                 'diff_status_comfort',
             ), }
-         ),
+        ),
 
         ("Additional Topics",
          {
-            "fields": (
-                'women_discussion_topics',
-                'adolescent_discussion_topics',
-            ), }
+             "fields": (
+                 'women_discussion_topics',
+                 'adolescent_discussion_topics',
+             ), }
          ), audit_fieldset_tuple
     )
 
