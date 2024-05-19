@@ -485,14 +485,10 @@ CALL_REASON = (
     ('follow_up_delivery', 'Follow up on delivery status'),
     ('follow_up_labs', 'Follow up on abnormal labs'),
     ('re_appointment', 'Re-appointment or reschedule'),
-<<<<<<< HEAD
-    (OTHER, 'Other, specify')
-=======
     ('recruitment', 'Recruitement'),
     ('focus_group', 'Focus group invitation'),
     ('6_month_visit_facet', '6th month visit(FACET)'),
     ('participant_eae_report', 'Participant\'s clinical notes for EAE reporting'),
->>>>>>> 05f747b (Refactor caregiver contact)
 )
 
 OUTCOME_CALL = (('successful_confirmed', 'Successful, appointment confirmed'),

@@ -1,5 +1,18 @@
 from django.db import models
-from edc_base.model_mixins import BaseUuidModel, ListModelMixin
+from edc_base.model_mixins import BaseUuidModel
+from edc_base.model_mixins import ListModelMixin as BaseListModelMixin
+
+
+class ListModelMixin(BaseListModelMixin):
+    name = models.CharField(
+        verbose_name='Name',
+        max_length=250,
+        db_index=True,
+        help_text='(suggest 40 characters max.)',
+    )
+
+    class Meta:
+        abstract = True
 
 
 class ChronicConditions(ListModelMixin, BaseUuidModel):
@@ -83,57 +96,27 @@ class HouseholdMember(ListModelMixin, BaseUuidModel):
 
 
 class MemberReadBooks(ListModelMixin, BaseUuidModel):
-    name = models.CharField(
-        verbose_name='Name',
-        max_length=250,
-        db_index=True,
-        help_text='(suggest 40 characters max.)',
-    )
+    pass
 
 
 class MemberToldStories(ListModelMixin, BaseUuidModel):
-    name = models.CharField(
-        verbose_name='Name',
-        max_length=250,
-        db_index=True,
-        help_text='(suggest 40 characters max.)',
-    )
+    pass
 
 
 class MemberSangSongs(ListModelMixin, BaseUuidModel):
-    name = models.CharField(
-        verbose_name='Name',
-        max_length=250,
-        db_index=True,
-        help_text='(suggest 40 characters max.)',
-    )
+    pass
 
 
 class MemberChildOutside(ListModelMixin, BaseUuidModel):
-    name = models.CharField(
-        verbose_name='Name',
-        max_length=250,
-        db_index=True,
-        help_text='(suggest 40 characters max.)',
-    )
+    pass
 
 
 class MemberPlayedWithChild(ListModelMixin, BaseUuidModel):
-    name = models.CharField(
-        verbose_name='Name',
-        max_length=250,
-        db_index=True,
-        help_text='(suggest 40 characters max.)',
-    )
+    pass
 
 
 class MemberNamedWithChild(ListModelMixin, BaseUuidModel):
-    name = models.CharField(
-        verbose_name='Name',
-        max_length=250,
-        db_index=True,
-        help_text='(suggest 40 characters max.)',
-    )
+    pass
 
 
 class ArvInterruptionReasons(ListModelMixin, BaseUuidModel):
@@ -149,4 +132,12 @@ class TBTests(ListModelMixin, BaseUuidModel):
 
 
 class GeneralSymptoms(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class MastitisActions(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class CrackedNipplesActions(ListModelMixin, BaseUuidModel):
     pass

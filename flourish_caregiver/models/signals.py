@@ -4,7 +4,6 @@ from datetime import datetime
 import PIL
 import pyminizip
 import pypdfium2 as pdfium
-from django import forms
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib.auth.models import Group, User
@@ -24,7 +23,7 @@ from edc_visit_tracking.constants import MISSED_VISIT
 from PIL import Image
 
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
-from flourish_prn.action_items import CHILDOFF_STUDY_ACTION
+from flourish_prn.action_items import CHILDOFF_STUDY_ACTION, CAREGIVEROFF_STUDY_ACTION
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -46,7 +45,8 @@ from ..helper_classes.auto_complete_child_crfs import AutoCompleteChildCrfs
 from ..helper_classes.consent_helper import consent_helper
 from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..helper_classes.onschedule_helper import OnScheduleHelper
-from ..helper_classes.utils import cohort_assigned, update_preg_screening_obj_child_pid
+from ..helper_classes.utils import (cohort_assigned, update_preg_screening_obj_child_pid,
+                                    get_related_child_count, get_child_consents)
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
@@ -359,15 +359,13 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
         child_dummy_consent_cls = django_apps.get_model(
             'flourish_child.childdummysubjectconsent')
-        registered_subject_cls = django_apps.get_model(
-            'edc_registration.registeredsubject')
 
         child_age = None
         children_count = instance.caregiver_visit_count
         if not children_count:
-            children_count = 1 + registered_subject_cls.objects.filter(
-                relative_identifier=instance.subject_consent.subject_identifier
-            ).exclude(subject_identifier=instance.subject_identifier, ).count()
+            children_count = 1 + get_related_child_count(
+                subject_identifier=instance.subject_consent.subject_identifier,
+                child_subject_identifier=instance.subject_identifier)
 
         if instance.child_dob:
             child_age = age(instance.child_dob, get_utcnow())
@@ -625,32 +623,23 @@ def maternal_caregiver_take_off_schedule(sender, instance, raw, created, **kwarg
 @receiver(post_save, weak=False, sender=UltraSound,
           dispatch_uid='ultrasound_on_post_save')
 def ultrasound_on_post_save(sender, instance, raw, created, **kwargs):
-    """ Triggers child off study, to remove mother on related schedules. This
-        is to account for multiple enrolment, can not take caregiver/mother offstudy.
-        If only child, child offstudy will trigger caregiver offstudy form.
+    """ Triggers caregiver offschedule, to remove mother on child related schedules.
+        This is to account for multiple enrolment, can not take caregiver/mother
+        offstudy.
+        If only child, caregiver offstudy is handled on the dashboard to avoid overlapping.
     """
-    child_offstudy_cls = django_apps.get_model(
-        'flourish_prn.childoffstudy')
+    if (instance.ga_confirmed_after < MIN_GA_LMP_ENROL_WEEKS
+            or instance.ga_confirmed_after > MAX_GA_LMP_ENROL_WEEKS):
+        child_count = get_related_child_count(
+            subject_identifier=instance.subject_identifier,
+            child_subject_identifier=instance.child_subject_identifier)
 
-    registration_datetime = get_registration_date(instance.subject_identifier)
-
-    if registration_datetime:
-        weeks_diff = (instance.report_datetime -
-                      registration_datetime).days / 7
-
-        ga_confirmed_after = instance.ga_confirmed - weeks_diff
-
-        if (ga_confirmed_after < MIN_GA_LMP_ENROL_WEEKS
-                or ga_confirmed_after > MAX_GA_LMP_ENROL_WEEKS):
-
-            trigger_action_item(child_offstudy_cls,
-                                CHILDOFF_STUDY_ACTION,
-                                instance.child_subject_identifier)
-        else:
-            trigger_action_item(child_offstudy_cls,
-                                CHILDOFF_STUDY_ACTION,
-                                instance.child_subject_identifier,
-                                opt_trigger=False)
+        if child_count >= 1:
+            helper_cls = onschedule_helper_cls(
+                subject_identifier=instance.subject_identifier, )
+            helper_cls.create_caregiver_offschedule(
+                instance.maternal_visit.schedule_name,
+                offschedule_datetime=instance.report_datetime)
 
 
 @receiver(post_save, weak=False, sender=ScreeningPregWomen,
@@ -797,49 +786,20 @@ def get_onschedule_model_obj(schedule, subject_identifier, schedule_name):
         return None
 
 
-def get_registration_date(subject_identifier):
-    child_consents = get_child_consents(subject_identifier)
-
-    '''
-    To cater for empty names, and unborn babies
-     have neither first_name nor last_name,
-     used a built-in filter instead since is_preg is not
-    '''
-    unborn_baby_consents = list(filter(
-        lambda child: child.is_preg, child_consents.filter(
-            study_child_identifier__isnull=True)))
-
-    if (child_consents and child_consents.values_list(
-            'subject_identifier', flat=True).distinct().count() == 1):
-        child_consent = child_consents[0]
-        return child_consent.consent_datetime
-
-    elif child_consents and unborn_baby_consents:
-        '''
-        Catering for unborn baby, if twins, the consent_datetime
-         of the first child is relavent
-        '''
-        return unborn_baby_consents[0].consent_datetime
-
-    else:
-        raise forms.ValidationError(
-            'Missing matching Child Subject Consent form, cannot proceed.')
-
-
 def create_registered_infant(instance):
     #  Create infant registered subject
     if (isinstance(instance, MaternalDelivery) and
-        getattr(instance, 'live_infants_to_register', None) == 1):
+            getattr(instance, 'live_infants_to_register', None) == 1):
         maternal_consent = SubjectConsent.objects.filter(
             subject_identifier=instance.subject_identifier
         ).order_by('version').last()
 
-        ultrasound = UltraSound.objects.filter(
+        ultrasound_exists = UltraSound.objects.filter(
             maternal_visit__subject_identifier=instance.subject_identifier,
             child_subject_identifier=instance.child_subject_identifier
-        ).order_by('report_datetime').last()
-    
-        if not ultrasound:
+        ).exists()
+
+        if not ultrasound_exists:
             raise ValidationError(
                 f'Maternal Ultrasound must exist for {instance.subject_identifier}')
         else:
@@ -927,15 +887,6 @@ def create_consent_version(instance, version):
             user_created=instance.user_modified or instance.user_created,
             created=get_utcnow())
         consent_version.save()
-
-
-def get_child_consents(subject_identifier):
-    child_consent_cls = django_apps.get_model(
-        'flourish_caregiver.caregiverchildconsent')
-
-    return child_consent_cls.objects.filter(
-        subject_consent__subject_identifier=subject_identifier).order_by(
-        '-consent_datetime')
 
 
 def stamp_image(instance):

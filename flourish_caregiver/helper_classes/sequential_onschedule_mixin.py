@@ -40,17 +40,6 @@ class SeqEnrolOnScheduleMixin:
             subject_identifier=self.caregiver_subject_identifier,
             schedule_name=schedule_name)
 
-        if '_sec' not in cohort:
-            fu_onschedule_model, fu_schedule_name = self.get_caregiver_fu_details(
-                cohort, child_count)
-
-            self.enrol_fu_schedule(
-                cohort=cohort,
-                subject_identifier=self.caregiver_subject_identifier,
-                schedule_name=fu_schedule_name,
-                onschedule_model=fu_onschedule_model,
-                is_caregiver=True)
-
     def get_caregiver_fu_details(self, cohort, child_count):
         fu_onschedule_model = caregiver_schedule_dict[cohort]['sq_followup'][
                 'onschedule_model']
@@ -81,14 +70,6 @@ class SeqEnrolOnScheduleMixin:
                 appointment_model_cls=self.child_appointment_cls,
                 subject_identifier=self.child_subject_identifier,
                 schedule_name=schedule_name)
-
-        if '_sec' not in cohort:
-            fu_onschedule_model, fu_schedule_name = self.get_child_fu_details(cohort)
-
-            self.enrol_fu_schedule(cohort=cohort,
-                                   subject_identifier=self.child_subject_identifier,
-                                   schedule_name=fu_schedule_name,
-                                   onschedule_model=fu_onschedule_model, )
 
     def get_child_fu_details(self, cohort):
         fu_onschedule_model = child_schedule_dict[cohort]['sq_followup'][
