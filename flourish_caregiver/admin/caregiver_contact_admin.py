@@ -22,9 +22,9 @@ class CaregiverContactAdmin(ModelAdminMixin, admin.ModelAdmin):
                 'contact_type',
                 'contact_datetime',
                 'call_reason',
-                'call_reason_other',
                 'contact_success',
-                'contact_comment',
+                'call_outcome',
+                'call_outcome_other',
                 'call_rescheduled',
                 'reason_rescheduled',
                 'reason_rescheduled_other',
@@ -36,7 +36,8 @@ class CaregiverContactAdmin(ModelAdminMixin, admin.ModelAdmin):
         'subject_identifier', 'contact_type',
         'contact_datetime', 'call_reason', 'contact_success']
 
-    list_filter = ['contact_type', 'call_reason', 'contact_success', 'study_name']
+    list_filter = ['contact_type', 'call_reason',
+                   'contact_success', 'study_name']
 
     radio_fields = {
         'contact_type': admin.VERTICAL,
@@ -44,4 +45,5 @@ class CaregiverContactAdmin(ModelAdminMixin, admin.ModelAdmin):
         'contact_success': admin.VERTICAL,
         'call_rescheduled': admin.VERTICAL,
         'reason_rescheduled': admin.VERTICAL,
+        'call_outcome': admin.VERTICAL,
     }

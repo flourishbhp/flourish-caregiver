@@ -3,7 +3,7 @@ from edc_base.model_managers import HistoricalRecords
 from edc_constants.choices import YES_NO
 from edc_base.model_fields import OtherCharField
 
-from ..maternal_choices import CALL_REASON, REASONS_FOR_RESCHEDULING
+from ..maternal_choices import CALL_REASON, REASONS_FOR_RESCHEDULING, OUTCOME_CALL
 from .model_mixins import CaregiverContactFieldsMixin
 from .subject_consent import SubjectConsent
 
@@ -54,6 +54,13 @@ class CaregiverContact(CaregiverContactFieldsMixin):
         blank=True
     )
     reason_rescheduled_other = OtherCharField()
+
+    call_outcome = models.CharField(
+        verbose_name='Outcome of a phone call or Home visit',
+        max_length=30,
+        choices=OUTCOME_CALL)
+
+    call_outcome_other = OtherCharField()
 
     study_name = models.CharField(
         verbose_name="Study name",
