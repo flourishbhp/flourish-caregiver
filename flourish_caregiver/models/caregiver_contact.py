@@ -53,14 +53,18 @@ class CaregiverContact(CaregiverContactFieldsMixin):
         null=True,
         blank=True
     )
-    reason_rescheduled_other = OtherCharField()
+    reason_rescheduled_other = OtherCharField(
+        max_length=255
+    )
 
     call_outcome = models.CharField(
         verbose_name='Outcome of a phone call or Home visit',
         max_length=30,
         choices=OUTCOME_CALL)
 
-    call_outcome_other = OtherCharField()
+    call_outcome_other = OtherCharField(
+        max_length=255
+    )
 
     study_name = models.CharField(
         verbose_name="Study name",
