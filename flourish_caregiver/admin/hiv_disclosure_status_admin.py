@@ -81,15 +81,6 @@ class HIVDisclosureStatusAdminA(HIVDisclosureStatusAdminMixin,
 
         return super().add_view(request, form_url, extra_context)
 
-    def changeform_view(self, request, object_id=None, form_url='',
-                        extra_context=None):
-        g = request.GET.copy()
-        g.update({
-            'associated_child_identifier': self.child_gt10(request),
-        })
-        request.GET = g
-        return super().changeform_view(request, object_id, form_url, extra_context)
-
 
 @admin.register(HIVDisclosureStatusB, site=flourish_caregiver_admin)
 class HIVDisclosureStatusAdminB(HIVDisclosureStatusAdminMixin,
@@ -113,18 +104,6 @@ class HIVDisclosureStatusAdminB(HIVDisclosureStatusAdminMixin,
 
         return super().add_view(request, form_url, extra_context)
 
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        g = request.GET.copy()
-        breakpoint()
-        g.update({
-            'associated_child_identifier': object_id.associated_child_identifier,
-        })
-
-        request.GET = g
-
-        return super().change_view(
-            request, object_id, form_url=form_url, extra_context=extra_context)
-
 
 @admin.register(HIVDisclosureStatusC, site=flourish_caregiver_admin)
 class HIVDisclosureStatusAdminC(HIVDisclosureStatusAdminMixin,
@@ -147,14 +126,3 @@ class HIVDisclosureStatusAdminC(HIVDisclosureStatusAdminMixin,
         request.GET = g
 
         return super().add_view(request, form_url, extra_context)
-
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        g = request.GET.copy()
-        g.update({
-            'associated_child_identifier': object_id.associated_child_identifier,
-        })
-
-        request.GET = g
-
-        return super().change_view(
-            request, object_id, form_url=form_url, extra_context=extra_context)
