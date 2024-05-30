@@ -429,11 +429,23 @@ list_data = {
     'flourish_caregiver.crackednipplesactions': [
         ('both_breasts', 'Breastfeed from both breasts'),
         ('non_cracked_breast',
-         'Breastfed from non-cracked nipple breast and pumped and dumped from the affected '
+         'Breastfed from non-cracked nipple breast and pumped and dumped from the '
+         'affected '
          'breast'),
         ('stopped_breastfeeding', 'Stopped breastfeeding and did not resume '),
         ('temp_stopped',
          'Stopped breastfeeding temporarily but resumed once breast healed'),
+        (OTHER, 'Other')
+    ],
+    'flourish_caregiver.disclosurereasons': [
+        ('someone_else_without_approval', 'Someone else disclosed without your approval'),
+        ('accidental_documentation',
+         'Child found out about status from accidentally seeing documentation/records'),
+        ('found_arv_medications',
+         'Child found out about status when they found ARV medications'),
+        ('overheard_conversation', 'Child overheard conversation about your HIV status'),
+        ('told_without_permission',
+         'Someone else told my child without my knowledge or permission'),
         (OTHER, 'Other')
     ]
 }

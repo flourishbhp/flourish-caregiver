@@ -141,3 +141,7 @@ class MastitisActions(ListModelMixin, BaseUuidModel):
 
 class CrackedNipplesActions(ListModelMixin, BaseUuidModel):
     pass
+
+
+class DisclosureReasons(ListModelMixin, BaseUuidModel):
+    pass
