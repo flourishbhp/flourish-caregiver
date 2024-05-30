@@ -8,16 +8,6 @@ from ..models import HIVDisclosureStatusA, HIVDisclosureStatusB, HIVDisclosureSt
 class HIVDisclosureStatusFormMixin(SubjectModelFormMixin, forms.ModelForm):
     form_validator_cls = HIVDisclosureStatusFormValidator
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if 'initial' in kwargs:
-            self.fields['associated_child_identifier'].initial = kwargs['initial'].get(
-                'associated_child_identifier')
-        elif self.instance and self.instance.pk:
-            self.fields[
-                'associated_child_identifier'].initial = (
-                self.instance.associated_child_identifier)
-
     associated_child_identifier = forms.CharField(
         label='Associated child identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
