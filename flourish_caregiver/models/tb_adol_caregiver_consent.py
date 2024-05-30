@@ -68,23 +68,9 @@ class TbAdolConsent(ConsentModelMixin, SiteModelMixin,
         null=True,
         blank=False)
 
-    tb_blood_test_consent = models.CharField(
-        verbose_name=(
-            'Will you allow for blood testing for TB for your adolescent? '),
-        max_length=3,
-        choices=YES_NO,
-        validators=[eligible_if_yes, ],
-        help_text='Participant is not eligible if no')
-
     future_studies_contact = models.CharField(
         verbose_name=('Contact for future studies: Do you give us permission for us '
                       'to contact you or your child for future studies?'),
-        max_length=3,
-        choices=YES_NO)
-
-    samples_future_studies = models.CharField(
-        verbose_name=('Use of Samples in Future Research: Do you give us permission to use '
-                      'your child\'s blood samples for future studies?'),
         max_length=3,
         choices=YES_NO)
 
@@ -151,6 +137,21 @@ class TbAdolChildConsent(BaseUuidModel):
         verbose_name='Adolescent DOB'
     )
 
+    tb_blood_test_consent = models.CharField(
+        verbose_name=(
+            'Will you allow for blood testing for TB for your adolescent? '),
+        max_length=3,
+        choices=YES_NO,
+        validators=[eligible_if_yes, ],
+        help_text='Participant is not eligible if no')
+
+    samples_future_studies = models.CharField(
+        verbose_name=(
+            'Use of Samples in Future Research: Do you give us permission to use '
+            'your child\'s blood samples for future studies?'),
+        max_length=3,
+        choices=YES_NO)
+
     def natural_key(self):
         return self.subject_identifier, self.version
 
@@ -158,4 +159,5 @@ class TbAdolChildConsent(BaseUuidModel):
         app_label = 'flourish_caregiver'
         verbose_name = 'TB Adolescent Child Consent'
         unique_together = (
+            ('tb_adol_consent', 'subject_identifier'),
             ('adol_firstname', 'adol_lastname', 'adol_dob', 'adol_gender'))
