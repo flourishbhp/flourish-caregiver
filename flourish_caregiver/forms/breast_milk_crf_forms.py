@@ -146,13 +146,6 @@ class BreastMilkBirthForms(BreastMilkBirthFormsMixin, SubjectModelFormMixin,
         widget=forms.RadioSelect,
         required=True,
     )
-    milk_collected =forms.ChoiceField(
-        label='Were you able to collect breast milk today?',
-        choices=YES_NO,
-        widget=forms.RadioSelect,
-        required=True,
-    )
-
 
     class Meta:
         model = BreastMilkBirth
