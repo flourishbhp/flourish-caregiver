@@ -2,6 +2,7 @@ from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from edc_constants.constants import NO
+from edc_constants.choices import YES_NO
 from flourish_form_validations.form_validators.breast_milk_crf_form_validator import \
     CrackedNipplesInlineFormValidator, MastitisInlineFormValidator, BreastMilkCRFFormValidator, BreastMilk6MonthsCRFFormValidator
 from .form_mixins import InlineSubjectModelFormMixin, SubjectModelFormMixin
@@ -146,6 +147,13 @@ class BreastMilkBirthForms(BreastMilkBirthFormsMixin, SubjectModelFormMixin,
         widget=forms.RadioSelect,
         required=True,
     )
+    milk_collected =forms.ChoiceField(
+        label='Were you able to collect breast milk today?',
+        choices=YES_NO,
+        widget=forms.RadioSelect,
+        required=True,
+    )
+
 
     class Meta:
         model = BreastMilkBirth
