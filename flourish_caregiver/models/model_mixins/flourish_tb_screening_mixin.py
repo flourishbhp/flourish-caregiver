@@ -49,8 +49,8 @@ class TBScreeningMixin(models.Model):
         max_length=10, blank=True, null=True)
 
     household_diagnosed_with_tb = models.CharField(
-        verbose_name='Since the last time you spoke with FLOURISH staff, have you been '
-                     'evaluated in a clinic for TB?',
+        verbose_name='Since the last time you spoke with FLOURISH staff, has someone in '
+                     'your household been diagnosed with TB? ',
         choices=YES_NO_UKN_CHOICES,
         max_length=20, )
 
