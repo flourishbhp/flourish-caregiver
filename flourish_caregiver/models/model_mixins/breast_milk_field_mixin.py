@@ -46,8 +46,7 @@ class BreastMilkFieldsMixin(CrfModelMixin, models.Model):
         verbose_name='Were you able to collect breast milk today?',
         choices=YES_NO,
         max_length=10,
-        null=True,
-        blank=True
+        blank=False
     )
 
     not_collected_reasons = models.CharField(
