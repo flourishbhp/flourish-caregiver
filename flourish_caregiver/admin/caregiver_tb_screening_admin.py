@@ -36,8 +36,11 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'blood_test_results',
                 'other_test_results',
                 'diagnosed_with_TB',
+                'diagnosed_with_TB_other',
                 'started_on_TB_treatment',
+                'started_on_TB_treatment_other',
                 'started_on_TB_preventative_therapy',
+                'started_on_TB_preventative_therapy_other',
             ]}),
         audit_fieldset_tuple
     )
