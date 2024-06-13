@@ -1311,6 +1311,13 @@ YES_NO_UKN_CHOICES = (
     (UNKNOWN, 'Unknown'),
 )
 
+YES_NO_AR_OTHER = (
+    (YES, YES),
+    (NO, NO),
+    (UNKNOWN, 'Awaiting results'),
+    (OTHER, 'Other'),
+)
+
 REFERRAL_LOCATION = (
     ('hospital_based_sw', 'Hospital-based Social Worker'),
     ('community_sw', 'Community Social Worker'),
