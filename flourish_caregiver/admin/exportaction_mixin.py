@@ -77,8 +77,8 @@ class ExportActionMixin(AdminExportHelper):
                     continue
                 if not (self.is_consent(obj) or self.is_visit(obj)) and isinstance(field, ManyToOneRel):
                     data.update(self.inline_data_dict(obj, field))
-                    continue   
-            
+                    continue
+
             ultrasound_model_cls = django_apps.get_model(
                 'flourish_caregiver.ultrasound')
             if isinstance(obj, ultrasound_model_cls):
@@ -89,12 +89,11 @@ class ExportActionMixin(AdminExportHelper):
                     maternal_delivery_obj, 'delivery_datetime', None)
                 delivery_dt = delivery_dt.date() if delivery_dt else ''
                 ga_birth_usconfirm = field_value if delivery_dt else ''
-                
 
                 data.update(current_ga=field_value,
                             ga_birth_usconfirm=ga_birth_usconfirm,
                             maternal_delivery_date=delivery_dt)
-            
+
             # Exclude identifying values
             data = self.remove_exclude_fields(data)
             # Correct date formats

@@ -412,5 +412,5 @@ list_data = {
         ('fatigue', 'Fatigue'),
         ('congestion', 'Congestion'),
         ('enlarged_lymph_nodes', 'Enlarged Lymph nodes'),
-        (OTHER, 'Other'),]
+        (OTHER, 'Other'), ]
 }

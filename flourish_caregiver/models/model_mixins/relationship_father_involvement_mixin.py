@@ -1,20 +1,15 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django_crypto_fields.fields import EncryptedCharField
-from edc_base.model_validators import CellNumber
-from edc_protocol.validators import datetime_not_before_study_start
-from edc_base.model_validators import datetime_not_future
-from edc_base.utils import get_utcnow
 from edc_base.model_fields.custom_fields import OtherCharField
-
-from django.core.validators import MinValueValidator, MaxValueValidator
+from edc_base.model_validators import CellNumber
 from edc_constants.choices import YES_NO
 
-from ...choices import (YES_NO_PNTA_DNK, YES_NO_PNTA, YES_NO_PNTA_NA,
-                        YES_NO_PNTA_UNKNOWN, HIV_STATUS_DISCUSSION, PARTNERS_SUPPORT,
-                        CHOICE_FREQUENCY, HAPPINESS_CHOICES, FATHER_VISITS,
-                        FUTURE_OF_RELATIONSHIP, FATHERS_FINANCIAL_SUPPORT)
-
 from ..list_models import HouseholdMember
+from ...choices import (CHOICE_FREQUENCY, FATHER_VISITS, FATHERS_FINANCIAL_SUPPORT,
+                        FUTURE_OF_RELATIONSHIP, HAPPINESS_CHOICES, HIV_STATUS_DISCUSSION,
+                        PARTNERS_SUPPORT, YES_NO_PNTA, YES_NO_PNTA_DNK, YES_NO_PNTA_NA,
+                        YES_NO_PNTA_UNKNOWN)
 
 
 class RelationshipFatherInvolvementMixin(models.Model):
@@ -34,7 +29,7 @@ class RelationshipFatherInvolvementMixin(models.Model):
 
     is_partner_the_father = models.CharField(
         verbose_name='Is the partner you are currently with also the'
-        ' father of this child enrolled in FLOURISH?',
+                     ' father of this child enrolled in FLOURISH?',
         choices=YES_NO_PNTA_UNKNOWN,
         max_length=25,
         blank=True,
@@ -42,7 +37,8 @@ class RelationshipFatherInvolvementMixin(models.Model):
 
     duration_with_partner = models.FloatField(
         verbose_name='How long have you been with your current partner?',
-        help_text='(Years).(Months), For example 1.5 year is equavalent to 1 years 6 months',
+        help_text='(Years).(Months), For example 1.5 year is equavalent to 1 years 6 '
+                  'months',
         default=0,
         validators=[MinValueValidator(0)],
         blank=True,
@@ -73,13 +69,14 @@ class RelationshipFatherInvolvementMixin(models.Model):
         max_length=25, )
 
     discussion_with_partner = models.CharField(
-        verbose_name="How easy or difficult is it to  discuss your HIV status  with your partner?",
+        verbose_name="How easy or difficult is it to  discuss your HIV status  with "
+                     "your partner?",
         choices=HIV_STATUS_DISCUSSION,
         max_length=17, )
 
     disclose_status = models.CharField(
         verbose_name='Do you plan to disclosure your HIV status to'
-        ' your partner at some time in the future',
+                     ' your partner at some time in the future',
         choices=YES_NO_PNTA_NA,
         max_length=23, )
 
@@ -104,7 +101,8 @@ class RelationshipFatherInvolvementMixin(models.Model):
         null=True)
 
     separation_consideration = models.CharField(
-        verbose_name="How often have you considered divorce, separation, or terminating your relationship?",
+        verbose_name="How often have you considered divorce, separation, or terminating "
+                     "your relationship?",
         choices=CHOICE_FREQUENCY,
         max_length=20,
         blank=True,
@@ -118,7 +116,8 @@ class RelationshipFatherInvolvementMixin(models.Model):
         null=True)
 
     relationship_progression = models.CharField(
-        verbose_name="In general, how often do you think that things between you and your partner are going well?",
+        verbose_name="In general, how often do you think that things between you and "
+                     "your partner are going well?",
         choices=CHOICE_FREQUENCY,
         max_length=20,
         blank=True,
@@ -132,7 +131,8 @@ class RelationshipFatherInvolvementMixin(models.Model):
         null=True)
 
     relationship_regret = models.CharField(
-        verbose_name="Do you ever regret that you entered a relationship with your partner?",
+        verbose_name="Do you ever regret that you entered a relationship with your "
+                     "partner?",
         choices=CHOICE_FREQUENCY,
         max_length=20,
         blank=True,
@@ -175,7 +175,7 @@ class RelationshipFatherInvolvementMixin(models.Model):
 
     future_relationship = models.CharField(
         verbose_name='Which of the following statements best describes how you'
-        ' feel about the future of your relationship?',
+                     ' feel about the future of your relationship?',
         choices=FUTURE_OF_RELATIONSHIP,
         max_length=20,
         help_text='(Partnership success can be defined as staying together.)',
@@ -185,25 +185,26 @@ class RelationshipFatherInvolvementMixin(models.Model):
     biological_father_alive = models.CharField(
         verbose_name='Is the biological father of this child alive',
         choices=YES_NO_PNTA_DNK,
-        max_length=9,)
+        max_length=9, )
 
     father_child_contact = models.CharField(
         verbose_name='How often does the biological father have contact '
-        '(home visits, phone calls, meeting up at another place) with your child? ',
+                     '(home visits, phone calls, meeting up at another place) with your'
+                     ' child? ',
         choices=FATHER_VISITS,
-        max_length=30,)
+        max_length=30, )
 
     fathers_financial_support = models.CharField(
         verbose_name='How supportive is the father in financially supporting the child?',
         choices=FATHERS_FINANCIAL_SUPPORT,
-        max_length=20,)
+        max_length=20, )
 
     child_left_alone = models.PositiveIntegerField(
         default=0,
         verbose_name='How many days in the last week did you have to'
-        ' leave your child alone at home without an adult?',
+                     ' leave your child alone at home without an adult?',
         help_text='Range from (0-7)',
-        validators=[MinValueValidator(0), MaxValueValidator(7), ],)
+        validators=[MinValueValidator(0), MaxValueValidator(7), ], )
 
     read_books = models.ManyToManyField(
         HouseholdMember,
@@ -249,14 +250,15 @@ class RelationshipFatherInvolvementMixin(models.Model):
 
     interview_participation = models.CharField(
         verbose_name='Would you be willing to participate in an interview'
-        ' to teach us more about caregiving?',
+                     ' to teach us more about caregiving?',
         choices=YES_NO,
         max_length=3)
 
     contact_info = models.CharField(
         verbose_name=('Would you be willing to provide us contact information so we'
                       ' can invite your partner or ex-partner (who is supporting '
-                      'the caregiving of the FLOURISH child) to an interview about caregiving?'),
+                      'the caregiving of the FLOURISH child) to an interview about '
+                      'caregiving?'),
         choices=YES_NO,
         max_length=3,
         blank=True,

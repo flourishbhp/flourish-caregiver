@@ -1209,7 +1209,7 @@ TB_REASON_CHOICES = (
     ('work', 'Participant/caregiver cannot be released from work'),
     ('isolation', 'Participant is in isolation due to COVID-19 or another infection'),
     ('not_well', 'Participant/caregiver is not well'),
-    ('other', 'Other'),
+    (OTHER, 'Other'),
 )
 
 PERIOD_HAPPENED = (
@@ -1311,6 +1311,13 @@ YES_NO_UKN_CHOICES = (
     (UNKNOWN, 'Unknown'),
 )
 
+YES_NO_AR_OTHER = (
+    (YES, YES),
+    (NO, NO),
+    (UNKNOWN, 'Awaiting results'),
+    (OTHER, 'Other'),
+)
+
 REFERRAL_LOCATION = (
     ('hospital_based_sw', 'Hospital-based Social Worker'),
     ('community_sw', 'Community Social Worker'),
@@ -1325,6 +1332,15 @@ YES_NO_NONE = (
     (None, 'None'),
     (YES, YES),
     (NO, NO))
+
+RELATIONSHIP_SCALE = (
+    ('0', '0'),
+    ('1', '1'),
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5', '5'),
+)
 
 RELATIONSHIP_SCALE = (
     ('0', '0'),
