@@ -1,7 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from edc_base.model_fields import OtherCharField
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO,YES_NO_NA
 
 from .list_models import DisclosureReasons
 from .model_mixins import CrfModelMixin
@@ -77,7 +77,7 @@ class HIVDisclosureStatusMixin(CrfModelMixin):
                      'them?',
         max_length=3,
         default='',
-        choices=YES_NO, )
+        choices=YES_NO_NA, )
 
     unintentional_disclosure_reason = models.ManyToManyField(
         DisclosureReasons,
