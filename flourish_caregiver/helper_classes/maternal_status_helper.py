@@ -5,13 +5,15 @@ from django.core.exceptions import ValidationError
 from edc_constants.constants import IND, NEG, POS, UNK
 
 from .enrollment_helper import EnrollmentHelper
+from .utils import get_locator_model_obj
 
 
 class MaternalStatusHelper(object):
 
     def __init__(self, maternal_visit=None, subject_identifier=None):
         self.maternal_visit = maternal_visit
-        self.subject_identifier = subject_identifier or self.maternal_visit.subject_identifier
+        self.subject_identifier = (subject_identifier or
+                                   self.maternal_visit.subject_identifier)
 
     @property
     def hiv_status(self):
@@ -21,7 +23,8 @@ class MaternalStatusHelper(object):
             'flourish_caregiver.hivrapidtestcounseling')
         try:
             rapid_test_result = rapid_test_result_cls.objects.filter(
-                maternal_visit__subject_identifier=self.subject_identifier).latest('report_datetime')
+                maternal_visit__subject_identifier=self.subject_identifier).latest(
+                'report_datetime')
         except rapid_test_result_cls.DoesNotExist:
             pass
         else:
@@ -35,7 +38,7 @@ class MaternalStatusHelper(object):
         antenatal_enrollment_cls = django_apps.get_model(
             'flourish_caregiver.antenatalenrollment')
         antenatal_enrollments = antenatal_enrollment_cls.objects.filter(
-            subject_identifier=self.subject_identifier,)
+            subject_identifier=self.subject_identifier, )
         for antenatal_enrollment in antenatal_enrollments:
             status = self._evaluate_status_from_rapid_tests(
                 (antenatal_enrollment, 'enrollment_hiv_status', 'rapid_test_date'))
@@ -43,7 +46,7 @@ class MaternalStatusHelper(object):
                 # Check that the week32_test_date is still within 3 months
                 status = self._evaluate_status_from_rapid_tests(
                     (antenatal_enrollment, 'enrollment_hiv_status',
-                        'week32_test_date'))
+                     'week32_test_date'))
             if status in [POS, NEG, UNK]:
                 return status
         return self.enrollment_hiv_status
@@ -96,8 +99,13 @@ class MaternalStatusHelper(object):
             if previous_enrollment.current_hiv_status is not None:
                 return previous_enrollment.current_hiv_status
 
-        maternal_dataset_objs = maternal_dataset_cls.objects.filter(
-            subject_identifier=self.subject_identifier)
+        maternal_dataset_objs = None
+
+        locator_obj = get_locator_model_obj(self.subject_identifier)
+
+        if locator_obj:
+            maternal_dataset_objs = maternal_dataset_cls.objects.filter(
+                study_maternal_identifier=locator_obj.study_maternal_identifier)
 
         # for maternal_dataset_obj in maternal_dataset_objs:
         if maternal_dataset_objs:
