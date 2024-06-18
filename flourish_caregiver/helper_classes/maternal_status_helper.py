@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from edc_constants.constants import IND, NEG, POS, UNK
 
 from .enrollment_helper import EnrollmentHelper
+from .utils import get_locator_model_obj
 
 
 class MaternalStatusHelper(object):
@@ -101,8 +102,13 @@ class MaternalStatusHelper(object):
             if previous_enrollment.current_hiv_status is not None:
                 return previous_enrollment.current_hiv_status
 
-        maternal_dataset_objs = maternal_dataset_cls.objects.filter(
-            subject_identifier=self.subject_identifier)
+        maternal_dataset_objs = None
+
+        locator_obj = get_locator_model_obj(self.subject_identifier)
+
+        if locator_obj:
+            maternal_dataset_objs = maternal_dataset_cls.objects.filter(
+                study_maternal_identifier=locator_obj.study_maternal_identifier)
 
         # for maternal_dataset_obj in maternal_dataset_objs:
         if maternal_dataset_objs:
