@@ -34,19 +34,23 @@ class ExportActionMixin(AdminExportHelper):
             data = obj.__dict__.copy()
 
             subject_identifier = getattr(obj, 'subject_identifier', None)
-            screening_identifier = self.screening_identifier(
+            screening_identifier = getattr(obj, 'screening_identifier', None)
+            study_maternal_identifier = getattr(obj, 'study_maternal_identifier', None)
+
+            screening_identifier = screening_identifier or self.screening_identifier(
                 subject_identifier=subject_identifier)
             previous_study = self.previous_bhp_study(
                 screening_identifier=screening_identifier)
+            study_maternal_identifier = study_maternal_identifier or self.study_maternal_identifier(
+                    screening_identifier=screening_identifier)
             caregiver_hiv_status = self.caregiver_hiv_status(
-                subject_identifier=subject_identifier)
+                subject_identifier=subject_identifier,
+                study_maternal_identifier=study_maternal_identifier)
 
             # Add subject identifier and visit code
             if getattr(obj, 'maternal_visit', None):
                 data_copy = data.copy()
                 data.clear()
-                study_maternal_identifier = self.study_maternal_identifier(
-                    screening_identifier=screening_identifier)
 
                 data.update(
                     matpid=subject_identifier,
@@ -147,10 +151,11 @@ class ExportActionMixin(AdminExportHelper):
             else:
                 return dataset_obj.study_maternal_identifier
 
-    def caregiver_hiv_status(self, subject_identifier=None):
+    def caregiver_hiv_status(self, subject_identifier=None, study_maternal_identifier=None):
 
         status_helper = MaternalStatusHelper(
-            subject_identifier=subject_identifier)
+            subject_identifier=subject_identifier,
+            study_maternal_identifier=study_maternal_identifier)
 
         return status_helper.hiv_status
 
@@ -228,5 +233,3 @@ class ExportActionMixin(AdminExportHelper):
             return None
         else:
             return maternal_delivery_obj
-        
-   
