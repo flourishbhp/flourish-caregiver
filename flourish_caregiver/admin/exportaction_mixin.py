@@ -1,3 +1,5 @@
+import pytz
+
 from django.apps import apps as django_apps
 from django.db.models import (FileField, ForeignKey, ImageField, ManyToManyField,
                               ManyToOneRel, OneToOneField)
@@ -7,6 +9,8 @@ from flourish_export.admin_export_helper import AdminExportHelper
 
 from ..helper_classes import MaternalStatusHelper
 from ..helper_classes.utils import get_child_subject_identifier_by_visit
+
+tz = pytz.timezone('Africa/Gaborone')
 
 
 class ExportActionMixin(AdminExportHelper):
@@ -92,7 +96,7 @@ class ExportActionMixin(AdminExportHelper):
                 field_value = getattr(obj, 'get_current_ga', '')
                 delivery_dt = getattr(
                     maternal_delivery_obj, 'delivery_datetime', None)
-                delivery_dt = delivery_dt.date() if delivery_dt else ''
+                delivery_dt = delivery_dt.astimezone(tz).date() if delivery_dt else ''
                 ga_birth_usconfirm = field_value if delivery_dt else ''
 
                 data.update(current_ga=field_value,
