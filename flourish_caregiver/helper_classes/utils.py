@@ -163,7 +163,7 @@ def get_related_child_count(subject_identifier, child_subject_identifier):
     registered_subject_cls = django_apps.get_model('edc_registration.registeredsubject')
     return registered_subject_cls.objects.filter(
         relative_identifier=subject_identifier).exclude(
-            subject_identifier=child_subject_identifier, ).count()
+        subject_identifier=child_subject_identifier, ).count()
 
 
 def get_child_consents(subject_identifier):
@@ -175,11 +175,22 @@ def get_child_consents(subject_identifier):
         '-consent_datetime')
 
 
+def get_locator_model_obj(subject_identifier):
+    locator_model_cls = django_apps.get_model(
+        'flourish_caregiver.caregiverlocator')
+    try:
+        return locator_model_cls.objects.get(
+            subject_identifier=subject_identifier
+        )
+    except locator_model_cls.DoesNotExist:
+        return None
+
+
 def get_registration_date(subject_identifier, child_subject_identifier):
     """ Get date and time child was consented or registered to the study.
     """
     child_consents = get_child_consents(subject_identifier).filter(
-        subject_identifier=child_subject_identifier,)
+        subject_identifier=child_subject_identifier, )
 
     if not child_consents.exists():
         raise forms.ValidationError(
