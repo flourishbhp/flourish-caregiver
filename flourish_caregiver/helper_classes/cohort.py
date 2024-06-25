@@ -1,7 +1,7 @@
 from django.apps import apps as django_apps
 from edc_base.utils import age
 
-from flourish_child.models import ChildDataset
+from flourish_child.models.child_dataset import ChildDataset
 
 from ..models.maternal_dataset import MaternalDataset
 from ..models.subject_consent import SubjectConsent
