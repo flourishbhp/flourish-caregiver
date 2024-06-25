@@ -9,12 +9,10 @@ from model_mommy.recipe import Recipe, seq
 
 from flourish_caregiver.models.hiv_disclosure_status import HIVDisclosureStatusA
 from flourish_caregiver.models.tb_engagement import TbEngagement
-from .models import AntenatalEnrollment, CaregiverTBScreening, HITSScreening, \
-    MaternalDelivery, \
-    ScreeningPregWomenInline, \
-    SubjectConsent, CaregiverCageAid, \
-    TbInformedConsent, TbInterview, TbOffStudy, TBReferralCaregiver, TbStudyEligibility, \
-    TbVisitScreeningWomen
+from .models import AntenatalEnrollment, CaregiverCageAid, CaregiverTBScreening, \
+    ChildhoodLeadExposureRisk, HITSScreening, MaternalDelivery, ScreeningPregWomenInline, \
+    SubjectConsent, TbInformedConsent, TbInterview, TbOffStudy, TBReferralCaregiver, \
+    TbStudyEligibility, TbVisitScreeningWomen
 from .models import CaregiverChildConsent, HIVRapidTestCounseling, LocatorLogEntry
 from .models import CaregiverEdinburghDeprScreening, CaregiverGadAnxietyScreening, \
     CaregiverPhqDeprScreening, TbRoutineHealthScreenV2
@@ -271,4 +269,8 @@ hitsscreening = Recipe(
 
 caregivercageaid = Recipe(
     CaregiverCageAid,
+)
+
+childhoodleadexposurerisk = Recipe(
+    ChildhoodLeadExposureRisk
 )

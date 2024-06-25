@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('sites', '0002_alter_domain_unique'),
-        ('flourish_caregiver', '0074_auto_20231101_2226'),
+        ('flourish_caregiver', '0041_auto_20240530_1013'),
     ]
 
     operations = [
