@@ -46,7 +46,6 @@ class TestMaternalStatusHelper(TestCase):
             child_dob=None,
             first_name=None,
             last_name=None, )
-
     def test_enrollment_hiv_status_pregnant_pos_valid(self):
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
@@ -90,7 +89,7 @@ class TestMaternalStatusHelper(TestCase):
             'study_maternal_identifier': '89721',
             'study_child_identifier': '1234'}
 
-        mommy.make_recipe(
+        maternal_dataset_obj=mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             **maternal_dataset_options)
 
@@ -104,6 +103,11 @@ class TestMaternalStatusHelper(TestCase):
         subject_identifier = sh.create_TD_efv_enrollment(
             maternal_dataset_options.get('screening_identifier'),
             child_dataset_obj.study_child_identifier)
+
+        mommy.make_recipe(
+            'flourish_caregiver.caregiverlocator',
+            study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,
+            subject_identifier=subject_identifier)
 
         status_helper = MaternalStatusHelper(
             subject_identifier=subject_identifier)
