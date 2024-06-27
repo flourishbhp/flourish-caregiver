@@ -18,7 +18,6 @@ def move_data_to_tb_adol_child_model(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('flourish_caregiver', '0076_auto_20231203_1348'),
         ]
 
     operations = [
