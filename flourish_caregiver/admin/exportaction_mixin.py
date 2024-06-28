@@ -203,15 +203,14 @@ class ExportActionMixin(AdminExportHelper):
 
     @property
     def exclude_fields(self):
-        return ['created', '_state', 'hostname_created', 'hostname_modified',
+        return ['_state', 'hostname_created', 'hostname_modified',
                 'revision', 'device_created', 'device_modified', 'id', 'site_id',
-                'created_time', 'modified_time', 'report_datetime_time',
-                'registration_datetime_time', 'screening_datetime_time', 'modified',
-                'form_as_json', 'consent_model', 'randomization_datetime',
-                'registration_datetime', 'is_verified_datetime', 'first_name',
-                'last_name', 'initials', 'guardian_name', 'identity', 'infant_visit_id',
-                'maternal_visit_id', 'processed', 'processed_datetime', 'packed',
-                'packed_datetime', 'shipped', 'shipped_datetime', 'received_datetime',
+                'modified_time', 'report_datetime_time', 'registration_datetime_time',
+                'screening_datetime_time', 'modified', 'form_as_json', 'consent_model',
+                'randomization_datetime', 'registration_datetime', 'is_verified_datetime',
+                'first_name', 'last_name', 'initials', 'guardian_name', 'identity',
+                'infant_visit_id', 'maternal_visit_id', 'processed', 'processed_datetime',
+                'packed', 'packed_datetime', 'shipped', 'shipped_datetime', 'received_datetime',
                 'identifier_prefix', 'primary_aliquot_identifier', 'clinic_verified',
                 'clinic_verified_datetime', 'drawn_datetime', 'slug', 'confirm_identity',
                 'related_tracking_identifier', 'parent_tracking_identifier', 'site',
