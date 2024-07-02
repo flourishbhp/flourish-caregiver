@@ -2,7 +2,7 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
-from edc_constants.constants import IND, NEG, POS, UNK
+from edc_constants.constants import IND, NEG, POS, UNK, YES
 
 from .enrollment_helper import EnrollmentHelper
 from .utils import get_locator_model_obj
@@ -26,7 +26,8 @@ class MaternalStatusHelper(object):
             'flourish_caregiver.hivrapidtestcounseling')
         try:
             rapid_test_result = rapid_test_result_cls.objects.filter(
-                maternal_visit__subject_identifier=self.subject_identifier).latest(
+                maternal_visit__subject_identifier=self.subject_identifier,
+                rapid_test_done=YES).latest(
                 'report_datetime')
         except rapid_test_result_cls.DoesNotExist:
             pass
