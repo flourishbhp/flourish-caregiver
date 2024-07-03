@@ -2,16 +2,21 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
-from edc_constants.constants import IND, NEG, POS, UNK
+from edc_constants.constants import IND, NEG, POS, UNK, YES
 
 from .enrollment_helper import EnrollmentHelper
+from .utils import get_locator_model_obj
 
 
 class MaternalStatusHelper(object):
 
-    def __init__(self, maternal_visit=None, subject_identifier=None):
+    def __init__(self, maternal_visit=None, subject_identifier=None,
+                 study_maternal_identifier=None):
         self.maternal_visit = maternal_visit
-        self.subject_identifier = subject_identifier or self.maternal_visit.subject_identifier
+        self.subject_identifier = (subject_identifier or
+                                   getattr(self.maternal_visit, 'subject_identifier', None))
+
+        self.study_maternal_identifier = study_maternal_identifier
 
     @property
     def hiv_status(self):
@@ -21,7 +26,9 @@ class MaternalStatusHelper(object):
             'flourish_caregiver.hivrapidtestcounseling')
         try:
             rapid_test_result = rapid_test_result_cls.objects.filter(
-                maternal_visit__subject_identifier=self.subject_identifier).latest('report_datetime')
+                maternal_visit__subject_identifier=self.subject_identifier,
+                rapid_test_done=YES).latest(
+                    'report_datetime')
         except rapid_test_result_cls.DoesNotExist:
             pass
         else:
@@ -96,8 +103,18 @@ class MaternalStatusHelper(object):
             if previous_enrollment.current_hiv_status is not None:
                 return previous_enrollment.current_hiv_status
 
-        maternal_dataset_objs = maternal_dataset_cls.objects.filter(
-            subject_identifier=self.subject_identifier)
+        maternal_dataset_objs = None
+        locator_obj = None
+
+        if self.subject_identifier:
+            locator_obj = get_locator_model_obj(self.subject_identifier)
+
+        study_maternal_identifier = getattr(
+            locator_obj, 'study_maternal_identifier', None) or self.study_maternal_identifier
+
+        if study_maternal_identifier:
+            maternal_dataset_objs = maternal_dataset_cls.objects.filter(
+                study_maternal_identifier=study_maternal_identifier)
 
         # for maternal_dataset_obj in maternal_dataset_objs:
         if maternal_dataset_objs:
