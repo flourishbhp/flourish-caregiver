@@ -32,7 +32,7 @@ class CaregiverContact(CaregiverContactFieldsMixin):
     )
 
     contact_comment = models.TextField(
-        verbose_name='Outcome of call',
+        verbose_name='Comment',
         max_length=500,
         null=True,
         blank=True
