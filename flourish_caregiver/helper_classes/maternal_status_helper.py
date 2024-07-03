@@ -28,7 +28,7 @@ class MaternalStatusHelper(object):
             rapid_test_result = rapid_test_result_cls.objects.filter(
                 maternal_visit__subject_identifier=self.subject_identifier,
                 rapid_test_done=YES).latest(
-                'report_datetime')
+                    'report_datetime')
         except rapid_test_result_cls.DoesNotExist:
             pass
         else:
@@ -43,6 +43,7 @@ class MaternalStatusHelper(object):
             'flourish_caregiver.antenatalenrollment')
         antenatal_enrollments = antenatal_enrollment_cls.objects.filter(
             subject_identifier=self.subject_identifier, )
+
         for antenatal_enrollment in antenatal_enrollments:
             status = self._evaluate_status_from_rapid_tests(
                 (antenatal_enrollment, 'enrollment_hiv_status', 'rapid_test_date'))
@@ -51,6 +52,7 @@ class MaternalStatusHelper(object):
                 status = self._evaluate_status_from_rapid_tests(
                     (antenatal_enrollment, 'enrollment_hiv_status',
                      'week32_test_date'))
+
             if status in [POS, NEG, UNK]:
                 return status
         return self.enrollment_hiv_status
