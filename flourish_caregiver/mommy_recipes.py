@@ -12,7 +12,7 @@ from flourish_caregiver.models.tb_engagement import TbEngagement
 from .models import AntenatalEnrollment, CaregiverTBScreening, HITSScreening, \
     MaternalDelivery, \
     ScreeningPregWomenInline, \
-    SubjectConsent, \
+    SubjectConsent, CaregiverCageAid, \
     TbInformedConsent, TbInterview, TbOffStudy, TBReferralCaregiver, TbStudyEligibility, \
     TbVisitScreeningWomen
 from .models import CaregiverChildConsent, HIVRapidTestCounseling, LocatorLogEntry
@@ -267,4 +267,8 @@ caregivertbscreening = Recipe(
 
 hitsscreening = Recipe(
     HITSScreening,
+)
+
+caregivercageaid = Recipe(
+    CaregiverCageAid,
 )
