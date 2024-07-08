@@ -93,11 +93,16 @@ class TestChildhoodLeadExposureRisk(TestCase):
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
+        ap = Appointment.objects.get(
+            visit_code='2001M',
+            subject_identifier=self.subject_consent.subject_identifier)
+
+        ap.appt_datetime = get_utcnow()
+        ap.save()
+
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(
-                visit_code='2001M',
-                subject_identifier=self.subject_consent.subject_identifier),
+            appointment=ap,
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
@@ -160,6 +165,8 @@ class TestChildhoodLeadExposureRisk(TestCase):
             maternal_visit=visit
         )
 
+        breakpoint()
+
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
@@ -175,7 +182,6 @@ class TestChildhoodLeadExposureRisk(TestCase):
 
     @tag('ryl')
     def test_required_year_later(self, ):
-
         visit = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
