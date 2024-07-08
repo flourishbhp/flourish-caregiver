@@ -1,8 +1,9 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from edc_base.model_fields import OtherCharField
-from edc_constants.choices import YES_NO
+from edc_constants.choices import YES_NO,YES_NO_NA
 
+from .list_models import DisclosureReasons
 from .model_mixins import CrfModelMixin
 from ..choices import DIFFICULTY_CHOICES, REACTION_CHOICES, REASONS_NOT_DISCLOSED, \
     WHODISCLOSED_CHOICES
@@ -69,6 +70,25 @@ class HIVDisclosureStatusMixin(CrfModelMixin):
         choices=REACTION_CHOICES)
 
     child_reaction_other = OtherCharField()
+
+    disclosure_intentional = models.CharField(
+        verbose_name='Did your child find out about your HIV status (disclosure) '
+                     'because you or another person you designated, intentionally told '
+                     'them?',
+        max_length=3,
+        default='',
+        choices=YES_NO_NA, )
+
+    unintentional_disclosure_reason = models.ManyToManyField(
+        DisclosureReasons,
+        verbose_name='If this disclosure was unintentional, please provide reasons '
+                     'why:',
+        max_length=50,
+        blank=True, )
+
+    unintentional_disclosure_other = models.TextField(
+        blank=True,
+        null=True)
 
     class Meta(CrfModelMixin.Meta):
         abstract = True

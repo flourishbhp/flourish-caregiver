@@ -29,14 +29,19 @@ class CaregiverChildConsentForm(SubjectModelFormMixin):
         gender = self.initial.get('gender', None)
         child_dob = self.initial.get('child_dob', None)
 
-        self.fields['version'].disabled = True
-        self.fields['child_dob'].disabled = True
+        version_field = self.fields.get('version', None)
+        child_dob_field = self.fields.get('child_dob', None)
+        if version_field and child_dob_field:
+            version_field.disabled = True
+            child_dob_field.disabled = True
         # # if and only if the above fields exist, make the field readonly
         # # or else make the fields editable
-        if self.study_child_identifier:
-            self.fields['study_child_identifier'].disabled = True
-        if gender:
-            self.fields['gender'].disabled = True
+        study_child_identifier_field = self.fields.get('study_child_identifier', None)
+        gender_field = self.fields.get('gender', None)
+        if self.study_child_identifier and study_child_identifier_field:
+            study_child_identifier_field.disabled = True
+        if gender and gender_field:
+            gender_field.disabled = True
         if child_dob:
             self.fields['child_dob'] = forms.CharField(
                 initial=self.initial['child_dob'], )

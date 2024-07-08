@@ -1,13 +1,11 @@
 from django import forms
 
-from ..models import HIVDisclosureStatusA, HIVDisclosureStatusB, HIVDisclosureStatusC
-from .form_mixins import SubjectModelFormMixin
-
 from flourish_form_validations.form_validators import HIVDisclosureStatusFormValidator
+from .form_mixins import SubjectModelFormMixin
+from ..models import HIVDisclosureStatusA, HIVDisclosureStatusB, HIVDisclosureStatusC
 
 
 class HIVDisclosureStatusFormMixin(SubjectModelFormMixin, forms.ModelForm):
-
     form_validator_cls = HIVDisclosureStatusFormValidator
 
     associated_child_identifier = forms.CharField(
@@ -19,7 +17,6 @@ class HIVDisclosureStatusFormMixin(SubjectModelFormMixin, forms.ModelForm):
 
 
 class HIVDisclosureStatusFormA(HIVDisclosureStatusFormMixin, forms.ModelForm):
-
     form_validator_cls = HIVDisclosureStatusFormValidator
 
     class Meta:
@@ -28,7 +25,6 @@ class HIVDisclosureStatusFormA(HIVDisclosureStatusFormMixin, forms.ModelForm):
 
 
 class HIVDisclosureStatusFormB(HIVDisclosureStatusFormMixin, forms.ModelForm):
-
     form_validator_cls = HIVDisclosureStatusFormValidator
 
     class Meta:
@@ -37,7 +33,6 @@ class HIVDisclosureStatusFormB(HIVDisclosureStatusFormMixin, forms.ModelForm):
 
 
 class HIVDisclosureStatusFormC(HIVDisclosureStatusFormMixin, forms.ModelForm):
-
     form_validator_cls = HIVDisclosureStatusFormValidator
 
     class Meta:

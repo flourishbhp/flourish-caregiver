@@ -1430,3 +1430,71 @@ class TestRuleGroups(TestCase):
             visit_code='2001M', )
 
         self.assertEqual(crf_metadata.entry_status, REQUIRED)
+
+
+    @tag('pars')
+    def test_pars_required(self):
+        #TODO: all tests need to be revisited/re-evaluated, they are broken due to various changes
+        maternal_dataset_options = {
+            'delivdt': get_utcnow() - relativedelta(years=10, months=5),
+            'mom_enrolldate': get_utcnow(),
+            'mom_hivstatus': 'HIV-infected',
+            'study_maternal_identifier': '11123',
+            'protocol': 'Tshilo Dikotla'}
+
+        child_dataset_options = {
+            'infant_hiv_exposed': 'Exposed',
+            'study_maternal_identifier': '11123',
+            'dob': get_utcnow() - relativedelta(years=10, months=5),
+            'study_child_identifier': '1234'}
+
+        mommy.make_recipe(
+            'flourish_child.childdataset',
+            **child_dataset_options)
+
+        maternal_dataset_obj = mommy.make_recipe(
+            'flourish_caregiver.maternaldataset',
+            **maternal_dataset_options)
+
+
+
+        schedule_name = 'c_quarterly1_schedule1'
+
+        _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+            name=schedule_name,
+            onschedule_model='flourish_caregiver.onschedulecohortcquarterly')
+
+        schedule.put_on_schedule(
+            subject_identifier=self.subject_identifier,
+            schedule_name=schedule_name,
+            onschedule_datetime=get_utcnow()
+
+        )
+        
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='3001M',
+                subject_identifier=self.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+        
+
+
+        mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='3001M',
+                subject_identifier=self.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+
+
+        self.assertEqual(
+            CrfMetadata.objects.get(
+                model='flourish_caregiver.relationshipfatherinvolvement',
+                subject_identifier=self.subject_identifier,
+                visit_code='2000M',
+                visit_code_sequence='0').entry_status, REQUIRED)

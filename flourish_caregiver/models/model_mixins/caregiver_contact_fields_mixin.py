@@ -9,6 +9,7 @@ from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 
 from ...maternal_choices import CONTACT_TYPE
 
+
 class CaregiverContactFieldsMixin(NonUniqueSubjectIdentifierFieldMixin,
                                   BaseUuidModel):
 

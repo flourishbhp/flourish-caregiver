@@ -25,9 +25,6 @@ from .exportaction_mixin import ExportActionMixin
 from .modeladmin_mixins import VersionControlMixin
 
 
-
-
-
 class ModelAdminMixin(ModelAdminNextUrlRedirectMixin, ModelAdminFormAutoNumberMixin,
                       ModelAdminRevisionMixin, ModelAdminReplaceLabelTextMixin,
                       ModelAdminInstitutionMixin, ModelAdminReadOnlyMixin,
@@ -86,12 +83,16 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
                 'adol_firstname',
                 'adol_lastname',
                 'adol_dob',
-                'adol_gender'
+                'adol_gender',
+                'tb_blood_test_consent',
+                'samples_future_studies'
             ),
         }),)
 
     radio_fields = {
         'adol_gender': admin.VERTICAL,
+        'tb_blood_test_consent': admin.VERTICAL,
+        'samples_future_studies': admin.VERTICAL
     }
 
     def get_formset(self, request, obj, **kwargs):
@@ -102,11 +103,15 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
         if subject_identifier:
             children = CaregiverChildConsent.objects.filter(
                 subject_consent__subject_identifier=subject_identifier, )
-            
-            for child in children:
+            unique_child_idx = set(children.values_list(
+                'subject_identifier', flat=True))
+
+            for child_identifier in unique_child_idx:
+                child = CaregiverChildConsent.objects.filter(
+                    subject_identifier=child_identifier).latest('consent_datetime')
                 age = relativedelta(get_utcnow().date(), child.child_dob).years
 
-                if 10 <= age <= 17:
+                if not self.check_child_consent_exists(child_identifier) and 10 <= age <= 17:
                     initial.append({
                         'adol_firstname': child.first_name,
                         'adol_lastname': child.last_name,
@@ -121,6 +126,10 @@ class TbAdolChildConsentInline(StackedInlineMixin, ModelAdminFormAutoNumberMixin
         formset.__init__ = partialmethod(formset.__init__, initial=initial)
 
         return formset
+
+    def check_child_consent_exists(self, subject_identifier):
+        return TbAdolChildConsent.objects.filter(
+            subject_identifier=subject_identifier).exists()
 
 
 @admin.register(TbAdolConsent, site=flourish_caregiver_admin)
@@ -147,9 +156,7 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
                 'identity',
                 'identity_type',
                 'confirm_identity',
-                'tb_blood_test_consent',
                 'future_studies_contact',
-                'samples_future_studies',
             ),
         }),
 
@@ -174,9 +181,7 @@ class TbAdolConsentAdmin(ModelAdminBasicMixin, ModelAdminMixin,
         'identity_type': admin.VERTICAL,
         'citizen': admin.VERTICAL,
         'is_dob_estimated': admin.VERTICAL,
-        'tb_blood_test_consent': admin.VERTICAL,
         'future_studies_contact': admin.VERTICAL,
-        'samples_future_studies': admin.VERTICAL,
         'consent_reviewed': admin.VERTICAL,
         'study_questions': admin.VERTICAL,
         'assessment_score': admin.VERTICAL,

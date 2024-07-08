@@ -1,3 +1,5 @@
+import pytz
+
 from django.apps import apps as django_apps
 from django.db.models import (FileField, ForeignKey, ImageField, ManyToManyField,
                               ManyToOneRel, OneToOneField)
@@ -8,46 +10,58 @@ from flourish_export.admin_export_helper import AdminExportHelper
 from ..helper_classes import MaternalStatusHelper
 from ..helper_classes.utils import get_child_subject_identifier_by_visit
 
+tz = pytz.timezone('Africa/Gaborone')
+
 
 class ExportActionMixin(AdminExportHelper):
 
     def update_variables(self, data={}):
         """ Update study identifiers to desired variable name(s).
         """
+        new_data_dict = {}
         replace_idx = {'subject_identifier': 'matpid',
                        'child_subject_identifier': 'childpid',
                        'study_maternal_identifier': 'old_matpid',
                        'study_child_identifier': 'old_childpid'}
         for old_idx, new_idx in replace_idx.items():
             try:
-                data[new_idx] = data.pop(old_idx)
+                new_data_dict[new_idx] = data.pop(old_idx)
             except KeyError:
                 continue
-        return data
+        new_data_dict.update(data)
+        return new_data_dict
 
     def export_as_csv(self, request, queryset):
         records = []
-    
+
         for obj in queryset:
             data = obj.__dict__.copy()
 
             subject_identifier = getattr(obj, 'subject_identifier', None)
-            screening_identifier = self.screening_identifier(
+            screening_identifier = getattr(obj, 'screening_identifier', None)
+            study_maternal_identifier = getattr(obj, 'study_maternal_identifier', None)
+
+            screening_identifier = screening_identifier or self.screening_identifier(
                 subject_identifier=subject_identifier)
             previous_study = self.previous_bhp_study(
                 screening_identifier=screening_identifier)
+            study_maternal_identifier = study_maternal_identifier or self.study_maternal_identifier(
+                    screening_identifier=screening_identifier)
             caregiver_hiv_status = self.caregiver_hiv_status(
-                subject_identifier=subject_identifier)
+                subject_identifier=subject_identifier,
+                study_maternal_identifier=study_maternal_identifier)
 
             # Add subject identifier and visit code
             if getattr(obj, 'maternal_visit', None):
-                study_maternal_identifier = self.study_maternal_identifier(
-                    screening_identifier=screening_identifier)
+                data_copy = data.copy()
+                data.clear()
 
                 data.update(
                     matpid=subject_identifier,
                     old_matpid=study_maternal_identifier,
-                    visit_code=obj.maternal_visit.visit_code)
+                    visit_code=obj.maternal_visit.visit_code,
+                    childpid=get_child_subject_identifier_by_visit(obj.maternal_visit),
+                    **data_copy)
 
             # Update variable names for study identifiers
             data = self.update_variables(data)
@@ -82,7 +96,7 @@ class ExportActionMixin(AdminExportHelper):
                 field_value = getattr(obj, 'get_current_ga', '')
                 delivery_dt = getattr(
                     maternal_delivery_obj, 'delivery_datetime', None)
-                delivery_dt = delivery_dt.date() if delivery_dt else ''
+                delivery_dt = delivery_dt.astimezone(tz).date() if delivery_dt else ''
                 ga_birth_usconfirm = field_value if delivery_dt else ''
                 
 
@@ -142,10 +156,11 @@ class ExportActionMixin(AdminExportHelper):
             else:
                 return dataset_obj.study_maternal_identifier
 
-    def caregiver_hiv_status(self, subject_identifier=None):
+    def caregiver_hiv_status(self, subject_identifier=None, study_maternal_identifier=None):
 
         status_helper = MaternalStatusHelper(
-            subject_identifier=subject_identifier)
+            subject_identifier=subject_identifier,
+            study_maternal_identifier=study_maternal_identifier)
 
         return status_helper.hiv_status
 
@@ -189,15 +204,14 @@ class ExportActionMixin(AdminExportHelper):
 
     @property
     def exclude_fields(self):
-        return ['created', '_state', 'hostname_created', 'hostname_modified',
+        return ['_state', 'hostname_created', 'hostname_modified',
                 'revision', 'device_created', 'device_modified', 'id', 'site_id',
-                'created_time', 'modified_time', 'report_datetime_time',
-                'registration_datetime_time', 'screening_datetime_time', 'modified',
-                'form_as_json', 'consent_model', 'randomization_datetime',
-                'registration_datetime', 'is_verified_datetime', 'first_name',
-                'last_name', 'initials', 'guardian_name', 'identity', 'infant_visit_id',
-                'maternal_visit_id', 'processed', 'processed_datetime', 'packed',
-                'packed_datetime', 'shipped', 'shipped_datetime', 'received_datetime',
+                'modified_time', 'report_datetime_time', 'registration_datetime_time',
+                'screening_datetime_time', 'modified', 'form_as_json', 'consent_model',
+                'randomization_datetime', 'registration_datetime', 'is_verified_datetime',
+                'first_name', 'last_name', 'initials', 'guardian_name', 'identity',
+                'infant_visit_id', 'maternal_visit_id', 'processed', 'processed_datetime',
+                'packed', 'packed_datetime', 'shipped', 'shipped_datetime', 'received_datetime',
                 'identifier_prefix', 'primary_aliquot_identifier', 'clinic_verified',
                 'clinic_verified_datetime', 'drawn_datetime', 'slug', 'confirm_identity',
                 'related_tracking_identifier', 'parent_tracking_identifier', 'site',

@@ -20,6 +20,9 @@ class TbAdolChildConsentForm(SiteModelFormMixin,
         widget=forms.TextInput(attrs={'readonly': 'readonly'}),
         required=False)
 
+    def has_changed(self):
+        return True
+
     class Meta:
         model = TbAdolChildConsent
         fields = '__all__'
