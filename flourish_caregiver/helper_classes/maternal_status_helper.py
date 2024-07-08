@@ -176,4 +176,5 @@ class MaternalStatusHelper(object):
                 return NEG
             return NEG
         else:
-            return UNK
+            if getattr(instance_result_date_tuple[0], instance_result_date_tuple[1]) == UNK:
+                return UNK
