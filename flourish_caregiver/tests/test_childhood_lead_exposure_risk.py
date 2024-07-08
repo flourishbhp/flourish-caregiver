@@ -165,7 +165,6 @@ class TestChildhoodLeadExposureRisk(TestCase):
             maternal_visit=visit
         )
 
-        breakpoint()
 
         mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
