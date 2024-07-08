@@ -100,7 +100,8 @@ class VisitSequence(VisitSequence):
         return self.appointment_model_cls.objects.filter(
             self.sequence_query,
             subject_identifier=self.subject_identifier,
-            visit_code=self.previous_visit_code).order_by(
+            visit_code=self.previous_visit_code,
+            visit_schedule_name=self.visit_schedule_name).order_by(
             '-visit_code_sequence').first()
 
     def get_visit_for_appointment(self, appointment):

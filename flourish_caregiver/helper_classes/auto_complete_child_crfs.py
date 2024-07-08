@@ -47,7 +47,8 @@ class AutoCompleteChildCrfs:
         """
         models = [
             'flourish_caregiver.cliniciannotesimage',
-            'flourish_caregiver.cliniciannotes'
+            'flourish_caregiver.cliniciannotes',
+            'flourish_caregiver.childhoodleadexposurerisk'
         ]
 
         return models

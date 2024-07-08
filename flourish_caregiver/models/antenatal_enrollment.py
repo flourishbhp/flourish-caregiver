@@ -1,3 +1,4 @@
+import pytz
 from django.apps import apps as django_apps
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -12,6 +13,8 @@ from edc_protocol.validators import date_not_before_study_start
 from .enrollment_mixin import EnrollmentMixin
 from .maternal_delivery import MaternalDelivery
 from .ultrasound import UltraSound
+
+tz = pytz.timezone('Africa/Gaborone')
 
 
 class AntenatalModelManager(models.Manager):
@@ -90,8 +93,8 @@ class AntenatalEnrollment(NonUniqueSubjectIdentifierFieldMixin,
                 result = self.calculate_ga_weeks(ultrasound, reference_dt=today)
             else:
                 # if child is already delivered stop changing GA
-                delivery_date = maternal_delivery.delivery_datetime.date()
-
+                delivery_datetime = maternal_delivery.delivery_datetime
+                delivery_date = delivery_datetime.astimezone(tz).date()
                 result = self.calculate_ga_weeks(ultrasound, reference_dt=delivery_date)
 
         return round(result, 1)
@@ -115,8 +118,10 @@ class AntenatalEnrollment(NonUniqueSubjectIdentifierFieldMixin,
                 pass
         elif confirmation_method == '1':
             try:
+                report_datetime = ultrasound.report_datetime
+                report_dt = report_datetime.astimezone(tz).date()
                 us_days = (ga_by_ultrasound_wks * 7) + ga_by_ultrasound_days
-                us_dd = reference_dt - ultrasound.report_datetime.date()
+                us_dd = reference_dt - report_dt
                 ga_weeks = (us_dd.days + us_days) / 7
             except TypeError:
                 pass
