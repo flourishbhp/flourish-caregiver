@@ -1,6 +1,7 @@
 from django.contrib import admin
 from edc_model_admin.model_admin_audit_fields_mixin import audit_fieldset_tuple
 
+from flourish_child.admin import PreviousResultsAdminMixin
 from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverTBScreeningForm
@@ -8,10 +9,14 @@ from ..models import CaregiverTBScreening
 
 
 @admin.register(CaregiverTBScreening, site=flourish_caregiver_admin)
-class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
+                                admin.ModelAdmin):
     form = CaregiverTBScreeningForm
 
     fieldsets = (
+        ('Previous Test Results', {
+            'fields': []
+        }),
         (None, {
             'fields': [
                 'maternal_visit',
@@ -67,3 +72,6 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     }
 
     filter_horizontal = ('tb_tests',)
+
+    def get_keys(self, request, obj=None):
+        return self.get_previous_results_keys(request, obj)
