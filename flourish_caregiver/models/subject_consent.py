@@ -297,7 +297,7 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         except locator_cls.DoesNotExist:
             pass
         else:
-            if not locator_obj.subject_identifier:
+            if not locator_obj.subject_identifier or locator_obj.subject_identifier != self.subject_identifier:
                 locator_obj.subject_identifier = self.subject_identifier
                 locator_obj.save()
 
