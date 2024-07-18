@@ -89,7 +89,7 @@ class AntenatalEnrollment(NonUniqueSubjectIdentifierFieldMixin,
                     subject_identifier=self.subject_identifier)
             except MaternalDelivery.DoesNotExist:
                 # if child is not yet delivered
-                today = self.caregiver_offstudy_dt or get_utcnow().date()
+                today = self.caregiver_offstudy_dt or get_utcnow().astimezone(tz).date()
 
                 result = self.calculate_ga_weeks(ultrasound, reference_dt=today)
             else:
