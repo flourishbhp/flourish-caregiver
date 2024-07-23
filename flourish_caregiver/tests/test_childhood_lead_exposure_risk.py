@@ -226,15 +226,7 @@ class TestChildhoodLeadExposureRisk(TestCase):
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
-        mommy.make_recipe(
-            'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(
-                visit_code='3005M',
-                subject_identifier=self.subject_consent.subject_identifier),
-            report_datetime=get_utcnow(),
-            reason=SCHEDULED)
-
         self.assertEqual(CrfMetadata.objects.get(
             model='flourish_caregiver.childhoodleadexposurerisk',
             subject_identifier=self.subject_consent.subject_identifier,
-            visit_code='3005M').entry_status, REQUIRED)
+            visit_code='3004M').entry_status, REQUIRED)
