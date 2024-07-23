@@ -58,8 +58,7 @@ class TBScreeningMixin(models.Model):
         verbose_name='Since the last time you spoke with FLOURISH staff, have you been '
                      'evaluated in a clinic for TB?',
         choices=YES_NO_UKN_CHOICES,
-        blank=True,
-        null=True,
+        default='',
         max_length=20, )
 
     clinic_visit_date = models.DateField(

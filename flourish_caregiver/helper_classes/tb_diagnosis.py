@@ -14,13 +14,15 @@ class TBDiagnosis:
             screening.fever_duration == self.EVALUATION_CONDITION,
             screening.sweats_duration == self.EVALUATION_CONDITION,
             screening.weight_loss_duration == self.EVALUATION_CONDITION,
-            screening.evaluated_for_tb == NO
+            (screening.evaluated_for_tb == NO and
+             screening.household_diagnosed_with_tb == YES)
         ]) >= 1
 
     def evaluate_for_tb(self, screening):
         if self.child_age:
             if self.child_age <= 12:
-                return (screening.evaluated_for_tb == NO or
+                return ((screening.evaluated_for_tb == NO and
+                         screening.household_diagnosed_with_tb == YES) or
                         screening.cough_duration == self.EVALUATION_CONDITION or
                         screening.fever_duration == self.EVALUATION_CONDITION or
                         screening.weight_loss_duration == self.EVALUATION_CONDITION or
@@ -35,5 +37,6 @@ class TBDiagnosis:
                     screening.fever == YES or
                     screening.sweats == YES or
                     screening.weight_loss == YES or
-                    screening.evaluated_for_tb == NO
+                    (screening.evaluated_for_tb == NO and
+                     screening.household_diagnosed_with_tb == YES)
             )
