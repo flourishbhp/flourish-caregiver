@@ -3,8 +3,8 @@ from django.db import models
 from edc_constants.choices import YES_NO
 
 from flourish_caregiver.models.model_mixins import CrfModelMixin
-from flourish_child.choices import BUSINESSES_RUN, CAREGIVER_EDUCATION_LEVEL_CHOICES, \
-    HOUSE_YEAR_BUILT_CHOICES
+from flourish_child.choices import (BUILT_DATES, BUSINESSES_RUN,
+                                    CAREGIVER_EDUCATION_LEVEL_CHOICES)
 
 
 class ChildhoodLeadExposureRisk(CrfModelMixin):
@@ -142,7 +142,7 @@ class ChildhoodLeadExposureRisk(CrfModelMixin):
     house_year_built = models.CharField(
         verbose_name='When was the house you live in now built?',
         max_length=15,
-        choices=HOUSE_YEAR_BUILT_CHOICES
+        choices=BUILT_DATES
     )
 
     class Meta:
