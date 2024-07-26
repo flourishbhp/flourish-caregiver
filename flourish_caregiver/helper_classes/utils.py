@@ -68,6 +68,17 @@ def update_preg_screening_obj_child_pid(consent, child_subject_identifier):
                                  'identifier found.')
 
 
+def get_maternal_visit_by_id(visit_id=''):
+    """ Returns the maternal visit instance for a specific id. """
+    maternal_visit_cls = django_apps.get_model(
+        'flourish_caregiver.maternalvisit')
+    try:
+        return maternal_visit_cls.objects.get(
+            id=visit_id)
+    except maternal_visit_cls.DoesNotExist:
+        return None
+
+
 def get_child_subject_identifier_by_visit(visit):
     """Returns the child subject identifier by visit."""
     schedule = getattr(visit, 'schedule', None)
