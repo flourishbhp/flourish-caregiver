@@ -195,7 +195,7 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
 
     @property
     def multiple_births(self):
-        """Returns value of births if the mother has twins/triplets.
+        """ Returns value of births if the mother has twins/triplets.
         """
         twin_triplet = {2: 'twins',
                         3: 'triplets'}
@@ -217,7 +217,7 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
 
     @property
     def caregiver_type(self):
-        """Return the letter that represents the caregiver type.
+        """ Return the letter that represents the caregiver type.
         """
         if self.biological_caregiver == 'Yes':
             return 'B'
@@ -226,9 +226,8 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         return None
 
     def make_new_identifier(self):
-        """Returns a new and unique identifier.
-
-        Override this if needed.
+        """ Returns a new and unique identifier.
+            Override this if needed.
         """
         identifier_kwargs = {
             'caregiver_type': self.caregiver_type,
@@ -331,10 +330,9 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
         return self.version
 
     def registration_update_or_create(self):
-        """Creates or Updates the registration model with attributes
-        from this instance.
-
-        Called from the signal
+        """ Creates or Updates the registration model with attributes
+            from this instance.
+            Called from the signal
         """
         if self.is_eligible:
             return super().registration_update_or_create()
