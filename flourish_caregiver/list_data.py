@@ -155,6 +155,7 @@ list_data = {
         ('prior_arv_trizivir', 'Trizivir (AZT, 3TC, Abacavir)'),
         ('prior_arv_abacavir', 'Abacavir'),
         ('prior_arv_dtg', 'DTG'),
+        ('prior_arv_taf', 'Tenofovir alfenamide (TAF)'),
         ('prior_arv_unknown', 'ART, unknown'),
         ('prior_arv_na', 'Not Applicable'),
         ('prior_arv_specify', 'Other, specify')

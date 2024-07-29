@@ -71,6 +71,7 @@ ARV_DRUG_LIST = (
     ('Efavirenz', 'EFV'),
     ('Aluvia', 'ALU'),
     ('Dolutegravir', 'DTG'),
+    ('tenofovir_alfenamide', 'TAF'),
     ('HAART,unknown', 'HAART,unknown'),
 )
 
