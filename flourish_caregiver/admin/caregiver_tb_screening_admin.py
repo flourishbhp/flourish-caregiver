@@ -1,8 +1,7 @@
 from django.contrib import admin
-from edc_constants.constants import PENDING
-from edc_fieldsets import Insert
 from edc_model_admin.model_admin_audit_fields_mixin import audit_fieldset_tuple
 
+from flourish_child.admin import PreviousResultsAdminMixin
 from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverTBScreeningForm
@@ -10,10 +9,14 @@ from ..models import CaregiverTBScreening
 
 
 @admin.register(CaregiverTBScreening, site=flourish_caregiver_admin)
-class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
+class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
+                                admin.ModelAdmin):
     form = CaregiverTBScreeningForm
 
     fieldsets = (
+        ('Previous Test Results', {
+            'fields': []
+        }),
         (None, {
             'fields': [
                 'maternal_visit',
@@ -38,8 +41,11 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'blood_test_results',
                 'other_test_results',
                 'diagnosed_with_TB',
+                'diagnosed_with_TB_other',
                 'started_on_TB_treatment',
+                'started_on_TB_treatment_other',
                 'started_on_TB_preventative_therapy',
+                'started_on_TB_preventative_therapy_other',
             ]}),
         audit_fieldset_tuple
     )
@@ -55,7 +61,6 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "weight_loss_duration": admin.VERTICAL,
         "household_diagnosed_with_tb": admin.VERTICAL,
         "evaluated_for_tb": admin.VERTICAL,
-        "tb_tests": admin.VERTICAL,
         "chest_xray_results": admin.VERTICAL,
         "sputum_sample_results": admin.VERTICAL,
         "urine_test_results": admin.VERTICAL,
@@ -65,3 +70,12 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         "started_on_TB_treatment": admin.VERTICAL,
         "started_on_TB_preventative_therapy": admin.VERTICAL,
     }
+
+    filter_horizontal = ('tb_tests',)
+
+    @property
+    def conditional_fieldlists(self):
+        return self.get_previous_results_conditional_fieldlists({})
+
+    def get_keys(self, request, obj=None):
+        return self.get_previous_results_keys(request, obj)

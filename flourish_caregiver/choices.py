@@ -1209,7 +1209,7 @@ TB_REASON_CHOICES = (
     ('work', 'Participant/caregiver cannot be released from work'),
     ('isolation', 'Participant is in isolation due to COVID-19 or another infection'),
     ('not_well', 'Participant/caregiver is not well'),
-    ('other', 'Other'),
+    (OTHER, 'Other'),
 )
 
 PERIOD_HAPPENED = (
@@ -1309,6 +1309,13 @@ YES_NO_UKN_CHOICES = (
     (YES, YES),
     (NO, NO),
     (UNKNOWN, 'Unknown'),
+)
+
+YES_NO_AR_OTHER = (
+    (YES, YES),
+    (NO, NO),
+    (UNKNOWN, 'Awaiting results'),
+    (OTHER, 'Other'),
 )
 
 REFERRAL_LOCATION = (
