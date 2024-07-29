@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'flourish_metadata_rules.apps.AppConfig',
     'flourish_child.apps.AppConfig',
     'flourish_facet.apps.AppConfig',
+    'flourish_export.apps.AppConfig',
     'pre_flourish.apps.AppConfig',
     'pre_flourish_follow.apps.AppConfig',
     'flourish_follow.apps.AppConfig',
@@ -102,7 +103,7 @@ ROOT_URLCONF = 'flourish_caregiver.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -155,7 +155,6 @@ list_data = {
         ('prior_arv_trizivir', 'Trizivir (AZT, 3TC, Abacavir)'),
         ('prior_arv_abacavir', 'Abacavir'),
         ('prior_arv_dtg', 'DTG'),
-        ('prior_arv_taf', 'Tenofovir alfenamide (TAF)'),
         ('prior_arv_unknown', 'ART, unknown'),
         ('prior_arv_na', 'Not Applicable'),
         ('prior_arv_specify', 'Other, specify')
@@ -403,6 +402,7 @@ list_data = {
         ('urine_test', 'Urine test (LAM)'),
         ('skin_test', 'Skin test (TST/Mantoux)'),
         ('blood_test', 'Blood test (quantiferon)'),
+        (NONE, 'None'),
         (OTHER, 'other')
     ],
     'flourish_caregiver.generalsymptoms': [
