@@ -74,8 +74,10 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         null=True,
         help_text='EDD Confirmed. Derived variable, see AntenatalEnrollment.')
 
-    ga_confirmed = models.IntegerField(
+    ga_confirmed = models.DecimalField(
         verbose_name="GA Confirmed.",
+        decimal_places=2,
+        max_digits=8,
         blank=True,
         null=True,
         help_text='Derived variable.')
@@ -142,8 +144,8 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
             return edd_by_lmp, 0
 
     def evaluate_ga_confirmed(self):
-        return int(abs(
-            40 - ((self.edd_confirmed - self.report_datetime.date()).days / 7)))
+        return round(abs(
+            40 - ((self.edd_confirmed - self.report_datetime.date()).days / 7)), 2)
 
     @property
     def get_current_ga(self):
@@ -169,7 +171,7 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
         if self.get_latest_consent and self.ga_confirmed:
             consent_dt = getattr(
                 self.get_latest_consent, 'consent_datetime', None)
-            result = self.ga_confirmed + ((consent_dt - self.report_datetime).days / 7)
+            result = float(self.ga_confirmed) + ((consent_dt - self.report_datetime).days / 7)
             return round(result, 1)
         else:
             return None
@@ -185,7 +187,7 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
 
         if registration_datetime:
             weeks_diff = (self.report_datetime - registration_datetime).days / 7
-            return self.ga_confirmed - weeks_diff
+            return float(self.ga_confirmed) - weeks_diff
 
     class Meta:
         app_label = 'flourish_caregiver'
