@@ -9,6 +9,9 @@ from ..forms import HIVDisclosureStatusFormC
 from ..models import HIVDisclosureStatusA, HIVDisclosureStatusB
 from ..models import HIVDisclosureStatusC
 
+from ..helper_classes.utils import (get_maternal_visit_by_id,
+                                    get_child_subject_identifier_by_visit)
+
 
 class HIVDisclosureStatusAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
@@ -41,27 +44,7 @@ class HIVDisclosureStatusAdminMixin(CrfModelAdminMixin, admin.ModelAdmin):
                     'disclosure_intentional': admin.VERTICAL,
                     'plan_to_disclose': admin.VERTICAL}
 
-
     filter_horizontal = ('unintentional_disclosure_reason',)
-
-    def child_gt10(self, request):
-        try:
-            visit_obj = self.visit_model.objects.get(
-                id=request.GET.get('maternal_visit'))
-        except self.visit_model.DoesNotExist:
-            pass
-        else:
-            onschedule_model = django_apps.get_model(
-                visit_obj.appointment.schedule.onschedule_model)
-            try:
-                onschedule_obj = onschedule_model.objects.get(
-                    subject_identifier=visit_obj.appointment.subject_identifier,
-                    schedule_name=visit_obj.appointment.schedule_name)
-            except onschedule_model.DoesNotExist:
-                pass
-            else:
-                if 'antenatal' not in onschedule_obj.schedule_name:
-                    return onschedule_obj.child_subject_identifier
 
 
 @admin.register(HIVDisclosureStatusA, site=flourish_caregiver_admin)
@@ -69,17 +52,22 @@ class HIVDisclosureStatusAdminA(HIVDisclosureStatusAdminMixin,
                                 admin.ModelAdmin):
     form = HIVDisclosureStatusFormA
 
-    def add_view(self, request, form_url='', extra_context=None):
-        associated_child_identifier = self.child_gt10(request)
+    def get_changeform_initial_data(self, request):
+        initial = super().get_changeform_initial_data(request)
 
-        g = request.GET.copy()
-        g.update({
-            'associated_child_identifier': associated_child_identifier,
-        })
+        maternal_visit_id = initial.get('maternal_visit', None)
 
-        request.GET = g
+        maternal_visit_obj = get_maternal_visit_by_id(
+            maternal_visit_id)
 
-        return super().add_view(request, form_url, extra_context)
+        child_identifier = None
+        if maternal_visit_obj:
+            child_identifier = get_child_subject_identifier_by_visit(
+                maternal_visit_obj)
+
+        if child_identifier:
+            initial['associated_child_identifier'] = child_identifier
+        return initial
 
 
 @admin.register(HIVDisclosureStatusB, site=flourish_caregiver_admin)
@@ -87,22 +75,24 @@ class HIVDisclosureStatusAdminB(HIVDisclosureStatusAdminMixin,
                                 admin.ModelAdmin):
     form = HIVDisclosureStatusFormB
 
-    def add_view(self, request, form_url='', extra_context=None):
-        associated_child_identifier = self.child_gt10(request)
+    def get_changeform_initial_data(self, request):
+        initial = super().get_changeform_initial_data(request)
 
-        if associated_child_identifier:
-            post_fix = int(associated_child_identifier[-2:])
-            associated_child_identifier = associated_child_identifier[:-2] + str(
-                post_fix + 10)
+        maternal_visit_id = initial.get('maternal_visit', None)
 
-        g = request.GET.copy()
-        g.update({
-            'associated_child_identifier': associated_child_identifier,
-        })
+        maternal_visit_obj = get_maternal_visit_by_id(
+            maternal_visit_id)
 
-        request.GET = g
+        child_identifier = None
+        if maternal_visit_obj:
+            child_identifier = get_child_subject_identifier_by_visit(
+                maternal_visit_obj)
 
-        return super().add_view(request, form_url, extra_context)
+        if child_identifier:
+            post_fix = int(child_identifier[-2:])
+            child_identifier = child_identifier[:-2] + str(post_fix + 10)
+            initial['associated_child_identifier'] = child_identifier
+        return initial
 
 
 @admin.register(HIVDisclosureStatusC, site=flourish_caregiver_admin)
@@ -110,19 +100,21 @@ class HIVDisclosureStatusAdminC(HIVDisclosureStatusAdminMixin,
                                 admin.ModelAdmin):
     form = HIVDisclosureStatusFormC
 
-    def add_view(self, request, form_url='', extra_context=None):
-        associated_child_identifier = self.child_gt10(request)
+    def get_changeform_initial_data(self, request):
+        initial = super().get_changeform_initial_data(request)
 
-        if associated_child_identifier:
-            post_fix = int(associated_child_identifier[-3:])
-            associated_child_identifier = associated_child_identifier[:-3] + str(
-                post_fix + 20)
+        maternal_visit_id = initial.get('maternal_visit', None)
 
-        g = request.GET.copy()
-        g.update({
-            'associated_child_identifier': associated_child_identifier,
-        })
+        maternal_visit_obj = get_maternal_visit_by_id(
+            maternal_visit_id)
 
-        request.GET = g
+        child_identifier = None
+        if maternal_visit_obj:
+            child_identifier = get_child_subject_identifier_by_visit(
+                maternal_visit_obj)
 
-        return super().add_view(request, form_url, extra_context)
+        if child_identifier:
+            post_fix = int(child_identifier[-3:])
+            child_identifier = child_identifier[:-3] + str(post_fix + 20)
+            initial['associated_child_identifier'] = child_identifier
+        return initial
