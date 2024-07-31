@@ -542,6 +542,14 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 subject_identifier=caregiver_sid)})
             extra_data.update({'study_status': self.study_status(obj.subject_identifier)})
 
+            # Update current and enrollment cohort
+            enrol_cohort, current_cohort = self.get_cohort_details(obj.subject_identifier)
+            consent_cohort = self.get_cohort_by_date(
+                obj.subject_identifier, obj.consent_datetime)
+            extra_data.update(enrol_cohort=enrol_cohort,
+                              current_cohort=current_cohort,
+                              consent_cohort=consent_cohort)
+
             obj_data.update(extra_data)
 
             # Update variable names for study identifiers
@@ -584,6 +592,41 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             super_actions.update(actions)
 
         return super_actions
+
+    @property
+    def cohort_model_cls(self):
+        return django_apps.get_model('flourish_caregiver.cohort')
+
+    def get_cohort_details(self, subject_identifier):
+        enrol_cohort = self.cohort_model_cls.objects.filter(
+            subject_identifier=subject_identifier,
+            enrollment_cohort=True).order_by('-assign_datetime').first()
+
+        current_cohort = self.cohort_model_cls.objects.filter(
+            subject_identifier=subject_identifier,
+            current_cohort=True).order_by('-assign_datetime').first()
+
+        enrol_name = getattr(enrol_cohort, 'name', None)
+        current_name = getattr(current_cohort, 'name', None)
+
+        return enrol_name, current_name
+
+    def get_cohort_by_date(self, subject_identifier, report_datetime):
+        """ Query cohort instances to get cohort details for a particular date.
+            i.e. cohort participant was enrolled on at a specificied date.
+            @param subject_identifier: child subject_identifier
+            @param report_datetime: datetime to query for
+            @return: cohort name
+        """
+        try:
+            child_cohort = self.cohort_model_cls.objects.filter(
+                subject_identifier=subject_identifier,
+                assign_datetime__date__lte=report_datetime.date()).latest(
+                'assign_datetime')
+        except self.cohort_model_cls.DoesNotExist:
+            return ''
+        else:
+            return child_cohort.name
 
     def update_variables(self, data={}):
         """ Update study identifiers to desired variable name(s).
