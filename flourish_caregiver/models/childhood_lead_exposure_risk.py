@@ -17,7 +17,8 @@ class ChildhoodLeadExposureRisk(CrfModelMixin):
     )
 
     lead_exposure_test = models.CharField(
-        verbose_name='Has your child ever been tested for lead exposure?',
+        verbose_name='Has your child ever been tested for lead exposure (do not include '
+                     'any FLOURISH study lab activities)?',
         max_length=7,
         choices=YES_NO,
     )
@@ -128,7 +129,8 @@ class ChildhoodLeadExposureRisk(CrfModelMixin):
     )
 
     pr_male_caregiver_edu = models.CharField(
-        verbose_name='Education level of primary male caregiver',
+        verbose_name='Education level of primary male caregiver of the child (Male '
+                     'caregiver is not required to be biological father)',
         max_length=45,
         choices=CAREGIVER_EDUCATION_LEVEL_CHOICES
     )
