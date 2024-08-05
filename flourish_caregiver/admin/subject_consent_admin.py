@@ -547,7 +547,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             consent_cohort = self.get_cohort_by_date(
                 obj.subject_identifier, obj.consent_datetime)
             extra_data.update(enrol_cohort=enrol_cohort,
-                              current_cohort=current_cohort,
+                              cohort=current_cohort,
                               consent_cohort=consent_cohort)
 
             obj_data.update(extra_data)
