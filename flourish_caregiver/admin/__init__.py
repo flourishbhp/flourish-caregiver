@@ -68,7 +68,7 @@ from .medical_history_admin import MedicalHistoryAdmin
 from .modeladmin_mixins import VersionControlMixin
 from .obsterical_history_admin import ObstericalHistoryAdmin
 from .offschedule_admin import CaregiverOffScheduleAdmin
-from .parent_adol_relationship_scale_admin import ParentAdolRelationshipScaleAdmin
+from .parent_adol_relationship_scale_admin import ParentAdolRelationshipScaleParentAdmin
 from .post_hiv_rapid_testing_and_conseling_admin import PostHivRapidTestAndConselingAdmin
 from .relationship_father_involvement_admin import RelationshipFatherInvolvementAdmin
 from .screening_preg_women_admin import (ScreeningPregWomenAdmin,
