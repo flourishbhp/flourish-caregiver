@@ -1,9 +1,25 @@
 from django.db import models
+from django.db.models import PROTECT
+from edc_base.model_mixins import BaseUuidModel
+from edc_visit_tracking.model_mixins import CrfInlineModelMixin
+
 from .model_mixins import CrfModelMixin
 from ..choices import RELATIONSHIP_SCALE
 
 
-class ParentAdolRelationshipScale(CrfModelMixin):
+class ParentAdolReloScaleParentModel(CrfModelMixin):
+    class Meta:
+        app_label = 'flourish_caregiver'
+        verbose_name = 'Parent-Adolescent Relationship Scales'
+
+
+class ParentAdolRelationshipScale(CrfInlineModelMixin, BaseUuidModel):
+    parent_adol_relo_scale_parent_model = models.ForeignKey(
+        ParentAdolReloScaleParentModel, on_delete=PROTECT, null=True)
+
+    associated_child_identifier = models.CharField(
+        max_length=25)
+
     eat_together = models.CharField(
         verbose_name="We eat meals together",
         max_length=2,
@@ -41,7 +57,8 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         choices=RELATIONSHIP_SCALE)
 
     compassion = models.CharField(
-        verbose_name='During stressful times in my child/adolescents life, I check if he/she is okay',
+        verbose_name='During stressful times in my child/adolescents life, I check if '
+                     'he/she is okay',
         max_length=2,
         choices=RELATIONSHIP_SCALE)
 
@@ -51,7 +68,8 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         choices=RELATIONSHIP_SCALE)
 
     play_sport = models.CharField(
-        verbose_name='I play sport or do other physical activities with my child/adolescent',
+        verbose_name='I play sport or do other physical activities with my '
+                     'child/adolescent',
         max_length=2,
         choices=RELATIONSHIP_SCALE)
 
@@ -61,7 +79,8 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         choices=RELATIONSHIP_SCALE)
 
     encourage = models.CharField(
-        verbose_name='I encourage my child/adolescent to do things he/she is interested in or enjoys',
+        verbose_name='I encourage my child/adolescent to do things he/she is interested '
+                     'in or enjoys',
         max_length=2,
         choices=RELATIONSHIP_SCALE)
 
@@ -76,7 +95,8 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         choices=RELATIONSHIP_SCALE)
 
     encourage_expression = models.CharField(
-        verbose_name='I encourage my child/adolescent to talk about their thoughts and feelings',
+        verbose_name='I encourage my child/adolescent to talk about their thoughts and '
+                     'feelings',
         max_length=2,
         choices=RELATIONSHIP_SCALE)
 
@@ -89,7 +109,7 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         question_3 = int(self.family_events_together)
         question_10 = int(self.play_sport)
 
-        result =  (question_1 + question_2 + question_3 + question_10) / 4
+        result = (question_1 + question_2 + question_3 + question_10) / 4
 
         return round(result, 4)
 
@@ -104,9 +124,9 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         question_12 = int(self.encourage)
         question_15 = int(self.encourage_expression)
 
-        result =  (question_4 + question_5 + question_6 + 
-                question_8 + question_12 + question_15) / 6
-        
+        result = (question_4 + question_5 + question_6 +
+                  question_8 + question_12 + question_15) / 6
+
         return round(result, 4)
 
     @property
@@ -119,7 +139,7 @@ class ParentAdolRelationshipScale(CrfModelMixin):
         question_11 = int(self.complains_about_me)
         question_13 = int(self.criticize_child)
         question_14 = int(self.change_attitude)
-        result =  (question_7 + question_9 + question_11 + question_13 + question_14) / 5
+        result = (question_7 + question_9 + question_11 + question_13 + question_14) / 5
 
         return round(result, 4)
 
