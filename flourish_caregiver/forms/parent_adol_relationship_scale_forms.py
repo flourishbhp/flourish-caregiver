@@ -5,6 +5,10 @@ from ..models import ParentAdolRelationshipScale, ParentAdolReloScaleParentModel
 
 
 class ParentAdolRelationshipScaleForm(InlineSubjectModelFormMixin):
+
+    associated_child_identifier = forms.CharField(
+        label='Associated child identifier',
+        widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     class Meta:
         model = ParentAdolRelationshipScale
         fields = '__all__'
