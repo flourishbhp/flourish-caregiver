@@ -8,7 +8,9 @@ from edc_model_admin import audit_fieldset_tuple, ModelAdminFormAutoNumberMixin,
 from .modeladmin_mixins import CrfModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import ParentAdolRelationshipScaleForm, ParentAdolRelationshipScaleParentForm
-from ..models import ParentAdolRelationshipScale, ParentAdolReloScaleParentModel
+from ..helper_classes.utils import get_child_subject_identifier_by_visit
+from ..models import MaternalVisit, ParentAdolRelationshipScale, \
+    ParentAdolReloScaleParentModel
 
 
 class ParentAdolRelationshipScaleAdmin(StackedInlineMixin,
@@ -25,6 +27,9 @@ class ParentAdolRelationshipScaleAdmin(StackedInlineMixin,
     readonly_fields = ('shared_activities',
                        'connectedness',
                        'hostility',)
+
+    twin_sufixes = ['25', '35']
+    triplet_sufixes = ['36', '46', '56']
 
     fieldsets = (
         (
@@ -79,7 +84,7 @@ class ParentAdolRelationshipScaleAdmin(StackedInlineMixin,
         initial = []
         if subject_identifier:
             caregiver_child_consents = self.get_caregiver_child_consents(
-                subject_identifier)
+                subject_identifier, request=request)
             for child_identifier in caregiver_child_consents:
                 initial.append({'associated_child_identifier': child_identifier})
         formset = super().get_formset(request, obj=obj, **kwargs)
@@ -92,15 +97,38 @@ class ParentAdolRelationshipScaleAdmin(StackedInlineMixin,
         subject_identifier = request.GET.get('subject_identifier')
         if subject_identifier:
             caregiver_child_consents = self.get_caregiver_child_consents(
-                subject_identifier)
+                subject_identifier, request=request)
             if not obj:
                 extra = len(caregiver_child_consents)
         return extra
 
-    def get_caregiver_child_consents(self, subject_ident):
-        return set(list(self.consent_cls.objects.filter(
-            subject_consent__subject_identifier=subject_ident
-        ).values_list('subject_identifier', flat=True)))
+    def get_caregiver_child_consents(self, subject_ident, request=None):
+        visit_id = request.GET.get('maternal_visit')
+        visit = MaternalVisit.objects.get(id=visit_id)
+        child_subject_identifier = get_child_subject_identifier_by_visit(visit)
+        return self.get_valid_kids(subject_ident, child_subject_identifier)
+
+    def get_valid_kids(self, subject_ident, child_subject_identifier):
+        if child_subject_identifier:
+            return self.check_sibship(subject_ident, child_subject_identifier)
+        return []
+
+    def check_sibship(self, subject_ident, child_subject_identifier):
+        suffix = child_subject_identifier.split('-')[-1]
+        kids = self.consent_cls.objects.filter(
+            subject_consent__subject_identifier=subject_ident).values_list(
+            'subject_identifier', flat=True)
+        if self.determine_sibship(suffix) in ['Twin', 'Triplet']:
+            return [kid for kid in kids if
+                    self.determine_sibship(kid.split('-')[-1]) in ['Twin', 'Triplet']]
+        return [child_subject_identifier]
+
+    def determine_sibship(self, suffix):
+        if suffix in self.twin_sufixes:
+            return "Twin"
+        elif suffix in self.triplet_sufixes:
+            return "Triplet"
+        return "Neither"
 
 
 @admin.register(ParentAdolReloScaleParentModel, site=flourish_caregiver_admin)
