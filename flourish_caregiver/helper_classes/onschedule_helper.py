@@ -194,7 +194,8 @@ class OnScheduleHelper(object):
     def create_caregiver_offschedule(self, schedule_name, offschedule_datetime=get_utcnow()):
         """ Take participant offschedule for a specific `schedule_name`
         """
-        caregiver_offschedule_cls = 'flourish_caregiver.caregiveroffschedule'
+        caregiver_offschedule_cls = django_apps.get_model(
+            'flourish_caregiver.caregiveroffschedule')
         try:
             offschedule_obj = caregiver_offschedule_cls.objects.get(
                  subject_identifier=self.subject_identifier,
