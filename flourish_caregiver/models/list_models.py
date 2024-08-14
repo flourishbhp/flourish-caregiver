@@ -145,3 +145,7 @@ class CrackedNipplesActions(ListModelMixin, BaseUuidModel):
 
 class DisclosureReasons(ListModelMixin, BaseUuidModel):
     pass
+
+
+class CaregiverTbReferralReasons(ListModelMixin, BaseUuidModel):
+    pass
