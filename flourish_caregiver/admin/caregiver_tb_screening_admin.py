@@ -73,9 +73,12 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
 
     filter_horizontal = ('tb_tests',)
 
-    @property
-    def conditional_fieldlists(self):
-        return self.get_previous_results_conditional_fieldlists({})
-
-    def get_keys(self, request, obj=None):
-        return self.get_previous_results_keys(request, obj)
+    def get_previous_instances(self, request):
+        previous_instances = []
+        current_instance = self.get_previous_instance(request)
+        while current_instance:
+            if self.has_pending_results(current_instance):
+                previous_instances.append(current_instance)
+            appointment = current_instance.maternal_visit.appointment
+            current_instance = self.get_previous_instance(request, appointment)
+        return previous_instances
