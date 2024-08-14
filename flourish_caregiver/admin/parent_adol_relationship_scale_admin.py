@@ -115,9 +115,9 @@ class ParentAdolRelationshipScaleAdmin(StackedInlineMixin,
 
     def check_sibship(self, subject_ident, child_subject_identifier):
         suffix = child_subject_identifier.split('-')[-1]
-        kids = self.consent_cls.objects.filter(
+        kids = list(set(self.consent_cls.objects.filter(
             subject_consent__subject_identifier=subject_ident).values_list(
-            'subject_identifier', flat=True)
+            'subject_identifier', flat=True)))
         if self.determine_sibship(suffix) in ['Twin', 'Triplet']:
             return [kid for kid in kids if
                     self.determine_sibship(kid.split('-')[-1]) in ['Twin', 'Triplet']]
