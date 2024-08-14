@@ -24,5 +24,5 @@ class CaregiverTBReferralAdmin(CrfModelAdminMixin, admin.ModelAdmin):
             ]}
          ), audit_fieldset_tuple)
 
-    radio_fields = {'reason_for_referral': admin.VERTICAL,
-                    'clinic_name': admin.VERTICAL, }
+    radio_fields = {'clinic_name': admin.VERTICAL, }
+    filter_horizontal = ('reason_for_referral',)
