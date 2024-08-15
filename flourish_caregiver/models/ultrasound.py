@@ -172,8 +172,10 @@ class UltraSound(UltraSoundModelMixin, ActionModelMixin, CrfModelMixin):
 
     @property
     def ga_confirmed_after(self):
-        registration_datetime = get_registration_date(
-            self.subject_identifier, self.child_subject_identifier)
+        registration_datetime = None
+        if self.child_subject_identifier:
+            registration_datetime = get_registration_date(
+                self.subject_identifier, self.child_subject_identifier)
 
         if registration_datetime:
             weeks_diff = (self.report_datetime - registration_datetime).days / 7
