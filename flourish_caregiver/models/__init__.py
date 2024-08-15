@@ -82,7 +82,8 @@ from .onschedule import OnScheduleCohortASecSeq, OnScheduleCohortBSecSeq, \
 from .onschedule import OnScheduleCohortATb2Months, OnScheduleCohortATb6Months
 from .onschedule import OnScheduleCohortBFUQuarterly, OnScheduleCohortCFUQuarterly
 from .onschedule import OnScheduleCohortBQuarterly, OnScheduleCohortCEnrollment
-from .parent_adol_relationship_scale import ParentAdolRelationshipScale
+from .parent_adol_relationship_scale import ParentAdolRelationshipScale, \
+    ParentAdolReloScaleParentModel
 from .post_hiv_rapid_testing_and_conseling import PostHivRapidTestAndConseling
 from .relationship_father_involvement import RelationshipFatherInvolvement
 from .screening_preg_women import ScreeningPregWomen, ScreeningPregWomenInline
@@ -117,5 +118,3 @@ from .tb_screen_preg import TbScreenPreg
 from .tb_study_screening import TbStudyEligibility
 from .tb_visit_screening_women import TbVisitScreeningWomen
 from .ultrasound import UltraSound
-from .caregiver_safi_stigma import CaregiverSafiStigma
-from .parent_adol_relationship_scale import ParentAdolRelationshipScale
