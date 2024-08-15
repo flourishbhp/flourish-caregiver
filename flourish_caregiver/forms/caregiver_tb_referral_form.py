@@ -18,6 +18,7 @@ class CaregiverTBReferralForm(SubjectModelFormMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         subject_identifier = self.initial.get('subject_identifier', None)
+        maternal_visit = self.initial.get('maternal_visit', None)
 
         referral_reasons = []
 
@@ -28,7 +29,7 @@ class CaregiverTBReferralForm(SubjectModelFormMixin, forms.ModelForm):
             'weight_loss': 'weight_loss_duration',
         }
         tb_screening_obj = self.tb_screening_model_cls.objects.filter(
-            maternal_visit__subject_identifier=subject_identifier).first()
+            maternal_visit__subject_identifier=subject_identifier, maternal_visit_id=maternal_visit).first()
         if tb_screening_obj:
             for symptom, duration in tb_screening_options.items():
                 symptom_value = getattr(tb_screening_obj, symptom)
