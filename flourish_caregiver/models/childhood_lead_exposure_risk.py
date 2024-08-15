@@ -3,6 +3,7 @@ from django.db import models
 from edc_constants.choices import YES_NO
 
 from flourish_caregiver.choices import YES_NO_UNK_NO_CHILD
+
 from flourish_caregiver.models.model_mixins import CrfModelMixin
 from flourish_child.choices import (BUILT_DATES, BUSINESSES_RUN,
                                     CAREGIVER_EDUCATION_LEVEL_CHOICES)
