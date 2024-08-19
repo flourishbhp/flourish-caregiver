@@ -1342,11 +1342,8 @@ RELATIONSHIP_SCALE = (
     ('5', '5'),
 )
 
-RELATIONSHIP_SCALE = (
-    ('0', '0'),
-    ('1', '1'),
-    ('2', '2'),
-    ('3', '3'),
-    ('4', '4'),
-    ('5', '5'),
+YES_NO_UNK_NO_CHILD = (
+    (YES, YES),
+    (NO, NO),
+    (UNKNOWN, 'Unknown, Caregiver does not live with child'),
 )
