@@ -85,4 +85,4 @@ class InterviewFocusGroupInterestVersion2Admin(CrfModelAdminMixin, admin.ModelAd
         'diff_status_comfort': admin.VERTICAL,
     }
 
-    search_fields = ('subject_identifier',)
+    search_fields = ('maternal_visit__subject_identifier',)
