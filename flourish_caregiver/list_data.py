@@ -438,7 +438,8 @@ list_data = {
         (OTHER, 'Other')
     ],
     'flourish_caregiver.disclosurereasons': [
-        ('someone_else_without_approval', 'Someone else disclosed without your approval'),
+        ('someone_else_without_approval',
+         'Someone else disclosed without your approval'),
         ('accidental_documentation',
          'Child found out about status from accidentally seeing documentation/records'),
         ('found_arv_medications',
@@ -447,6 +448,14 @@ list_data = {
         ('told_without_permission',
          'Someone else told my child without my knowledge or permission'),
         (OTHER, 'Other')
+    ],
+    'flourish_caregiver.caregivertbreferralreasons': [
+        ('cough', 'Cough'),
+        ('fever', 'Fever'),
+        ('sweats', 'Sweats'),
+        ('weight_loss', 'Weight loss'),
+        ('household_diagnosed_with_tb', 'Household Contact with TB'),
+        (OTHER, 'Other, specify'),
     ]
 }
 
