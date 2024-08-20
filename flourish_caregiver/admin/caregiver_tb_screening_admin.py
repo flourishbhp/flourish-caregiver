@@ -79,3 +79,11 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
 
     def get_keys(self, request, obj=None):
         return self.get_previous_results_keys(request, obj)
+
+    update_fields = [
+        'chest_xray_results',
+        'sputum_sample_results',
+        'urine_test_results',
+        'skin_test_results',
+        'blood_test_results',
+    ]
