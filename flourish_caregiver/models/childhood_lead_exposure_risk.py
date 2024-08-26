@@ -2,6 +2,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from edc_constants.choices import YES_NO
 
+from flourish_caregiver.choices import YES_NO_UNK_NO_CHILD
+
 from flourish_caregiver.models.model_mixins import CrfModelMixin
 from flourish_child.choices import (BUILT_DATES, BUSINESSES_RUN,
                                     CAREGIVER_EDUCATION_LEVEL_CHOICES)
@@ -108,15 +110,15 @@ class ChildhoodLeadExposureRisk(CrfModelMixin):
 
     peeling_paint = models.CharField(
         verbose_name='Is there any peeling, chipping or cracking paint in your home?',
-        max_length=7,
-        choices=YES_NO,
+        max_length=30,
+        choices=YES_NO_UNK_NO_CHILD,
     )
 
     house_by_busy_road = models.CharField(
         verbose_name='Since your child was born, have you ever lived in a home next to a '
                      'busy road',
-        max_length=7,
-        choices=YES_NO,
+        max_length=30,
+        choices=YES_NO_UNK_NO_CHILD,
     )
 
     years_near_busy_road = models.DecimalField(
