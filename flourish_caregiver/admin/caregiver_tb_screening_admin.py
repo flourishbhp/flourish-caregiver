@@ -13,10 +13,9 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
                                 admin.ModelAdmin):
     form = CaregiverTBScreeningForm
 
+    visit_attr = 'maternal_visit'
+
     fieldsets = (
-        ('Previous Test Results', {
-            'fields': []
-        }),
         (None, {
             'fields': [
                 'maternal_visit',
@@ -72,13 +71,6 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
     }
 
     filter_horizontal = ('tb_tests',)
-
-    @property
-    def conditional_fieldlists(self):
-        return self.get_previous_results_conditional_fieldlists({})
-
-    def get_keys(self, request, obj=None):
-        return self.get_previous_results_keys(request, obj)
 
     update_fields = [
         'chest_xray_results',
