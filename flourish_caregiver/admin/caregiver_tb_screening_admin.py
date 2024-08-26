@@ -13,10 +13,9 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
                                 admin.ModelAdmin):
     form = CaregiverTBScreeningForm
 
+    visit_attr = 'maternal_visit'
+
     fieldsets = (
-        ('Previous Test Results', {
-            'fields': []
-        }),
         (None, {
             'fields': [
                 'maternal_visit',
@@ -73,12 +72,10 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
 
     filter_horizontal = ('tb_tests',)
 
-    def get_previous_instances(self, request):
-        previous_instances = []
-        current_instance = self.get_previous_instance(request)
-        while current_instance:
-            if self.has_pending_results(current_instance):
-                previous_instances.append(current_instance)
-            appointment = current_instance.maternal_visit.appointment
-            current_instance = self.get_previous_instance(request, appointment)
-        return previous_instances
+    update_fields = [
+        'chest_xray_results',
+        'sputum_sample_results',
+        'urine_test_results',
+        'skin_test_results',
+        'blood_test_results',
+    ]
