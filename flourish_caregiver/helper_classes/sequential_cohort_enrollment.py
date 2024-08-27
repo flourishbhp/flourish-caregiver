@@ -201,13 +201,12 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def create_cohort_instance(self, ):
         defaults = {
             'assign_datetime': get_utcnow(),
-            'enrollment_cohort': False }
+            'enrollment_cohort': False, }
         obj, _ = self.cohort_model_cls.objects.get_or_create(
            subject_identifier=self.child_subject_identifier,
            name=self.evaluated_cohort,
            defaults=defaults, )
         return obj
-
 
     def age_up_enrollment(self):
         """Checks if a child has aged up and put the on a new cohort and schedule.

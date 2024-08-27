@@ -7,7 +7,7 @@ class MatrixMatchVariablesMixin:
     @property
     def child_clinical_measurements_cls(self):
         return django_apps.get_model('flourish_child.childclinicalmeasurements')
-        
+
     @property
     def child_bmi(self):
         try:

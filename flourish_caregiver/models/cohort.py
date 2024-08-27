@@ -6,12 +6,12 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
-from edc_constants.constants import POS, NEG
+from edc_constants.constants import NEG, POS
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
 
 from .caregiver_child_consent import CaregiverChildConsent
-from .model_mixins import SearchSlugModelMixin, MatrixMatchVariablesMixin
+from .model_mixins import MatrixMatchVariablesMixin, SearchSlugModelMixin
 from ..helper_classes import MaternalStatusHelper
 from ..helper_classes.schedule_dict import child_schedule_dict
 

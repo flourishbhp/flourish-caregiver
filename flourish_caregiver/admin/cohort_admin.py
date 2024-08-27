@@ -11,6 +11,7 @@ class CohortAdmin(ModelAdminMixin, admin.ModelAdmin):
 
     form = CohortForm
     search_fields = ['subject_identifier']
+    readonly_fields = ['enrollment_cohort']
 
     fields = ('name',
               'assign_datetime',

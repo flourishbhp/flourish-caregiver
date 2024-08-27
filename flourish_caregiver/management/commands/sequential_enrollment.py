@@ -1,15 +1,14 @@
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
-from ...models import CaregiverChildConsent
 from ...helper_classes import SequentialCohortEnrollment
+from ...models import CaregiverChildConsent
 
 
 class Command(BaseCommand):
     help = "Sequentially enrol children into cohorts"
 
     def handle(self, *args, **options):
-        
         # Get a list of all children in the study
         child_identifiers = CaregiverChildConsent.objects.values_list(
             'subject_identifier', flat=True)
