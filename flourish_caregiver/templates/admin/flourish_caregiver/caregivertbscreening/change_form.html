@@ -79,27 +79,60 @@
     </style>
 {% endblock %}
 
+{% block extrahead %}
+    {{ block.super }}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+
+            form.addEventListener('submit', function (event) {
+                const previousFieldsFieldset = document.querySelector('fieldset.mb-4');
+                const previousFields = previousFieldsFieldset.querySelectorAll('input[type=radio]');
+                let hasPending = false;
+
+                previousFields.forEach(function (field) {
+                    if (field.checked && field.value === 'PENDING') {
+                        hasPending = true;
+                    }
+                });
+
+                if (hasPending) {
+                    const confirmed = confirm("There are previous fields marked as 'PENDING'. Do you want to proceed?");
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock extrahead %}
+
 {% block field_sets %}
     {% if previous_fields_form %}
         <fieldset class="mb-4">
-        <legend>Previously Pending Results</legend>
-        <div class="row g-3">
-            {% for field in previous_fields_form %}
-                <div class="col-12">
-                    <div class="form-group">
-                        {{ field.label_tag }}
-                        <div class="form-check">
-                            {{ field }}
+            <legend>Previously Pending Results</legend>
+            <div class="row g-3">
+                {% for field in previous_fields_form %}
+                    <div class="col-12 form-check previous-field">
+                        <div class="col-12">
+                            <div class="form-group">
+                                {{ field.label_tag }}
+                                <div class="form-check">
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="error">{{ field.errors|join:", " }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-    </fieldset>
+                {% endfor %}
+            </div>
+        </fieldset>
     {% endif %}
     <fieldset>
-    <legend>Caregiver TB Screening</legend>
-    {{ block.super }}
+        <legend>Caregiver TB Screening</legend>
+        {{ block.super }}
     </fieldset>
 {% endblock field_sets %}
 
