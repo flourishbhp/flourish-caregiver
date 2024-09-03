@@ -41,14 +41,16 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
         schedules = self.cohort_schedules_cls.objects.filter(
             schedule_type__icontains='followup',
             onschedule_model__startswith='flourish_caregiver').exclude(
-            schedule_type__icontains='quarterly').values_list(
-            'schedule_name', flat=True)
+                schedule_type__icontains='quarterly').values_list(
+                'schedule_name', flat=True)
         return schedules
 
     @property
     def conditional_fieldlists(self):
         conditional_fieldlists = {
             'a_antenatal1_schedule1': Remove('waist_circ', 'hip_circ'),
+            'a_antenatal2_schedule1': Remove('waist_circ', 'hip_circ'),
+            'a_antenatal3_schedule1': Remove('waist_circ', 'hip_circ'),
             'a_birth1_schedule1': Remove('height', 'waist_circ', 'hip_circ'),
             'tb_2_months_schedule': Remove('height', 'waist_circ', 'hip_circ'), }
 
