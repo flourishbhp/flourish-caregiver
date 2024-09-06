@@ -352,6 +352,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
     - Put subject on cohort a schedule after consenting on behalf of child.
     """
     if not raw and instance.is_eligible:
+        cohort_obj = None
         if not bool(instance.study_child_identifier):
             update_preg_screening_obj_child_pid(
                 instance.subject_consent,
@@ -372,7 +373,7 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
 
         # Check if the participant has been put into an enrolment cohort
         try:
-            Cohort.objects.get(
+            cohort_obj = Cohort.objects.get(
                 subject_identifier=instance.subject_identifier,
                 enrollment_cohort=True)
         except Cohort.DoesNotExist:
@@ -452,6 +453,11 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
                 instance.subject_consent.subject_identifier,
                 screening_identifier=instance.subject_consent.screening_identifier,
                 study_child_identifier=instance.study_child_identifier)
+
+        # Resave cohort object to update enrolment variables, once participant
+        # has been put on schedule.
+        if cohort_obj:
+            cohort_obj.save()
 
 
 @receiver(post_save, weak=False, sender=ClinicianNotesImage,
