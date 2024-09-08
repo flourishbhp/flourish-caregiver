@@ -16,6 +16,7 @@ from edc_model_admin import ModelAdminBasicMixin
 from edc_model_admin import StackedInlineMixin
 from simple_history.admin import SimpleHistoryAdmin
 from pre_flourish.helper_classes.utils import is_flourish_eligible
+from flourish_child.helper_classes.utils import child_utils
 
 from .consent_amin_mixin import ConsentMixin
 from .modeladmin_mixins import ModelAdminMixin
@@ -509,13 +510,6 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         return super(CaregiverChildConsentAdmin, self).render_change_form(
             request, context, *args, **kwargs)
 
-    def caregiver_hiv_status(self, subject_identifier=None):
-
-        status_helper = MaternalStatusHelper(
-            subject_identifier=subject_identifier)
-
-        return status_helper.hiv_status
-
     def export_as_csv(self, request, queryset):
         queryset = queryset.defer('site_id', 'initials', 'dob', 'id',
                                   'is_dob_estimated', 'guardian_name',
@@ -537,8 +531,12 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
             parent_obj = getattr(obj, 'subject_consent', None)
             caregiver_sid = getattr(parent_obj, 'subject_identifier', None)
-            extra_data.update({'hiv_exposure': self.caregiver_hiv_status(
-                subject_identifier=caregiver_sid)})
+
+            exposure_status = child_utils.child_hiv_exposure(
+                obj.subject_identifier,
+                obj.study_child_identifier,
+                caregiver_sid)
+            extra_data.update({'hiv_exposure': exposure_status})
             extra_data.update({'study_status': self.study_status(obj.subject_identifier)})
 
             # Update current and enrollment cohort

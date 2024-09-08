@@ -49,6 +49,8 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     def conditional_fieldlists(self):
         conditional_fieldlists = {
             'a_antenatal1_schedule1': Remove('waist_circ', 'hip_circ'),
+            'a_antenatal2_schedule1': Remove('waist_circ', 'hip_circ'),
+            'a_antenatal3_schedule1': Remove('waist_circ', 'hip_circ'),
             'a_birth1_schedule1': Remove('height', 'waist_circ', 'hip_circ'),
             'tb_2_months_schedule': Remove('height', 'waist_circ', 'hip_circ'), }
 
