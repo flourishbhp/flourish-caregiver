@@ -22,7 +22,6 @@ from .consent_amin_mixin import ConsentMixin
 from .modeladmin_mixins import ModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
-from ..helper_classes import MaternalStatusHelper
 from ..models import CaregiverChildConsent, CaregiverLocator, SubjectConsent
 
 

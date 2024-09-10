@@ -6,13 +6,12 @@ from edc_base.model_validators import datetime_not_future
 from edc_base.sites import SiteModelMixin
 from edc_base.utils import get_utcnow
 from edc_constants.choices import YES_NO
-from edc_constants.constants import NEG, POS
 from edc_identifier.model_mixins import NonUniqueSubjectIdentifierFieldMixin
 from edc_protocol.validators import datetime_not_before_study_start
+from flourish_child.helper_classes.utils import child_utils
 
 from .caregiver_child_consent import CaregiverChildConsent
 from .model_mixins import MatrixMatchVariablesMixin, SearchSlugModelMixin
-from ..helper_classes import MaternalStatusHelper
 from ..helper_classes.schedule_dict import child_schedule_dict
 
 
@@ -94,14 +93,12 @@ class Cohort(MatrixMatchVariablesMixin,
         return antenatal.exists()
 
     def check_exposure(self):
-        exposure = {POS: 'EXPOSED', NEG: 'UNEXPOSED', }
-        child_dataset = getattr(self.caregiver_child_consent, 'child_dataset', None)
-        if child_dataset:
-            return getattr(child_dataset, 'infant_hiv_exposed', None).upper()
-        else:
-            maternal_status = MaternalStatusHelper(
-                subject_identifier=self.caregiver_subject_identifier).hiv_status
-            return exposure.get(maternal_status, maternal_status)
+        exposure = {'HEU': 'EXPOSED', 'HUU': 'UNEXPOSED', }
+        exposure_status = child_utils.child_hiv_exposure(
+                self.subject_identifier,
+                self.caregiver_child_consent.study_child_identifier,
+                self.caregiver_subject_identifier)
+        return exposure.get(exposure_status, exposure_status)
 
     def check_current_cohort(self):
         cohort_onschedules = [name_dict.get('name') for name_dict in
