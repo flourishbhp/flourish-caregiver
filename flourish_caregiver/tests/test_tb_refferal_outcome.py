@@ -10,6 +10,7 @@ from edc_visit_tracking.constants import SCHEDULED
 from model_mommy import mommy
 
 from flourish_caregiver.subject_helper_mixin import SubjectHelperMixin
+from ..models import MaternalVisit
 
 
 @tag('tbro')
@@ -79,7 +80,6 @@ class TestTBReferralOutcome(TestCase):
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
 
-    @tag('posr')
     def test_tb_referral_hiv_pos_required(self):
         self.assertEqual(CrfMetadata.objects.get(
             subject_identifier=self.subject_consent.subject_identifier,
@@ -99,7 +99,7 @@ class TestTBReferralOutcome(TestCase):
             model='flourish_caregiver.tbreferralcaregiver',
             visit_code='2000M').entry_status, REQUIRED)
 
-        caregiver_visit_2001M = mommy.make_recipe(
+        mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
                 visit_code='2001M',
@@ -112,20 +112,15 @@ class TestTBReferralOutcome(TestCase):
             model='flourish_caregiver.tbreferralcaregiver',
             visit_code='2001M').entry_status, NOT_REQUIRED)
 
-    @tag('gdsj')
     def test_tb_referral_hiv_neg_required(self):
         self.subject_helper = SubjectHelperMixin()
 
         subject_identifier = self.subject_helper.create_antenatal_enrollment(
             version='4')
 
-        caregiver_visit_1000M = mommy.make_recipe(
-            'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(
-                visit_code='1000M',
-                subject_identifier=subject_identifier),
-            report_datetime=get_utcnow(),
-            reason=SCHEDULED)
+        caregiver_visit_1000M = MaternalVisit.objects.get(
+            subject_identifier=subject_identifier,
+            visit_code='1000M')
 
         self.assertEqual(CrfMetadata.objects.get(
             subject_identifier=subject_identifier,
@@ -146,18 +141,17 @@ class TestTBReferralOutcome(TestCase):
             model='flourish_caregiver.tbreferralcaregiver',
             visit_code='1000M').entry_status, REQUIRED)
 
-    @tag('esra')
     def test_tb_referral_outcome_required(self):
         self.assertEqual(CrfMetadata.objects.get(
             subject_identifier=self.subject_consent.subject_identifier,
             model='flourish_caregiver.caregivertbreferraloutcome',
             visit_code='2000M').entry_status, NOT_REQUIRED)
 
-        tb_referral_caregiver = mommy.make_recipe(
+        mommy.make_recipe(
             'flourish_caregiver.tbreferralcaregiver',
             maternal_visit=self.caregiver_visit_2000M, )
 
-        caregiver_visit_2001M = mommy.make_recipe(
+        mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
                 visit_code='2001M',

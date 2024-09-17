@@ -89,7 +89,8 @@ class Cohort(MatrixMatchVariablesMixin,
         antenatal_cls = django_apps.get_model(
             'flourish_caregiver.antenatalenrollment')
         antenatal = antenatal_cls.objects.filter(
-            subject_identifier=self.caregiver_subject_identifier)
+            subject_identifier=self.caregiver_subject_identifier,
+            child_subject_identifier=self.subject_identifier)
         return antenatal.exists()
 
     def check_exposure(self):
