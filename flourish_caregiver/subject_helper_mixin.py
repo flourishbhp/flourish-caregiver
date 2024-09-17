@@ -7,9 +7,11 @@ from edc_appointment.creators import InvalidParentAppointmentMissingVisitError
 from edc_appointment.creators import InvalidParentAppointmentStatusError
 from edc_appointment.creators import UnscheduledAppointmentCreator
 from edc_appointment.creators import UnscheduledAppointmentError
+from edc_appointment.models import Appointment
 from edc_base.utils import get_utcnow
 from edc_constants.constants import NOT_APPLICABLE, YES
 from edc_facility.import_holidays import import_holidays
+from edc_visit_tracking.constants import SCHEDULED
 from model_mommy import mommy
 
 from .models import CaregiverLocator, MaternalDataset
@@ -82,6 +84,21 @@ class SubjectHelperMixin:
         mommy.make_recipe(
             'flourish_caregiver.caregiverlocator',
             subject_identifier=subject_consent.subject_identifier, )
+
+        anc_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='1000M',
+                subject_identifier=subject_consent.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.ultrasound',
+            maternal_visit=anc_visit,
+            child_subject_identifier=child_consent.subject_identifier,
+            number_of_gestations=1
+        )
 
         return subject_consent.subject_identifier
 

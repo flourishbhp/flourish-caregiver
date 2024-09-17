@@ -23,7 +23,6 @@ from edc_visit_tracking.constants import MISSED_VISIT
 from PIL import Image
 
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
-from flourish_prn.action_items import CHILDOFF_STUDY_ACTION, CAREGIVEROFF_STUDY_ACTION
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
 from .caregiver_clinician_notes import ClinicianNotesImage
@@ -804,7 +803,7 @@ def create_registered_infant(instance):
             maternal_visit__subject_identifier=instance.subject_identifier,
             child_subject_identifier=instance.child_subject_identifier
         ).exists()
-    
+
         if not ultrasound_exists:
             raise ValidationError(
                 f'Maternal Ultrasound must exist for {instance.subject_identifier}')
