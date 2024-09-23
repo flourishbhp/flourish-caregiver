@@ -42,7 +42,8 @@ class MaternalStatusHelper(object):
         antenatal_enrollment_cls = django_apps.get_model(
             'flourish_caregiver.antenatalenrollment')
         antenatal_enrollments = antenatal_enrollment_cls.objects.filter(
-            subject_identifier=self.subject_identifier,)
+            subject_identifier=self.subject_identifier, )
+
         for antenatal_enrollment in antenatal_enrollments:
             status = self._evaluate_status_from_rapid_tests(
                 (antenatal_enrollment, 'enrollment_hiv_status', 'rapid_test_date'))
@@ -50,7 +51,8 @@ class MaternalStatusHelper(object):
                 # Check that the week32_test_date is still within 3 months
                 status = self._evaluate_status_from_rapid_tests(
                     (antenatal_enrollment, 'enrollment_hiv_status',
-                        'week32_test_date'))
+                     'week32_test_date'))
+
             if status in [POS, NEG, UNK]:
                 return status
         return self.enrollment_hiv_status

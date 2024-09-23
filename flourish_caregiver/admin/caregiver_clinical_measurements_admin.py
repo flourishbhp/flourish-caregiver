@@ -45,7 +45,7 @@ class CaregiverClinicalMeasurementsAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'schedule_name', flat=True)
         return schedules
 
-    @property 
+    @property
     def conditional_fieldlists(self):
         conditional_fieldlists = {
             'a_antenatal1_schedule1': Remove('waist_circ', 'hip_circ'),

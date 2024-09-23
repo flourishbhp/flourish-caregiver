@@ -16,7 +16,7 @@ from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 
 from ..models import MaternalVisit, SubjectConsent
 from ..visit_sequence import VisitSequence
-
+from edc_base.utils import get_utcnow
 
 class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin):
     visit_sequence_cls = VisitSequence
@@ -102,7 +102,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         action_cls = site_action_items.get(
             maternal_offstudy_cls.action_name)
         action_item_model_cls = action_cls.action_item_model_cls()
-
+        report_datetime = self.cleaned_data.get('report_datetime', get_utcnow())
         try:
             action_item_model_cls.objects.get(
                 subject_identifier=self.subject_identifier,
@@ -111,7 +111,8 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         except action_item_model_cls.DoesNotExist:
             try:
                 maternal_offstudy_cls.objects.get(
-                    subject_identifier=self.subject_identifier)
+                    subject_identifier=self.subject_identifier,
+                    offstudy_date__lt=report_datetime.date())
             except maternal_offstudy_cls.DoesNotExist:
                 pass
             else:

@@ -1,7 +1,9 @@
 from dateutil.relativedelta import relativedelta
 from django.test import tag, TestCase
+from edc_appointment.models import Appointment
 from edc_base import get_utcnow
 from edc_facility.import_holidays import import_holidays
+from edc_visit_tracking.constants import SCHEDULED
 from model_mommy import mommy
 
 from flourish_caregiver.models import (CaregiverChildConsent, OnScheduleCohortAAntenatal,
@@ -17,7 +19,7 @@ class TestANCSecondPregnancy(TestCase):
         import_holidays()
         self.subject_helper = SubjectHelperMixin()
 
-        self.subject_identifier = self.subject_helper.create_antenatal_enrollment()
+        self.subject_identifier = self.subject_helper.create_antenatal_enrollment(version='4')
 
         self.caregiver_onschedule = OnScheduleCohortAAntenatal.objects.get(
             subject_identifier=self.subject_identifier, )
@@ -87,6 +89,26 @@ class TestANCSecondPregnancy(TestCase):
             'flourish_caregiver.antenatalenrollment',
             subject_identifier=self.subject_identifier,
             child_subject_identifier=child_2.subject_identifier,
+        )
+
+        onsch = OnScheduleCohortAAntenatal.objects.filter(
+            subject_identifier=self.subject_identifier,
+            schedule_name='a_antenatal2_schedule1')
+
+        anc_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='1000M',
+                schedule_name=onsch[0].schedule_name,
+                subject_identifier=self.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.ultrasound',
+            maternal_visit=anc_visit,
+            child_subject_identifier=child_2.subject_identifier,
+            number_of_gestations=1
         )
 
         mommy.make_recipe(
