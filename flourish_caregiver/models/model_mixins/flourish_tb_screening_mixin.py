@@ -70,7 +70,7 @@ class TBScreeningMixin(models.Model):
         TBTests,
         blank=True,
         verbose_name='What diagnostic tests were performed for TB?',
-        max_length=15, )
+        default='',)
 
     other_test = models.TextField(verbose_name='If "Other", specify test and result',
                                   blank=True, null=True)

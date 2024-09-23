@@ -1,0 +1,142 @@
+{% extends "admin/change_form.html" %}
+{% load static admin_urls %}
+
+
+{% block extrastyle %}
+    {{ block.super }}
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        legend {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .radio-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .radio-wrapper .form-check {
+            margin-right: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+
+            form.addEventListener('submit', function (event) {
+                const previousFieldsFieldset = document.querySelector('fieldset.mb-4');
+                const previousFields = previousFieldsFieldset.querySelectorAll('input[type=radio]');
+                let hasPending = false;
+
+                previousFields.forEach(function (field) {
+                    if (field.checked && field.value === 'PENDING') {
+                        hasPending = true;
+                    }
+                });
+
+                if (hasPending) {
+                    const confirmed = confirm("There are PENDING results from previous visit/s. Do you want to proceed?");
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock extrahead %}
+
+{% block field_sets %}
+    {% if previous_fields_form %}
+        <fieldset class="mb-4">
+            <legend>Previously Pending Results</legend>
+            <div class="row g-3">
+                {% for field in previous_fields_form %}
+                    <div class="col-12 form-check previous-field">
+                        <div class="col-12">
+                            <div class="form-group">
+                                {{ field.label_tag }}
+                                <div class="form-check">
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="error">{{ field.errors|join:", " }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </fieldset>
+    {% endif %}
+    <fieldset>
+        <legend>Caregiver TB Screening</legend>
+        {{ block.super }}
+    </fieldset>
+{% endblock field_sets %}
+
+
+{% block submit_buttons_bottom %}
+    {{ block.super }}
+{% endblock %}
