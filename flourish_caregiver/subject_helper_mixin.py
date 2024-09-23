@@ -100,6 +100,21 @@ class SubjectHelperMixin:
             number_of_gestations=1
         )
 
+        anc_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='1000M',
+                subject_identifier=subject_consent.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.ultrasound',
+            maternal_visit=anc_visit,
+            child_subject_identifier=child_consent.subject_identifier,
+            number_of_gestations=1
+        )
+
         return subject_consent.subject_identifier
 
     def create_TD_efv_enrollment(self, screening_identifier, study_child_identifier,
