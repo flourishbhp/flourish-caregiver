@@ -55,7 +55,7 @@ class SubjectHelperMixin:
         import_holidays()
 
         preg_screening = mommy.make_recipe(
-            'flourish_caregiver.screeningpregwomen',)
+            'flourish_caregiver.screeningpregwomen', )
 
         self.options = {
             'consent_datetime': get_utcnow(),
@@ -73,7 +73,7 @@ class SubjectHelperMixin:
             subject_consent=subject_consent,
             child_dob=None,
             first_name=None,
-            last_name=None,)
+            last_name=None, )
 
         mommy.make_recipe(
             'flourish_caregiver.antenatalenrollment',
@@ -83,7 +83,22 @@ class SubjectHelperMixin:
 
         mommy.make_recipe(
             'flourish_caregiver.caregiverlocator',
-            subject_identifier=subject_consent.subject_identifier,)
+            subject_identifier=subject_consent.subject_identifier, )
+
+        anc_visit = mommy.make_recipe(
+            'flourish_caregiver.maternalvisit',
+            appointment=Appointment.objects.get(
+                visit_code='1000M',
+                subject_identifier=subject_consent.subject_identifier),
+            report_datetime=get_utcnow(),
+            reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.ultrasound',
+            maternal_visit=anc_visit,
+            child_subject_identifier=child_consent.subject_identifier,
+            number_of_gestations=1
+        )
 
         anc_visit = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -136,8 +151,8 @@ class SubjectHelperMixin:
             mommy.make_recipe(
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
-                study_child_identifier= study_child_identifier,
-                child_dob=maternal_dataset_obj.delivdt,)
+                study_child_identifier=study_child_identifier,
+                child_dob=maternal_dataset_obj.delivdt, )
 
             mommy.make_recipe(
                 'flourish_caregiver.caregiverpreviouslyenrolled')
@@ -182,7 +197,7 @@ class SubjectHelperMixin:
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
                 study_child_identifier=study_child_identifier,
-                child_dob=maternal_dataset_obj.delivdt,)
+                child_dob=maternal_dataset_obj.delivdt, )
 
             mommy.make_recipe(
                 'flourish_caregiver.caregiverpreviouslyenrolled')
@@ -193,7 +208,8 @@ class SubjectHelperMixin:
     def prepare_prior_participant_enrollment(self, maternal_dataset_obj):
         try:
             caregiver_locator = CaregiverLocator.objects.get(
-                study_maternal_identifier=maternal_dataset_obj.study_maternal_identifier,)
+                study_maternal_identifier=maternal_dataset_obj
+                .study_maternal_identifier, )
         except CaregiverLocator.DoesNotExist:
             caregiver_locator = mommy.make_recipe(
                 'flourish_caregiver.caregiverlocator',
@@ -217,7 +233,7 @@ class SubjectHelperMixin:
 
         log = mommy.make_recipe(
             'flourish_follow.log',
-            call=call,)
+            call=call, )
 
         mommy.make_recipe(
             'flourish_follow.logentry',
@@ -228,7 +244,8 @@ class SubjectHelperMixin:
 
     def enroll_prior_participant(self, screening_identifier, study_child_identifier,
                                  hiv_status=None, version='1', child_version='1',
-                                 options={}, child_consent_options={}, update_created_dt=None):
+                                 options={}, child_consent_options={},
+                                 update_created_dt=None):
 
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(
@@ -238,7 +255,7 @@ class SubjectHelperMixin:
         else:
             self.options = options or {
                 'consent_datetime': get_utcnow(),
-                'version': version }
+                'version': version}
 
             screening_options = {
                 'child_alive': YES,
@@ -290,8 +307,10 @@ class SubjectHelperMixin:
                     report_datetime=self.options.get('consent_datetime'))
             return subject_consent.subject_identifier
 
-    def enroll_prior_participant_assent(self, screening_identifier, study_child_identifier,
-                                        consent_datetime=None, hiv_status=None, bio_mother_options={}):
+    def enroll_prior_participant_assent(self, screening_identifier,
+                                        study_child_identifier,
+                                        consent_datetime=None, hiv_status=None,
+                                        bio_mother_options={}):
         try:
             maternal_dataset_obj = MaternalDataset.objects.get(
                 screening_identifier=screening_identifier)
@@ -325,7 +344,7 @@ class SubjectHelperMixin:
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
                 study_child_identifier=study_child_identifier,
-                child_dob=maternal_dataset_obj.delivdt,)
+                child_dob=maternal_dataset_obj.delivdt, )
 
             mommy.make_recipe(
                 'flourish_child.childassent',
@@ -366,8 +385,8 @@ class SubjectHelperMixin:
             self.options = {
                 'consent_datetime': consent_datetime or get_utcnow(),
                 'version': '1'
-                }
-            
+            }
+
             mommy.make_recipe(
                 'flourish_caregiver.flourishconsentversion',
                 screening_identifier=maternal_dataset_obj.screening_identifier,
@@ -389,7 +408,7 @@ class SubjectHelperMixin:
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
                 study_child_identifier=study_child_identifier1,
-                child_dob=maternal_dataset_obj.delivdt,)
+                child_dob=maternal_dataset_obj.delivdt, )
 
             mommy.make_recipe(
                 'flourish_child.childassent',
@@ -406,7 +425,7 @@ class SubjectHelperMixin:
                 'flourish_caregiver.caregiverchildconsent',
                 subject_consent=subject_consent,
                 study_child_identifier=study_child_identifier2,
-                child_dob=maternal_dataset_obj.delivdt,)
+                child_dob=maternal_dataset_obj.delivdt, )
 
             mommy.make_recipe(
                 'flourish_child.childassent',

@@ -17,7 +17,6 @@ from .ultrasound import UltraSound
 tz = pytz.timezone('Africa/Gaborone')
 
 
-
 class AntenatalModelManager(models.Manager):
     use_in_migrations = True
 

@@ -1,15 +1,14 @@
 from django.db import models
 
 from .model_mixins import CrfModelMixin
-from ..choices import (DEPRESSION_MOOD, GUILT_FEELINGS, SUICIDAL, INSOMNIA_INITIAL,
-                       INSOMIA_MIDNIGHT, INSOMNIA_EARLY, WORK_INTERESTS, AGITATION,
-                       RETARDATION, ANXIETY, ANXIETY_PYSCHIC, SOMATIC_SYMPTOMS,
-                       HYPOCHONDRIASIS, WEIGHT_LOSS, INSIGHT, GENERAL_SOMATIC,
-                       GENITAL_SYMPTOMS)
+from ..choices import (AGITATION, ANXIETY, ANXIETY_PYSCHIC, DEPRESSION_MOOD,
+                       GENERAL_SOMATIC, GENITAL_SYMPTOMS, GUILT_FEELINGS, HYPOCHONDRIASIS,
+                       INSIGHT, INSOMIA_MIDNIGHT, INSOMNIA_EARLY, INSOMNIA_INITIAL,
+                       RETARDATION, SOMATIC_SYMPTOMS, SUICIDAL, WEIGHT_LOSS,
+                       WORK_INTERESTS)
 
 
 class CaregiverHamdDeprScreening(CrfModelMixin):
-
     depressed_mood = models.CharField(
         verbose_name=('Depressed Mood (Gloomy attitude, pessimism about the '
                       'future, feeling of sadness, tendency to weep)'),
