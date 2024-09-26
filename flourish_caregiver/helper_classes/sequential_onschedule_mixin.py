@@ -85,11 +85,14 @@ class SeqEnrolOnScheduleMixin:
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model,
             name=schedule_name)
-        schedule.put_on_schedule(
-            subject_identifier=subject_identifier,
-            onschedule_datetime=onschedule_datetime,
-            base_appt_datetime=base_appt_datetime,
-            schedule_name=schedule_name)
+
+        if not schedule.is_onschedule(subject_identifier=subject_identifier,
+                                      report_datetime=onschedule_datetime):
+            schedule.put_on_schedule(
+                subject_identifier=subject_identifier,
+                onschedule_datetime=onschedule_datetime,
+                base_appt_datetime=base_appt_datetime,
+                schedule_name=schedule_name)
 
         if is_caregiver:
             self.update_onschedule_model(onschedule_model=onschedule_model,
