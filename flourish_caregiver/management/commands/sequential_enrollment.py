@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
@@ -10,7 +11,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Get a list of all children in the study
-        child_identifiers = CaregiverChildConsent.objects.values_list(
+        child_identifiers = CaregiverChildConsent.objects.exclude(
+            subject_identifier__in=self.offstudy_subject_identifiers).values_list(
             'subject_identifier', flat=True)
         child_identifiers = list(set(child_identifiers))
 
@@ -30,3 +32,12 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(
                         self.style.SUCCESS(f'Participant {child_id} hasn\'t aged up.'))
+
+    @property
+    def offstudy_subject_identifiers(self):
+        """ Returns a list of `subject_identifier` for all children offstudy.
+        """
+        child_offstudy_cls = django_apps.get_model(
+            'flourish_prn.childoffstudy')
+        return child_offstudy_cls.objects.values_list(
+            'subject_identifier', flat=True)

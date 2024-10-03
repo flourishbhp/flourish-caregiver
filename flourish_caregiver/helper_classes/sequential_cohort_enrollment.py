@@ -26,6 +26,8 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
 
     cohort_model = 'flourish_caregiver.cohort'
 
+    cohort_schedules_model = 'flourish_caregiver.cohortschedules'
+
     def __init__(self, child_subject_identifier=None):
         self.child_subject_identifier = child_subject_identifier
 
@@ -44,6 +46,19 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     @property
     def cohort_model_cls(self):
         return django_apps.get_model(self.cohort_model)
+
+    @property
+    def cohort_schedules_model_cls(self):
+        return django_apps.get_model(self.cohort_schedules_model)
+
+    def get_caregiver_cohort_schedule(self, cohort_name, schedule_types=[]):
+
+        cohort_schedules = self.cohort_schedules_model_cls.objects.filter(
+            cohort_name=cohort_name,
+            schedule_type__in=schedule_types,
+            onschedule_model__startswith='flourish_caregiver')
+
+        return cohort_schedules
 
     @property
     def child_last_qt_subject_schedule_obj(self):
@@ -67,23 +82,37 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             consideration multiple children enrollment. Get only schedule
             for relate child.
         """
+        cohort_schedules = self.get_caregiver_cohort_schedule(
+            self.current_cohort,
+            schedule_types=['quarterly', 'followup_quarterly'])
+        schedule_names = cohort_schedules.values_list(
+            'schedule_name', flat=True)
+
         quart_schedules = self.subject_schedule_cls.objects.filter(
-             Q(schedule_name__icontains='qt') | Q(
-                 schedule_name__icontains='quart'),
-             subject_identifier=self.caregiver_subject_identifier).order_by(
+             subject_identifier=self.caregiver_subject_identifier,
+             schedule_name__in=schedule_names).order_by(
                  '-onschedule_datetime')
+
+        child_subject_identifier = self.child_subject_identifier
+        child_identifier_suffix = self.child_subject_identifier[-3:]
+
+        if child_identifier_suffix == '-35':
+            child_subject_identifier = self.child_subject_identifier[:-3] + '-25'
+        elif child_identifier_suffix in ['-46', '-56']:
+            child_subject_identifier = self.child_subject_identifier[:-3] + '-36'
+
         for schedule in quart_schedules:
             onschedule_model_cls = django_apps.get_model(
                 schedule.onschedule_model)
             obj_exists = onschedule_model_cls.objects.filter(
                 subject_identifier=self.caregiver_subject_identifier,
-                child_subject_identifier=self.child_subject_identifier,
+                child_subject_identifier=child_subject_identifier,
                 schedule_name=schedule.schedule_name).exists()
             if obj_exists:
                 return schedule
 
         raise SequentialCohortEnrollmentError(
-            f'{self.caregiver_subject_identifier} : was never been on quarterly '
+            f'{self.caregiver_subject_identifier} : has never been on quarterly '
             f'schedule')
 
     @property
@@ -178,7 +207,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         """
 
         cohort = self.cohort_model_cls.objects.filter(
-            subject_identifier=self.child_subject_identifier).order_by(
+                subject_identifier=self.child_subject_identifier).order_by(
             'assign_datetime').last()
         if cohort:
             return cohort.name
@@ -216,11 +245,11 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
         try:
             with transaction.atomic():
                 if self.aged_up and self.current_cohort != self.evaluated_cohort:
-                    # put them on a new aged up cohort
-                    cohort_obj = self.create_cohort_instance()
                     # Put caregiver and child off and on schedule
+                    self.put_onschedule()
+                    # Put them on a new aged up cohort
+                    cohort_obj = self.create_cohort_instance()
                     if cohort_obj:
-                        self.put_onschedule()
                         aged_up = True
         except Exception as e:
             # e.add_note(f'failed for child : {self.child_subject_identifier}')
