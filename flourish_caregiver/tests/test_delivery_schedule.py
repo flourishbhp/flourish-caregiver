@@ -38,7 +38,8 @@ class TestDeliverySchedule(TestCase):
             'study_questions': YES,
             'assessment_score': YES,
             'consent_signature': YES,
-            'consent_copy': YES
+            'consent_copy': YES,
+            'version': '4'
         }
         self.consent = mommy.make_recipe('flourish_caregiver.subjectconsent',
                                          **self.eligible_options)
@@ -73,6 +74,13 @@ class TestDeliverySchedule(TestCase):
             reason=SCHEDULED)
 
         mommy.make_recipe(
+            'flourish_caregiver.ultrasound',
+            maternal_visit=self.enrol_visit,
+            child_subject_identifier=self.child_consent.subject_identifier,
+            number_of_gestations=1
+        )
+
+        mommy.make_recipe(
             'flourish_caregiver.maternaldelivery',
             child_subject_identifier=self.child_consent.subject_identifier,
             subject_identifier=self.consent.subject_identifier)
@@ -85,7 +93,7 @@ class TestDeliverySchedule(TestCase):
 
         self.assertEqual(self.status_helper.hiv_status, POS)
 
-        birth_visit = mommy.make_recipe(
+        mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
                 subject_identifier=self.consent.subject_identifier,

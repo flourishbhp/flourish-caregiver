@@ -489,20 +489,20 @@ class TestRuleGroups(TestCase):
     @tag('hiv_disclosure')
     def test_hiv_disclosure_metadata_fu_required(self):
         maternal_dataset_options = {
-            'delivdt': get_utcnow() - relativedelta(years=14),
-            'mom_enrolldate': get_utcnow(),
+            'delivdt': (get_utcnow() - relativedelta(years=14)).date(),
+            'mom_enrolldate': get_utcnow().date(),
             'mom_hivstatus': 'HIV-infected',
-            'study_maternal_identifier': '11223',
+            'study_maternal_identifier': '12223',
             'protocol': 'Mpepu',
             'mom_pregarv_strat': '3-drug ART',
             'preg_pi': 1}
 
         child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
-            'infant_enrolldate': get_utcnow(),
-            'study_maternal_identifier': '11223',
-            'study_child_identifier': '1234',
-            'dob': get_utcnow() - relativedelta(years=14)}
+            'infant_enrolldate': get_utcnow().date(),
+            'study_maternal_identifier': '12223',
+            'study_child_identifier': '1134',
+            'dob': (get_utcnow() - relativedelta(years=14)).date()}
 
         mommy.make_recipe(
             'flourish_child.childdataset',

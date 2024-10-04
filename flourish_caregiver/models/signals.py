@@ -45,7 +45,8 @@ from ..helper_classes.consent_helper import consent_helper
 from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..helper_classes.onschedule_helper import OnScheduleHelper
 from ..helper_classes.utils import (cohort_assigned, update_preg_screening_obj_child_pid,
-                                    get_related_child_count, get_child_consents)
+                                    get_related_child_count, get_child_consents,
+                                    pf_identifier_check)
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
@@ -415,16 +416,26 @@ def caregiver_child_consent_on_post_save(sender, instance, raw, created, **kwarg
             except CaregiverPreviouslyEnrolled.DoesNotExist:
                 pass
             else:
-                if child_age:
-                    if instance.subject_identifier[-3:] not in ['-35', '-46',
-                                                                '-56']:
-                        helper_cls = onschedule_helper_cls(cohort=instance.cohort)
+                if (child_age and
+                        instance.subject_identifier[-3:] not in ['-35', '-46', '-56']):
+                    helper_cls = onschedule_helper_cls(cohort=instance.cohort)
+                    _identifier = instance.study_child_identifier or ''
+
+                    if pf_identifier_check(_identifier):
+                        helper_cls.put_on_fu_schedule(
+                            instance,
+                            instance.subject_identifier,
+                            base_appt_datetime=instance.consent_datetime.replace(
+                                microsecond=0),
+                            child_count=children_count)
+                    else:
                         helper_cls.put_cohort_onschedule(
                             instance,
                             base_appt_datetime=prev_enrolled_obj.report_datetime.replace(
                                 microsecond=0))
 
-            # Get or create a child dummy consent instance (account for re-consenting).
+            # Get or create a child dummy consent instance (account for
+            # re-consenting).
             try:
                 child_dummy_consent = child_dummy_consent_cls.objects.get(
                     subject_identifier=instance.subject_identifier,

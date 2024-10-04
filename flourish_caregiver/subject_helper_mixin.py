@@ -100,21 +100,6 @@ class SubjectHelperMixin:
             number_of_gestations=1
         )
 
-        anc_visit = mommy.make_recipe(
-            'flourish_caregiver.maternalvisit',
-            appointment=Appointment.objects.get(
-                visit_code='1000M',
-                subject_identifier=subject_consent.subject_identifier),
-            report_datetime=get_utcnow(),
-            reason=SCHEDULED)
-
-        mommy.make_recipe(
-            'flourish_caregiver.ultrasound',
-            maternal_visit=anc_visit,
-            child_subject_identifier=child_consent.subject_identifier,
-            number_of_gestations=1
-        )
-
         return subject_consent.subject_identifier
 
     def create_TD_efv_enrollment(self, screening_identifier, study_child_identifier,
@@ -474,3 +459,30 @@ class SubjectHelperMixin:
             raise ValidationError(str(e))
         else:
             return appoinment.appointment
+
+    def create_caregiver_cohort_schedules(self):
+        cohorts = ['a', 'b', 'c']
+        for cohort in cohorts:
+            _count = 1
+            while _count <= 3:
+                mommy.make_recipe(
+                    'flourish_caregiver.cohortschedules',
+                    schedule_name=f'{cohort}_fu{_count}_schedule1',
+                    schedule_type='followup',
+                    cohort_name=f'cohort_{cohort}',
+                    onschedule_model=f'flourish_caregiver.onschedulecohort{cohort}fu',
+                    child_count=_count
+                )
+                _count += 1
+
+    def create_child_cohort_schedules(self):
+        cohorts = ['a', 'b', 'c']
+        for cohort in cohorts:
+            mommy.make_recipe(
+                'flourish_caregiver.cohortschedules',
+                schedule_name=f'child_{cohort}_fu_schedule1',
+                schedule_type='followup',
+                cohort_name=f'cohort_{cohort}',
+                onschedule_model=f'flourish_child.onschedulechildcohort{cohort}fu',
+                child_count=None
+            )
