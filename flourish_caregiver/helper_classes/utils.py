@@ -1,4 +1,4 @@
-import datetime
+import datetime, re
 
 from django import forms
 from django.apps import apps as django_apps
@@ -222,3 +222,11 @@ def get_registration_date(subject_identifier, child_subject_identifier):
     else:
         earliest_consent = child_consents.earliest('consent_datetime')
         return earliest_consent.consent_datetime
+
+
+def pf_identifier_check(identifier):
+    pattern = r'[B|C]142\-0[0-9A-Z]{8}\-[0-9]{1}P-[0-9]+'
+    if re.fullmatch(pattern, identifier):
+        return True
+    else:
+        return False

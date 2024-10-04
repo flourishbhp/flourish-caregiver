@@ -24,6 +24,7 @@ from .models import Cohort
 from .models import InterviewFocusGroupInterestV2
 from .models import MaternalInterimIdccVersion2, MedicalHistory
 from .models import ScreeningPregWomen, ScreeningPriorBhpParticipants, UltraSound
+from .models import CohortSchedules
 
 fake = Faker()
 
@@ -274,3 +275,6 @@ caregivercageaid = Recipe(
 childhoodleadexposurerisk = Recipe(
     ChildhoodLeadExposureRisk
 )
+
+cohortschedules = Recipe(
+    CohortSchedules)

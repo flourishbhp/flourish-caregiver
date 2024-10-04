@@ -4,7 +4,7 @@ from edc_appointment.models import Appointment
 from edc_base import get_utcnow
 from edc_constants.constants import YES
 from edc_facility.import_holidays import import_holidays
-from edc_metadata import REQUIRED, NOT_REQUIRED
+from edc_metadata import REQUIRED
 from edc_metadata.models import CrfMetadata
 from edc_visit_tracking.constants import SCHEDULED
 from model_mommy import mommy
@@ -39,7 +39,8 @@ class TestMaternalARVRuleGroup(TestCase):
             'study_questions': YES,
             'assessment_score': YES,
             'consent_signature': YES,
-            'consent_copy': YES
+            'consent_copy': YES,
+            'version': '4'
         }
         self.consent = mommy.make_recipe('flourish_caregiver.subjectconsent',
                                          **self.eligible_options)
@@ -72,6 +73,13 @@ class TestMaternalARVRuleGroup(TestCase):
                 subject_identifier=self.consent.subject_identifier),
             report_datetime=get_utcnow(),
             reason=SCHEDULED)
+
+        mommy.make_recipe(
+            'flourish_caregiver.ultrasound',
+            maternal_visit=self.enrol_visit,
+            child_subject_identifier=self.child_consent.subject_identifier,
+            number_of_gestations=1
+        )
 
     def test_maternal_arv_during_preg_required(self):
         self.assertEqual(CrfMetadata.objects.get(

@@ -31,7 +31,7 @@ class TestLWHIV(TestCase):
 
         self.eligible_options = {
             'screening_identifier': self.subject_screening.screening_identifier,
-            'consent_datetime': get_utcnow,
+            'consent_datetime': get_utcnow(),
             'remain_in_study': YES,
             'hiv_testing': YES,
             'breastfeed_intent': YES,
@@ -65,7 +65,6 @@ class TestLWHIV(TestCase):
         self.status_helper = MaternalStatusHelper(
             subject_identifier=self.consent.subject_identifier)
 
-
         self.enrol_visit = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
             appointment=Appointment.objects.get(
@@ -86,7 +85,7 @@ class TestLWHIV(TestCase):
             'version': '1'}
 
         self.maternal_dataset_options = {
-            'delivdt': get_utcnow() - relativedelta(years=5, months=5),
+            'delivdt': (get_utcnow() - relativedelta(years=5, months=5)).date(),
             'mom_enrolldate': get_utcnow(),
             'mom_hivstatus': 'HIV-infected',
             'study_maternal_identifier': '89721',
@@ -94,7 +93,7 @@ class TestLWHIV(TestCase):
 
         self.child_dataset_options = {
             'infant_hiv_exposed': 'Exposed',
-            'infant_enrolldate': get_utcnow(),
+            'infant_enrolldate': get_utcnow().date(),
             'study_maternal_identifier': '89721',
             'study_child_identifier': '1234'}
 
@@ -107,7 +106,7 @@ class TestLWHIV(TestCase):
         mommy.make_recipe(
             'flourish_child.childdataset',
             subject_identifier=self.subject_identifier + '10',
-            dob=get_utcnow() - relativedelta(years=5, months=5),
+            dob=(get_utcnow() - relativedelta(years=5, months=5)).date(),
             **self.child_dataset_options)
 
         mommy.make_recipe(
@@ -124,7 +123,7 @@ class TestLWHIV(TestCase):
             'flourish_caregiver.caregiverchildconsent',
             subject_consent=subject_consent,
             study_child_identifier=self.child_dataset_options['study_child_identifier'],
-            child_dob=get_utcnow() - relativedelta(years=5, months=5), )
+            child_dob=(get_utcnow() - relativedelta(years=5, months=5)).date(), )
 
         mommy.make_recipe(
             'flourish_caregiver.caregiverpreviouslyenrolled',

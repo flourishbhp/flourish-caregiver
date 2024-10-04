@@ -12,6 +12,7 @@ from dateutil.relativedelta import relativedelta
 from ..forms import MedicalHistoryForm
 from ..models import MaternalVisit, MedicalHistory
 from ..models.list_models import WcsDxAdult, ChronicConditions
+from ..models.list_models import GeneralSymptoms
 from ..subject_helper_mixin import SubjectHelperMixin
 
 
@@ -78,11 +79,12 @@ class TestMedicalHistoryForm(TestCase):
         who = WcsDxAdult.objects.create(name=NOT_APPLICABLE, short_name='N/A')
         chronic_conditions = ChronicConditions.objects.create(
             name='Asthma', short_name='Asthma')
+        self.symptoms = GeneralSymptoms.objects.create(
+            name='cough', short_name='cough')
 
         self.medical_history_options = {'chronic_since': YES,
                                         'who_diagnosis': YES,
                                         'current_illness': YES,
-                                        'current_symptoms': 'cough',
                                         'know_hiv_status': 'Nobody', }
 
         self.mh_visit2000M = MedicalHistory.objects.create(
@@ -90,6 +92,7 @@ class TestMedicalHistoryForm(TestCase):
             **self.medical_history_options)
         self.mh_visit2000M.who.add(who)
         self.mh_visit2000M.caregiver_chronic.add(chronic_conditions)
+        self.mh_visit2000M.current_symptoms.add(self.symptoms)
 
         self.visit2001M = mommy.make_recipe(
             'flourish_caregiver.maternalvisit',
@@ -131,10 +134,12 @@ class TestMedicalHistoryForm(TestCase):
             maternal_visit=self.visit2001M,
             symptoms_start_date=get_utcnow(),
             clinic_visit=YES,
+            current_symptoms=self.symptoms,
             med_history_changed=YES, )
         for obj in ChronicConditions.objects.all():
             medical_history_dict.update(
                 caregiver_chronic=str(obj.id))
+
         for obj in WcsDxAdult.objects.all():
             medical_history_dict.update(
                 who=str(obj.id))

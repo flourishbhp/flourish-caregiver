@@ -1,6 +1,7 @@
 from django.test import tag, TestCase
 from edc_appointment.models import Appointment
 from edc_base import get_utcnow
+from edc_constants.constants import YES 
 from edc_facility.import_holidays import import_holidays
 from edc_metadata import NOT_REQUIRED, REQUIRED
 from edc_metadata.models import CrfMetadata
@@ -76,6 +77,7 @@ class TestBriefDangerAssessment(TestCase):
         self.hitsscreening = mommy.make_recipe(
             'flourish_caregiver.hitsscreening',
             maternal_visit=self.enrol_visit,
+            in_relationship=YES,
             physical_hurt='5',
             insults='5',
             threaten='5',
@@ -90,6 +92,7 @@ class TestBriefDangerAssessment(TestCase):
         self.hitsscreening = mommy.make_recipe(
             'flourish_caregiver.hitsscreening',
             maternal_visit=self.enrol_visit,
+            in_relationship=YES,
             physical_hurt='1',
             insults='1',
             threaten='1',
