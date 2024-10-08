@@ -4,7 +4,7 @@ from functools import partialmethod
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Subquery, Q
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from edc_consent.actions import (
@@ -527,7 +527,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             caregiver_sid = getattr(parent_obj, 'subject_identifier', None)
 
             maternal_dataset_qs = self.related_maternal_dataset(
-                subject_identifier=caregiver_sid)
+                identifier=getattr(obj, 'study_child_identifier', caregiver_sid))
             extra_data = {}
             if maternal_dataset_qs:
                 extra_data = maternal_dataset_qs.__dict__
@@ -652,14 +652,19 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         else:
             return dataset_obj
 
-    def related_maternal_dataset(self, subject_identifier=None):
+    def related_maternal_dataset(self, identifier=None):
         maternaldataset_cls = django_apps.get_model(
             'flourish_caregiver.maternaldataset')
+        childdataset = self.previous_study_dataset(identifier=identifier)
+        if childdataset:
+            qs = Q(study_maternal_identifier=childdataset.study_maternal_identifier)
+        else:
+            qs = Q(subject_identifier=identifier)
 
         try:
             dataset_obj = maternaldataset_cls.objects.only(
-                'study_maternal_identifier', 'protocol').filter(
-                subject_identifier=subject_identifier).latest('modified')
+                'study_maternal_identifier', 'protocol').filter(qs).latest(
+                    'modified')
         except maternaldataset_cls.DoesNotExist:
             return None
         else:
