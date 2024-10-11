@@ -85,7 +85,7 @@ list_data = {
         ('mmed_raltearavir', 'Raltearavir'),
         ('mmed_painkillers', 'Painkillers'),
         ('mmed_antibiotics', 'Antibiotics'),
-        ('nmed_tru_prep','Truvada (Prep or Pep)'),
+        ('nmed_truvada_prep_or_pep','Truvada (Prep or Pep)'),
         ('mmed_other', 'Other, Specify'),
         ('mmed_none', 'None'),
     ],
