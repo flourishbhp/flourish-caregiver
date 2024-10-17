@@ -536,6 +536,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 obj.subject_identifier,
                 obj.study_child_identifier,
                 caregiver_sid)
+            extra_data.update({'caregiver_subject_identifier': caregiver_sid})
             extra_data.update({'hiv_exposure': exposure_status})
             extra_data.update({'study_status': self.study_status(obj.subject_identifier)})
 
@@ -630,6 +631,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         """
         new_data_dict = {}
         replace_idx = {'subject_identifier': 'childpid',
+                       'caregiver_subject_identifier': 'matpid',
                        'study_maternal_identifier': 'old_matpid',
                        'study_child_identifier': 'old_childpid'}
         for old_idx, new_idx in replace_idx.items():
