@@ -1,9 +1,11 @@
 import os
-from datetime import datetime
 
+import pytz
 import PIL
 import pyminizip
 import pypdfium2 as pdfium
+from datetime import datetime, time
+from dateutil.relativedelta import relativedelta
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib.auth.models import Group, User
@@ -46,12 +48,14 @@ from ..helper_classes.fu_onschedule_helper import FollowUpEnrolmentHelper
 from ..helper_classes.onschedule_helper import OnScheduleHelper
 from ..helper_classes.utils import (cohort_assigned, update_preg_screening_obj_child_pid,
                                     get_related_child_count, get_child_consents,
-                                    pf_identifier_check)
+                                    pf_identifier_check, create_unscheduled_appointment,
+                                    create_call_reminder)
 from ..models import CaregiverOffSchedule, ScreeningPregWomen
 from ..models import ScreeningPriorBhpParticipants
 from ..models.tb_informed_consent import TbInformedConsent
 from ..models.tb_off_study import TbOffStudy  # was supposed to be in the prns
 from ..models.tb_visit_screening_women import TbVisitScreeningWomen
+from ..models.caregiver_tb_screening import CaregiverTBScreening
 
 caregiver_config = django_apps.get_app_config('flourish_caregiver')
 
@@ -125,6 +129,32 @@ def update_maternal_dataset_and_worklist(subject_identifier,
             else:
                 screening_obj.subject_identifier = subject_identifier
                 screening_obj.save_base(raw=True)
+
+
+@receiver(post_save, weak=False, sender=CaregiverTBScreening,
+          dispatch_uid='caregiver_tb_screening_on_post_save')
+def caregiver_tb_screening_on_post_save(
+        sender, instance, raw, created, **kwargs):
+
+    if not raw and created:
+        appointment = instance.maternal_visit.appointment
+        if (appointment.visit_code_sequence == 0 and instance.symptomatic and
+                not instance.tb_diagnoses):
+            scheduled_dt = instance.report_datetime + relativedelta(weeks=2)
+            scheduled_dt = scheduled_dt.astimezone(
+                pytz.timezone('Africa/Gaborone'))
+            _appt = create_unscheduled_appointment(
+                appointment, scheduled_dt)
+            if _appt:
+                # Update the appointment date time to reflect correctly.
+                _appt.appt_datetime = scheduled_dt
+                _appt.save()
+                title = (f'{appointment.subject_identifier[-6:]}'
+                         f' TB 2 week call : @ {appointment.visit_code}')
+                reminder_time = time(8, 0)
+                repeat = 'once'
+                create_call_reminder(title, scheduled_dt.date(), reminder_time,
+                                     repeat)
 
 
 @receiver(post_save, weak=False, sender=SubjectConsent,
