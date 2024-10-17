@@ -1,5 +1,6 @@
 from django.db import models
 from edc_base.model_validators.date import date_not_future
+from edc_constants.constants import YES
 
 from flourish_caregiver.choices import YES_NO_UKN_CHOICES
 from flourish_caregiver.models.list_models import TBTests
@@ -107,6 +108,13 @@ class TBScreeningMixin(models.Model):
         blank=True,
         null=True
     )
+
+    @property
+    def symptomatic(self):
+        return (self.cough == YES or
+                self.fever == YES or
+                self.sweats == YES or
+                self.weight_loss == YES)
 
     class Meta:
         abstract = True
