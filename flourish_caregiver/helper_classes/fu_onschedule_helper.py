@@ -112,7 +112,7 @@ class FollowUpEnrolmentHelper(object):
                 [vs[0], vs[1].replace('quarterly', 'fu'), vs[2]])
         else:
             schedule_name = '_'.join(
-                [vs[0], vs[2].replace('quart', 'fu'), vs[3]])
+                [vs[0], vs[1].replace('quart', 'fu'), vs[2]])
 
         onschedule_model_cls = self.cohort_dict.get(schedule_name[0])
         onschedule_quart_model_cls = self.cohort_quart_dict.get(
