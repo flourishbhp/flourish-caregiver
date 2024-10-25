@@ -11,6 +11,7 @@ from edc_visit_schedule.model_mixins import SubjectScheduleCrfModelMixin
 from edc_visit_tracking.model_mixins import CrfModelMixin as BaseCrfModelMixin
 from edc_visit_tracking.model_mixins import PreviousVisitModelMixin
 
+from ...helper_classes.utils import get_child_subject_identifier_by_visit
 from ...visit_sequence import VisitSequence
 from ..maternal_visit import MaternalVisit
 from .consent_version_model_mixin import ConsentVersionModelModelMixin
@@ -38,6 +39,10 @@ class CrfModelMixin(BaseCrfModelMixin, ConsentVersionModelModelMixin,
     @property
     def subject_identifier(self):
         return self.maternal_visit.appointment.subject_identifier
+
+    @property
+    def child_subject_identifier(self):
+        return get_child_subject_identifier_by_visit(self.maternal_visit)
 
     @property
     def visit_code(self):
