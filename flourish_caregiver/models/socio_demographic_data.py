@@ -5,6 +5,8 @@ from .antenatal_enrollment import AntenatalEnrollment
 from .list_models import ExpenseContributors
 from .model_mixins import CrfModelMixin, SocioDemographicDataMixin, HouseHoldDetailsMixin
 
+from ..helper_classes.utils import get_child_subject_identifier_by_visit
+
 
 class SocioDemographicData(SocioDemographicDataMixin, CrfModelMixin):
     """ A model completed by the user on Demographics form for all mothers.
@@ -16,6 +18,10 @@ class SocioDemographicData(SocioDemographicDataMixin, CrfModelMixin):
                      'expenses:',
         blank=True
     )
+
+    @property
+    def child_subject_identifier(self):
+        return get_child_subject_identifier_by_visit(self.maternal_visit)
 
     @property
     def is_pregnant(self):

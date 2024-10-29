@@ -4,7 +4,7 @@ from functools import partialmethod
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Subquery, Q
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from edc_consent.actions import (
@@ -523,14 +523,14 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         for obj in queryset:
             obj_data = obj.__dict__
 
+            parent_obj = getattr(obj, 'subject_consent', None)
+            caregiver_sid = getattr(parent_obj, 'subject_identifier', None)
+
             maternal_dataset_qs = self.related_maternal_dataset(
-                identifier=getattr(obj, 'study_child_identifier', None))
+                identifier=getattr(obj, 'study_child_identifier', caregiver_sid))
             extra_data = {}
             if maternal_dataset_qs:
                 extra_data = maternal_dataset_qs.__dict__
-
-            parent_obj = getattr(obj, 'subject_consent', None)
-            caregiver_sid = getattr(parent_obj, 'subject_identifier', None)
 
             exposure_status = child_utils.child_hiv_exposure(
                 obj.subject_identifier,
@@ -657,16 +657,18 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
             'flourish_caregiver.maternaldataset')
         childdataset = self.previous_study_dataset(identifier=identifier)
         if childdataset:
-            maternal_identifier = childdataset.study_maternal_identifier
-            try:
-                dataset_obj = maternaldataset_cls.objects.only(
-                    'study_maternal_identifier', 'protocol').get(
-                    study_maternal_identifier=maternal_identifier)
-            except maternaldataset_cls.DoesNotExist:
-                return None
-            else:
-                return dataset_obj
-        return None
+            qs = Q(study_maternal_identifier=childdataset.study_maternal_identifier)
+        else:
+            qs = Q(subject_identifier=identifier)
+
+        try:
+            dataset_obj = maternaldataset_cls.objects.only(
+                'study_maternal_identifier', 'protocol').filter(qs).latest(
+                    'modified')
+        except maternaldataset_cls.DoesNotExist:
+            return None
+        else:
+            return dataset_obj
 
     def study_status(self, subject_identifier=None):
         if not subject_identifier:

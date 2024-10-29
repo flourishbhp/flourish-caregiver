@@ -4,7 +4,7 @@ from edc_visit_schedule.site_visit_schedules import site_visit_schedules
 
 
 class OnScheduleHelper(object):
-    """A helper class that puts a participant into a particular schedule
+    """ A helper class that puts a participant into a particular schedule
     """
 
     def __init__(self, subject_identifier=None, onschedule_datetime=None, cohort=None, ):
@@ -12,6 +12,34 @@ class OnScheduleHelper(object):
         self.subject_identifier = subject_identifier
         self.onschedule_datetime = onschedule_datetime or get_utcnow()
         self.cohort = cohort
+
+    def put_on_fu_schedule(self, instance, child_subject_identifier,
+                           base_appt_datetime, child_count):
+        cohort_schedules = django_apps.get_model('flourish_caregiver.cohortschedules')
+        try:
+            cohort_schedule = cohort_schedules.objects.get(
+                cohort_name=self.cohort,
+                schedule_type='followup',
+                child_count=child_count, )
+        except cohort_schedules.DoesNotExist:
+            raise
+        else:
+            _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                onschedule_model=cohort_schedule.onschedule_model,
+                name=cohort_schedule.schedule_name)
+            onschedule_model_cls = django_apps.get_model(
+                cohort_schedule.onschedule_model)
+            subject_identifier = (self.subject_identifier or
+                                  instance.subject_consent.subject_identifier)
+
+            self.add_on_schedule(
+                schedule=schedule,
+                subject_identifier=subject_identifier,
+                instance=instance,
+                schedule_name=cohort_schedule.schedule_name,
+                base_appt_datetime=base_appt_datetime,
+                child_subject_identifier=child_subject_identifier,
+                onschedule_model_cls=onschedule_model_cls, )
 
     def put_cohort_onschedule(self, instance, base_appt_datetime=None):
         if self.cohort is not None:
@@ -29,9 +57,9 @@ class OnScheduleHelper(object):
                                      caregiver_visit_count=instance.caregiver_visit_count)
 
     def put_quarterly_onschedule(self, instance, base_appt_datetime=None):
-        """ Determine the `cohort` and child count for multiple enrollments to
-            enroll subject and call the put_on_schedule function to put the subject
-            on a particular schedule.
+        """ Determine the `cohort` and child count for multiple enrollments
+            to enrol subject and call the put_on_schedule function to put
+            the subject on a particular schedule.
             @param instance: object instance to determine cohort and count.
             @param base_appt_datetime: base datetime to start the appointment.
         """

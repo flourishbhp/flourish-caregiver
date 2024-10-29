@@ -48,5 +48,5 @@ class PostHivRapidTestAndConseling(CrfModelMixin):
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
-        verbose_name = 'Post HIV rapid testing and counseling'
-        verbose_name_plural = 'Post HIV rapid testing and counseling'
+        verbose_name = 'Post HIV Testing and Counseling'
+        verbose_name_plural = 'Post HIV Testing and Counseling'

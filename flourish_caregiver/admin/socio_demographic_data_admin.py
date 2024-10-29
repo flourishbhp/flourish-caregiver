@@ -131,6 +131,7 @@ class SocioDemographicDataAdmin(CrfModelAdminMixin, admin.ModelAdmin):
     inlines = [HouseHoldDetailsInlineAdmin, ]
 
     list_display = ('maternal_visit',
+                    'child_subject_identifier',
                     'marital_status',
                     'ethnicity',
                     'highest_education')

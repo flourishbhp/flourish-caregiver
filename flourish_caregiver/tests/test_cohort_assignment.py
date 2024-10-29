@@ -95,7 +95,8 @@ class TestCohortAssignmentSetup(TestCase):
         self.subject_identifier = self.subject_identifier[:-1] + '2'
         self.study_maternal_identifier = '981232'
         self.maternal_dataset_options['protocol'] = 'Mpepu'
-        self.maternal_dataset_options['delivdt'] = self.year_3_age(5, 1)
+        self.maternal_dataset_options['delivdt'] = (get_utcnow() - relativedelta(
+            years=5, months=1)).date()
         maternal_dataset_obj = mommy.make_recipe(
             'flourish_caregiver.maternaldataset',
             subject_identifier=self.subject_identifier,
@@ -104,7 +105,7 @@ class TestCohortAssignmentSetup(TestCase):
 
         mommy.make_recipe(
             'flourish_child.childdataset',
-            dob=self.year_3_age(5, 1),
+            dob=(get_utcnow() - relativedelta(years=5, months=1)).date(),
             **self.child_dataset_options)
 
         self.options = {
