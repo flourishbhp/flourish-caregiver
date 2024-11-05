@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.core.exceptions import ObjectDoesNotExist
+from edc_fieldsets.fieldlist import Insert
 from edc_model_admin.model_admin_audit_fields_mixin import audit_fieldset_tuple
 
 from flourish_child.admin import PreviousResultsAdminMixin
@@ -30,6 +32,7 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
                 'weight_loss_duration',
                 'household_diagnosed_with_tb',
                 'evaluated_for_tb',
+                'flourish_referral',
                 'clinic_visit_date',
                 'tb_tests',
                 'other_test',
@@ -50,24 +53,26 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
     )
 
     radio_fields = {
-        "cough": admin.VERTICAL,
-        "cough_duration": admin.VERTICAL,
-        "fever": admin.VERTICAL,
-        "fever_duration": admin.VERTICAL,
-        "sweats": admin.VERTICAL,
-        "sweats_duration": admin.VERTICAL,
-        "weight_loss": admin.VERTICAL,
-        "weight_loss_duration": admin.VERTICAL,
-        "household_diagnosed_with_tb": admin.VERTICAL,
-        "evaluated_for_tb": admin.VERTICAL,
-        "chest_xray_results": admin.VERTICAL,
-        "sputum_sample_results": admin.VERTICAL,
-        "urine_test_results": admin.VERTICAL,
-        "skin_test_results": admin.VERTICAL,
-        "blood_test_results": admin.VERTICAL,
-        "diagnosed_with_TB": admin.VERTICAL,
-        "started_on_TB_treatment": admin.VERTICAL,
-        "started_on_TB_preventative_therapy": admin.VERTICAL,
+        'cough': admin.VERTICAL,
+        'cough_duration': admin.VERTICAL,
+        'fever': admin.VERTICAL,
+        'fever_duration': admin.VERTICAL,
+        'sweats': admin.VERTICAL,
+        'sweats_duration': admin.VERTICAL,
+        'weight_loss': admin.VERTICAL,
+        'weight_loss_duration': admin.VERTICAL,
+        'persistent_symptoms': admin.VERTICAL,
+        'household_diagnosed_with_tb': admin.VERTICAL,
+        'evaluated_for_tb': admin.VERTICAL,
+        'flourish_referral': admin.VERTICAL,
+        'chest_xray_results': admin.VERTICAL,
+        'sputum_sample_results': admin.VERTICAL,
+        'urine_test_results': admin.VERTICAL,
+        'skin_test_results': admin.VERTICAL,
+        'blood_test_results': admin.VERTICAL,
+        'diagnosed_with_TB': admin.VERTICAL,
+        'started_on_TB_treatment': admin.VERTICAL,
+        'started_on_TB_preventative_therapy': admin.VERTICAL,
     }
 
     filter_horizontal = ('tb_tests',)
@@ -79,3 +84,30 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
         'skin_test_results',
         'blood_test_results',
     ]
+
+    def get_key(self, request, obj=None):
+        try:
+            model_obj = self.get_instance(request)
+        except ObjectDoesNotExist:
+            return None
+        else:
+            return model_obj.schedule_name
+
+    @property
+    def quarterly_schedules(self):
+        schedules = self.cohort_schedules_cls.objects.filter(
+            schedule_type__icontains='quarterly',
+            onschedule_model__startswith='flourish_caregiver').values_list(
+                'schedule_name', flat=True)
+        return schedules
+
+    @property
+    def conditional_fieldlists(self):
+        conditional_fieldlists = {}
+        schedules = list(self.quarterly_schedules)
+
+        for schedule in schedules:
+            conditional_fieldlists.update(
+                {schedule: Insert('persistent_symptoms',
+                                  after='weight_loss_duration')})
+        return conditional_fieldlists
