@@ -136,25 +136,39 @@ def update_maternal_dataset_and_worklist(subject_identifier,
 def caregiver_tb_screening_on_post_save(
         sender, instance, raw, created, **kwargs):
 
-    if not raw and created:
-        appointment = instance.maternal_visit.appointment
-        if (appointment.visit_code_sequence == 0 and instance.symptomatic and
-                not instance.tb_diagnoses):
-            scheduled_dt = instance.report_datetime + relativedelta(weeks=2)
-            scheduled_dt = scheduled_dt.astimezone(
-                pytz.timezone('Africa/Gaborone'))
-            _appt = create_unscheduled_appointment(
-                appointment, scheduled_dt)
-            if _appt:
-                # Update the appointment date time to reflect correctly.
-                _appt.appt_datetime = scheduled_dt
-                _appt.save()
-                title = (f'{appointment.subject_identifier[-6:]}'
-                         f' TB 2 week call : @ {appointment.visit_code}')
-                reminder_time = time(8, 0)
-                repeat = 'once'
-                create_call_reminder(title, scheduled_dt.date(), reminder_time,
-                                     repeat)
+    if not raw:
+        report_dt = instance.report_datetime
+        visit_date = instance.clinic_visit_date
+
+        dt_30days = (report_dt - relativedelta(days=30)).date()
+        within_30days = visit_date >= dt_30days if visit_date else None
+
+        if not within_30days:
+            appointment = instance.maternal_visit.appointment
+            try:
+                appointment.__class__.objects.get(
+                    subject_identifier=appointment.subject_identifier,
+                    visit_code=appointment.visit_code,
+                    visit_code_sequence=1,
+                    schedule_name=appointment.schedule_name)
+            except appointment.__class__.DoesNotExist:
+                if (appointment.visit_code_sequence == 0 and instance.symptomatic and
+                        not instance.tb_diagnoses):
+                    scheduled_dt = report_dt + relativedelta(weeks=2)
+                    scheduled_dt = scheduled_dt.astimezone(
+                        pytz.timezone('Africa/Gaborone'))
+                    _appt = create_unscheduled_appointment(
+                        appointment, scheduled_dt)
+                    if _appt:
+                        # Update the appointment date time to reflect correctly.
+                        _appt.appt_datetime = scheduled_dt
+                        _appt.save()
+                        title = (f'{appointment.subject_identifier[-6:]}'
+                                 f' TB 2 week call : @ {appointment.visit_code}')
+                        reminder_time = time(8, 0)
+                        repeat = 'once'
+                        create_call_reminder(title, scheduled_dt.date(), reminder_time,
+                                             repeat)
 
 
 @receiver(post_save, weak=False, sender=SubjectConsent,
