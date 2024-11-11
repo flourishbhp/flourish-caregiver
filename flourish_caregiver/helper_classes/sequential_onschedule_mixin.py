@@ -22,7 +22,8 @@ class SeqEnrolOnScheduleMixin:
         cohort = self.evaluated_cohort
         schedule_type = self.schedule_type
         child_count = str(self.child_consent_obj.caregiver_visit_count)
-        onschedule_datetime = self.caregiver_last_qt_subject_schedule_obj.onschedule_datetime
+        onschedule_datetime = self.caregiver_last_inperson_visit.report_datetime
+        # self.caregiver_last_qt_subject_schedule_obj.onschedule_datetime
 
         # TODO: To get variables needed from the model
         onschedule_model = caregiver_schedule_dict[cohort][schedule_type][
@@ -53,7 +54,8 @@ class SeqEnrolOnScheduleMixin:
 
         onschedule_model = child_schedule_dict[cohort][schedule_type]['onschedule_model']
         schedule_name = child_schedule_dict[cohort][schedule_type]['name']
-        onschedule_datetime = self.child_last_qt_subject_schedule_obj.onschedule_datetime
+        onschedule_datetime = self.child_last_inperson_visit.report_datetime
+        # self.child_last_qt_subject_schedule_obj.onschedule_datetime
 
         _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
             onschedule_model=onschedule_model,
