@@ -22,6 +22,7 @@ class CaregiverTBReferralOutcomeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'clinic_name',
                 'clinic_name_other',
                 'tests_performed',
+                'comments',
                 'other_test_specify',
                 'chest_xray_results',
                 'sputum_sample_results',

@@ -20,6 +20,9 @@ class TBReferralMixin(models.Model):
         null=True,
         blank=True)
 
+    no_referral_reason_other = OtherCharField(
+        verbose_name='If other, specify', )
+
     date_of_referral = models.DateField(
         verbose_name='Date of referral:',
         validators=[date_not_future],

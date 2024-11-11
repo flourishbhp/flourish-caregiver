@@ -96,5 +96,10 @@ class FlourishTbReferralOutcomeMixin(models.Model):
 
     other_reasons = OtherCharField()
 
+    comments = models.TextField(
+        verbose_name='Any additional comments',
+        blank=True,
+        null=True)
+
     class Meta:
         abstract = True

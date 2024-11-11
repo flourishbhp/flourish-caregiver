@@ -1352,4 +1352,5 @@ NO_REFERRAL_REASONS = (
     ('declined', 'Declined referral'),
     ('no_symptoms', 'Participant no longer has symptoms'),
     ('already_evaluated', 'Participant already evaluated for TB in last month'),
+    (OTHER, 'Other, specify')
 )
