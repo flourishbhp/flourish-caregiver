@@ -1,9 +1,12 @@
 from django.db import models
 from edc_base.model_validators.date import date_not_future
+from edc_constants.constants import YES
+from edc_constants.choices import YES_NO
 
 from flourish_caregiver.choices import YES_NO_UKN_CHOICES
 from flourish_caregiver.models.list_models import TBTests
-from flourish_child.choices import DURATION_OPTIONS, TEST_RESULTS_CHOICES
+from flourish_child.choices import (DURATION_OPTIONS, TEST_RESULTS_CHOICES,
+                                    YES_NO_DN_RECALL)
 
 
 class TBScreeningMixin(models.Model):
@@ -72,8 +75,10 @@ class TBScreeningMixin(models.Model):
         verbose_name='What diagnostic tests were performed for TB?',
         default='',)
 
-    other_test = models.TextField(verbose_name='If "Other", specify test and result',
-                                  blank=True, null=True)
+    other_test = models.TextField(
+        verbose_name='If "Other", specify test and result',
+        blank=True,
+        null=True)
 
     chest_xray_results = models.CharField(
         verbose_name='Chest Xray Results',
@@ -100,13 +105,35 @@ class TBScreeningMixin(models.Model):
         choices=TEST_RESULTS_CHOICES,
         max_length=15, blank=True, null=True)
 
-    other_test_results = models.TextField(verbose_name='Other Test Result', blank=True,
+    other_test_results = models.TextField(verbose_name='Other Test Result',
+                                          blank=True,
                                           null=True)
+
+    persistent_symptoms = models.CharField(
+        verbose_name=('Were any symptoms (cough, fever, night sweats, '
+                      'weight loss, or fatigue) present when you last '
+                      'spoke with FLOURISH staff?'),
+        choices=YES_NO_DN_RECALL,
+        max_length=13)
+
+    flourish_referral = models.CharField(
+        verbose_name='Were you referred by our FLOURISH clinic team?',
+        choices=YES_NO,
+        max_length=3,
+        blank=True,
+        null=True)
 
     tb_diagnoses = models.BooleanField(
         blank=True,
         null=True
     )
+
+    @property
+    def symptomatic(self):
+        return (self.cough == YES or
+                self.fever == YES or
+                self.sweats == YES or
+                self.weight_loss == YES)
 
     class Meta:
         abstract = True

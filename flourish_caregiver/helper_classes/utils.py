@@ -6,6 +6,11 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from edc_appointment.constants import NEW_APPT
+from edc_appointment.creators import InvalidParentAppointmentMissingVisitError
+from edc_appointment.creators import InvalidParentAppointmentStatusError
+from edc_appointment.creators import UnscheduledAppointmentCreator
+from edc_appointment.creators import UnscheduledAppointmentError
 
 from ..helper_classes.cohort_assignment import CohortAssignment
 
@@ -230,3 +235,37 @@ def pf_identifier_check(identifier):
         return True
     else:
         return False
+
+
+def create_unscheduled_appointment(appointment, reference_date):
+    unscheduled_appointment_cls = UnscheduledAppointmentCreator
+
+    options = {'subject_identifier': appointment.subject_identifier,
+               'visit_schedule_name': appointment.visit_schedule_name,
+               'schedule_name': appointment.schedule_name,
+               'visit_code': appointment.visit_code,
+               'facility': appointment.facility,
+               'suggested_datetime': reference_date,
+               'timepoint_datetime': reference_date,
+               'check_appointment': False,
+               'appt_status': NEW_APPT, }
+
+    try:
+        _appointment = unscheduled_appointment_cls(**options)
+    except (ObjectDoesNotExist, UnscheduledAppointmentError,
+            InvalidParentAppointmentMissingVisitError,
+            InvalidParentAppointmentStatusError) as e:
+        raise ValidationError(str(e))
+    else:
+        return _appointment.appointment
+
+
+def create_call_reminder(title, start_date, reminder_time, repeat,
+                         end_date=None):
+    reminder_model_cls = django_apps.get_model('flourish_calendar.reminder')
+    reminder_model_cls.objects.update_or_create(
+        title=title,
+        repeat=repeat,
+        defaults={'start_date': start_date,
+                  'end_date': end_date,
+                  'remainder_time': reminder_time})

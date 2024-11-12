@@ -207,7 +207,8 @@ class SubjectConsent(ConsentModelMixin, SiteModelMixin,
             child_dataset_cls = django_apps.get_model(
                 'flourish_child.childdataset')
             children = child_dataset_cls.objects.filter(
-                study_maternal_identifier=dataset_obj.study_maternal_identifier)
+                study_maternal_identifier=dataset_obj.study_maternal_identifier,
+                twin_triplet=True)
 
             if children.count() > 3:
                 raise ValidationError(

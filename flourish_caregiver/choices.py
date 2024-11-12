@@ -1347,3 +1347,10 @@ YES_NO_UNK_NO_CHILD = (
     (NO, NO),
     (UNKNOWN, 'Unknown, Caregiver does not live with child'),
 )
+
+NO_REFERRAL_REASONS = (
+    ('declined', 'Declined referral'),
+    ('no_symptoms', 'Participant no longer has symptoms'),
+    ('already_evaluated', 'Participant already evaluated for TB in last month'),
+    (OTHER, 'Other, specify')
+)
