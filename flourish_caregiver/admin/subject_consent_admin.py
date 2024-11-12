@@ -4,7 +4,7 @@ from functools import partialmethod
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.contrib import admin
-from django.db.models import OuterRef, Subquery, Q
+from django.db.models import OuterRef, Subquery
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from edc_consent.actions import (
@@ -354,6 +354,47 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
 
     search_fields = ('subject_identifier', 'dob',)
 
+    def export_linkage_csv(self, request, queryset):
+        records = []
+        _existing = []
+        for obj in queryset:
+            study_maternal_identifier = self.study_maternal_identifier(
+                screening_identifier=obj.screening_identifier)
+            caregiver_data = dict(
+                matpid=obj.subject_identifier,
+                old_matpid=study_maternal_identifier, )
+
+            child_consents = obj.caregiverchildconsent_set.values(
+                'subject_identifier', 'study_child_identifier')
+            for child_consent in child_consents:
+                data = {}
+                subject_identifier = child_consent.get('subject_identifier')
+                study_child_identifier = child_consent.get('study_child_identifier')
+                maternal_dataset = self.related_maternal_dataset(
+                    study_child_identifier)
+                enrol_cohort, curr_cohort = self.get_cohort_details(subject_identifier)
+                if subject_identifier not in _existing:
+                    data.update(
+                        **caregiver_data,
+                        childpid=subject_identifier,
+                        old_childpid=study_child_identifier,
+                        previous_study=getattr(maternal_dataset, 'protocol', None),
+                        enrol_cohort=enrol_cohort,
+                        current_cohort=curr_cohort)
+                    records.append(data)
+                    _existing.append(subject_identifier)
+        _model = self.model
+        self.model = None
+        response = self.write_to_csv(
+            records, app_label='CaregiverChildLinkage', export_type='csv')
+        self.model = _model
+        return response
+
+    export_linkage_csv.short_description = _(
+        'Export linkage CSV')
+
+    actions = [export_linkage_csv]
+
     def get_actions(self, request):
 
         super_actions = super().get_actions(request)
@@ -536,7 +577,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 obj.subject_identifier,
                 obj.study_child_identifier,
                 caregiver_sid)
-            extra_data.update({'caregiver_subject_identifier': caregiver_sid})
+            # extra_data.update({'caregiver_subject_identifier': caregiver_sid})
             extra_data.update({'hiv_exposure': exposure_status})
             extra_data.update({'study_status': self.study_status(obj.subject_identifier)})
 
@@ -591,24 +632,6 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
 
         return super_actions
 
-    @property
-    def cohort_model_cls(self):
-        return django_apps.get_model('flourish_caregiver.cohort')
-
-    def get_cohort_details(self, subject_identifier):
-        enrol_cohort = self.cohort_model_cls.objects.filter(
-            subject_identifier=subject_identifier,
-            enrollment_cohort=True).order_by('-assign_datetime').first()
-
-        current_cohort = self.cohort_model_cls.objects.filter(
-            subject_identifier=subject_identifier,
-            current_cohort=True).order_by('-assign_datetime').first()
-
-        enrol_name = getattr(enrol_cohort, 'name', None)
-        current_name = getattr(current_cohort, 'name', None)
-
-        return enrol_name, current_name
-
     def get_cohort_by_date(self, subject_identifier, report_datetime):
         """ Query cohort instances to get cohort details for a particular date.
             i.e. cohort participant was enrolled on at a specificied date.
@@ -641,34 +664,6 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 continue
         new_data_dict.update(data)
         return new_data_dict
-
-    def previous_study_dataset(self, identifier=None):
-        childdataset_cls = django_apps.get_model('flourish_child.childdataset')
-        try:
-            dataset_obj = childdataset_cls.objects.get(
-                study_child_identifier=identifier)
-        except childdataset_cls.DoesNotExist:
-            return None
-        else:
-            return dataset_obj
-
-    def related_maternal_dataset(self, identifier=None):
-        maternaldataset_cls = django_apps.get_model(
-            'flourish_caregiver.maternaldataset')
-        childdataset = self.previous_study_dataset(identifier=identifier)
-        if childdataset:
-            qs = Q(study_maternal_identifier=childdataset.study_maternal_identifier)
-        else:
-            qs = Q(subject_identifier=identifier)
-
-        try:
-            dataset_obj = maternaldataset_cls.objects.only(
-                'study_maternal_identifier', 'protocol').filter(qs).latest(
-                    'modified')
-        except maternaldataset_cls.DoesNotExist:
-            return None
-        else:
-            return dataset_obj
 
     def study_status(self, subject_identifier=None):
         if not subject_identifier:
