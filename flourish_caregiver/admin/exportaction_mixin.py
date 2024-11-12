@@ -2,7 +2,7 @@ import pytz
 
 from django.apps import apps as django_apps
 from django.db.models import (FileField, ForeignKey, ImageField, ManyToManyField,
-                              ManyToOneRel, OneToOneField)
+                              ManyToOneRel, OneToOneField, Q)
 from django.db.models.fields.reverse_related import OneToOneRel
 from django.utils.translation import ugettext_lazy as _
 from flourish_export.admin_export_helper import AdminExportHelper
@@ -60,7 +60,7 @@ class ExportActionMixin(AdminExportHelper):
                     matpid=subject_identifier,
                     old_matpid=study_maternal_identifier,
                     visit_code=obj.maternal_visit.visit_code,
-                    childpid=get_child_subject_identifier_by_visit(obj.maternal_visit),
+                    # childpid=get_child_subject_identifier_by_visit(obj.maternal_visit),
                     **data_copy)
 
             # Update variable names for study identifiers
@@ -236,3 +236,49 @@ class ExportActionMixin(AdminExportHelper):
             return None
         else:
             return maternal_delivery_obj
+
+    def previous_child_study_dataset(self, identifier=None):
+        childdataset_cls = django_apps.get_model('flourish_child.childdataset')
+        try:
+            dataset_obj = childdataset_cls.objects.get(
+                study_child_identifier=identifier)
+        except childdataset_cls.DoesNotExist:
+            return None
+        else:
+            return dataset_obj
+
+    def related_maternal_dataset(self, identifier=None):
+        maternaldataset_cls = django_apps.get_model(
+            'flourish_caregiver.maternaldataset')
+        childdataset = self.previous_child_study_dataset(identifier=identifier)
+        if childdataset:
+            qs = Q(study_maternal_identifier=childdataset.study_maternal_identifier)
+        else:
+            qs = Q(subject_identifier=identifier)
+
+        try:
+            dataset_obj = maternaldataset_cls.objects.only(
+                'study_maternal_identifier', 'protocol').filter(qs).latest(
+                    'modified')
+        except maternaldataset_cls.DoesNotExist:
+            return None
+        else:
+            return dataset_obj
+
+    @property
+    def cohort_model_cls(self):
+        return django_apps.get_model('flourish_caregiver.cohort')
+
+    def get_cohort_details(self, subject_identifier):
+        enrol_cohort = self.cohort_model_cls.objects.filter(
+            subject_identifier=subject_identifier,
+            enrollment_cohort=True).order_by('-assign_datetime').first()
+
+        current_cohort = self.cohort_model_cls.objects.filter(
+            subject_identifier=subject_identifier,
+            current_cohort=True).order_by('-assign_datetime').first()
+
+        enrol_name = getattr(enrol_cohort, 'name', None)
+        current_name = getattr(current_cohort, 'name', None)
+
+        return enrol_name, current_name
