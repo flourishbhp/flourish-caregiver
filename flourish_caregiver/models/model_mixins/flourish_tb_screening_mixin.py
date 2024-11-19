@@ -2,7 +2,8 @@ from django.db import models
 from edc_base.model_validators.date import date_not_future
 from edc_constants.constants import YES
 from edc_constants.choices import YES_NO
-
+from flourish_caregiver.helper_classes import MaternalStatusHelper
+from flourish_caregiver.helper_classes.tb_diagnosis import TBDiagnosis
 from flourish_caregiver.choices import YES_NO_UKN_CHOICES
 from flourish_caregiver.models.list_models import TBTests
 from flourish_child.choices import (DURATION_OPTIONS, TEST_RESULTS_CHOICES,
@@ -109,13 +110,6 @@ class TBScreeningMixin(models.Model):
                                           blank=True,
                                           null=True)
 
-    persistent_symptoms = models.CharField(
-        verbose_name=('Were any symptoms (cough, fever, night sweats, '
-                      'weight loss, or fatigue) present when you last '
-                      'spoke with FLOURISH staff?'),
-        choices=YES_NO_DN_RECALL,
-        max_length=13)
-
     flourish_referral = models.CharField(
         verbose_name='Were you referred by our FLOURISH clinic team?',
         choices=YES_NO,
@@ -130,10 +124,11 @@ class TBScreeningMixin(models.Model):
 
     @property
     def symptomatic(self):
-        return (self.cough == YES or
-                self.fever == YES or
-                self.sweats == YES or
-                self.weight_loss == YES)
+        maternal_status_helper = MaternalStatusHelper(maternal_visit=self.maternal_visit)
+        tb_diagnoses = TBDiagnosis(hiv_status=maternal_status_helper.hiv_status)
+
+        return tb_diagnoses.evaluate_for_tb(self)
+         
 
     class Meta:
         abstract = True
