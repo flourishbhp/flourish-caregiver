@@ -28,6 +28,10 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
 
     cohort_schedules_model = 'flourish_caregiver.cohortschedules'
 
+    child_visit_model = 'flourish_child.childvisit'
+
+    caregiver_visit_model = 'flourish_caregiver.maternalvisit'
+
     def __init__(self, child_subject_identifier=None):
         self.child_subject_identifier = child_subject_identifier
 
@@ -51,14 +55,86 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
     def cohort_schedules_model_cls(self):
         return django_apps.get_model(self.cohort_schedules_model)
 
-    def get_caregiver_cohort_schedule(self, cohort_name, schedule_types=[]):
+    @property
+    def child_visit_model_cls(self):
+        return django_apps.get_model(self.child_visit_model)
+
+    @property
+    def caregiver_visit_model_cls(self):
+        return django_apps.get_model(self.caregiver_visit_model)
+
+    def get_cohort_schedule(self, cohort_name,
+                            subject_type='flourish_caregiver',
+                            schedule_types=[]):
 
         cohort_schedules = self.cohort_schedules_model_cls.objects.filter(
-            cohort_name=cohort_name,
             schedule_type__in=schedule_types,
-            onschedule_model__startswith='flourish_caregiver')
+            onschedule_model__startswith=subject_type)
+        if cohort_name:
+            cohort_schedules = cohort_schedules.filter(
+                cohort_name=cohort_name, )
 
         return cohort_schedules
+
+    @property
+    def related_child_identifier_onsch(self):
+        child_subject_identifier = self.child_subject_identifier
+        child_identifier_suffix = self.child_subject_identifier[-3:]
+
+        if child_identifier_suffix == '-35':
+            child_subject_identifier = self.child_subject_identifier[:-3] + '-25'
+        elif child_identifier_suffix in ['-46', '-56']:
+            child_subject_identifier = self.child_subject_identifier[:-3] + '-36'
+        return child_subject_identifier
+
+    @property
+    def child_last_inperson_visit(self):
+        cohort_schedules = self.get_cohort_schedule(
+            None,
+            'flourish_child',
+            schedule_types=['enrollment', 'birth', 'followup'])
+        schedule_names = cohort_schedules.values_list(
+            'schedule_name', flat=True)
+        try:
+            visit_obj = self.child_visit_model_cls.objects.filter(
+                subject_identifier=self.child_consent_obj.subject_identifier,
+                schedule_name__in=schedule_names).latest('report_datetime')
+        except self.child_visit_model_cls.DoesNotExist:
+            raise SequentialCohortEnrollmentError(
+                f'{self.child_consent_obj.subject_identifier} : has no in-person '
+                f'visit.')
+        else:
+            return visit_obj
+
+    @property
+    def caregiver_last_inperson_visit(self):
+        cohort_schedules = self.get_cohort_schedule(
+            None,
+            'flourish_caregiver',
+            schedule_types=['antenatal', 'enrollment', 'birth', 'followup'])
+        schedule_names = cohort_schedules.values_list(
+            'schedule_name', flat=True)
+
+        visit_objs = self.caregiver_visit_model_cls.objects.filter(
+            subject_identifier=self.caregiver_subject_identifier,
+            schedule_name__in=schedule_names).order_by(
+                '-report_datetime')
+
+        child_subject_identifier = self.related_child_identifier_onsch
+
+        for visit_obj in visit_objs:
+            onschedule_model = visit_obj.schedule.onschedule_model
+            onschedule_model_cls = django_apps.get_model(onschedule_model)
+            obj_exists = onschedule_model_cls.objects.filter(
+                subject_identifier=self.caregiver_subject_identifier,
+                child_subject_identifier=child_subject_identifier,
+                schedule_name=visit_obj.schedule_name).exists()
+            if obj_exists:
+                return visit_obj
+
+        raise SequentialCohortEnrollmentError(
+            f'{self.caregiver_subject_identifier} : has no in-person '
+            f'visit.')
 
     @property
     def child_last_qt_subject_schedule_obj(self):
@@ -82,7 +158,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
             consideration multiple children enrollment. Get only schedule
             for relate child.
         """
-        cohort_schedules = self.get_caregiver_cohort_schedule(
+        cohort_schedules = self.get_cohort_schedule(
             self.current_cohort,
             schedule_types=['quarterly', 'followup_quarterly'])
         schedule_names = cohort_schedules.values_list(
@@ -93,13 +169,7 @@ class SequentialCohortEnrollment(SeqEnrolOnScheduleMixin,
              schedule_name__in=schedule_names).order_by(
                  '-onschedule_datetime')
 
-        child_subject_identifier = self.child_subject_identifier
-        child_identifier_suffix = self.child_subject_identifier[-3:]
-
-        if child_identifier_suffix == '-35':
-            child_subject_identifier = self.child_subject_identifier[:-3] + '-25'
-        elif child_identifier_suffix in ['-46', '-56']:
-            child_subject_identifier = self.child_subject_identifier[:-3] + '-36'
+        child_subject_identifier = self.related_child_identifier_onsch
 
         for schedule in quart_schedules:
             onschedule_model_cls = django_apps.get_model(

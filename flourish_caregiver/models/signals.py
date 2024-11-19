@@ -325,6 +325,8 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
     """
     tb_informed_consent_cls = django_apps.get_model(
         'flourish_caregiver.tbinformedconsent')
+    schedule_history_cls = django_apps.get_model(
+        'edc_visit_schedule.subjectschedulehistory')
 
     child_consents = get_child_consents(instance.subject_identifier)
 
@@ -332,31 +334,54 @@ def maternal_delivery_on_post_save(sender, instance, raw, created, **kwargs):
         preg_enroll=True,
         subject_identifier=instance.child_subject_identifier)
 
-    if instance.live_infants_to_register == 1 and preg_child_consent.exists():
-        helper_cls = onschedule_helper_cls(instance.subject_identifier, )
-        caregiver_visit_count = preg_child_consent.latest(
-            'consent_datetime').caregiver_visit_count
-        if not raw and created:
-            helper_cls.put_on_schedule(
-                'cohort_a_birth',
-                instance=instance,
-                child_subject_identifier=instance.child_subject_identifier,
-                base_appt_datetime=instance.delivery_datetime.replace(
-                    microsecond=0),
-                caregiver_visit_count=caregiver_visit_count)
-            create_registered_infant(instance)
-            try:
-                tb_informed_consent_cls.objects.get(
-                    subject_identifier=instance.subject_identifier)
-            except tb_informed_consent_cls.DoesNotExist:
-                pass
-            else:
+    if preg_child_consent.exists():
+        if instance.live_infants_to_register == 1:
+            helper_cls = onschedule_helper_cls(instance.subject_identifier, )
+            caregiver_visit_count = preg_child_consent.latest(
+                'consent_datetime').caregiver_visit_count
+            if not raw and created:
                 helper_cls.put_on_schedule(
-                    'cohort_a_tb_2_months',
+                    'cohort_a_birth',
                     instance=instance,
                     child_subject_identifier=instance.child_subject_identifier,
-                    base_appt_datetime=instance.delivery_datetime.replace(microsecond=0),
+                    base_appt_datetime=instance.delivery_datetime.replace(
+                        microsecond=0),
                     caregiver_visit_count=caregiver_visit_count)
+                create_registered_infant(instance)
+                try:
+                    tb_informed_consent_cls.objects.get(
+                        subject_identifier=instance.subject_identifier)
+                except tb_informed_consent_cls.DoesNotExist:
+                    pass
+                else:
+                    helper_cls.put_on_schedule(
+                        'cohort_a_tb_2_months',
+                        instance=instance,
+                        child_subject_identifier=instance.child_subject_identifier,
+                        base_appt_datetime=instance.delivery_datetime.replace(microsecond=0),
+                        caregiver_visit_count=caregiver_visit_count)
+        elif instance.still_births == 1:
+            onschedules = schedule_history_cls.objects.filter(
+                subject_identifier=instance.subject_identifier)
+            for onschedule in onschedules:
+                if onschedule.schedule_status == 'offschedule':
+                    continue
+                onschedule_cls = django_apps.get_model(onschedule.onschedule_model)
+                try:
+                    onschedule_obj = onschedule_cls.objects.get(
+                        subject_identifier=instance.subject_identifier,
+                        child_subject_identifier=instance.child_subject_identifier)
+                except onschedule_cls.DoesNotExist:
+                    continue
+                else:
+                    _, schedule = site_visit_schedules.get_by_onschedule_model_schedule_name(
+                        onschedule_model=onschedule_obj._meta.label_lower,
+                        name=onschedule_obj.schedule_name)
+
+                    schedule.take_off_schedule(
+                        subject_identifier=instance.subject_identifier,
+                        offschedule_datetime=instance.report_datetime,
+                        schedule_name=onschedule_obj.schedule_name)
 
 
 @receiver(post_save, weak=False, sender=CaregiverPreviouslyEnrolled,

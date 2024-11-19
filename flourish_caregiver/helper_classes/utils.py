@@ -1,4 +1,5 @@
-import datetime, re
+import re
+import datetime
 
 from django import forms
 from django.apps import apps as django_apps
@@ -9,9 +10,9 @@ from django.utils.translation import gettext_lazy as _
 from edc_appointment.constants import NEW_APPT
 from edc_appointment.creators import InvalidParentAppointmentMissingVisitError
 from edc_appointment.creators import InvalidParentAppointmentStatusError
-from edc_appointment.creators import UnscheduledAppointmentCreator
 from edc_appointment.creators import UnscheduledAppointmentError
 
+from ..helper_classes.unscheduled_appointment_creator import UnscheduledAppointmentCreator
 from ..helper_classes.cohort_assignment import CohortAssignment
 
 
