@@ -1354,3 +1354,11 @@ NO_REFERRAL_REASONS = (
     ('already_evaluated', 'Participant already evaluated for TB in last month'),
     (OTHER, 'Other, specify')
 )
+
+NO_EVALUATION_REASONS = (
+    ('referral_other_clinic', 'Referral to another clinic'),
+    ('referral_hospital', 'Referral to a hospital'),
+    ('no_service_providers', 'No service providers'),
+    ('no_diagnostic_tests', 'No diagnostic tests'),
+    (OTHER, 'Other, please specify')
+)
