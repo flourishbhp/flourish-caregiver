@@ -223,6 +223,7 @@ FEEDING_CHOICES = (
      'Both breastfeeding and formula feeding'),
     ('Medical complications: Infant did not feed',
      'Medical complications: Infant did not feed'),
+     (NOT_APPLICABLE, 'Not applicable')
 )
 
 FLOURISH_PARTICIPATION = (
