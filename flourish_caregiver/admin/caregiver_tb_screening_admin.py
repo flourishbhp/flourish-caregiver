@@ -38,7 +38,7 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
                 'other_test',
                 'chest_xray_results',
                 'sputum_sample_results',
-                'stool_sample_results'
+                'stool_sample_results',
                 'urine_test_results',
                 'skin_test_results',
                 'blood_test_results',
