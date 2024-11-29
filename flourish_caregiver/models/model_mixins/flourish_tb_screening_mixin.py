@@ -88,9 +88,14 @@ class TBScreeningMixin(models.Model):
         verbose_name='Sputum sample Results',
         choices=TEST_RESULTS_CHOICES,
         max_length=15, blank=True, null=True)
-
+    
     urine_test_results = models.CharField(
         verbose_name='Urine Test Results',
+        choices=TEST_RESULTS_CHOICES,
+        max_length=15, blank=True, null=True)
+
+    stool_sample_results = models.CharField(
+        verbose_name='Stool sample Results',
         choices=TEST_RESULTS_CHOICES,
         max_length=15, blank=True, null=True)
 
