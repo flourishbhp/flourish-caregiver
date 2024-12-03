@@ -59,6 +59,11 @@ class FlourishTbReferralOutcomeMixin(models.Model):
         verbose_name='Urine Test Results',
         choices=TEST_RESULTS_CHOICES,
         max_length=15, blank=True, null=True)
+    
+    stool_sample_results = models.CharField(
+        verbose_name='Stool sample Results',
+        choices=TEST_RESULTS_CHOICES,
+        max_length=15, blank=True, null=True)
 
     skin_test_results = models.CharField(
         verbose_name='Skin Test Results',
@@ -81,27 +86,21 @@ class FlourishTbReferralOutcomeMixin(models.Model):
         max_length=3, blank=True, null=True)
 
     tb_treatment = models.CharField(
-        verbose_name='Were you started on TB treatment?',
+        verbose_name='Were you started on TB treatment (consists of '
+                     'four or more drugs taken over several months)?',
         choices=TB_TREATMENT_CHOICES,
         max_length=20, blank=True, null=True)
 
     other_tb_treatment = OtherCharField()
 
     tb_preventative_therapy = models.CharField(
-        verbose_name='Were you started on TB preventative therapy?treatment (consists of '
-                     'four or more drugs taken over several months)',
+        verbose_name='Were you started on TB preventative therapy (such as isoniazid or '
+                     'rifapentine/isoniazid for several months)',
         choices=YES_NO_OTHER,
         max_length=10, blank=True, null=True)
 
     other_tb_preventative_therapy = OtherCharField()
 
-    tb_isoniazid_preventative_therapy = models.CharField(
-        verbose_name='Were you started on TB preventative therapy (such as isoniazid or '
-                     'rifapentine/isoniazid for several months)? ',
-        choices=YES_NO_OTHER,
-        max_length=10, blank=True, null=True)
-
-    other_tb_isoniazid_preventative_therapy = OtherCharField()
 
     reasons = models.CharField(
         verbose_name='Reasons not able to go to TB clinic for evaluation',
