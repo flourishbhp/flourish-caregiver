@@ -401,6 +401,7 @@ list_data = {
         ('chest_xray', 'Chest Xray'),
         ('sputum_sample', 'Sputum sample'),
         ('urine_test', 'Urine test (LAM)'),
+        ('stool_sample', 'Stool sample'),
         ('skin_test', 'Skin test (TST/Mantoux)'),
         ('blood_test', 'Blood test (quantiferon)'),
         (NONE, 'None'),
