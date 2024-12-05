@@ -49,6 +49,7 @@ class AutoCompleteChildCrfs:
             'flourish_caregiver.cliniciannotesimage',
             'flourish_caregiver.cliniciannotes',
             'flourish_caregiver.childhoodleadexposurerisk'
+            'flourish_caregiver.relationshipfatherinvolvement'
         ]
 
         return models
