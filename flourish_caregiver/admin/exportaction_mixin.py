@@ -218,6 +218,10 @@ class ExportActionMixin(AdminExportHelper):
                 'subject_identifier_as_pk']
 
     @property
+    def metadata_exclude_fields(self):
+        return self.exclude_fields + ['consent_version', ]
+
+    @property
     def maternal_delivery(self):
         return django_apps.get_model('flourish_caregiver.maternaldelivery')
 

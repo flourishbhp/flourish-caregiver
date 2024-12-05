@@ -18,6 +18,7 @@ from edc_visit_tracking.model_mixins import VisitModelMixin, CaretakerFieldsMixi
 
 from ..choices import MATERNAL_VISIT_STUDY_STATUS, VISIT_REASON
 from ..choices import VISIT_INFO_SOURCE, ALIVE_DEAD_UNKNOWN
+from ..helper_classes.utils import get_child_subject_identifier_by_visit
 from ..visit_sequence import VisitSequence
 
 
@@ -98,6 +99,10 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
     objects = VisitModelManager()
 
     history = HistoricalRecords()
+
+    @property
+    def child_subject_identifier(self):
+        return get_child_subject_identifier_by_visit(self)
 
     @property
     def action_item_reason(self):
