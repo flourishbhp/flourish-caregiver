@@ -223,6 +223,7 @@ FEEDING_CHOICES = (
      'Both breastfeeding and formula feeding'),
     ('Medical complications: Infant did not feed',
      'Medical complications: Infant did not feed'),
+     (NOT_APPLICABLE, 'Not applicable')
 )
 
 FLOURISH_PARTICIPATION = (
@@ -1353,4 +1354,12 @@ NO_REFERRAL_REASONS = (
     ('no_symptoms', 'Participant no longer has symptoms'),
     ('already_evaluated', 'Participant already evaluated for TB in last month'),
     (OTHER, 'Other, specify')
+)
+
+NO_EVALUATION_REASONS = (
+    ('referral_other_clinic', 'Referral to another clinic'),
+    ('referral_hospital', 'Referral to a hospital'),
+    ('no_service_providers', 'No service providers'),
+    ('no_diagnostic_tests', 'No diagnostic tests'),
+    (OTHER, 'Other, please specify')
 )
