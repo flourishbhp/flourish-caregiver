@@ -45,6 +45,11 @@ class FlourishTbReferralOutcomeMixin(models.Model):
         verbose_name='Urine Test Results',
         choices=TEST_RESULTS_CHOICES,
         max_length=15, blank=True, null=True)
+    
+    stool_sample_results = models.CharField(
+        verbose_name='Stool sample Results',
+        choices=TEST_RESULTS_CHOICES,
+        max_length=15, blank=True, null=True)
 
     skin_test_results = models.CharField(
         verbose_name='Skin Test Results',
