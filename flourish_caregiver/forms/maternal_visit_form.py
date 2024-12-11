@@ -7,7 +7,7 @@ from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
 from edc_form_validators import FormValidatorMixin
 
 from edc_action_item.site_action_items import site_action_items
-from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT
+from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT,UNSCHEDULED
 from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, MISSED_VISIT
 from edc_visit_tracking.form_validators import VisitFormValidator
 from flourish_form_validations.form_validators import \
@@ -242,6 +242,11 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             OTHER,
             field='info_source',
             field_required='info_source_other')
+        
+        self.required_if(
+            UNSCHEDULED,
+            field='reason',
+            field_required='reason_unscheduled')
 
     def validate_against_consent_datetime(self, report_datetime):
         """Returns an instance of the current maternal consent or
