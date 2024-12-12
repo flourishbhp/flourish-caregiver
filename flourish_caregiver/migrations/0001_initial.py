@@ -45,40 +45,70 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AntenatalEnrollment',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier', models.CharField(max_length=50, unique=True, verbose_name='Subject Identifier')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
-                ('enrollment_hiv_status', models.CharField(editable=False, help_text='Auto-filled by enrollment helper', max_length=15, null=True)),
-                ('date_at_32wks', models.DateField(editable=False, help_text='Auto-filled by enrollment helper', null=True)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(max_length=50,
+                 unique=True, verbose_name='Subject Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
+                ('enrollment_hiv_status', models.CharField(editable=False,
+                 help_text='Auto-filled by enrollment helper', max_length=15, null=True)),
+                ('date_at_32wks', models.DateField(editable=False,
+                 help_text='Auto-filled by enrollment helper', null=True)),
                 ('is_eligible', models.BooleanField(editable=False)),
                 ('pending_ultrasound', models.BooleanField(editable=False)),
-                ('is_diabetic', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you diabetic?')),
-                ('will_breastfeed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='INELIGIBLE if NO', max_length=3, verbose_name='Do you intent to breast-feed your child for 6 months?')),
-                ('current_hiv_status', models.CharField(choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate'), ('NEVER', 'Never tested for HIV'), ('unknown', 'Unknown'), ('DWTA', "Don't want to answer")], help_text='if POS or NEG, ask for documentation.', max_length=30, verbose_name='What is your current HIV status?')),
-                ('evidence_hiv_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='evidence = clinic and/or IDCC records. check regimes/drugs. If NO, more criteria required.', max_length=15, null=True, verbose_name='(Interviewer) Have you seen evidence of the HIV result?')),
-                ('week32_test', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='No', max_length=3, verbose_name='Have you tested for HIV before or during this pregnancy?')),
-                ('week32_test_date', models.DateField(validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date of HIV Test')),
-                ('week32_result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What was your result?')),
-                ('evidence_32wk_hiv_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='evidence = clinic and/or IDCC records. check regimes/drugs.', max_length=15, null=True, verbose_name='(Interviewer) Have you seen evidence of the result from HIV test on or before this pregnancy?')),
-                ('will_get_arvs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If found POS by RAPID TEST. Then answer YES', max_length=15, null=True, verbose_name='(Interviewer) If HIV+ve, do records show that participant is taking, is prescribed,or will be prescribed ARVs (if newly diagnosed) during pregnancy?')),
-                ('rapid_test_done', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text="Remember, rapid test is for NEG, UNTESTED, UNKNOWN and Don't want to answer.", max_length=15, null=True, verbose_name='Was a rapid test processed?')),
-                ('rapid_test_date', models.DateField(blank=True, null=True, validators=[edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date of rapid test')),
-                ('rapid_test_result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What is the rapid test result?')),
-                ('ineligibility', models.TextField(editable=False, max_length=350, null=True, verbose_name='Reason not enrolled')),
-                ('knows_lmp', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='LMP', max_length=3, verbose_name='Does the mother know the approximate date of the first day her last menstrual period?')),
-                ('last_period_date', models.DateField(blank=True, help_text='LMP', null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='What is the approximate date of the first day of the mother’s last menstrual period')),
-                ('ga_lmp_enrollment_wks', models.IntegerField(blank=True, help_text=' (weeks of gestation at enrollment, LMP). Eligible if >21 and <29 weeks GA', null=True, verbose_name='GA by LMP at enrollment.')),
-                ('ga_lmp_anc_wks', models.IntegerField(blank=True, help_text=' (weeks of gestation at enrollment, ANC)', null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(40)], verbose_name="What is the mother's gestational age according to ANC records?")),
-                ('edd_by_lmp', models.DateField(blank=True, null=True, validators=[edc_protocol.validators.date_not_before_study_start], verbose_name='Estimated date of delivery by lmp')),
+                ('is_diabetic', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you diabetic?')),
+                ('will_breastfeed', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], help_text='INELIGIBLE if NO', max_length=3, verbose_name='Do you intent to breast-feed your child for 6 months?')),
+                ('current_hiv_status', models.CharField(choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate'), ('NEVER', 'Never tested for HIV'), (
+                    'unknown', 'Unknown'), ('DWTA', "Don't want to answer")], help_text='if POS or NEG, ask for documentation.', max_length=30, verbose_name='What is your current HIV status?')),
+                ('evidence_hiv_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')],
+                 help_text='evidence = clinic and/or IDCC records. check regimes/drugs. If NO, more criteria required.', max_length=15, null=True, verbose_name='(Interviewer) Have you seen evidence of the HIV result?')),
+                ('week32_test', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='No',
+                 max_length=3, verbose_name='Have you tested for HIV before or during this pregnancy?')),
+                ('week32_test_date', models.DateField(validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of HIV Test')),
+                ('week32_result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), (
+                    'IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What was your result?')),
+                ('evidence_32wk_hiv_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='evidence = clinic and/or IDCC records. check regimes/drugs.',
+                 max_length=15, null=True, verbose_name='(Interviewer) Have you seen evidence of the result from HIV test on or before this pregnancy?')),
+                ('will_get_arvs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If found POS by RAPID TEST. Then answer YES', max_length=15,
+                 null=True, verbose_name='(Interviewer) If HIV+ve, do records show that participant is taking, is prescribed,or will be prescribed ARVs (if newly diagnosed) during pregnancy?')),
+                ('rapid_test_done', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')],
+                 help_text="Remember, rapid test is for NEG, UNTESTED, UNKNOWN and Don't want to answer.", max_length=15, null=True, verbose_name='Was a rapid test processed?')),
+                ('rapid_test_date', models.DateField(blank=True, null=True, validators=[
+                 edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date of rapid test')),
+                ('rapid_test_result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), (
+                    'IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What is the rapid test result?')),
+                ('ineligibility', models.TextField(editable=False,
+                 max_length=350, null=True, verbose_name='Reason not enrolled')),
+                ('knows_lmp', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='LMP', max_length=3,
+                 verbose_name='Does the mother know the approximate date of the first day her last menstrual period?')),
+                ('last_period_date', models.DateField(blank=True, help_text='LMP', null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='What is the approximate date of the first day of the mother’s last menstrual period')),
+                ('ga_lmp_enrollment_wks', models.IntegerField(
+                    blank=True, help_text=' (weeks of gestation at enrollment, LMP). Eligible if >21 and <29 weeks GA', null=True, verbose_name='GA by LMP at enrollment.')),
+                ('ga_lmp_anc_wks', models.IntegerField(blank=True, help_text=' (weeks of gestation at enrollment, ANC)', null=True, validators=[django.core.validators.MinValueValidator(
+                    1), django.core.validators.MaxValueValidator(40)], verbose_name="What is the mother's gestational age according to ANC records?")),
+                ('edd_by_lmp', models.DateField(blank=True, null=True, validators=[
+                 edc_protocol.validators.date_not_before_study_start], verbose_name='Estimated date of delivery by lmp')),
             ],
             options={
                 'verbose_name': 'Maternal Antenatal Enrollment',
@@ -88,21 +118,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverMedications',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)', max_length=250, unique=True, verbose_name='Name')),
-                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required', max_length=250, unique=True, verbose_name='Stored value')),
-                ('display_index', models.IntegerField(db_index=True, default=0, help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
-                ('field_name', models.CharField(blank=True, editable=False, help_text='Not required', max_length=25, null=True)),
-                ('version', models.CharField(default='1.0', editable=False, max_length=35)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)',
+                 max_length=250, unique=True, verbose_name='Name')),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
             ],
             options={
                 'ordering': ['display_index', 'name'],
@@ -112,21 +155,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ChronicConditions',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)', max_length=250, unique=True, verbose_name='Name')),
-                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required', max_length=250, unique=True, verbose_name='Stored value')),
-                ('display_index', models.IntegerField(db_index=True, default=0, help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
-                ('field_name', models.CharField(blank=True, editable=False, help_text='Not required', max_length=25, null=True)),
-                ('version', models.CharField(default='1.0', editable=False, max_length=35)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)',
+                 max_length=250, unique=True, verbose_name='Name')),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
             ],
             options={
                 'ordering': ['display_index', 'name'],
@@ -136,7 +192,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DataSetActionItem',
             fields=[
-                ('actionitem_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='edc_action_item.actionitem')),
+                ('actionitem_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE,
+                 parent_link=True, primary_key=True, serialize=False, to='edc_action_item.actionitem')),
             ],
             options={
                 'abstract': False,
@@ -149,21 +206,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DeliveryComplications',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)', max_length=250, unique=True, verbose_name='Name')),
-                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required', max_length=250, unique=True, verbose_name='Stored value')),
-                ('display_index', models.IntegerField(db_index=True, default=0, help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
-                ('field_name', models.CharField(blank=True, editable=False, help_text='Not required', max_length=25, null=True)),
-                ('version', models.CharField(default='1.0', editable=False, max_length=35)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)',
+                 max_length=250, unique=True, verbose_name='Name')),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
             ],
             options={
                 'ordering': ['display_index', 'name'],
@@ -173,21 +243,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MaternalDiagnosesList',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)', max_length=250, unique=True, verbose_name='Name')),
-                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required', max_length=250, unique=True, verbose_name='Stored value')),
-                ('display_index', models.IntegerField(db_index=True, default=0, help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
-                ('field_name', models.CharField(blank=True, editable=False, help_text='Not required', max_length=25, null=True)),
-                ('version', models.CharField(default='1.0', editable=False, max_length=35)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)',
+                 max_length=250, unique=True, verbose_name='Name')),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
             ],
             options={
                 'ordering': ['display_index', 'name'],
@@ -197,41 +280,73 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MaternalVisit',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('visit_schedule_name', models.CharField(editable=False, help_text='the name of the visit schedule used to find the "schedule"', max_length=25)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('visit_schedule_name', models.CharField(editable=False,
+                 help_text='the name of the visit schedule used to find the "schedule"', max_length=25)),
                 ('schedule_name', models.CharField(editable=False, max_length=25)),
-                ('visit_code', models.CharField(editable=False, max_length=25, null=True)),
-                ('visit_code_sequence', models.IntegerField(blank=True, default=0, help_text='An integer to represent the sequence of additional appointments relative to the base appointment, 0, needed to complete data collection for the timepoint. (NNNN.0)', null=True, verbose_name='Sequence')),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('information_provider', models.CharField(max_length=20, verbose_name="Please indicate who provided most of the information for this participant's visit")),
-                ('information_provider_other', models.CharField(blank=True, max_length=20, null=True, verbose_name='if information provider is Other, please specify')),
-                ('is_present', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='Yes', max_length=10, verbose_name="Is the participant present at today's visit")),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of this report', validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Visit Date and Time')),
-                ('reason_unscheduled_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=25, null=True, verbose_name='If "Other" reason for unscheduled visit, specify')),
-                ('reason_missed_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=25, null=True, verbose_name='If "Other" reason for missed visit, specify')),
-                ('require_crfs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='Yes', max_length=10, verbose_name='Are scheduled data being submitted with this visit?')),
-                ('info_source_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If "Other" source of information, specify')),
-                ('comments', models.TextField(blank=True, max_length=250, null=True, verbose_name='Comment if any additional pertinent information about the participant')),
-                ('reason', models.CharField(choices=[('scheduled', 'Scheduled visit/contact'), ('missed', 'Missed Scheduled visit'), ('unscheduled', 'Unscheduled visit at which lab samples or data are being submitted'), ('lost', 'Lost to follow-up (use only when taking subject off study)'), ('failed eligibility', 'Subject failed enrollment eligibility'), ('completed protocol', 'Subject has completed the study')], max_length=25, verbose_name='Reason for visit')),
-                ('reason_missed', models.CharField(blank=True, max_length=250, null=True, verbose_name="If 'missed' above, reason scheduled visit was missed")),
-                ('reason_unscheduled', models.CharField(blank=True, max_length=25, null=True, verbose_name="If 'Unscheduled' above, provide reason for the unscheduled visit")),
-                ('study_status', models.CharField(choices=[('on study', 'On study'), ('off study', 'Off study-no further follow-up (including death); use only for last study contact')], max_length=50, verbose_name="What is the participant's current study status")),
-                ('survival_status', models.CharField(choices=[('alive', 'Alive'), ('dead', 'Dead'), ('unknown', 'Unknown')], default='alive', max_length=10, null=True, verbose_name="Participant's survival status")),
-                ('info_source', models.CharField(choices=[('participant', 'Clinic visit with participant'), ('other_contact', 'Other contact with participant (for example telephone call)'), ('other_doctor', 'Contact with external health care provider/medical doctor'), ('family', 'Contact with family or designated person who can provide information'), ('chart', 'Hospital chart or other medical record'), ('OTHER', 'Other')], default='participant', max_length=25, verbose_name='Source of information?')),
-                ('last_alive_date', models.DateField(blank=True, null=True, validators=[edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date participant last known alive')),
-                ('appointment', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='edc_appointment.appointment')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('visit_code', models.CharField(
+                    editable=False, max_length=25, null=True)),
+                ('visit_code_sequence', models.IntegerField(blank=True, default=0,
+                 help_text='An integer to represent the sequence of additional appointments relative to the base appointment, 0, needed to complete data collection for the timepoint. (NNNN.0)', null=True, verbose_name='Sequence')),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('information_provider', models.CharField(max_length=20,
+                 verbose_name="Please indicate who provided most of the information for this participant's visit")),
+                ('information_provider_other', models.CharField(blank=True, max_length=20,
+                 null=True, verbose_name='if information provider is Other, please specify')),
+                ('is_present', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], default='Yes', max_length=10, verbose_name="Is the participant present at today's visit")),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of this report', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Visit Date and Time')),
+                ('reason_unscheduled_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=25, null=True, verbose_name='If "Other" reason for unscheduled visit, specify')),
+                ('reason_missed_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=25, null=True, verbose_name='If "Other" reason for missed visit, specify')),
+                ('require_crfs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='Yes',
+                 max_length=10, verbose_name='Are scheduled data being submitted with this visit?')),
+                ('info_source_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If "Other" source of information, specify')),
+                ('comments', models.TextField(blank=True, max_length=250, null=True,
+                 verbose_name='Comment if any additional pertinent information about the participant')),
+                ('reason', models.CharField(choices=[('scheduled', 'Scheduled visit/contact'), ('missed', 'Missed Scheduled visit'), ('unscheduled', 'Unscheduled visit at which lab samples or data are being submitted'), ('lost',
+                 'Lost to follow-up (use only when taking subject off study)'), ('failed eligibility', 'Subject failed enrollment eligibility'), ('completed protocol', 'Subject has completed the study')], max_length=25, verbose_name='Reason for visit')),
+                ('reason_missed', models.CharField(blank=True, max_length=250, null=True,
+                 verbose_name="If 'missed' above, reason scheduled visit was missed")),
+                ('reason_unscheduled', models.CharField(blank=True, max_length=25, null=True,
+                 verbose_name="If 'Unscheduled' above, provide reason for the unscheduled visit")),
+                ('study_status', models.CharField(choices=[('on study', 'On study'), (
+                    'off study', 'Off study-no further follow-up (including death); use only for last study contact')], max_length=50, verbose_name="What is the participant's current study status")),
+                ('survival_status', models.CharField(choices=[('alive', 'Alive'), ('dead', 'Dead'), (
+                    'unknown', 'Unknown')], default='alive', max_length=10, null=True, verbose_name="Participant's survival status")),
+                ('info_source', models.CharField(choices=[('participant', 'Clinic visit with participant'), ('other_contact', 'Other contact with participant (for example telephone call)'), ('other_doctor', 'Contact with external health care provider/medical doctor'), (
+                    'family', 'Contact with family or designated person who can provide information'), ('chart', 'Hospital chart or other medical record'), ('OTHER', 'Other')], default='participant', max_length=25, verbose_name='Source of information?')),
+                ('last_alive_date', models.DateField(blank=True, null=True, validators=[
+                 edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date participant last known alive')),
+                ('appointment', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='edc_appointment.appointment')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Maternal Visit',
@@ -246,21 +361,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PhoneNumType',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)', max_length=250, unique=True, verbose_name='Name')),
-                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required', max_length=250, unique=True, verbose_name='Stored value')),
-                ('display_index', models.IntegerField(db_index=True, default=0, help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
-                ('field_name', models.CharField(blank=True, editable=False, help_text='Not required', max_length=25, null=True)),
-                ('version', models.CharField(default='1.0', editable=False, max_length=35)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)',
+                 max_length=250, unique=True, verbose_name='Name')),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
             ],
             options={
                 'ordering': ['display_index', 'name'],
@@ -270,21 +398,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PriorArv',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)', max_length=250, unique=True, verbose_name='Name')),
-                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required', max_length=250, unique=True, verbose_name='Stored value')),
-                ('display_index', models.IntegerField(db_index=True, default=0, help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
-                ('field_name', models.CharField(blank=True, editable=False, help_text='Not required', max_length=25, null=True)),
-                ('version', models.CharField(default='1.0', editable=False, max_length=35)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)',
+                 max_length=250, unique=True, verbose_name='Name')),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
             ],
             options={
                 'ordering': ['display_index', 'name'],
@@ -294,29 +435,45 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ReferralFormMixin',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('referred_to', models.CharField(choices=[('community_social_worker', 'Community Social Worker'), ('hospital_based_social_worker', 'Hospital-based Social Worker'), ('a&e', 'A&E'), ('psychologist', 'Psychologist'), ('psychiatrist', 'Psychiatrist'), ('OTHER', 'Other')], max_length=50, verbose_name='Referred To')),
-                ('referred_to_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('id', models.AutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('referred_to', models.CharField(choices=[('community_social_worker', 'Community Social Worker'), ('hospital_based_social_worker', 'Hospital-based Social Worker'), (
+                    'a&e', 'A&E'), ('psychologist', 'Psychologist'), ('psychiatrist', 'Psychiatrist'), ('OTHER', 'Other')], max_length=50, verbose_name='Referred To')),
+                ('referred_to_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
             ],
         ),
         migrations.CreateModel(
             name='WcsDxAdult',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)', max_length=250, unique=True, verbose_name='Name')),
-                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required', max_length=250, unique=True, verbose_name='Stored value')),
-                ('display_index', models.IntegerField(db_index=True, default=0, help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
-                ('field_name', models.CharField(blank=True, editable=False, help_text='Not required', max_length=25, null=True)),
-                ('version', models.CharField(default='1.0', editable=False, max_length=35)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('name', models.CharField(db_index=True, help_text='(suggest 40 characters max.)',
+                 max_length=250, unique=True, verbose_name='Name')),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
             ],
             options={
                 'ordering': ['display_index', 'name'],
@@ -326,41 +483,71 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UltraSound',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
                 ('action_identifier', models.CharField(max_length=25, null=True)),
                 ('subject_identifier', models.CharField(max_length=50)),
                 ('tracking_identifier', models.CharField(max_length=30, null=True)),
-                ('related_tracking_identifier', models.CharField(max_length=30, null=True)),
-                ('parent_tracking_identifier', models.CharField(max_length=30, null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('bpd', models.DecimalField(decimal_places=2, help_text='Units in cm.', max_digits=6, validators=[flourish_caregiver.validators.validate_bpd], verbose_name='BPD?')),
-                ('hc', models.DecimalField(decimal_places=2, help_text='Units in cm.', max_digits=6, validators=[flourish_caregiver.validators.validate_hc], verbose_name='HC?')),
-                ('ac', models.DecimalField(decimal_places=2, help_text='Units in cm.', max_digits=6, validators=[flourish_caregiver.validators.validate_ac], verbose_name='AC?')),
-                ('fl', models.DecimalField(decimal_places=2, help_text='Units in cm.', max_digits=6, validators=[flourish_caregiver.validators.validate_fl], verbose_name='FL?')),
-                ('amniotic_fluid_volume', models.CharField(choices=[('0', 'Normal'), ('1', 'Abnormal')], max_length=10, verbose_name='Amniotic fluid volume?')),
-                ('number_of_gestations', models.CharField(choices=[('0', '0'), ('1', '1'), ('2', '2'), ('3', '3')], help_text='If number is not equal to 1, then participant goes off study.', max_length=3, verbose_name='Number of viable gestations seen?')),
-                ('ga_by_lmp', models.IntegerField(blank=True, help_text='Units in weeks. Derived variable, see AntenatalEnrollment.', null=True, verbose_name='GA by LMP at ultrasound date')),
-                ('ga_by_ultrasound_wks', models.IntegerField(help_text='Units in weeks.', validators=[flourish_caregiver.validators.validate_ga_by_ultrasound], verbose_name='GA by ultrasound in weeks')),
-                ('ga_by_ultrasound_days', models.IntegerField(help_text='must be less than 7days.', verbose_name='GA by ultrasound days offset')),
-                ('est_fetal_weight', models.DecimalField(decimal_places=2, help_text='Units in grams.', max_digits=8, validators=[flourish_caregiver.validators.validate_fetal_weight], verbose_name='Estimated fetal weight')),
-                ('est_edd_ultrasound', models.DateField(help_text='EDD', verbose_name='Estimated date of delivery by ultrasound')),
-                ('edd_confirmed', models.DateField(help_text='EDD Confirmed. Derived variable, see AntenatalEnrollment.', verbose_name='EDD Confirmed.')),
-                ('ga_confirmed', models.IntegerField(help_text='Derived variable.', verbose_name='GA confirmed.')),
-                ('ga_confrimation_method', models.CharField(choices=[('0', '0'), ('1', '1')], help_text='0=EDD Confirmed by edd_by_lmp, 1=EDD Confirmed by edd_by_ultrasound.', max_length=3, verbose_name='The method used to derive edd_confirmed.')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('related_tracking_identifier',
+                 models.CharField(max_length=30, null=True)),
+                ('parent_tracking_identifier',
+                 models.CharField(max_length=30, null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('bpd', models.DecimalField(decimal_places=2, help_text='Units in cm.', max_digits=6,
+                 validators=[flourish_caregiver.validators.validate_bpd], verbose_name='BPD?')),
+                ('hc', models.DecimalField(decimal_places=2, help_text='Units in cm.', max_digits=6,
+                 validators=[flourish_caregiver.validators.validate_hc], verbose_name='HC?')),
+                ('ac', models.DecimalField(decimal_places=2, help_text='Units in cm.', max_digits=6,
+                 validators=[flourish_caregiver.validators.validate_ac], verbose_name='AC?')),
+                ('fl', models.DecimalField(decimal_places=2, help_text='Units in cm.', max_digits=6,
+                 validators=[flourish_caregiver.validators.validate_fl], verbose_name='FL?')),
+                ('amniotic_fluid_volume', models.CharField(choices=[
+                 ('0', 'Normal'), ('1', 'Abnormal')], max_length=10, verbose_name='Amniotic fluid volume?')),
+                ('number_of_gestations', models.CharField(choices=[('0', '0'), ('1', '1'), ('2', '2'), (
+                    '3', '3')], help_text='If number is not equal to 1, then participant goes off study.', max_length=3, verbose_name='Number of viable gestations seen?')),
+                ('ga_by_lmp', models.IntegerField(blank=True, help_text='Units in weeks. Derived variable, see AntenatalEnrollment.',
+                 null=True, verbose_name='GA by LMP at ultrasound date')),
+                ('ga_by_ultrasound_wks', models.IntegerField(help_text='Units in weeks.', validators=[
+                 flourish_caregiver.validators.validate_ga_by_ultrasound], verbose_name='GA by ultrasound in weeks')),
+                ('ga_by_ultrasound_days', models.IntegerField(
+                    help_text='must be less than 7days.', verbose_name='GA by ultrasound days offset')),
+                ('est_fetal_weight', models.DecimalField(decimal_places=2, help_text='Units in grams.', max_digits=8, validators=[
+                 flourish_caregiver.validators.validate_fetal_weight], verbose_name='Estimated fetal weight')),
+                ('est_edd_ultrasound', models.DateField(help_text='EDD',
+                 verbose_name='Estimated date of delivery by ultrasound')),
+                ('edd_confirmed', models.DateField(
+                    help_text='EDD Confirmed. Derived variable, see AntenatalEnrollment.', verbose_name='EDD Confirmed.')),
+                ('ga_confirmed', models.IntegerField(
+                    help_text='Derived variable.', verbose_name='GA confirmed.')),
+                ('ga_confrimation_method', models.CharField(choices=[
+                 ('0', '0'), ('1', '1')], help_text='0=EDD Confirmed by edd_by_lmp, 1=EDD Confirmed by edd_by_ultrasound.', max_length=3, verbose_name='The method used to derive edd_confirmed.')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'UltraSound Form',
@@ -370,34 +557,60 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TbScreenPreg',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('have_cough', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Have you had a cough for ≥2 weeks?')),
-                ('have_fever', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you currently have a fever?')),
-                ('night_sweats', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], help_text='A patient is considered to have night sweats if they have had more than two nights of waking up with their night clothing drenched due to sweating with a need to change the night clothing', max_length=30, verbose_name='Do you currently have night sweats?')),
-                ('weight_loss', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you have any unexplained weight loss?')),
-                ('cough_blood', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Have you coughed up blood in the last 2 weeks?')),
-                ('enlarged_lymph', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you currently have enlarged lymph nodes?')),
-                ('unexplained_fatigue', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you have unexplained fatigue?')),
-                ('tb_screened', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Were you screened for TB at a routine healthcare encounter with the four screening questions (cough for 2 weeks, fever, weight loss, night sweats) since conception?')),
-                ('where_screened', models.CharField(blank=True, choices=[('antenatal_visit', 'Antenatal visit'), ('idcc', 'IDCC'), ('postpartum_visit', 'Postpartum visit'), ('hospital', 'Hospital '), ('OTHER', 'Other ')], max_length=30, null=True, verbose_name='Where were you screened?')),
-                ('where_screened_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If other, specify')),
-                ('tb_symptom_screened', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Did you screen positive for the TB symptom screen?')),
-                ('diagnostic_evaluation', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Were you referred for TB diagnostic evaluation? ')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('have_cough', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Have you had a cough for ≥2 weeks?')),
+                ('have_fever', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you currently have a fever?')),
+                ('night_sweats', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')],
+                 help_text='A patient is considered to have night sweats if they have had more than two nights of waking up with their night clothing drenched due to sweating with a need to change the night clothing', max_length=30, verbose_name='Do you currently have night sweats?')),
+                ('weight_loss', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you have any unexplained weight loss?')),
+                ('cough_blood', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Have you coughed up blood in the last 2 weeks?')),
+                ('enlarged_lymph', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you currently have enlarged lymph nodes?')),
+                ('unexplained_fatigue', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you have unexplained fatigue?')),
+                ('tb_screened', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30,
+                 verbose_name='Were you screened for TB at a routine healthcare encounter with the four screening questions (cough for 2 weeks, fever, weight loss, night sweats) since conception?')),
+                ('where_screened', models.CharField(blank=True, choices=[('antenatal_visit', 'Antenatal visit'), ('idcc', 'IDCC'), ('postpartum_visit', 'Postpartum visit'), (
+                    'hospital', 'Hospital '), ('OTHER', 'Other ')], max_length=30, null=True, verbose_name='Where were you screened?')),
+                ('where_screened_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If other, specify')),
+                ('tb_symptom_screened', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Did you screen positive for the TB symptom screen?')),
+                ('diagnostic_evaluation', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Were you referred for TB diagnostic evaluation? ')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'TB Screen for Pregnant Women',
@@ -407,37 +620,66 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TbPresenceHouseholdMembers',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('tb_diagnosed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Has any member of your household been diagnosed with tuberculosis in the last 12 months?')),
-                ('tb_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), ('sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you.')),
-                ('tb_ind_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
-                ('cough_signs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=20, verbose_name='Has any member of your household had cough for two weeks or more in the last 12 months? ')),
-                ('cough_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), ('sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you')),
-                ('cough_ind_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
-                ('fever_signs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Has any member of your household had unexplained fever concerning for tuberculosis in the last 12 months?')),
-                ('fever_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), ('sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you')),
-                ('fever_ind_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
-                ('night_sweats', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Has any member of your household had night sweats in the last 12 months? ')),
-                ('sweat_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), ('sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you')),
-                ('sweat_ind_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
-                ('weight_loss', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Has any member of your household had unexplained weight loss in the last 12 months? ')),
-                ('weight_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), ('sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you')),
-                ('weight_ind_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('tb_diagnosed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')],
+                 max_length=30, verbose_name='Has any member of your household been diagnosed with tuberculosis in the last 12 months?')),
+                ('tb_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), (
+                    'sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you.')),
+                ('tb_ind_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
+                ('cough_signs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')],
+                 max_length=20, verbose_name='Has any member of your household had cough for two weeks or more in the last 12 months? ')),
+                ('cough_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), (
+                    'sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you')),
+                ('cough_ind_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
+                ('fever_signs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')],
+                 max_length=30, verbose_name='Has any member of your household had unexplained fever concerning for tuberculosis in the last 12 months?')),
+                ('fever_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), (
+                    'sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you')),
+                ('fever_ind_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
+                ('night_sweats', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Has any member of your household had night sweats in the last 12 months? ')),
+                ('sweat_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), (
+                    'sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you')),
+                ('sweat_ind_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
+                ('weight_loss', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')],
+                 max_length=30, verbose_name='Has any member of your household had unexplained weight loss in the last 12 months? ')),
+                ('weight_ind_rel', models.CharField(blank=True, choices=[('partner', 'Partner'), ('child', 'Child'), ('mother', 'Mother'), ('father', 'Father'), (
+                    'sibling', 'Sibling'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Please indicate the relationship of this individual or individuals to you')),
+                ('weight_ind_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other, specify...')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Presence of TB Symptoms in Household Members for Pregnant Women',
@@ -447,32 +689,56 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TbHistoryPreg',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('prior_tb_infec', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], help_text='TB infection, known as latent TB, is defined as persons who are infected by the bacterium, M. tuberculosis, but have no TB symptoms. TB infection is diagnosed with a positive tuberculin skin test (TST) or IGRA lab test. ', max_length=30, verbose_name='Do you have a prior history of TB infection?')),
-                ('history_of_tbt', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you have a prior history of taking isoniazid for TB preventative therapy (TPT)')),
-                ('tbt_completed', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='Did you complete your TB preventative therapy (TPT)?')),
-                ('prior_tb_history', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], help_text='TB disease, known as active TB, is defined as persons who are infected by the bacterium, M. tuberculosis, with TB symptoms or positive laboratory findings, such as Gene Xpert or sputum culture.', max_length=30, verbose_name='Do you have a prior history of TB disease?')),
-                ('tb_diagnosis_type', models.CharField(blank=True, choices=[('pulmonary', 'Pulmonary'), ('extra_pulmonary', 'Extra-pulmonary'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='What type of TB were you diagnosed with?')),
-                ('extra_pulmonary_loc', models.CharField(blank=True, choices=[('lymph_nodes', 'Lymph nodes'), ('abdomen', 'Abdomen '), ('bones', 'Bones '), ('brain', 'Brrain'), ('unknown', 'Unknown')], max_length=40, null=True, verbose_name='Where was the location of your extra-pulmonary TB?')),
-                ('prior_treatmnt_history', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], help_text='TB treatment generally requires 4 drugs for 6 months or longer.', max_length=30, verbose_name='Do you have a prior history of taking TB treatment?')),
-                ('tb_drugs_freq', models.CharField(blank=True, choices=[('4_drugs', '4 drugs'), ('more_than_4', 'More than 4 drugs'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='How many drugs did you take for TB treatment?')),
-                ('iv_meds_used', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='Did you take any intravenous (IV) medications during TB treatment?')),
-                ('tb_treatmnt_completed', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='Did you complete TB treatment? ')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('prior_tb_infec', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')],
+                 help_text='TB infection, known as latent TB, is defined as persons who are infected by the bacterium, M. tuberculosis, but have no TB symptoms. TB infection is diagnosed with a positive tuberculin skin test (TST) or IGRA lab test. ', max_length=30, verbose_name='Do you have a prior history of TB infection?')),
+                ('history_of_tbt', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, verbose_name='Do you have a prior history of taking isoniazid for TB preventative therapy (TPT)')),
+                ('tbt_completed', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='Did you complete your TB preventative therapy (TPT)?')),
+                ('prior_tb_history', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')],
+                 help_text='TB disease, known as active TB, is defined as persons who are infected by the bacterium, M. tuberculosis, with TB symptoms or positive laboratory findings, such as Gene Xpert or sputum culture.', max_length=30, verbose_name='Do you have a prior history of TB disease?')),
+                ('tb_diagnosis_type', models.CharField(blank=True, choices=[('pulmonary', 'Pulmonary'), ('extra_pulmonary', 'Extra-pulmonary'), (
+                    'unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='What type of TB were you diagnosed with?')),
+                ('extra_pulmonary_loc', models.CharField(blank=True, choices=[('lymph_nodes', 'Lymph nodes'), ('abdomen', 'Abdomen '), ('bones', 'Bones '), (
+                    'brain', 'Brrain'), ('unknown', 'Unknown')], max_length=40, null=True, verbose_name='Where was the location of your extra-pulmonary TB?')),
+                ('prior_treatmnt_history', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('DWTA', 'Prefer not to answer')],
+                 help_text='TB treatment generally requires 4 drugs for 6 months or longer.', max_length=30, verbose_name='Do you have a prior history of taking TB treatment?')),
+                ('tb_drugs_freq', models.CharField(blank=True, choices=[('4_drugs', '4 drugs'), ('more_than_4', 'More than 4 drugs'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='How many drugs did you take for TB treatment?')),
+                ('iv_meds_used', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='Did you take any intravenous (IV) medications during TB treatment?')),
+                ('tb_treatmnt_completed', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'DWTA', 'Prefer not to answer')], max_length=30, null=True, verbose_name='Did you complete TB treatment? ')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'History of TB for Pregnant Women',
@@ -482,31 +748,54 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SubstanceUsePriorPregnancy',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('smoked_prior_to_preg', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever smoked cigarettes prior to this pregnancy?')),
-                ('smoking_prior_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), ('2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
-                ('alcohol_prior_pregnancy', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever drank alcohol prior to this pregnancy?')),
-                ('alcohol_prior_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), ('2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
-                ('marijuana_prior_preg', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever used marijuana/weed prior to this pregnancy?')),
-                ('marijuana_prior_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), ('2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
-                ('other_illicit_substances_prior_preg', models.CharField(blank=True, max_length=500, null=True, verbose_name='Please list any other illicit substances that the participant reports using prior to this pregnancy.')),
-                ('khat_prior_preg', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever used Khat prior to this pregnancy?')),
-                ('khat_prior_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once_every_few_weeks', 'Once every few weeks'), ('weekly', 'Weekly'), ('two_three_times_per_month', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('smoked_prior_to_preg', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever smoked cigarettes prior to this pregnancy?')),
+                ('smoking_prior_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), (
+                    '2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
+                ('alcohol_prior_pregnancy', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever drank alcohol prior to this pregnancy?')),
+                ('alcohol_prior_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), (
+                    '2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
+                ('marijuana_prior_preg', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever used marijuana/weed prior to this pregnancy?')),
+                ('marijuana_prior_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), (
+                    '2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
+                ('other_illicit_substances_prior_preg', models.CharField(blank=True, max_length=500, null=True,
+                 verbose_name='Please list any other illicit substances that the participant reports using prior to this pregnancy.')),
+                ('khat_prior_preg', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever used Khat prior to this pregnancy?')),
+                ('khat_prior_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once_every_few_weeks', 'Once every few weeks'), ('weekly', 'Weekly'), (
+                    'two_three_times_per_month', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Substance Use Prior to Pregnancy',
@@ -517,31 +806,54 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SubstanceUseDuringPregnancy',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('smoked_during_preg', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever smoked cigarettes during this pregnancy?')),
-                ('smoking_during_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), ('2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
-                ('alcohol_during_pregnancy', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever drank alcohol during this pregnancy?')),
-                ('alcohol_during_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), ('2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
-                ('marijuana_during_preg', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever used marijuana/weed during this pregnancy?')),
-                ('marijuana_during_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), ('2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
-                ('other_illicit_substances_during_preg', models.CharField(blank=True, max_length=500, null=True, verbose_name='Please list any other illicit substances that the participant reports using during this pregnancy.')),
-                ('khat_during_preg', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever used Khat during this pregnancy?')),
-                ('khat_during_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once_every_few_weeks', 'Once every few weeks'), ('weekly', 'Weekly'), ('two_three_times_per_month', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('smoked_during_preg', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever smoked cigarettes during this pregnancy?')),
+                ('smoking_during_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), (
+                    '2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
+                ('alcohol_during_pregnancy', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever drank alcohol during this pregnancy?')),
+                ('alcohol_during_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), (
+                    '2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
+                ('marijuana_during_preg', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever used marijuana/weed during this pregnancy?')),
+                ('marijuana_during_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once every few days', 'Once every few days'), ('weekly', 'Weekly'), (
+                    '2-3 times per month or less', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much: ')),
+                ('other_illicit_substances_during_preg', models.CharField(blank=True, max_length=500, null=True,
+                 verbose_name='Please list any other illicit substances that the participant reports using during this pregnancy.')),
+                ('khat_during_preg', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Has the participant ever used Khat during this pregnancy?')),
+                ('khat_during_preg_freq', models.CharField(blank=True, choices=[('daily', 'Daily'), ('once_every_few_weeks', 'Once every few weeks'), ('weekly', 'Weekly'), (
+                    'two_three_times_per_month', '2-3 times per month or less')], max_length=30, null=True, verbose_name='If yes, please indicate how much')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Substance Use During Pregnancy',
@@ -552,70 +864,128 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SubjectConsent',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier_as_pk', models.UUIDField(default=uuid.uuid4, editable=False)),
-                ('subject_identifier_aka', models.CharField(editable=False, help_text='track a previously allocated identifier.', max_length=50, null=True, verbose_name='Subject Identifier a.k.a')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('citizen', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the participant a Botswana citizen? ')),
-                ('legal_marriage', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A', help_text="If 'No', participant may not be consented.", max_length=3, null=True, verbose_name='If not a citizen, is the participant legally married to a Botswana citizen?')),
-                ('marriage_certificate', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A', help_text="If 'No', participant may not be consented.", max_length=3, null=True, verbose_name='[Interviewer] Has the participant produced the marriage certificate as proof? ')),
-                ('marriage_certificate_no', models.CharField(blank=True, help_text='e.g. 000/YYYY', max_length=9, null=True, verbose_name='What is the marriage certificate number?')),
-                ('identity', django_crypto_fields.fields.identity_field.IdentityField(help_text=' (Encryption: RSA local)', max_length=71, verbose_name='Identity number')),
-                ('confirm_identity', django_crypto_fields.fields.identity_field.IdentityField(help_text='Retype the identity number (Encryption: RSA local)', max_length=71, null=True)),
-                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True)),
-                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
-                ('initials', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[django.core.validators.RegexValidator(message='Ensure initials consist of letters only in upper case, no spaces.', regex='^[A-Z]{2,3}$')])),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier_as_pk', models.UUIDField(
+                    default=uuid.uuid4, editable=False)),
+                ('subject_identifier_aka', models.CharField(editable=False, help_text='track a previously allocated identifier.',
+                 max_length=50, null=True, verbose_name='Subject Identifier a.k.a')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('citizen', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the participant a Botswana citizen? ')),
+                ('legal_marriage', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A', help_text="If 'No', participant may not be consented.",
+                 max_length=3, null=True, verbose_name='If not a citizen, is the participant legally married to a Botswana citizen?')),
+                ('marriage_certificate', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A',
+                 help_text="If 'No', participant may not be consented.", max_length=3, null=True, verbose_name='[Interviewer] Has the participant produced the marriage certificate as proof? ')),
+                ('marriage_certificate_no', models.CharField(blank=True, help_text='e.g. 000/YYYY',
+                 max_length=9, null=True, verbose_name='What is the marriage certificate number?')),
+                ('identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    help_text=' (Encryption: RSA local)', max_length=71, verbose_name='Identity number')),
+                ('confirm_identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    help_text='Retype the identity number (Encryption: RSA local)', max_length=71, null=True)),
+                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True)),
+                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
+                ('initials', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True,
+                 validators=[django.core.validators.RegexValidator(message='Ensure initials consist of letters only in upper case, no spaces.', regex='^[A-Z]{2,3}$')])),
                 ('dob', models.DateField(null=True, verbose_name='Date of birth')),
-                ('is_dob_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedField(choices=[('-', 'No'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), ('YMD', 'Yes, estimated Year, Month and Day')], help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, null=True, verbose_name='Is date of birth estimated?')),
-                ('guardian_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is a minor.<BR>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)", max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Guardian's last and first name")),
+                ('is_dob_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedField(choices=[('-', 'No'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), (
+                    'YMD', 'Yes, estimated Year, Month and Day')], help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, null=True, verbose_name='Is date of birth estimated?')),
+                ('guardian_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is a minor.<BR>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)",
+                 max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Guardian's last and first name")),
                 ('subject_type', models.CharField(max_length=25)),
-                ('is_incarcerated', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="( if 'Yes' STOP participant cannot be consented )", max_length=3, null=True, validators=[edc_consent.validators.eligible_if_no], verbose_name='Is the participant under involuntary incarceration?')),
-                ('is_literate', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="If 'No' provide witness's name on this form and signature on the paper document.", max_length=3, verbose_name='Is the participant literate?')),
-                ('witness_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is illiterate.<br>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)", max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Witness's last and first name")),
-                ('language', models.CharField(choices=[('tn', 'Setswana'), ('en', 'English')], help_text='The language used for the consent process will also be used during data collection.', max_length=25, verbose_name='Language of consent')),
-                ('is_verified', models.BooleanField(default=False, editable=False)),
-                ('is_verified_datetime', models.DateTimeField(editable=False, null=True)),
-                ('verified_by', models.CharField(editable=False, max_length=25, null=True)),
-                ('consent_datetime', models.DateTimeField(validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Consent date and time')),
+                ('is_incarcerated', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="( if 'Yes' STOP participant cannot be consented )", max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_no], verbose_name='Is the participant under involuntary incarceration?')),
+                ('is_literate', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], help_text="If 'No' provide witness's name on this form and signature on the paper document.", max_length=3, verbose_name='Is the participant literate?')),
+                ('witness_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is illiterate.<br>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)",
+                 max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Witness's last and first name")),
+                ('language', models.CharField(choices=[('tn', 'Setswana'), ('en', 'English')],
+                 help_text='The language used for the consent process will also be used during data collection.', max_length=25, verbose_name='Language of consent')),
+                ('is_verified', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_verified_datetime', models.DateTimeField(
+                    editable=False, null=True)),
+                ('verified_by', models.CharField(
+                    editable=False, max_length=25, null=True)),
+                ('consent_datetime', models.DateTimeField(validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Consent date and time')),
                 ('report_datetime', models.DateTimeField(editable=False, null=True)),
-                ('version', models.CharField(editable=False, help_text="See 'Consent Type' for consent versions by period.", max_length=10, verbose_name='Consent version')),
+                ('version', models.CharField(editable=False, help_text="See 'Consent Type' for consent versions by period.",
+                 max_length=10, verbose_name='Consent version')),
                 ('updates_versions', models.BooleanField(default=False)),
-                ('sid', models.CharField(blank=True, editable=False, help_text='Used for randomization against a prepared rando-list.', max_length=15, null=True, verbose_name='SID')),
-                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comment')),
-                ('dm_comment', models.CharField(editable=False, help_text='see also edc.data manager.', max_length=150, null=True, verbose_name='Data Management comment')),
-                ('consent_identifier', models.UUIDField(default=uuid.uuid4, editable=False, help_text='A unique identifier for this consent instance')),
-                ('consent_reviewed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, verbose_name='I have reviewed the consent with the participant')),
-                ('study_questions', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, verbose_name='I have answered all questions the participant had about the study')),
-                ('assessment_score', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, verbose_name='I have asked the participant questions about this study and the participant has demonstrated understanding')),
-                ('consent_signature', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, verbose_name='I have verified that the participant has signed the consent form')),
-                ('consent_copy', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Declined', 'Yes, but subject declined copy')], help_text='If declined, return copy with the consent', max_length=20, null=True, verbose_name='I have provided the participant with a copy of their signed informed consent')),
-                ('subject_identifier', models.CharField(max_length=50, null=True, verbose_name='Subject Identifier')),
-                ('screening_identifier', models.CharField(max_length=50, verbose_name='Screening identifier')),
-                ('gender', models.CharField(choices=[('M', 'Male'), ('F', 'Female')], max_length=1, verbose_name='Gender')),
-                ('identity_type', models.CharField(choices=[('country_id', 'Country ID number'), ('country_id_rcpt', 'Country ID receipt'), ('passport', 'Passport'), ('OTHER', 'Other')], max_length=25, verbose_name='What type of identity number is this?')),
-                ('recruit_source', models.CharField(choices=[('ANC clinic staff', 'ANC clinic staff'), ('BHP recruiter/clinician', 'BHP recruiter/clinician'), ('OTHER', 'Other, specify')], max_length=75, verbose_name='The caregiver first learned about the flourish study from ')),
-                ('recruit_source_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other recruitment source, specify...')),
-                ('recruitment_clinic', models.CharField(choices=[('Prior', 'Prior BHP Study'), ('PMH', 'Gaborone(PMH)'), ('G.West Clinic', 'G.West Clinic'), ('BH3 Clinic', 'BH3 Clinic'), ('Ext2', 'Extension 2 Clinic'), ('Nkoyaphiri', 'Nkoyaphiri Clinic'), ('Lesirane', 'Lesirane Clinic'), ('Old Naledi', 'Old Naledi'), ('Mafitlhakgosi', 'Mafitlhakgosi'), ('Schools', 'Schools'), ('OTHER', 'Other health facilities not associated with study site')], max_length=100, verbose_name='The caregiver was recruited from')),
-                ('recruitment_clinic_other', models.CharField(blank=True, max_length=100, null=True, verbose_name='if other recruitment, specify...')),
-                ('remain_in_study', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, verbose_name='Are you willing to remain in the study area until 2025?')),
-                ('biological_caregiver', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you the biological mother to the child or children?')),
-                ('hiv_testing', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation', max_length=3, verbose_name='If HIV status not known, are you willing to undergo HIV testing and counseling?')),
-                ('breastfeed_intent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation', max_length=3, verbose_name='Do you intend on breast feeding your infant?')),
-                ('future_contact', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you give us permission to be contacted for future studies?')),
-                ('child_consent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation', max_length=3, verbose_name='Are you willing to consent for your child’s participation in FLOURISH?')),
-                ('ineligibility', models.TextField(editable=False, max_length=150, null=True, verbose_name='Reason not eligible')),
-                ('is_eligible', models.BooleanField(default=False, editable=False)),
-                ('multiple_birth', models.BooleanField(default=False, editable=False)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('sid', models.CharField(blank=True, editable=False,
+                 help_text='Used for randomization against a prepared rando-list.', max_length=15, null=True, verbose_name='SID')),
+                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comment')),
+                ('dm_comment', models.CharField(editable=False, help_text='see also edc.data manager.',
+                 max_length=150, null=True, verbose_name='Data Management comment')),
+                ('consent_identifier', models.UUIDField(default=uuid.uuid4, editable=False,
+                 help_text='A unique identifier for this consent instance')),
+                ('consent_reviewed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.',
+                 max_length=3, null=True, verbose_name='I have reviewed the consent with the participant')),
+                ('study_questions', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.',
+                 max_length=3, null=True, verbose_name='I have answered all questions the participant had about the study')),
+                ('assessment_score', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3,
+                 null=True, verbose_name='I have asked the participant questions about this study and the participant has demonstrated understanding')),
+                ('consent_signature', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.',
+                 max_length=3, null=True, verbose_name='I have verified that the participant has signed the consent form')),
+                ('consent_copy', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Declined', 'Yes, but subject declined copy')],
+                 help_text='If declined, return copy with the consent', max_length=20, null=True, verbose_name='I have provided the participant with a copy of their signed informed consent')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, null=True, verbose_name='Subject Identifier')),
+                ('screening_identifier', models.CharField(
+                    max_length=50, verbose_name='Screening identifier')),
+                ('gender', models.CharField(choices=[
+                 ('M', 'Male'), ('F', 'Female')], max_length=1, verbose_name='Gender')),
+                ('identity_type', models.CharField(choices=[('country_id', 'Country ID number'), ('country_id_rcpt', 'Country ID receipt'), (
+                    'passport', 'Passport'), ('OTHER', 'Other')], max_length=25, verbose_name='What type of identity number is this?')),
+                ('recruit_source', models.CharField(choices=[('ANC clinic staff', 'ANC clinic staff'), ('BHP recruiter/clinician', 'BHP recruiter/clinician'), (
+                    'OTHER', 'Other, specify')], max_length=75, verbose_name='The caregiver first learned about the flourish study from ')),
+                ('recruit_source_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other recruitment source, specify...')),
+                ('recruitment_clinic', models.CharField(choices=[('Prior', 'Prior BHP Study'), ('PMH', 'Gaborone(PMH)'), ('G.West Clinic', 'G.West Clinic'), ('BH3 Clinic', 'BH3 Clinic'), ('Ext2', 'Extension 2 Clinic'), ('Nkoyaphiri', 'Nkoyaphiri Clinic'), (
+                    'Lesirane', 'Lesirane Clinic'), ('Old Naledi', 'Old Naledi'), ('Mafitlhakgosi', 'Mafitlhakgosi'), ('Schools', 'Schools'), ('OTHER', 'Other health facilities not associated with study site')], max_length=100, verbose_name='The caregiver was recruited from')),
+                ('recruitment_clinic_other', models.CharField(blank=True, max_length=100,
+                 null=True, verbose_name='if other recruitment, specify...')),
+                ('remain_in_study', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.',
+                 max_length=3, verbose_name='Are you willing to remain in the study area until 2025?')),
+                ('biological_caregiver', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you the biological mother to the child or children?')),
+                ('hiv_testing', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation',
+                 max_length=3, verbose_name='If HIV status not known, are you willing to undergo HIV testing and counseling?')),
+                ('breastfeed_intent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')],
+                 help_text='If ‘No’ ineligible for study participation', max_length=3, verbose_name='Do you intend on breast feeding your infant?')),
+                ('future_contact', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you give us permission to be contacted for future studies?')),
+                ('child_consent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation',
+                 max_length=3, verbose_name='Are you willing to consent for your child’s participation in FLOURISH?')),
+                ('ineligibility', models.TextField(editable=False,
+                 max_length=150, null=True, verbose_name='Reason not eligible')),
+                ('is_eligible', models.BooleanField(
+                    default=False, editable=False)),
+                ('multiple_birth', models.BooleanField(
+                    default=False, editable=False)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Adult Participation Consent',
@@ -632,34 +1002,60 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SocioDemographicData',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('marital_status', models.CharField(choices=[('Single', 'Single'), ('Married', 'Married'), ('Cohabiting', 'Cohabiting'), ('Widowed', 'Widowed'), ('Divorced', 'Divorced'), ('OTHER', 'Other, specify')], max_length=25, verbose_name='Current Marital status ')),
-                ('marital_status_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other specify...')),
-                ('ethnicity', models.CharField(choices=[('Black African', 'Black African'), ('Caucasian', 'Caucasian'), ('Asian', 'Asian'), ('OTHER', 'Other, specify')], max_length=25, verbose_name='Ethnicity ')),
-                ('ethnicity_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other specify...')),
-                ('highest_education', models.CharField(choices=[('None', 'None'), ('Primary', 'Primary'), ('Junior Secondary', 'Junior Secondary'), ('Senior Secondary', 'Senior Secondary'), ('Tertiary', 'Tertiary')], max_length=25, verbose_name='Highest educational level completed ')),
-                ('current_occupation', models.CharField(choices=[('Housewife', 'Housewife'), ('Salaried (government)', 'Salaried (government)'), ('Salaried (private, not including domestic work)', 'Salaried (private, not including domestic work)'), ('Domestic work (paid)', 'Domestic work (paid)'), ('Self-employed', 'Self-employed'), ('Student', 'Student'), ('Unemployed', 'Unemployed'), ('OTHER', 'Other, specify')], max_length=75, verbose_name='Current occupation')),
-                ('current_occupation_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other specify...')),
-                ('provides_money', models.CharField(choices=[('You', 'You'), ('Partner/husband', 'Partner/husband'), ('Mother', 'Mother'), ('Father', 'Father'), ('Sister', 'Sister'), ('Brother', 'Brother'), ('Aunt', 'Aunt'), ('Uncle', 'Uncle'), ('Grandmother', 'Grandmother'), ('Grandfather', 'Grandfather'), ('Mother-in-law or Father-in-law', 'Mother-in-law or Father-in-law'), ('Friend', 'Friend'), ('Work collegues', 'Work collegues'), ('Unsure', 'Unsure'), ('OTHER', 'Other, specify')], max_length=50, verbose_name='Who provides most of your money?')),
-                ('provides_money_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other specify...')),
-                ('money_earned', models.CharField(choices=[('None', 'None'), ('<P200 per month / <P47 per week', '<P200 per month / <P47 per week'), ('P200-500 per month / P47-116 per week', 'P200-500 per month / P47-116 per week'), ('P501-1000 per month / P117 - 231 per week', 'P501-1000 per month / P117 - 231 per week'), ('P1001-5000 per month / P212 - 1157 per week', 'P1001-5000 per month / P212 - 1157 per week'), ('>P5000 per month / >P1157 per week', '>P5000 per month / >P1157 per week'), ('Unsure', 'Unsure'), ('OTHER', 'Other, specify')], max_length=50, verbose_name='How much money do you personally earn? ')),
-                ('money_earned_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other specify...')),
-                ('stay_with_child', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you currently living in the same household as child who is also participating in the FLOURISH study?')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('marital_status', models.CharField(choices=[('Single', 'Single'), ('Married', 'Married'), ('Cohabiting', 'Cohabiting'), (
+                    'Widowed', 'Widowed'), ('Divorced', 'Divorced'), ('OTHER', 'Other, specify')], max_length=25, verbose_name='Current Marital status ')),
+                ('marital_status_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other specify...')),
+                ('ethnicity', models.CharField(choices=[('Black African', 'Black African'), ('Caucasian', 'Caucasian'), (
+                    'Asian', 'Asian'), ('OTHER', 'Other, specify')], max_length=25, verbose_name='Ethnicity ')),
+                ('ethnicity_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other specify...')),
+                ('highest_education', models.CharField(choices=[('None', 'None'), ('Primary', 'Primary'), ('Junior Secondary', 'Junior Secondary'), (
+                    'Senior Secondary', 'Senior Secondary'), ('Tertiary', 'Tertiary')], max_length=25, verbose_name='Highest educational level completed ')),
+                ('current_occupation', models.CharField(choices=[('Housewife', 'Housewife'), ('Salaried (government)', 'Salaried (government)'), ('Salaried (private, not including domestic work)', 'Salaried (private, not including domestic work)'), (
+                    'Domestic work (paid)', 'Domestic work (paid)'), ('Self-employed', 'Self-employed'), ('Student', 'Student'), ('Unemployed', 'Unemployed'), ('OTHER', 'Other, specify')], max_length=75, verbose_name='Current occupation')),
+                ('current_occupation_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other specify...')),
+                ('provides_money', models.CharField(choices=[('You', 'You'), ('Partner/husband', 'Partner/husband'), ('Mother', 'Mother'), ('Father', 'Father'), ('Sister', 'Sister'), ('Brother', 'Brother'), ('Aunt', 'Aunt'), ('Uncle', 'Uncle'), ('Grandmother', 'Grandmother'), (
+                    'Grandfather', 'Grandfather'), ('Mother-in-law or Father-in-law', 'Mother-in-law or Father-in-law'), ('Friend', 'Friend'), ('Work collegues', 'Work collegues'), ('Unsure', 'Unsure'), ('OTHER', 'Other, specify')], max_length=50, verbose_name='Who provides most of your money?')),
+                ('provides_money_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other specify...')),
+                ('money_earned', models.CharField(choices=[('None', 'None'), ('<P200 per month / <P47 per week', '<P200 per month / <P47 per week'), ('P200-500 per month / P47-116 per week', 'P200-500 per month / P47-116 per week'), ('P501-1000 per month / P117 - 231 per week', 'P501-1000 per month / P117 - 231 per week'), (
+                    'P1001-5000 per month / P212 - 1157 per week', 'P1001-5000 per month / P212 - 1157 per week'), ('>P5000 per month / >P1157 per week', '>P5000 per month / >P1157 per week'), ('Unsure', 'Unsure'), ('OTHER', 'Other, specify')], max_length=50, verbose_name='How much money do you personally earn? ')),
+                ('money_earned_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other specify...')),
+                ('stay_with_child', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3,
+                 verbose_name='Are you currently living in the same household as child who is also participating in the FLOURISH study?')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Socio Demographic Data',
@@ -670,28 +1066,48 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ScreeningPriorBhpParticipants',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('screening_identifier', models.CharField(blank=True, max_length=36, null=True, unique=True, verbose_name='Eligibility Identifier')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of assessing eligibility', validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
-                ('study_maternal_identifier', models.CharField(blank=True, max_length=50, null=True, verbose_name='Study Caregiver Subject Identifier')),
-                ('child_alive', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=10, verbose_name='Is the child from the previous study alive?')),
-                ('mother_alive', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('N/A', 'Not Applicable')], default='N/A', max_length=10, verbose_name='Is the biological mother from the previous study alive?')),
-                ('flourish_participation', models.CharField(choices=[('interested', 'Yes I am interested'), ('another_caregiver_interested', 'Yes another caregiver is interested'), ('No', 'No'), ('undecided', 'Undecided'), ('N/A', 'Not applicable')], default='N/A', max_length=40, verbose_name='Are you or another caregiver of this child interested in participating in the FLOURISH Study? ')),
-                ('ineligibility', models.TextField(editable=False, max_length=150, null=True, verbose_name='Reason not eligible')),
-                ('is_eligible', models.BooleanField(default=False, editable=False)),
-                ('is_consented', models.BooleanField(default=False, editable=False)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('screening_identifier', models.CharField(blank=True, max_length=36,
+                 null=True, unique=True, verbose_name='Eligibility Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of assessing eligibility', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
+                ('study_maternal_identifier', models.CharField(blank=True, max_length=50,
+                 null=True, verbose_name='Study Caregiver Subject Identifier')),
+                ('child_alive', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=10, verbose_name='Is the child from the previous study alive?')),
+                ('mother_alive', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=10, verbose_name='Is the biological mother from the previous study alive?')),
+                ('flourish_participation', models.CharField(choices=[('interested', 'Yes I am interested'), ('another_caregiver_interested', 'Yes another caregiver is interested'), ('No', 'No'), (
+                    'undecided', 'Undecided'), ('N/A', 'Not applicable')], default='N/A', max_length=40, verbose_name='Are you or another caregiver of this child interested in participating in the FLOURISH Study? ')),
+                ('ineligibility', models.TextField(editable=False,
+                 max_length=150, null=True, verbose_name='Reason not eligible')),
+                ('is_eligible', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_consented', models.BooleanField(
+                    default=False, editable=False)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Screening Prior BHP Participants',
@@ -701,26 +1117,44 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ScreeningPregWomen',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('screening_identifier', models.CharField(blank=True, max_length=36, null=True, unique=True, verbose_name='Eligibility Identifier')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of assessing eligibility', validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
-                ('hiv_testing', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='If HIV status not known, are you willing to undergo HIV testing and counseling?')),
-                ('breastfeed_intent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you intend on breastfeeding your infant?')),
-                ('ineligibility', models.TextField(editable=False, max_length=150, null=True, verbose_name='Reason not eligible')),
-                ('is_eligible', models.BooleanField(default=False, editable=False)),
-                ('is_consented', models.BooleanField(default=False, editable=False)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('screening_identifier', models.CharField(blank=True, max_length=36,
+                 null=True, unique=True, verbose_name='Eligibility Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of assessing eligibility', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
+                ('hiv_testing', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3,
+                 verbose_name='If HIV status not known, are you willing to undergo HIV testing and counseling?')),
+                ('breastfeed_intent', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you intend on breastfeeding your infant?')),
+                ('ineligibility', models.TextField(editable=False,
+                 max_length=150, null=True, verbose_name='Reason not eligible')),
+                ('is_eligible', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_consented', models.BooleanField(
+                    default=False, editable=False)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Screening for Newly Enrolled Pregnant Women',
@@ -730,30 +1164,52 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ObstericalHistory',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('prev_pregnancies', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(20)], verbose_name='Including the pregnancy of the child in the FLOURISH study, how many previous pregnancies for this participant?')),
-                ('pregs_24wks_or_more', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of pregnancies at least 24 weeks?')),
-                ('lost_before_24wks', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of pregnancies lost before 24 weeks gestation')),
-                ('lost_after_24wks', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of pregnancies lost at or after 24 weeks gestation ')),
-                ('live_children', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(20)], verbose_name='How many living children does the participant have?')),
-                ('children_died_b4_5yrs', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(20)], verbose_name="How many of the participant's children died after birth before 5 years of age? ")),
-                ('children_deliv_before_37wks', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of previous pregnancies delivered at < 37 weeks GA?')),
-                ('children_deliv_aftr_37wks', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of previous pregnancies delivered at >= 37 weeks GA?')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('prev_pregnancies', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(
+                    20)], verbose_name='Including the pregnancy of the child in the FLOURISH study, how many previous pregnancies for this participant?')),
+                ('pregs_24wks_or_more', models.IntegerField(validators=[django.core.validators.MinValueValidator(
+                    0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of pregnancies at least 24 weeks?')),
+                ('lost_before_24wks', models.IntegerField(validators=[django.core.validators.MinValueValidator(
+                    0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of pregnancies lost before 24 weeks gestation')),
+                ('lost_after_24wks', models.IntegerField(validators=[django.core.validators.MinValueValidator(
+                    0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of pregnancies lost at or after 24 weeks gestation ')),
+                ('live_children', models.IntegerField(validators=[django.core.validators.MinValueValidator(
+                    0), django.core.validators.MaxValueValidator(20)], verbose_name='How many living children does the participant have?')),
+                ('children_died_b4_5yrs', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(
+                    20)], verbose_name="How many of the participant's children died after birth before 5 years of age? ")),
+                ('children_deliv_before_37wks', models.IntegerField(validators=[django.core.validators.MinValueValidator(
+                    0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of previous pregnancies delivered at < 37 weeks GA?')),
+                ('children_deliv_aftr_37wks', models.IntegerField(validators=[django.core.validators.MinValueValidator(
+                    0), django.core.validators.MaxValueValidator(20)], verbose_name='Number of previous pregnancies delivered at >= 37 weeks GA?')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Obsterical History',
@@ -764,32 +1220,56 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MedicalHistory',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('chronic_since', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Does the caregiver have any chronic conditions?')),
-                ('caregiver_chronic_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If other, specify.')),
-                ('who_diagnosis', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='Please use the WHO Staging Guidelines. ONLY for HIV infected caregivers', max_length=25, verbose_name='Has the caregiver ever been diagnosed with a WHO Stage III or IV illness?')),
-                ('caregiver_medications_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If other, specify.')),
-                ('know_hiv_status', models.CharField(choices=[('Nobody', 'Nobody'), ('1 person', '1 person'), ('2-5 people', '2-5 people'), ('6-10 people', '6-10 people'), ('More than 10 people', 'More than 10 people'), ('dont know', 'I do not know'), ('N/A', 'Not applicable')], max_length=50, verbose_name='How many people know that you are living with HIV?')),
-                ('comment', models.TextField(blank=True, max_length=250, null=True, verbose_name='Comments')),
-                ('med_history_changed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=20, null=True, verbose_name='Has any of your following medical history changed?')),
-                ('caregiver_chronic', models.ManyToManyField(related_name='caregiver', to='flourish_caregiver.ChronicConditions', verbose_name='Does the caregiver have any of the above. Tick all that apply')),
-                ('caregiver_medications', models.ManyToManyField(blank=True, to='flourish_caregiver.CaregiverMedications', verbose_name='Does the caregiver currently take any of the above medications. Tick all that apply')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
-                ('who', models.ManyToManyField(to='flourish_caregiver.WcsDxAdult', verbose_name='List any new WHO Stage III/IV diagnoses that are not reported')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('chronic_since', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Does the caregiver have any chronic conditions?')),
+                ('caregiver_chronic_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If other, specify.')),
+                ('who_diagnosis', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='Please use the WHO Staging Guidelines. ONLY for HIV infected caregivers',
+                 max_length=25, verbose_name='Has the caregiver ever been diagnosed with a WHO Stage III or IV illness?')),
+                ('caregiver_medications_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If other, specify.')),
+                ('know_hiv_status', models.CharField(choices=[('Nobody', 'Nobody'), ('1 person', '1 person'), ('2-5 people', '2-5 people'), ('6-10 people', '6-10 people'), ('More than 10 people',
+                 'More than 10 people'), ('dont know', 'I do not know'), ('N/A', 'Not applicable')], max_length=50, verbose_name='How many people know that you are living with HIV?')),
+                ('comment', models.TextField(blank=True,
+                 max_length=250, null=True, verbose_name='Comments')),
+                ('med_history_changed', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=20, null=True, verbose_name='Has any of your following medical history changed?')),
+                ('caregiver_chronic', models.ManyToManyField(related_name='caregiver', to='flourish_caregiver.ChronicConditions',
+                 verbose_name='Does the caregiver have any of the above. Tick all that apply')),
+                ('caregiver_medications', models.ManyToManyField(blank=True, to='flourish_caregiver.CaregiverMedications',
+                 verbose_name='Does the caregiver currently take any of the above medications. Tick all that apply')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('who', models.ManyToManyField(to='flourish_caregiver.WcsDxAdult',
+                 verbose_name='List any new WHO Stage III/IV diagnoses that are not reported')),
             ],
             options={
                 'verbose_name': 'Medical History',
@@ -800,29 +1280,50 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MaternalInterimIdcc',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('info_since_lastvisit', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Is there new laboratory information available on the mother since last visit')),
-                ('recent_cd4', models.DecimalField(blank=True, decimal_places=2, max_digits=8, null=True, verbose_name='Most recent CD4 available')),
-                ('recent_cd4_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date of recent CD4')),
-                ('value_vl_size', models.CharField(blank=True, choices=[('equal', '='), ('less_than', '<'), ('greater_than', '>')], max_length=25, null=True, verbose_name='Is the value for the most recent VL available “=” ,“<”, or “>” a number? ')),
-                ('value_vl', models.DecimalField(blank=True, decimal_places=2, max_digits=10, null=True, verbose_name='Value of VL ')),
-                ('recent_vl_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date of recent VL')),
-                ('other_diagnoses', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=25, null=True, verbose_name='Please specify any other diagnoses found in the IDCC since the last visit ')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('info_since_lastvisit', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Is there new laboratory information available on the mother since last visit')),
+                ('recent_cd4', models.DecimalField(blank=True, decimal_places=2,
+                 max_digits=8, null=True, verbose_name='Most recent CD4 available')),
+                ('recent_cd4_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of recent CD4')),
+                ('value_vl_size', models.CharField(blank=True, choices=[('equal', '='), ('less_than', '<'), (
+                    'greater_than', '>')], max_length=25, null=True, verbose_name='Is the value for the most recent VL available “=” ,“<”, or “>” a number? ')),
+                ('value_vl', models.DecimalField(blank=True, decimal_places=2,
+                 max_digits=10, null=True, verbose_name='Value of VL ')),
+                ('recent_vl_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of recent VL')),
+                ('other_diagnoses', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=25,
+                 null=True, verbose_name='Please specify any other diagnoses found in the IDCC since the last visit ')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Maternal Interim Idcc Data',
@@ -833,30 +1334,52 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MaternalHivInterimHx',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('has_cd4', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='During this pregnancy did the mother have at least one CD4 count performed (outside the study)? ')),
-                ('cd4_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date of most recent CD4 test? ')),
-                ('cd4_result', models.CharField(blank=True, max_length=35, null=True, verbose_name='Result of most recent CD4 test')),
-                ('has_vl', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="(if 'YES' continue. Otherwise go to question 9)", max_length=3, verbose_name='During this pregnancy did the mother have a viral load perfomed (outside the study)? ')),
-                ('vl_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='If yes, Date of most recent VL test? ')),
-                ('vl_detectable', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A', max_length=3, verbose_name='Was the viral load detectable?')),
-                ('vl_result', models.CharField(blank=True, max_length=35, null=True, verbose_name='Result of most recent VL test')),
-                ('comment', models.TextField(blank=True, max_length=250, null=True, verbose_name='Comment if any additional pertinent information ')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('has_cd4', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3,
+                 verbose_name='During this pregnancy did the mother have at least one CD4 count performed (outside the study)? ')),
+                ('cd4_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of most recent CD4 test? ')),
+                ('cd4_result', models.CharField(blank=True, max_length=35,
+                 null=True, verbose_name='Result of most recent CD4 test')),
+                ('has_vl', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="(if 'YES' continue. Otherwise go to question 9)",
+                 max_length=3, verbose_name='During this pregnancy did the mother have a viral load perfomed (outside the study)? ')),
+                ('vl_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='If yes, Date of most recent VL test? ')),
+                ('vl_detectable', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'N/A', 'Not applicable')], default='N/A', max_length=3, verbose_name='Was the viral load detectable?')),
+                ('vl_result', models.CharField(blank=True, max_length=35,
+                 null=True, verbose_name='Result of most recent VL test')),
+                ('comment', models.TextField(blank=True, max_length=250, null=True,
+                 verbose_name='Comment if any additional pertinent information ')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Maternal HIV Interim Hx',
@@ -867,24 +1390,40 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MaternalDiagnoses',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('has_who_dx', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=3, verbose_name='During this pregnancy, did the mother have any new diagnoses listed in the WHO Adult/Adolescent HIV clinical staging document which  is/are NOT reported?')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
-                ('who', models.ManyToManyField(to='flourish_caregiver.WcsDxAdult', verbose_name='List any new WHO Stage III/IV diagnoses that are not reported in the Question above:')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('has_who_dx', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=3,
+                 verbose_name='During this pregnancy, did the mother have any new diagnoses listed in the WHO Adult/Adolescent HIV clinical staging document which  is/are NOT reported?')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('who', models.ManyToManyField(to='flourish_caregiver.WcsDxAdult',
+                 verbose_name='List any new WHO Stage III/IV diagnoses that are not reported in the Question above:')),
             ],
             options={
                 'verbose_name': 'Maternal Diagnosis',
@@ -895,36 +1434,64 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MaternalDelivery',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier', models.CharField(max_length=50, unique=True, verbose_name='Subject Identifier')),
-                ('report_datetime', models.DateTimeField(validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
-                ('delivery_datetime', models.DateTimeField(help_text='If TIME unknown, estimate', validators=[edc_base.model_validators.date.datetime_not_future], verbose_name='Date and time of delivery :')),
-                ('delivery_time_estimated', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the delivery TIME estimated?')),
-                ('delivery_hospital', models.CharField(choices=[('PMH', 'Gaborone(PMH)'), ('G.West Clinic', 'G.West Clinic'), ('BH3 Clinic', 'BH3 Clinic'), ('Lesirane', 'Lesirane Clinic'), ('Old Naledi', 'Old Naledi'), ('Mafitlhakgosi', 'Mafitlhakgosi'), ('OTHER', 'Other health facilities not associated with study site')], help_text="If 'OTHER', specify below", max_length=65, verbose_name='Place of delivery? ')),
-                ('delivery_hospital_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('labour_hrs', models.CharField(max_length=10, verbose_name='How long prior to delivery, in HRS, did labour begin? ')),
-                ('mode_delivery', models.CharField(choices=[('spontaneous vaginal', 'spontaneous vaginal'), ('vaginal forceps', 'vaginal forceps'), ('elective c-section', 'elective C-section'), ('emergent c-section', 'emrgent C-section'), ('OTHER', 'Other delivery mode not listed above')], help_text="If 'OTHER', specify below", max_length=100, verbose_name='What was the mode of delivery?')),
-                ('mode_delivery_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('csection_reason', models.CharField(choices=[('N/A', 'Not Applicable'), ('arrest', 'Arrest'), ('non-reassuring fetal fetal heart rate', 'Non-reassuring fetal heart rate'), ('malpresentation/breeech fetus', 'Malpresentation/breech fetus'), ('interruption of hiv transmission', 'Interruption of HIV transmission'), ('failure to progress/descend', 'Failue to progress/descend'), ('fetal anomaly', 'Fetal anomaly'), ('OTHER', 'Other reason for csection not listed above.')], help_text="If 'OTHER', specify below", max_length=100, verbose_name='If C-section was performed, indicate reason below')),
-                ('csection_reason_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('delivery_complications_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('live_infants_to_register', models.IntegerField(verbose_name='How many babies are you registering to the study? ')),
-                ('still_births', models.IntegerField(default=0, verbose_name='How many still births or miscarriages?')),
-                ('valid_regiment_duration', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If not 4 or more weeks then participant will go OFF STUDY.', max_length=15, null=True, verbose_name='(Interviewer) If HIV+ve, has the participant been on the ART regimen for at least 4 weeks in pregnancy?')),
-                ('arv_initiation_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='(Interviewer) If on ART, when did the participant initiate therapy for this pregnancy?')),
-                ('delivery_comment', models.TextField(blank=True, max_length=250, null=True, verbose_name='List any additional information about the labour and delivery (mother only) ')),
-                ('comment', models.TextField(blank=True, max_length=250, null=True, verbose_name='Comment if any additional pertinent information ')),
-                ('feeding_mode', models.CharField(choices=[('Breastfeeding only', 'Breastfeed only'), ('Formula feeding only', 'Formula feeding only'), ('Both breastfeeding and formula feeding', 'Both breastfeeding and formula feeding'), ('Medical complications: Infant did not feed', 'Medical complications: Infant did not feed')], max_length=100, verbose_name='How was the infant being fed immediately after delivery?')),
-                ('delivery_complications', models.ManyToManyField(help_text="If 'OTHER', specify below", to='flourish_caregiver.DeliveryComplications', verbose_name='Were any of the following complications present at delivery? ')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(max_length=50,
+                 unique=True, verbose_name='Subject Identifier')),
+                ('report_datetime', models.DateTimeField(validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
+                ('delivery_datetime', models.DateTimeField(help_text='If TIME unknown, estimate', validators=[
+                 edc_base.model_validators.date.datetime_not_future], verbose_name='Date and time of delivery :')),
+                ('delivery_time_estimated', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the delivery TIME estimated?')),
+                ('delivery_hospital', models.CharField(choices=[('PMH', 'Gaborone(PMH)'), ('G.West Clinic', 'G.West Clinic'), ('BH3 Clinic', 'BH3 Clinic'), ('Lesirane', 'Lesirane Clinic'), ('Old Naledi', 'Old Naledi'), (
+                    'Mafitlhakgosi', 'Mafitlhakgosi'), ('OTHER', 'Other health facilities not associated with study site')], help_text="If 'OTHER', specify below", max_length=65, verbose_name='Place of delivery? ')),
+                ('delivery_hospital_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('labour_hrs', models.CharField(max_length=10,
+                 verbose_name='How long prior to delivery, in HRS, did labour begin? ')),
+                ('mode_delivery', models.CharField(choices=[('spontaneous vaginal', 'spontaneous vaginal'), ('vaginal forceps', 'vaginal forceps'), ('elective c-section', 'elective C-section'), (
+                    'emergent c-section', 'emrgent C-section'), ('OTHER', 'Other delivery mode not listed above')], help_text="If 'OTHER', specify below", max_length=100, verbose_name='What was the mode of delivery?')),
+                ('mode_delivery_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('csection_reason', models.CharField(choices=[('N/A', 'Not Applicable'), ('arrest', 'Arrest'), ('non-reassuring fetal fetal heart rate', 'Non-reassuring fetal heart rate'), ('malpresentation/breeech fetus', 'Malpresentation/breech fetus'), ('interruption of hiv transmission', 'Interruption of HIV transmission'), (
+                    'failure to progress/descend', 'Failue to progress/descend'), ('fetal anomaly', 'Fetal anomaly'), ('OTHER', 'Other reason for csection not listed above.')], help_text="If 'OTHER', specify below", max_length=100, verbose_name='If C-section was performed, indicate reason below')),
+                ('csection_reason_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('delivery_complications_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('live_infants_to_register', models.IntegerField(
+                    verbose_name='How many babies are you registering to the study? ')),
+                ('still_births', models.IntegerField(default=0,
+                 verbose_name='How many still births or miscarriages?')),
+                ('valid_regiment_duration', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If not 4 or more weeks then participant will go OFF STUDY.',
+                 max_length=15, null=True, verbose_name='(Interviewer) If HIV+ve, has the participant been on the ART regimen for at least 4 weeks in pregnancy?')),
+                ('arv_initiation_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='(Interviewer) If on ART, when did the participant initiate therapy for this pregnancy?')),
+                ('delivery_comment', models.TextField(blank=True, max_length=250, null=True,
+                 verbose_name='List any additional information about the labour and delivery (mother only) ')),
+                ('comment', models.TextField(blank=True, max_length=250, null=True,
+                 verbose_name='Comment if any additional pertinent information ')),
+                ('feeding_mode', models.CharField(choices=[('Breastfeeding only', 'Breastfeed only'), ('Formula feeding only', 'Formula feeding only'), ('Both breastfeeding and formula feeding', 'Both breastfeeding and formula feeding'), (
+                    'Medical complications: Infant did not feed', 'Medical complications: Infant did not feed')], max_length=100, verbose_name='How was the infant being fed immediately after delivery?')),
+                ('delivery_complications', models.ManyToManyField(help_text="If 'OTHER', specify below",
+                 to='flourish_caregiver.DeliveryComplications', verbose_name='Were any of the following complications present at delivery? ')),
             ],
             options={
                 'verbose_name': 'Birth Form',
@@ -934,63 +1501,113 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MaternalDataset',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('screening_identifier', models.CharField(blank=True, max_length=36, null=True, unique=True, verbose_name='Eligibility Identifier')),
-                ('study_maternal_identifier', models.CharField(max_length=50, unique=True, verbose_name='Study maternal Subject Identifier')),
-                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Firstname')),
-                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Lastname')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('screening_identifier', models.CharField(blank=True, max_length=36,
+                 null=True, unique=True, verbose_name='Eligibility Identifier')),
+                ('study_maternal_identifier', models.CharField(max_length=50,
+                 unique=True, verbose_name='Study maternal Subject Identifier')),
+                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Firstname')),
+                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Lastname')),
                 ('protocol', models.CharField(max_length=150)),
                 ('delivdt', models.DateField(verbose_name='Delivery date')),
                 ('site_name', models.CharField(max_length=150)),
-                ('mom_enrolldate', models.DateField(verbose_name='Maternal enrollment date')),
-                ('delivmeth', models.CharField(blank=True, max_length=150, null=True, verbose_name='Method of delivery')),
-                ('delivery_location', models.CharField(blank=True, max_length=150, null=True, verbose_name='Delivery location')),
-                ('ega_delivery', models.IntegerField(blank=True, null=True, verbose_name='EGA at delivery')),
-                ('mom_age_enrollment', models.CharField(blank=True, max_length=150, null=True, verbose_name="Mother's age at enrollment")),
-                ('mom_hivstatus', models.CharField(max_length=150, verbose_name='Maternal HIV infection status')),
+                ('mom_enrolldate', models.DateField(
+                    verbose_name='Maternal enrollment date')),
+                ('delivmeth', models.CharField(blank=True, max_length=150,
+                 null=True, verbose_name='Method of delivery')),
+                ('delivery_location', models.CharField(blank=True,
+                 max_length=150, null=True, verbose_name='Delivery location')),
+                ('ega_delivery', models.IntegerField(
+                    blank=True, null=True, verbose_name='EGA at delivery')),
+                ('mom_age_enrollment', models.CharField(blank=True, max_length=150,
+                 null=True, verbose_name="Mother's age at enrollment")),
+                ('mom_hivstatus', models.CharField(max_length=150,
+                 verbose_name='Maternal HIV infection status')),
                 ('parity', models.IntegerField(blank=True, null=True)),
                 ('gravida', models.IntegerField(blank=True, null=True)),
-                ('mom_education', models.CharField(max_length=150, verbose_name='Maternal education level')),
-                ('mom_maritalstatus', models.CharField(max_length=150, verbose_name='Maternal marital status')),
-                ('mom_personal_earnings', models.CharField(blank=True, max_length=150, null=True, verbose_name="Mother's personal earnings")),
-                ('mom_moneysource', models.CharField(max_length=150, verbose_name='Maternal source of income')),
-                ('mom_occupation', models.CharField(max_length=150, verbose_name="Mother's occupation")),
-                ('mom_pregarv_strat', models.CharField(blank=True, max_length=150, null=True, verbose_name='Maternal ARVs during pregnancy')),
-                ('mom_arvstart_date', models.DateField(blank=True, null=True, verbose_name='Date mother started HAART')),
-                ('mom_baseline_cd4', models.IntegerField(blank=True, null=True, verbose_name='Maternal baseline CD4 count')),
-                ('mom_baseline_cd4date', models.DateField(blank=True, null=True, verbose_name="Draw data of mother's baseline CD4")),
-                ('mom_baseline_vl', models.IntegerField(blank=True, null=True, verbose_name='Maternal baseline viral load')),
-                ('mom_baseline_vldate', models.DateField(blank=True, null=True, verbose_name="Draw date of mother's baseline VL")),
-                ('mom_baseline_hgb', models.DecimalField(blank=True, decimal_places=1, max_digits=10, null=True, verbose_name='Maternal baseline HGB')),
-                ('mom_baseline_hgbdt', models.DateField(blank=True, null=True, verbose_name='Date of maternal baseline HGB')),
-                ('mom_deathdate', models.DateField(blank=True, null=True, verbose_name='Date mother died')),
-                ('cooking_method', models.CharField(blank=True, max_length=200, null=True, verbose_name='Primary cooking method')),
-                ('home_eletrified', models.CharField(blank=True, max_length=150, null=True, verbose_name='Electricity in home')),
-                ('house_type', models.CharField(blank=True, max_length=150, null=True, verbose_name='Type of dwelling')),
-                ('toilet', models.CharField(blank=True, max_length=150, null=True, verbose_name='Toilet facilities')),
-                ('toilet_indoors', models.CharField(blank=True, max_length=150, null=True, verbose_name='House has indoor toilet')),
-                ('toilet_private', models.CharField(blank=True, max_length=150, null=True, verbose_name='Private toilet for compound')),
-                ('piped_water', models.CharField(blank=True, max_length=150, null=True, verbose_name='Water piped into home')),
-                ('home_refridgeration', models.CharField(blank=True, max_length=150, null=True, verbose_name='Refrigeration in home')),
-                ('drinking_water', models.CharField(blank=True, max_length=150, null=True, verbose_name='Source of drinking water')),
-                ('live_inhouse_number', models.IntegerField(blank=True, null=True, verbose_name='Number of people living in household')),
-                ('twin_triplet', models.IntegerField(blank=True, null=True, verbose_name='Twins or thiplets')),
-                ('preg_dtg', models.IntegerField(blank=True, null=True, verbose_name='Preg DTG')),
-                ('preg_pi', models.IntegerField(blank=True, null=True, verbose_name='Preg PI')),
-                ('preg_efv', models.IntegerField(blank=True, null=True, verbose_name='Preg EFV')),
-                ('on_worklist', models.BooleanField(blank=True, default=False, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('mom_education', models.CharField(
+                    max_length=150, verbose_name='Maternal education level')),
+                ('mom_maritalstatus', models.CharField(
+                    max_length=150, verbose_name='Maternal marital status')),
+                ('mom_personal_earnings', models.CharField(
+                    blank=True, max_length=150, null=True, verbose_name="Mother's personal earnings")),
+                ('mom_moneysource', models.CharField(
+                    max_length=150, verbose_name='Maternal source of income')),
+                ('mom_occupation', models.CharField(
+                    max_length=150, verbose_name="Mother's occupation")),
+                ('mom_pregarv_strat', models.CharField(blank=True, max_length=150,
+                 null=True, verbose_name='Maternal ARVs during pregnancy')),
+                ('mom_arvstart_date', models.DateField(blank=True,
+                 null=True, verbose_name='Date mother started HAART')),
+                ('mom_baseline_cd4', models.IntegerField(blank=True,
+                 null=True, verbose_name='Maternal baseline CD4 count')),
+                ('mom_baseline_cd4date', models.DateField(blank=True,
+                 null=True, verbose_name="Draw data of mother's baseline CD4")),
+                ('mom_baseline_vl', models.IntegerField(blank=True,
+                 null=True, verbose_name='Maternal baseline viral load')),
+                ('mom_baseline_vldate', models.DateField(blank=True,
+                 null=True, verbose_name="Draw date of mother's baseline VL")),
+                ('mom_baseline_hgb', models.DecimalField(blank=True, decimal_places=1,
+                 max_digits=10, null=True, verbose_name='Maternal baseline HGB')),
+                ('mom_baseline_hgbdt', models.DateField(blank=True,
+                 null=True, verbose_name='Date of maternal baseline HGB')),
+                ('mom_deathdate', models.DateField(blank=True,
+                 null=True, verbose_name='Date mother died')),
+                ('cooking_method', models.CharField(blank=True, max_length=200,
+                 null=True, verbose_name='Primary cooking method')),
+                ('home_eletrified', models.CharField(
+                    blank=True, max_length=150, null=True, verbose_name='Electricity in home')),
+                ('house_type', models.CharField(blank=True, max_length=150,
+                 null=True, verbose_name='Type of dwelling')),
+                ('toilet', models.CharField(blank=True, max_length=150,
+                 null=True, verbose_name='Toilet facilities')),
+                ('toilet_indoors', models.CharField(blank=True, max_length=150,
+                 null=True, verbose_name='House has indoor toilet')),
+                ('toilet_private', models.CharField(blank=True, max_length=150,
+                 null=True, verbose_name='Private toilet for compound')),
+                ('piped_water', models.CharField(blank=True, max_length=150,
+                 null=True, verbose_name='Water piped into home')),
+                ('home_refridgeration', models.CharField(
+                    blank=True, max_length=150, null=True, verbose_name='Refrigeration in home')),
+                ('drinking_water', models.CharField(blank=True, max_length=150,
+                 null=True, verbose_name='Source of drinking water')),
+                ('live_inhouse_number', models.IntegerField(
+                    blank=True, null=True, verbose_name='Number of people living in household')),
+                ('twin_triplet', models.IntegerField(blank=True,
+                 null=True, verbose_name='Twins or thiplets')),
+                ('preg_dtg', models.IntegerField(
+                    blank=True, null=True, verbose_name='Preg DTG')),
+                ('preg_pi', models.IntegerField(
+                    blank=True, null=True, verbose_name='Preg PI')),
+                ('preg_efv', models.IntegerField(
+                    blank=True, null=True, verbose_name='Preg EFV')),
+                ('on_worklist', models.BooleanField(
+                    blank=True, default=False, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Maternal Dataset',
@@ -999,26 +1616,44 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MaternalArvDuringPreg',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('took_arv', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='(NOT including single -dose NVP in labour)', max_length=3, verbose_name='Did the mother receive any ARVs during this pregnancy?')),
-                ('is_interrupt', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=3, verbose_name='Was there an interruption in the ARVs received during pregnancy through delivery of >/=3days?')),
-                ('interrupt', models.CharField(choices=[('TOXICITY', 'Toxicity'), ('NO_DRUGS', 'No drugs available'), ('NO_REFILL', "Didn't get to clinic for refill"), ('FORGOT', 'Mother forgot to take the ARVs'), ('OTHER', 'Other'), ('N/A', 'Not Applicable')], default='N/A', max_length=50, verbose_name='Please give reason for interruption')),
-                ('interrupt_other', models.TextField(blank=True, max_length=250, null=True, verbose_name='Other, specify ')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('took_arv', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='(NOT including single -dose NVP in labour)',
+                 max_length=3, verbose_name='Did the mother receive any ARVs during this pregnancy?')),
+                ('is_interrupt', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=3,
+                 verbose_name='Was there an interruption in the ARVs received during pregnancy through delivery of >/=3days?')),
+                ('interrupt', models.CharField(choices=[('TOXICITY', 'Toxicity'), ('NO_DRUGS', 'No drugs available'), ('NO_REFILL', "Didn't get to clinic for refill"), (
+                    'FORGOT', 'Mother forgot to take the ARVs'), ('OTHER', 'Other'), ('N/A', 'Not Applicable')], default='N/A', max_length=50, verbose_name='Please give reason for interruption')),
+                ('interrupt_other', models.TextField(blank=True,
+                 max_length=250, null=True, verbose_name='Other, specify ')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'ARVs During Pregnancy',
@@ -1029,18 +1664,28 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LocatorLog',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, verbose_name='Report date')),
-                ('maternal_dataset', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternaldataset')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('report_datetime', models.DateTimeField(
+                    default=edc_base.utils.get_utcnow, verbose_name='Report date')),
+                ('maternal_dataset', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternaldataset')),
             ],
             options={
                 'ordering': ('-modified', '-created'),
@@ -1051,30 +1696,52 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HivViralLoadAndCd4',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('last_cd4_count_known', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the caregiver’s last CD4 count known?')),
-                ('cd4_count', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(9999)], verbose_name='What is the caregiver’s CD4 count?')),
-                ('cd4_count_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date of CD4 count')),
-                ('last_vl_known', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the caregiver’s last viral load known?')),
-                ('vl_detectable', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, null=True, verbose_name='Was the viral load detectable?')),
-                ('recent_vl_results', models.IntegerField(blank=True, help_text='copies/ml', null=True, validators=[django.core.validators.MinValueValidator(10), django.core.validators.MaxValueValidator(150000)], verbose_name='Quantitative results of most recent Viral Load test')),
-                ('hiv_results_quantifier', models.CharField(blank=True, choices=[('equal', '='), ('less_than', '<'), ('greater_than', '>')], max_length=12, null=True)),
-                ('last_vl_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date of last viral load test')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('last_cd4_count_known', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the caregiver’s last CD4 count known?')),
+                ('cd4_count', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(
+                    1), django.core.validators.MaxValueValidator(9999)], verbose_name='What is the caregiver’s CD4 count?')),
+                ('cd4_count_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of CD4 count')),
+                ('last_vl_known', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the caregiver’s last viral load known?')),
+                ('vl_detectable', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, null=True, verbose_name='Was the viral load detectable?')),
+                ('recent_vl_results', models.IntegerField(blank=True, help_text='copies/ml', null=True, validators=[django.core.validators.MinValueValidator(
+                    10), django.core.validators.MaxValueValidator(150000)], verbose_name='Quantitative results of most recent Viral Load test')),
+                ('hiv_results_quantifier', models.CharField(blank=True, choices=[
+                 ('equal', '='), ('less_than', '<'), ('greater_than', '>')], max_length=12, null=True)),
+                ('last_vl_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of last viral load test')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'HIV Viral Load and CD4',
@@ -1085,26 +1752,44 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HIVRapidTestCounseling',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('rapid_test_done', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Was a rapid test processed?')),
-                ('result_date', models.DateField(blank=True, null=True, validators=[edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date of rapid test')),
-                ('result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What is the rapid test result?')),
-                ('comments', models.CharField(blank=True, max_length=250, null=True, verbose_name='Comment')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('rapid_test_done', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Was a rapid test processed?')),
+                ('result_date', models.DateField(blank=True, null=True, validators=[
+                 edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date of rapid test')),
+                ('result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), (
+                    'IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What is the rapid test result?')),
+                ('comments', models.CharField(blank=True,
+                 max_length=250, null=True, verbose_name='Comment')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'HIV Rapid Testing and Counseling',
@@ -1115,26 +1800,44 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HIVDisclosureStatus',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('disclosed_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=7, verbose_name='Have you disclosed your HIV status to your child?')),
-                ('plan_to_disclose', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], max_length=7, null=True, verbose_name='Do you plan on disclosing your HIV status to your child?')),
-                ('reason_not_disclosed', models.CharField(blank=True, choices=[('fear_of_burdening_the_child', 'Fear of burdening the child'), ('stigma', 'Stigma'), ('fear_of_rejection', 'Fear of rejection'), ('feeling_child_is_immature', 'Feeling child is immature'), ('worry_about_her_mother', 'Does not want the child to worry about her mother'), ('scare_the_child', 'Does not want to scare the child'), ('hurt_by_reactions_of_others', 'Does not want the child to be hurt by reactions of others'), ('feel_the_child_needs_to_know', 'Does not feel the child needs to know'), ('does_not_know_how_to_explain', 'Does not know how to explain this to their child'), ('OTHER', 'Other')], max_length=50, null=True, verbose_name='What is the reason you have not disclosed your HIV status to your child?')),
-                ('reason_not_disclosed_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('disclosed_status', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=7, verbose_name='Have you disclosed your HIV status to your child?')),
+                ('plan_to_disclose', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=7, null=True, verbose_name='Do you plan on disclosing your HIV status to your child?')),
+                ('reason_not_disclosed', models.CharField(blank=True, choices=[('fear_of_burdening_the_child', 'Fear of burdening the child'), ('stigma', 'Stigma'), ('fear_of_rejection', 'Fear of rejection'), ('feeling_child_is_immature', 'Feeling child is immature'), ('worry_about_her_mother', 'Does not want the child to worry about her mother'), ('scare_the_child', 'Does not want to scare the child'), (
+                    'hurt_by_reactions_of_others', 'Does not want the child to be hurt by reactions of others'), ('feel_the_child_needs_to_know', 'Does not feel the child needs to know'), ('does_not_know_how_to_explain', 'Does not know how to explain this to their child'), ('OTHER', 'Other')], max_length=50, null=True, verbose_name='What is the reason you have not disclosed your HIV status to your child?')),
+                ('reason_not_disclosed_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'HIV Disclosure status',
@@ -1145,75 +1848,137 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalSubjectConsent',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('subject_identifier_as_pk', models.UUIDField(default=uuid.uuid4, editable=False)),
-                ('subject_identifier_aka', models.CharField(editable=False, help_text='track a previously allocated identifier.', max_length=50, null=True, verbose_name='Subject Identifier a.k.a')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('citizen', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the participant a Botswana citizen? ')),
-                ('legal_marriage', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A', help_text="If 'No', participant may not be consented.", max_length=3, null=True, verbose_name='If not a citizen, is the participant legally married to a Botswana citizen?')),
-                ('marriage_certificate', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A', help_text="If 'No', participant may not be consented.", max_length=3, null=True, verbose_name='[Interviewer] Has the participant produced the marriage certificate as proof? ')),
-                ('marriage_certificate_no', models.CharField(blank=True, help_text='e.g. 000/YYYY', max_length=9, null=True, verbose_name='What is the marriage certificate number?')),
-                ('identity', django_crypto_fields.fields.identity_field.IdentityField(help_text=' (Encryption: RSA local)', max_length=71, verbose_name='Identity number')),
-                ('confirm_identity', django_crypto_fields.fields.identity_field.IdentityField(help_text='Retype the identity number (Encryption: RSA local)', max_length=71, null=True)),
-                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True)),
-                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
-                ('initials', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[django.core.validators.RegexValidator(message='Ensure initials consist of letters only in upper case, no spaces.', regex='^[A-Z]{2,3}$')])),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier_as_pk', models.UUIDField(
+                    default=uuid.uuid4, editable=False)),
+                ('subject_identifier_aka', models.CharField(editable=False, help_text='track a previously allocated identifier.',
+                 max_length=50, null=True, verbose_name='Subject Identifier a.k.a')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('citizen', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the participant a Botswana citizen? ')),
+                ('legal_marriage', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A', help_text="If 'No', participant may not be consented.",
+                 max_length=3, null=True, verbose_name='If not a citizen, is the participant legally married to a Botswana citizen?')),
+                ('marriage_certificate', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A',
+                 help_text="If 'No', participant may not be consented.", max_length=3, null=True, verbose_name='[Interviewer] Has the participant produced the marriage certificate as proof? ')),
+                ('marriage_certificate_no', models.CharField(blank=True, help_text='e.g. 000/YYYY',
+                 max_length=9, null=True, verbose_name='What is the marriage certificate number?')),
+                ('identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    help_text=' (Encryption: RSA local)', max_length=71, verbose_name='Identity number')),
+                ('confirm_identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    help_text='Retype the identity number (Encryption: RSA local)', max_length=71, null=True)),
+                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True)),
+                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
+                ('initials', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True,
+                 validators=[django.core.validators.RegexValidator(message='Ensure initials consist of letters only in upper case, no spaces.', regex='^[A-Z]{2,3}$')])),
                 ('dob', models.DateField(null=True, verbose_name='Date of birth')),
-                ('is_dob_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedField(choices=[('-', 'No'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), ('YMD', 'Yes, estimated Year, Month and Day')], help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, null=True, verbose_name='Is date of birth estimated?')),
-                ('guardian_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is a minor.<BR>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)", max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Guardian's last and first name")),
+                ('is_dob_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedField(choices=[('-', 'No'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), (
+                    'YMD', 'Yes, estimated Year, Month and Day')], help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, null=True, verbose_name='Is date of birth estimated?')),
+                ('guardian_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is a minor.<BR>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)",
+                 max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Guardian's last and first name")),
                 ('subject_type', models.CharField(max_length=25)),
-                ('is_incarcerated', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="( if 'Yes' STOP participant cannot be consented )", max_length=3, null=True, validators=[edc_consent.validators.eligible_if_no], verbose_name='Is the participant under involuntary incarceration?')),
-                ('is_literate', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="If 'No' provide witness's name on this form and signature on the paper document.", max_length=3, verbose_name='Is the participant literate?')),
-                ('witness_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is illiterate.<br>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)", max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Witness's last and first name")),
-                ('language', models.CharField(choices=[('tn', 'Setswana'), ('en', 'English')], help_text='The language used for the consent process will also be used during data collection.', max_length=25, verbose_name='Language of consent')),
-                ('is_verified', models.BooleanField(default=False, editable=False)),
-                ('is_verified_datetime', models.DateTimeField(editable=False, null=True)),
-                ('verified_by', models.CharField(editable=False, max_length=25, null=True)),
-                ('consent_datetime', models.DateTimeField(validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Consent date and time')),
+                ('is_incarcerated', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="( if 'Yes' STOP participant cannot be consented )", max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_no], verbose_name='Is the participant under involuntary incarceration?')),
+                ('is_literate', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], help_text="If 'No' provide witness's name on this form and signature on the paper document.", max_length=3, verbose_name='Is the participant literate?')),
+                ('witness_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is illiterate.<br>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)",
+                 max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Witness's last and first name")),
+                ('language', models.CharField(choices=[('tn', 'Setswana'), ('en', 'English')],
+                 help_text='The language used for the consent process will also be used during data collection.', max_length=25, verbose_name='Language of consent')),
+                ('is_verified', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_verified_datetime', models.DateTimeField(
+                    editable=False, null=True)),
+                ('verified_by', models.CharField(
+                    editable=False, max_length=25, null=True)),
+                ('consent_datetime', models.DateTimeField(validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Consent date and time')),
                 ('report_datetime', models.DateTimeField(editable=False, null=True)),
-                ('version', models.CharField(editable=False, help_text="See 'Consent Type' for consent versions by period.", max_length=10, verbose_name='Consent version')),
+                ('version', models.CharField(editable=False, help_text="See 'Consent Type' for consent versions by period.",
+                 max_length=10, verbose_name='Consent version')),
                 ('updates_versions', models.BooleanField(default=False)),
-                ('sid', models.CharField(blank=True, editable=False, help_text='Used for randomization against a prepared rando-list.', max_length=15, null=True, verbose_name='SID')),
-                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comment')),
-                ('dm_comment', models.CharField(editable=False, help_text='see also edc.data manager.', max_length=150, null=True, verbose_name='Data Management comment')),
-                ('consent_identifier', models.UUIDField(default=uuid.uuid4, editable=False, help_text='A unique identifier for this consent instance')),
-                ('consent_reviewed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, verbose_name='I have reviewed the consent with the participant')),
-                ('study_questions', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, verbose_name='I have answered all questions the participant had about the study')),
-                ('assessment_score', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, verbose_name='I have asked the participant questions about this study and the participant has demonstrated understanding')),
-                ('consent_signature', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, verbose_name='I have verified that the participant has signed the consent form')),
-                ('consent_copy', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Declined', 'Yes, but subject declined copy')], help_text='If declined, return copy with the consent', max_length=20, null=True, verbose_name='I have provided the participant with a copy of their signed informed consent')),
-                ('subject_identifier', models.CharField(max_length=50, null=True, verbose_name='Subject Identifier')),
-                ('screening_identifier', models.CharField(max_length=50, verbose_name='Screening identifier')),
-                ('gender', models.CharField(choices=[('M', 'Male'), ('F', 'Female')], max_length=1, verbose_name='Gender')),
-                ('identity_type', models.CharField(choices=[('country_id', 'Country ID number'), ('country_id_rcpt', 'Country ID receipt'), ('passport', 'Passport'), ('OTHER', 'Other')], max_length=25, verbose_name='What type of identity number is this?')),
-                ('recruit_source', models.CharField(choices=[('ANC clinic staff', 'ANC clinic staff'), ('BHP recruiter/clinician', 'BHP recruiter/clinician'), ('OTHER', 'Other, specify')], max_length=75, verbose_name='The caregiver first learned about the flourish study from ')),
-                ('recruit_source_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other recruitment source, specify...')),
-                ('recruitment_clinic', models.CharField(choices=[('Prior', 'Prior BHP Study'), ('PMH', 'Gaborone(PMH)'), ('G.West Clinic', 'G.West Clinic'), ('BH3 Clinic', 'BH3 Clinic'), ('Ext2', 'Extension 2 Clinic'), ('Nkoyaphiri', 'Nkoyaphiri Clinic'), ('Lesirane', 'Lesirane Clinic'), ('Old Naledi', 'Old Naledi'), ('Mafitlhakgosi', 'Mafitlhakgosi'), ('Schools', 'Schools'), ('OTHER', 'Other health facilities not associated with study site')], max_length=100, verbose_name='The caregiver was recruited from')),
-                ('recruitment_clinic_other', models.CharField(blank=True, max_length=100, null=True, verbose_name='if other recruitment, specify...')),
-                ('remain_in_study', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, verbose_name='Are you willing to remain in the study area until 2025?')),
-                ('biological_caregiver', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you the biological mother to the child or children?')),
-                ('hiv_testing', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation', max_length=3, verbose_name='If HIV status not known, are you willing to undergo HIV testing and counseling?')),
-                ('breastfeed_intent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation', max_length=3, verbose_name='Do you intend on breast feeding your infant?')),
-                ('future_contact', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you give us permission to be contacted for future studies?')),
-                ('child_consent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation', max_length=3, verbose_name='Are you willing to consent for your child’s participation in FLOURISH?')),
-                ('ineligibility', models.TextField(editable=False, max_length=150, null=True, verbose_name='Reason not eligible')),
-                ('is_eligible', models.BooleanField(default=False, editable=False)),
-                ('multiple_birth', models.BooleanField(default=False, editable=False)),
+                ('sid', models.CharField(blank=True, editable=False,
+                 help_text='Used for randomization against a prepared rando-list.', max_length=15, null=True, verbose_name='SID')),
+                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comment')),
+                ('dm_comment', models.CharField(editable=False, help_text='see also edc.data manager.',
+                 max_length=150, null=True, verbose_name='Data Management comment')),
+                ('consent_identifier', models.UUIDField(default=uuid.uuid4, editable=False,
+                 help_text='A unique identifier for this consent instance')),
+                ('consent_reviewed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.',
+                 max_length=3, null=True, verbose_name='I have reviewed the consent with the participant')),
+                ('study_questions', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.',
+                 max_length=3, null=True, verbose_name='I have answered all questions the participant had about the study')),
+                ('assessment_score', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3,
+                 null=True, verbose_name='I have asked the participant questions about this study and the participant has demonstrated understanding')),
+                ('consent_signature', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.',
+                 max_length=3, null=True, verbose_name='I have verified that the participant has signed the consent form')),
+                ('consent_copy', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Declined', 'Yes, but subject declined copy')],
+                 help_text='If declined, return copy with the consent', max_length=20, null=True, verbose_name='I have provided the participant with a copy of their signed informed consent')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, null=True, verbose_name='Subject Identifier')),
+                ('screening_identifier', models.CharField(
+                    max_length=50, verbose_name='Screening identifier')),
+                ('gender', models.CharField(choices=[
+                 ('M', 'Male'), ('F', 'Female')], max_length=1, verbose_name='Gender')),
+                ('identity_type', models.CharField(choices=[('country_id', 'Country ID number'), ('country_id_rcpt', 'Country ID receipt'), (
+                    'passport', 'Passport'), ('OTHER', 'Other')], max_length=25, verbose_name='What type of identity number is this?')),
+                ('recruit_source', models.CharField(choices=[('ANC clinic staff', 'ANC clinic staff'), ('BHP recruiter/clinician', 'BHP recruiter/clinician'), (
+                    'OTHER', 'Other, specify')], max_length=75, verbose_name='The caregiver first learned about the flourish study from ')),
+                ('recruit_source_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other recruitment source, specify...')),
+                ('recruitment_clinic', models.CharField(choices=[('Prior', 'Prior BHP Study'), ('PMH', 'Gaborone(PMH)'), ('G.West Clinic', 'G.West Clinic'), ('BH3 Clinic', 'BH3 Clinic'), ('Ext2', 'Extension 2 Clinic'), ('Nkoyaphiri', 'Nkoyaphiri Clinic'), (
+                    'Lesirane', 'Lesirane Clinic'), ('Old Naledi', 'Old Naledi'), ('Mafitlhakgosi', 'Mafitlhakgosi'), ('Schools', 'Schools'), ('OTHER', 'Other health facilities not associated with study site')], max_length=100, verbose_name='The caregiver was recruited from')),
+                ('recruitment_clinic_other', models.CharField(blank=True, max_length=100,
+                 null=True, verbose_name='if other recruitment, specify...')),
+                ('remain_in_study', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.',
+                 max_length=3, verbose_name='Are you willing to remain in the study area until 2025?')),
+                ('biological_caregiver', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you the biological mother to the child or children?')),
+                ('hiv_testing', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation',
+                 max_length=3, verbose_name='If HIV status not known, are you willing to undergo HIV testing and counseling?')),
+                ('breastfeed_intent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')],
+                 help_text='If ‘No’ ineligible for study participation', max_length=3, verbose_name='Do you intend on breast feeding your infant?')),
+                ('future_contact', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you give us permission to be contacted for future studies?')),
+                ('child_consent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If ‘No’ ineligible for study participation',
+                 max_length=3, verbose_name='Are you willing to consent for your child’s participation in FLOURISH?')),
+                ('ineligibility', models.TextField(editable=False,
+                 max_length=150, null=True, verbose_name='Reason not eligible')),
+                ('is_eligible', models.BooleanField(
+                    default=False, editable=False)),
+                ('multiple_birth', models.BooleanField(
+                    default=False, editable=False)),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
             ],
             options={
                 'verbose_name': 'historical Adult Participation Consent',
@@ -1225,33 +1990,57 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalScreeningPriorBhpParticipants',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('screening_identifier', models.CharField(blank=True, db_index=True, max_length=36, null=True, verbose_name='Eligibility Identifier')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of assessing eligibility', validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
-                ('study_maternal_identifier', models.CharField(blank=True, max_length=50, null=True, verbose_name='Study Caregiver Subject Identifier')),
-                ('child_alive', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=10, verbose_name='Is the child from the previous study alive?')),
-                ('mother_alive', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), ('N/A', 'Not Applicable')], default='N/A', max_length=10, verbose_name='Is the biological mother from the previous study alive?')),
-                ('flourish_participation', models.CharField(choices=[('interested', 'Yes I am interested'), ('another_caregiver_interested', 'Yes another caregiver is interested'), ('No', 'No'), ('undecided', 'Undecided'), ('N/A', 'Not applicable')], default='N/A', max_length=40, verbose_name='Are you or another caregiver of this child interested in participating in the FLOURISH Study? ')),
-                ('ineligibility', models.TextField(editable=False, max_length=150, null=True, verbose_name='Reason not eligible')),
-                ('is_eligible', models.BooleanField(default=False, editable=False)),
-                ('is_consented', models.BooleanField(default=False, editable=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('screening_identifier', models.CharField(blank=True, db_index=True,
+                 max_length=36, null=True, verbose_name='Eligibility Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of assessing eligibility', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
+                ('study_maternal_identifier', models.CharField(blank=True, max_length=50,
+                 null=True, verbose_name='Study Caregiver Subject Identifier')),
+                ('child_alive', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=10, verbose_name='Is the child from the previous study alive?')),
+                ('mother_alive', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=10, verbose_name='Is the biological mother from the previous study alive?')),
+                ('flourish_participation', models.CharField(choices=[('interested', 'Yes I am interested'), ('another_caregiver_interested', 'Yes another caregiver is interested'), ('No', 'No'), (
+                    'undecided', 'Undecided'), ('N/A', 'Not applicable')], default='N/A', max_length=40, verbose_name='Are you or another caregiver of this child interested in participating in the FLOURISH Study? ')),
+                ('ineligibility', models.TextField(editable=False,
+                 max_length=150, null=True, verbose_name='Reason not eligible')),
+                ('is_eligible', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_consented', models.BooleanField(
+                    default=False, editable=False)),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
             ],
             options={
                 'verbose_name': 'historical Screening Prior BHP Participants',
@@ -1263,31 +2052,53 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalScreeningPregWomen',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('screening_identifier', models.CharField(blank=True, db_index=True, max_length=36, null=True, verbose_name='Eligibility Identifier')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of assessing eligibility', validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
-                ('hiv_testing', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='If HIV status not known, are you willing to undergo HIV testing and counseling?')),
-                ('breastfeed_intent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you intend on breastfeeding your infant?')),
-                ('ineligibility', models.TextField(editable=False, max_length=150, null=True, verbose_name='Reason not eligible')),
-                ('is_eligible', models.BooleanField(default=False, editable=False)),
-                ('is_consented', models.BooleanField(default=False, editable=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('screening_identifier', models.CharField(blank=True, db_index=True,
+                 max_length=36, null=True, verbose_name='Eligibility Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of assessing eligibility', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
+                ('hiv_testing', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3,
+                 verbose_name='If HIV status not known, are you willing to undergo HIV testing and counseling?')),
+                ('breastfeed_intent', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you intend on breastfeeding your infant?')),
+                ('ineligibility', models.TextField(editable=False,
+                 max_length=150, null=True, verbose_name='Reason not eligible')),
+                ('is_eligible', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_consented', models.BooleanField(
+                    default=False, editable=False)),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
             ],
             options={
                 'verbose_name': 'historical Screening for Newly Enrolled Pregnant Women',
@@ -1299,46 +2110,82 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalMaternalVisit',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('visit_schedule_name', models.CharField(editable=False, help_text='the name of the visit schedule used to find the "schedule"', max_length=25)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('visit_schedule_name', models.CharField(editable=False,
+                 help_text='the name of the visit schedule used to find the "schedule"', max_length=25)),
                 ('schedule_name', models.CharField(editable=False, max_length=25)),
-                ('visit_code', models.CharField(editable=False, max_length=25, null=True)),
-                ('visit_code_sequence', models.IntegerField(blank=True, default=0, help_text='An integer to represent the sequence of additional appointments relative to the base appointment, 0, needed to complete data collection for the timepoint. (NNNN.0)', null=True, verbose_name='Sequence')),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('information_provider', models.CharField(max_length=20, verbose_name="Please indicate who provided most of the information for this participant's visit")),
-                ('information_provider_other', models.CharField(blank=True, max_length=20, null=True, verbose_name='if information provider is Other, please specify')),
-                ('is_present', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='Yes', max_length=10, verbose_name="Is the participant present at today's visit")),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of this report', validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Visit Date and Time')),
-                ('reason_unscheduled_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=25, null=True, verbose_name='If "Other" reason for unscheduled visit, specify')),
-                ('reason_missed_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=25, null=True, verbose_name='If "Other" reason for missed visit, specify')),
-                ('require_crfs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='Yes', max_length=10, verbose_name='Are scheduled data being submitted with this visit?')),
-                ('info_source_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If "Other" source of information, specify')),
-                ('comments', models.TextField(blank=True, max_length=250, null=True, verbose_name='Comment if any additional pertinent information about the participant')),
-                ('reason', models.CharField(choices=[('scheduled', 'Scheduled visit/contact'), ('missed', 'Missed Scheduled visit'), ('unscheduled', 'Unscheduled visit at which lab samples or data are being submitted'), ('lost', 'Lost to follow-up (use only when taking subject off study)'), ('failed eligibility', 'Subject failed enrollment eligibility'), ('completed protocol', 'Subject has completed the study')], max_length=25, verbose_name='Reason for visit')),
-                ('reason_missed', models.CharField(blank=True, max_length=250, null=True, verbose_name="If 'missed' above, reason scheduled visit was missed")),
-                ('reason_unscheduled', models.CharField(blank=True, max_length=25, null=True, verbose_name="If 'Unscheduled' above, provide reason for the unscheduled visit")),
-                ('study_status', models.CharField(choices=[('on study', 'On study'), ('off study', 'Off study-no further follow-up (including death); use only for last study contact')], max_length=50, verbose_name="What is the participant's current study status")),
-                ('survival_status', models.CharField(choices=[('alive', 'Alive'), ('dead', 'Dead'), ('unknown', 'Unknown')], default='alive', max_length=10, null=True, verbose_name="Participant's survival status")),
-                ('info_source', models.CharField(choices=[('participant', 'Clinic visit with participant'), ('other_contact', 'Other contact with participant (for example telephone call)'), ('other_doctor', 'Contact with external health care provider/medical doctor'), ('family', 'Contact with family or designated person who can provide information'), ('chart', 'Hospital chart or other medical record'), ('OTHER', 'Other')], default='participant', max_length=25, verbose_name='Source of information?')),
-                ('last_alive_date', models.DateField(blank=True, null=True, validators=[edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date participant last known alive')),
+                ('visit_code', models.CharField(
+                    editable=False, max_length=25, null=True)),
+                ('visit_code_sequence', models.IntegerField(blank=True, default=0,
+                 help_text='An integer to represent the sequence of additional appointments relative to the base appointment, 0, needed to complete data collection for the timepoint. (NNNN.0)', null=True, verbose_name='Sequence')),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('information_provider', models.CharField(max_length=20,
+                 verbose_name="Please indicate who provided most of the information for this participant's visit")),
+                ('information_provider_other', models.CharField(blank=True, max_length=20,
+                 null=True, verbose_name='if information provider is Other, please specify')),
+                ('is_present', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], default='Yes', max_length=10, verbose_name="Is the participant present at today's visit")),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of this report', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Visit Date and Time')),
+                ('reason_unscheduled_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=25, null=True, verbose_name='If "Other" reason for unscheduled visit, specify')),
+                ('reason_missed_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=25, null=True, verbose_name='If "Other" reason for missed visit, specify')),
+                ('require_crfs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='Yes',
+                 max_length=10, verbose_name='Are scheduled data being submitted with this visit?')),
+                ('info_source_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If "Other" source of information, specify')),
+                ('comments', models.TextField(blank=True, max_length=250, null=True,
+                 verbose_name='Comment if any additional pertinent information about the participant')),
+                ('reason', models.CharField(choices=[('scheduled', 'Scheduled visit/contact'), ('missed', 'Missed Scheduled visit'), ('unscheduled', 'Unscheduled visit at which lab samples or data are being submitted'), ('lost',
+                 'Lost to follow-up (use only when taking subject off study)'), ('failed eligibility', 'Subject failed enrollment eligibility'), ('completed protocol', 'Subject has completed the study')], max_length=25, verbose_name='Reason for visit')),
+                ('reason_missed', models.CharField(blank=True, max_length=250, null=True,
+                 verbose_name="If 'missed' above, reason scheduled visit was missed")),
+                ('reason_unscheduled', models.CharField(blank=True, max_length=25, null=True,
+                 verbose_name="If 'Unscheduled' above, provide reason for the unscheduled visit")),
+                ('study_status', models.CharField(choices=[('on study', 'On study'), (
+                    'off study', 'Off study-no further follow-up (including death); use only for last study contact')], max_length=50, verbose_name="What is the participant's current study status")),
+                ('survival_status', models.CharField(choices=[('alive', 'Alive'), ('dead', 'Dead'), (
+                    'unknown', 'Unknown')], default='alive', max_length=10, null=True, verbose_name="Participant's survival status")),
+                ('info_source', models.CharField(choices=[('participant', 'Clinic visit with participant'), ('other_contact', 'Other contact with participant (for example telephone call)'), ('other_doctor', 'Contact with external health care provider/medical doctor'), (
+                    'family', 'Contact with family or designated person who can provide information'), ('chart', 'Hospital chart or other medical record'), ('OTHER', 'Other')], default='participant', max_length=25, verbose_name='Source of information?')),
+                ('last_alive_date', models.DateField(blank=True, null=True, validators=[
+                 edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date participant last known alive')),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('appointment', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='edc_appointment.appointment')),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('appointment', models.ForeignKey(blank=True, db_constraint=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='edc_appointment.appointment')),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
             ],
             options={
                 'verbose_name': 'historical Maternal Visit',
@@ -1350,40 +2197,71 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalMaternalDelivery',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('subject_identifier', models.CharField(db_index=True, max_length=50, verbose_name='Subject Identifier')),
-                ('report_datetime', models.DateTimeField(validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
-                ('delivery_datetime', models.DateTimeField(help_text='If TIME unknown, estimate', validators=[edc_base.model_validators.date.datetime_not_future], verbose_name='Date and time of delivery :')),
-                ('delivery_time_estimated', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the delivery TIME estimated?')),
-                ('delivery_hospital', models.CharField(choices=[('PMH', 'Gaborone(PMH)'), ('G.West Clinic', 'G.West Clinic'), ('BH3 Clinic', 'BH3 Clinic'), ('Lesirane', 'Lesirane Clinic'), ('Old Naledi', 'Old Naledi'), ('Mafitlhakgosi', 'Mafitlhakgosi'), ('OTHER', 'Other health facilities not associated with study site')], help_text="If 'OTHER', specify below", max_length=65, verbose_name='Place of delivery? ')),
-                ('delivery_hospital_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('labour_hrs', models.CharField(max_length=10, verbose_name='How long prior to delivery, in HRS, did labour begin? ')),
-                ('mode_delivery', models.CharField(choices=[('spontaneous vaginal', 'spontaneous vaginal'), ('vaginal forceps', 'vaginal forceps'), ('elective c-section', 'elective C-section'), ('emergent c-section', 'emrgent C-section'), ('OTHER', 'Other delivery mode not listed above')], help_text="If 'OTHER', specify below", max_length=100, verbose_name='What was the mode of delivery?')),
-                ('mode_delivery_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('csection_reason', models.CharField(choices=[('N/A', 'Not Applicable'), ('arrest', 'Arrest'), ('non-reassuring fetal fetal heart rate', 'Non-reassuring fetal heart rate'), ('malpresentation/breeech fetus', 'Malpresentation/breech fetus'), ('interruption of hiv transmission', 'Interruption of HIV transmission'), ('failure to progress/descend', 'Failue to progress/descend'), ('fetal anomaly', 'Fetal anomaly'), ('OTHER', 'Other reason for csection not listed above.')], help_text="If 'OTHER', specify below", max_length=100, verbose_name='If C-section was performed, indicate reason below')),
-                ('csection_reason_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('delivery_complications_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('live_infants_to_register', models.IntegerField(verbose_name='How many babies are you registering to the study? ')),
-                ('still_births', models.IntegerField(default=0, verbose_name='How many still births or miscarriages?')),
-                ('valid_regiment_duration', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If not 4 or more weeks then participant will go OFF STUDY.', max_length=15, null=True, verbose_name='(Interviewer) If HIV+ve, has the participant been on the ART regimen for at least 4 weeks in pregnancy?')),
-                ('arv_initiation_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='(Interviewer) If on ART, when did the participant initiate therapy for this pregnancy?')),
-                ('delivery_comment', models.TextField(blank=True, max_length=250, null=True, verbose_name='List any additional information about the labour and delivery (mother only) ')),
-                ('comment', models.TextField(blank=True, max_length=250, null=True, verbose_name='Comment if any additional pertinent information ')),
-                ('feeding_mode', models.CharField(choices=[('Breastfeeding only', 'Breastfeed only'), ('Formula feeding only', 'Formula feeding only'), ('Both breastfeeding and formula feeding', 'Both breastfeeding and formula feeding'), ('Medical complications: Infant did not feed', 'Medical complications: Infant did not feed')], max_length=100, verbose_name='How was the infant being fed immediately after delivery?')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(db_index=True,
+                 max_length=50, verbose_name='Subject Identifier')),
+                ('report_datetime', models.DateTimeField(validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
+                ('delivery_datetime', models.DateTimeField(help_text='If TIME unknown, estimate', validators=[
+                 edc_base.model_validators.date.datetime_not_future], verbose_name='Date and time of delivery :')),
+                ('delivery_time_estimated', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the delivery TIME estimated?')),
+                ('delivery_hospital', models.CharField(choices=[('PMH', 'Gaborone(PMH)'), ('G.West Clinic', 'G.West Clinic'), ('BH3 Clinic', 'BH3 Clinic'), ('Lesirane', 'Lesirane Clinic'), ('Old Naledi', 'Old Naledi'), (
+                    'Mafitlhakgosi', 'Mafitlhakgosi'), ('OTHER', 'Other health facilities not associated with study site')], help_text="If 'OTHER', specify below", max_length=65, verbose_name='Place of delivery? ')),
+                ('delivery_hospital_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('labour_hrs', models.CharField(max_length=10,
+                 verbose_name='How long prior to delivery, in HRS, did labour begin? ')),
+                ('mode_delivery', models.CharField(choices=[('spontaneous vaginal', 'spontaneous vaginal'), ('vaginal forceps', 'vaginal forceps'), ('elective c-section', 'elective C-section'), (
+                    'emergent c-section', 'emrgent C-section'), ('OTHER', 'Other delivery mode not listed above')], help_text="If 'OTHER', specify below", max_length=100, verbose_name='What was the mode of delivery?')),
+                ('mode_delivery_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('csection_reason', models.CharField(choices=[('N/A', 'Not Applicable'), ('arrest', 'Arrest'), ('non-reassuring fetal fetal heart rate', 'Non-reassuring fetal heart rate'), ('malpresentation/breeech fetus', 'Malpresentation/breech fetus'), ('interruption of hiv transmission', 'Interruption of HIV transmission'), (
+                    'failure to progress/descend', 'Failue to progress/descend'), ('fetal anomaly', 'Fetal anomaly'), ('OTHER', 'Other reason for csection not listed above.')], help_text="If 'OTHER', specify below", max_length=100, verbose_name='If C-section was performed, indicate reason below')),
+                ('csection_reason_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('delivery_complications_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('live_infants_to_register', models.IntegerField(
+                    verbose_name='How many babies are you registering to the study? ')),
+                ('still_births', models.IntegerField(default=0,
+                 verbose_name='How many still births or miscarriages?')),
+                ('valid_regiment_duration', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If not 4 or more weeks then participant will go OFF STUDY.',
+                 max_length=15, null=True, verbose_name='(Interviewer) If HIV+ve, has the participant been on the ART regimen for at least 4 weeks in pregnancy?')),
+                ('arv_initiation_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='(Interviewer) If on ART, when did the participant initiate therapy for this pregnancy?')),
+                ('delivery_comment', models.TextField(blank=True, max_length=250, null=True,
+                 verbose_name='List any additional information about the labour and delivery (mother only) ')),
+                ('comment', models.TextField(blank=True, max_length=250, null=True,
+                 verbose_name='Comment if any additional pertinent information ')),
+                ('feeding_mode', models.CharField(choices=[('Breastfeeding only', 'Breastfeed only'), ('Formula feeding only', 'Formula feeding only'), ('Both breastfeeding and formula feeding', 'Both breastfeeding and formula feeding'), (
+                    'Medical complications: Infant did not feed', 'Medical complications: Infant did not feed')], max_length=100, verbose_name='How was the infant being fed immediately after delivery?')),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'historical Birth Form',
@@ -1395,26 +2273,43 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalLocatorLogEntry',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
-                ('log_status', models.CharField(choices=[('exist', 'Exists'), ('not_found', 'Not found')], max_length=25, verbose_name='What is the status of the locator?')),
-                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comments')),
-                ('date_created', models.DateField(default=django.utils.timezone.now)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
+                ('log_status', models.CharField(choices=[('exist', 'Exists'), (
+                    'not_found', 'Not found')], max_length=25, verbose_name='What is the status of the locator?')),
+                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comments')),
+                ('date_created', models.DateField(
+                    default=django.utils.timezone.now)),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('locator_log', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='flourish_caregiver.locatorlog')),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('locator_log', models.ForeignKey(blank=True, db_constraint=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='flourish_caregiver.locatorlog')),
             ],
             options={
                 'verbose_name': 'historical locator log entry',
@@ -1426,23 +2321,37 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalLocatorLog',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, verbose_name='Report date')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('report_datetime', models.DateTimeField(
+                    default=edc_base.utils.get_utcnow, verbose_name='Report date')),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('maternal_dataset', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='flourish_caregiver.maternaldataset')),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('maternal_dataset', models.ForeignKey(blank=True, db_constraint=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='flourish_caregiver.maternaldataset')),
             ],
             options={
                 'verbose_name': 'historical locator log',
@@ -1454,27 +2363,45 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalEnrollment',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('enrollment_identifier', models.CharField(blank=True, db_index=True, max_length=36, null=True, verbose_name='Enrollment Identifier')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of enrollment', validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
-                ('pregnant', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you currently pregnant?')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('enrollment_identifier', models.CharField(blank=True, db_index=True,
+                 max_length=36, null=True, verbose_name='Enrollment Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of enrollment', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
+                ('pregnant', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you currently pregnant?')),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
             ],
             options={
                 'verbose_name': 'historical Enrollment',
@@ -1486,26 +2413,42 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalCaregiverOffSchedule',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('subject_identifier', models.CharField(db_index=True, max_length=50, verbose_name='Subject Identifier')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(db_index=True,
+                 max_length=50, verbose_name='Subject Identifier')),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('offschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Date and time subject taken off schedule')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
+                ('offschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Date and time subject taken off schedule')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
             ],
             options={
                 'verbose_name': 'historical caregiver off schedule',
@@ -1517,59 +2460,107 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalCaregiverLocator',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
                 ('action_identifier', models.CharField(max_length=25, null=True)),
                 ('tracking_identifier', models.CharField(max_length=30, null=True)),
-                ('related_tracking_identifier', models.CharField(max_length=30, null=True)),
-                ('parent_tracking_identifier', models.CharField(max_length=30, null=True)),
-                ('may_sms', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, null=True, verbose_name='Has the participant given permission <b>to be contacted by SMS</b> by study staff for follow-up purposes during the study?')),
-                ('mail_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Mailing address ')),
-                ('physical_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Physical address with detailed description')),
-                ('subject_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
-                ('subject_cell_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number (alternate)')),
-                ('subject_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone')),
-                ('subject_phone_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone (alternate)')),
-                ('may_contact_indirectly', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='For example a partner, spouse, family member, neighbour ...', max_length=25, verbose_name='Has the participant given permission for study staff <b>to contact anyone else</b> for follow-up purposes during the study?')),
-                ('indirect_contact_name', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Full names of the contact person')),
-                ('indirect_contact_relation', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Relationship to participant')),
-                ('indirect_contact_physical_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Full physical address ')),
-                ('indirect_contact_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
-                ('indirect_contact_cell_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number (alternative)')),
-                ('indirect_contact_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone number')),
-                ('subject_work_place', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Name and location of work place')),
-                ('subject_work_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Work contact cell number')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('screening_identifier', models.CharField(blank=True, db_index=True, max_length=36, null=True, verbose_name='Eligibility Identifier')),
-                ('subject_identifier', models.CharField(blank=True, max_length=50, null=True, verbose_name='Subject Identifier')),
-                ('study_maternal_identifier', models.CharField(blank=True, max_length=50, null=True, verbose_name='Study Caregiver Subject Identifier')),
-                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='First name')),
-                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
-                ('locator_date', models.DateField(validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date Locator Form signed')),
-                ('health_care_infant', models.CharField(blank=True, max_length=35, null=True, verbose_name='Health clinic where your infant will receive their routine care')),
-                ('may_call', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=25, verbose_name='Has the participant given his/her permission for study staff to call her for follow-up purposes during the study?')),
-                ('may_visit_home', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Has the participant given his/her permission for study staff <b>to make home visits</b> for follow-up purposes during the study??')),
-                ('has_caretaker', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name="Has the participant identified someone who will be responsible for the care of the baby in case of her death, to whom the study team could share information about her baby's health?")),
-                ('caretaker_name', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text='include firstname and surname (Encryption: RSA local)', max_length=71, null=True, verbose_name='Full Name of the responsible person')),
-                ('may_call_work', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Doesnt_work', "Doesn't work")], max_length=25, verbose_name='Has the participant given his/her permission for study staff to contact her at work for follow up purposes during the study?')),
-                ('subject_work_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Work contact number')),
-                ('caretaker_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
-                ('caretaker_tel', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone number')),
+                ('related_tracking_identifier',
+                 models.CharField(max_length=30, null=True)),
+                ('parent_tracking_identifier',
+                 models.CharField(max_length=30, null=True)),
+                ('may_sms', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, null=True,
+                 verbose_name='Has the participant given permission <b>to be contacted by SMS</b> by study staff for follow-up purposes during the study?')),
+                ('mail_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Mailing address ')),
+                ('physical_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Physical address with detailed description')),
+                ('subject_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
+                ('subject_cell_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number (alternate)')),
+                ('subject_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone')),
+                ('subject_phone_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone (alternate)')),
+                ('may_contact_indirectly', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='For example a partner, spouse, family member, neighbour ...',
+                 max_length=25, verbose_name='Has the participant given permission for study staff <b>to contact anyone else</b> for follow-up purposes during the study?')),
+                ('indirect_contact_name', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Full names of the contact person')),
+                ('indirect_contact_relation', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Relationship to participant')),
+                ('indirect_contact_physical_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Full physical address ')),
+                ('indirect_contact_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
+                ('indirect_contact_cell_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number (alternative)')),
+                ('indirect_contact_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone number')),
+                ('subject_work_place', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Name and location of work place')),
+                ('subject_work_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Work contact cell number')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('screening_identifier', models.CharField(blank=True, db_index=True,
+                 max_length=36, null=True, verbose_name='Eligibility Identifier')),
+                ('subject_identifier', models.CharField(blank=True,
+                 max_length=50, null=True, verbose_name='Subject Identifier')),
+                ('study_maternal_identifier', models.CharField(blank=True, max_length=50,
+                 null=True, verbose_name='Study Caregiver Subject Identifier')),
+                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='First name')),
+                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
+                ('locator_date', models.DateField(validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date Locator Form signed')),
+                ('health_care_infant', models.CharField(blank=True, max_length=35, null=True,
+                 verbose_name='Health clinic where your infant will receive their routine care')),
+                ('may_call', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=25,
+                 verbose_name='Has the participant given his/her permission for study staff to call her for follow-up purposes during the study?')),
+                ('may_visit_home', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25,
+                 verbose_name='Has the participant given his/her permission for study staff <b>to make home visits</b> for follow-up purposes during the study??')),
+                ('has_caretaker', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25,
+                 verbose_name="Has the participant identified someone who will be responsible for the care of the baby in case of her death, to whom the study team could share information about her baby's health?")),
+                ('caretaker_name', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(
+                    blank=True, help_text='include firstname and surname (Encryption: RSA local)', max_length=71, null=True, verbose_name='Full Name of the responsible person')),
+                ('may_call_work', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Doesnt_work', "Doesn't work")], max_length=25,
+                 verbose_name='Has the participant given his/her permission for study staff to contact her at work for follow up purposes during the study?')),
+                ('subject_work_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Work contact number')),
+                ('caretaker_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
+                ('caretaker_tel', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone number')),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
             ],
             options={
                 'verbose_name': 'historical Caregiver Locator',
@@ -1581,45 +2572,79 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HistoricalAntenatalEnrollment',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
-                ('subject_identifier', models.CharField(db_index=True, max_length=50, verbose_name='Subject Identifier')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
-                ('enrollment_hiv_status', models.CharField(editable=False, help_text='Auto-filled by enrollment helper', max_length=15, null=True)),
-                ('date_at_32wks', models.DateField(editable=False, help_text='Auto-filled by enrollment helper', null=True)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(db_index=True,
+                 max_length=50, verbose_name='Subject Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
+                ('enrollment_hiv_status', models.CharField(editable=False,
+                 help_text='Auto-filled by enrollment helper', max_length=15, null=True)),
+                ('date_at_32wks', models.DateField(editable=False,
+                 help_text='Auto-filled by enrollment helper', null=True)),
                 ('is_eligible', models.BooleanField(editable=False)),
                 ('pending_ultrasound', models.BooleanField(editable=False)),
-                ('is_diabetic', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you diabetic?')),
-                ('will_breastfeed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='INELIGIBLE if NO', max_length=3, verbose_name='Do you intent to breast-feed your child for 6 months?')),
-                ('current_hiv_status', models.CharField(choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate'), ('NEVER', 'Never tested for HIV'), ('unknown', 'Unknown'), ('DWTA', "Don't want to answer")], help_text='if POS or NEG, ask for documentation.', max_length=30, verbose_name='What is your current HIV status?')),
-                ('evidence_hiv_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='evidence = clinic and/or IDCC records. check regimes/drugs. If NO, more criteria required.', max_length=15, null=True, verbose_name='(Interviewer) Have you seen evidence of the HIV result?')),
-                ('week32_test', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='No', max_length=3, verbose_name='Have you tested for HIV before or during this pregnancy?')),
-                ('week32_test_date', models.DateField(validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date of HIV Test')),
-                ('week32_result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What was your result?')),
-                ('evidence_32wk_hiv_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='evidence = clinic and/or IDCC records. check regimes/drugs.', max_length=15, null=True, verbose_name='(Interviewer) Have you seen evidence of the result from HIV test on or before this pregnancy?')),
-                ('will_get_arvs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If found POS by RAPID TEST. Then answer YES', max_length=15, null=True, verbose_name='(Interviewer) If HIV+ve, do records show that participant is taking, is prescribed,or will be prescribed ARVs (if newly diagnosed) during pregnancy?')),
-                ('rapid_test_done', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text="Remember, rapid test is for NEG, UNTESTED, UNKNOWN and Don't want to answer.", max_length=15, null=True, verbose_name='Was a rapid test processed?')),
-                ('rapid_test_date', models.DateField(blank=True, null=True, validators=[edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date of rapid test')),
-                ('rapid_test_result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What is the rapid test result?')),
-                ('ineligibility', models.TextField(editable=False, max_length=350, null=True, verbose_name='Reason not enrolled')),
-                ('knows_lmp', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='LMP', max_length=3, verbose_name='Does the mother know the approximate date of the first day her last menstrual period?')),
-                ('last_period_date', models.DateField(blank=True, help_text='LMP', null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='What is the approximate date of the first day of the mother’s last menstrual period')),
-                ('ga_lmp_enrollment_wks', models.IntegerField(blank=True, help_text=' (weeks of gestation at enrollment, LMP). Eligible if >21 and <29 weeks GA', null=True, verbose_name='GA by LMP at enrollment.')),
-                ('ga_lmp_anc_wks', models.IntegerField(blank=True, help_text=' (weeks of gestation at enrollment, ANC)', null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(40)], verbose_name="What is the mother's gestational age according to ANC records?")),
-                ('edd_by_lmp', models.DateField(blank=True, null=True, validators=[edc_protocol.validators.date_not_before_study_start], verbose_name='Estimated date of delivery by lmp')),
+                ('is_diabetic', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you diabetic?')),
+                ('will_breastfeed', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], help_text='INELIGIBLE if NO', max_length=3, verbose_name='Do you intent to breast-feed your child for 6 months?')),
+                ('current_hiv_status', models.CharField(choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate'), ('NEVER', 'Never tested for HIV'), (
+                    'unknown', 'Unknown'), ('DWTA', "Don't want to answer")], help_text='if POS or NEG, ask for documentation.', max_length=30, verbose_name='What is your current HIV status?')),
+                ('evidence_hiv_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')],
+                 help_text='evidence = clinic and/or IDCC records. check regimes/drugs. If NO, more criteria required.', max_length=15, null=True, verbose_name='(Interviewer) Have you seen evidence of the HIV result?')),
+                ('week32_test', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], default='No',
+                 max_length=3, verbose_name='Have you tested for HIV before or during this pregnancy?')),
+                ('week32_test_date', models.DateField(validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of HIV Test')),
+                ('week32_result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), (
+                    'IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What was your result?')),
+                ('evidence_32wk_hiv_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='evidence = clinic and/or IDCC records. check regimes/drugs.',
+                 max_length=15, null=True, verbose_name='(Interviewer) Have you seen evidence of the result from HIV test on or before this pregnancy?')),
+                ('will_get_arvs', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If found POS by RAPID TEST. Then answer YES', max_length=15,
+                 null=True, verbose_name='(Interviewer) If HIV+ve, do records show that participant is taking, is prescribed,or will be prescribed ARVs (if newly diagnosed) during pregnancy?')),
+                ('rapid_test_done', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')],
+                 help_text="Remember, rapid test is for NEG, UNTESTED, UNKNOWN and Don't want to answer.", max_length=15, null=True, verbose_name='Was a rapid test processed?')),
+                ('rapid_test_date', models.DateField(blank=True, null=True, validators=[
+                 edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Date of rapid test')),
+                ('rapid_test_result', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), (
+                    'IND', 'Indeterminate')], max_length=15, null=True, verbose_name='What is the rapid test result?')),
+                ('ineligibility', models.TextField(editable=False,
+                 max_length=350, null=True, verbose_name='Reason not enrolled')),
+                ('knows_lmp', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='LMP', max_length=3,
+                 verbose_name='Does the mother know the approximate date of the first day her last menstrual period?')),
+                ('last_period_date', models.DateField(blank=True, help_text='LMP', null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='What is the approximate date of the first day of the mother’s last menstrual period')),
+                ('ga_lmp_enrollment_wks', models.IntegerField(
+                    blank=True, help_text=' (weeks of gestation at enrollment, LMP). Eligible if >21 and <29 weeks GA', null=True, verbose_name='GA by LMP at enrollment.')),
+                ('ga_lmp_anc_wks', models.IntegerField(blank=True, help_text=' (weeks of gestation at enrollment, ANC)', null=True, validators=[django.core.validators.MinValueValidator(
+                    1), django.core.validators.MaxValueValidator(40)], verbose_name="What is the mother's gestational age according to ANC records?")),
+                ('edd_by_lmp', models.DateField(blank=True, null=True, validators=[
+                 edc_protocol.validators.date_not_before_study_start], verbose_name='Estimated date of delivery by lmp')),
                 ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(primary_key=True, serialize=False)),
-                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'historical Maternal Antenatal Enrollment',
@@ -1631,28 +2656,48 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FoodSecurityQuestionnaire',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('did_food_last', models.CharField(choices=[('0', 'Often True'), ('1', 'Sometimes True'), ('2', 'Never True'), ('3', 'I don’t know or Refused to answer')], max_length=60, verbose_name='The food that (I/we) bought just didn’t last, and (I/we) didn’t have money to get more.')),
-                ('afford_balanced_meals', models.CharField(choices=[('0', 'Often True'), ('1', 'Sometimes True'), ('2', 'Never True'), ('3', 'I don’t know or Refused to answer')], max_length=50, verbose_name='(I/we) couldn’t afford to eat balanced meals.')),
-                ('cut_meals', models.CharField(choices=[('0', 'Yes'), ('1', 'No'), ('2', 'I don’t know')], max_length=50, verbose_name="In the last 12 months, since last (name of current month), did (you or other adults in your household) ever cut the size of your meals or skip meals because there wasn't enough money for food?")),
-                ('how_often', models.CharField(blank=True, choices=[('0', 'Acknowledges being depressed and ill'), ('1', 'Acknowledges illness but attributes cause to bad food, climate, overwork, virus, need for rest, etc'), ('2', 'Denies being ill at all')], max_length=60, null=True, verbose_name='How often did this happen—almost every month, some months but not every month, or in only 1 or 2 months?')),
-                ('ate_less', models.CharField(choices=[('0', 'Yes'), ('1', 'No'), ('2', 'I don’t know')], max_length=60, verbose_name="In the last 12 months, did you ever eat less than you felt you should because there wasn't enough money for food? ")),
-                ('no_food_money', models.CharField(choices=[('0', 'Yes'), ('1', 'No'), ('2', 'I don’t know')], max_length=60, verbose_name="In the last 12 months, were you every hungry but didn't eat because there wasn't enough money for food?")),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('did_food_last', models.CharField(choices=[('0', 'Often True'), ('1', 'Sometimes True'), ('2', 'Never True'), (
+                    '3', 'I don’t know or Refused to answer')], max_length=60, verbose_name='The food that (I/we) bought just didn’t last, and (I/we) didn’t have money to get more.')),
+                ('afford_balanced_meals', models.CharField(choices=[('0', 'Often True'), ('1', 'Sometimes True'), ('2', 'Never True'), (
+                    '3', 'I don’t know or Refused to answer')], max_length=50, verbose_name='(I/we) couldn’t afford to eat balanced meals.')),
+                ('cut_meals', models.CharField(choices=[('0', 'Yes'), ('1', 'No'), ('2', 'I don’t know')], max_length=50,
+                 verbose_name="In the last 12 months, since last (name of current month), did (you or other adults in your household) ever cut the size of your meals or skip meals because there wasn't enough money for food?")),
+                ('how_often', models.CharField(blank=True, choices=[('0', 'Acknowledges being depressed and ill'), ('1', 'Acknowledges illness but attributes cause to bad food, climate, overwork, virus, need for rest, etc'), (
+                    '2', 'Denies being ill at all')], max_length=60, null=True, verbose_name='How often did this happen—almost every month, some months but not every month, or in only 1 or 2 months?')),
+                ('ate_less', models.CharField(choices=[('0', 'Yes'), ('1', 'No'), ('2', 'I don’t know')], max_length=60,
+                 verbose_name="In the last 12 months, did you ever eat less than you felt you should because there wasn't enough money for food? ")),
+                ('no_food_money', models.CharField(choices=[('0', 'Yes'), ('1', 'No'), ('2', 'I don’t know')], max_length=60,
+                 verbose_name="In the last 12 months, were you every hungry but didn't eat because there wasn't enough money for food?")),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Food Security Questionnaire',
@@ -1662,21 +2707,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FlourishConsentVersion',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('screening_identifier', models.CharField(max_length=50, unique=True, verbose_name='Screening identifier')),
-                ('version', models.CharField(choices=[('1', 'Consent version 1'), ('3', 'Consent version 3')], max_length=3, verbose_name='Which version of the consent would you like to be consented with.')),
-                ('report_datetime', models.DateTimeField(validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report datetime.')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('screening_identifier', models.CharField(max_length=50,
+                 unique=True, verbose_name='Screening identifier')),
+                ('version', models.CharField(choices=[('1', 'Consent version 1'), ('3', 'Consent version 3')],
+                 max_length=3, verbose_name='Which version of the consent would you like to be consented with.')),
+                ('report_datetime', models.DateTimeField(validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report datetime.')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Flourish Consent Version',
@@ -1686,22 +2744,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Enrollment',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
-                ('enrollment_identifier', models.CharField(blank=True, max_length=36, null=True, unique=True, verbose_name='Enrollment Identifier')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of enrollment', validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
-                ('pregnant', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you currently pregnant?')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('enrollment_identifier', models.CharField(blank=True, max_length=36,
+                 null=True, unique=True, verbose_name='Enrollment Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time of enrollment', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
+                ('pregnant', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you currently pregnant?')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Enrollment',
@@ -1711,27 +2783,46 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverPreviouslyEnrolled',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier', models.CharField(max_length=50, unique=True, verbose_name='Subject Identifier')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_base.model_validators.date.datetime_not_future, edc_protocol.validators.datetime_not_before_study_start], verbose_name='Report Time and Date')),
-                ('maternal_prev_enroll', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is this caregiver the person previously enrolled in a BHP study')),
-                ('current_hiv_status', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('IND', 'Indeterminate')], max_length=14, null=True, verbose_name='What is your current HIV status?')),
-                ('last_test_date', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, null=True, verbose_name='Do you know your last HIV test date?')),
-                ('test_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='Test Date')),
-                ('is_date_estimated', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, null=True, verbose_name='Is this date estimated?')),
-                ('sex', models.CharField(blank=True, choices=[('M', 'Male'), ('F', 'Female')], max_length=7, null=True, verbose_name='Gender')),
-                ('relation_to_child', models.CharField(blank=True, choices=[('father', 'Father'), ('grandmother', 'Grandmother'), ('grandfather', 'Grandfather'), ('aunt', 'Aunt'), ('uncle', 'Uncle'), ('sister', 'Sister'), ('brother', 'Brother'), ('guardian', 'Guardian'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Relationship to child')),
-                ('relation_to_child_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(max_length=50,
+                 unique=True, verbose_name='Subject Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_base.model_validators.date.datetime_not_future, edc_protocol.validators.datetime_not_before_study_start], verbose_name='Report Time and Date')),
+                ('maternal_prev_enroll', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is this caregiver the person previously enrolled in a BHP study')),
+                ('current_hiv_status', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), (
+                    'IND', 'Indeterminate')], max_length=14, null=True, verbose_name='What is your current HIV status?')),
+                ('last_test_date', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, null=True, verbose_name='Do you know your last HIV test date?')),
+                ('test_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Test Date')),
+                ('is_date_estimated', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, null=True, verbose_name='Is this date estimated?')),
+                ('sex', models.CharField(blank=True, choices=[
+                 ('M', 'Male'), ('F', 'Female')], max_length=7, null=True, verbose_name='Gender')),
+                ('relation_to_child', models.CharField(blank=True, choices=[('father', 'Father'), ('grandmother', 'Grandmother'), ('grandfather', 'Grandfather'), ('aunt', 'Aunt'), (
+                    'uncle', 'Uncle'), ('sister', 'Sister'), ('brother', 'Brother'), ('guardian', 'Guardian'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Relationship to child')),
+                ('relation_to_child_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Caregiver Enrollment Information',
@@ -1741,32 +2832,56 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverPhqDeprScreening',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('activity_interest', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Little interest or pleasure in doing things')),
-                ('depressed', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Feeling down, depressed, or hopelesss')),
-                ('sleep_disorders', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Trouble falling/staying asleep, sleeping too much')),
-                ('fatigued', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Feeling tired or having little energy')),
-                ('eating_disorders', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Poor appetite or overeating')),
-                ('self_doubt', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Feeling bad about yourself or that you are a failure or have let yourself or your family down')),
-                ('easily_distracted', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Trouble concentrating on things, such as reading the newspaper or watching television.')),
-                ('restlessness', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Moving or speaking so slowly that other people could have noticed. Or the opposite; being so fidgety or restless that you have been moving around a lot more than usual')),
-                ('self_harm', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Thoughts that you would be better off dead or of hurting yourself in some way')),
-                ('depression_score', models.IntegerField(blank=True, null=True, verbose_name='Depression score')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('activity_interest', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=25, verbose_name='Little interest or pleasure in doing things')),
+                ('depressed', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=25, verbose_name='Feeling down, depressed, or hopelesss')),
+                ('sleep_disorders', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=25, verbose_name='Trouble falling/staying asleep, sleeping too much')),
+                ('fatigued', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=25, verbose_name='Feeling tired or having little energy')),
+                ('eating_disorders', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), (
+                    '2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25, verbose_name='Poor appetite or overeating')),
+                ('self_doubt', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=25, verbose_name='Feeling bad about yourself or that you are a failure or have let yourself or your family down')),
+                ('easily_distracted', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=25, verbose_name='Trouble concentrating on things, such as reading the newspaper or watching television.')),
+                ('restlessness', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=25,
+                 verbose_name='Moving or speaking so slowly that other people could have noticed. Or the opposite; being so fidgety or restless that you have been moving around a lot more than usual')),
+                ('self_harm', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=25, verbose_name='Thoughts that you would be better off dead or of hurting yourself in some way')),
+                ('depression_score', models.IntegerField(
+                    blank=True, null=True, verbose_name='Depression score')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Depression Screening - PHQ-9',
@@ -1777,54 +2892,98 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverLocator',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('slug', models.CharField(db_index=True, default='', editable=False, help_text='a field used for quick search', max_length=250, null=True)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
                 ('action_identifier', models.CharField(max_length=25, null=True)),
                 ('tracking_identifier', models.CharField(max_length=30, null=True)),
-                ('related_tracking_identifier', models.CharField(max_length=30, null=True)),
-                ('parent_tracking_identifier', models.CharField(max_length=30, null=True)),
-                ('may_sms', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, null=True, verbose_name='Has the participant given permission <b>to be contacted by SMS</b> by study staff for follow-up purposes during the study?')),
-                ('mail_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Mailing address ')),
-                ('physical_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Physical address with detailed description')),
-                ('subject_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
-                ('subject_cell_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number (alternate)')),
-                ('subject_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone')),
-                ('subject_phone_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone (alternate)')),
-                ('may_contact_indirectly', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='For example a partner, spouse, family member, neighbour ...', max_length=25, verbose_name='Has the participant given permission for study staff <b>to contact anyone else</b> for follow-up purposes during the study?')),
-                ('indirect_contact_name', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Full names of the contact person')),
-                ('indirect_contact_relation', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Relationship to participant')),
-                ('indirect_contact_physical_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Full physical address ')),
-                ('indirect_contact_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
-                ('indirect_contact_cell_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number (alternative)')),
-                ('indirect_contact_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone number')),
-                ('subject_work_place', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Name and location of work place')),
-                ('subject_work_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Work contact cell number')),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('screening_identifier', models.CharField(blank=True, max_length=36, null=True, unique=True, verbose_name='Eligibility Identifier')),
-                ('subject_identifier', models.CharField(blank=True, max_length=50, null=True, verbose_name='Subject Identifier')),
-                ('study_maternal_identifier', models.CharField(blank=True, max_length=50, null=True, verbose_name='Study Caregiver Subject Identifier')),
-                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='First name')),
-                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
-                ('locator_date', models.DateField(validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date Locator Form signed')),
-                ('health_care_infant', models.CharField(blank=True, max_length=35, null=True, verbose_name='Health clinic where your infant will receive their routine care')),
-                ('may_call', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=25, verbose_name='Has the participant given his/her permission for study staff to call her for follow-up purposes during the study?')),
-                ('may_visit_home', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Has the participant given his/her permission for study staff <b>to make home visits</b> for follow-up purposes during the study??')),
-                ('has_caretaker', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name="Has the participant identified someone who will be responsible for the care of the baby in case of her death, to whom the study team could share information about her baby's health?")),
-                ('caretaker_name', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text='include firstname and surname (Encryption: RSA local)', max_length=71, null=True, verbose_name='Full Name of the responsible person')),
-                ('may_call_work', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Doesnt_work', "Doesn't work")], max_length=25, verbose_name='Has the participant given his/her permission for study staff to contact her at work for follow up purposes during the study?')),
-                ('subject_work_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Work contact number')),
-                ('caretaker_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
-                ('caretaker_tel', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone number')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('related_tracking_identifier',
+                 models.CharField(max_length=30, null=True)),
+                ('parent_tracking_identifier',
+                 models.CharField(max_length=30, null=True)),
+                ('may_sms', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, null=True,
+                 verbose_name='Has the participant given permission <b>to be contacted by SMS</b> by study staff for follow-up purposes during the study?')),
+                ('mail_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Mailing address ')),
+                ('physical_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Physical address with detailed description')),
+                ('subject_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
+                ('subject_cell_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number (alternate)')),
+                ('subject_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone')),
+                ('subject_phone_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone (alternate)')),
+                ('may_contact_indirectly', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='For example a partner, spouse, family member, neighbour ...',
+                 max_length=25, verbose_name='Has the participant given permission for study staff <b>to contact anyone else</b> for follow-up purposes during the study?')),
+                ('indirect_contact_name', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Full names of the contact person')),
+                ('indirect_contact_relation', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Relationship to participant')),
+                ('indirect_contact_physical_address', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=500, null=True, verbose_name='Full physical address ')),
+                ('indirect_contact_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
+                ('indirect_contact_cell_alt', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number (alternative)')),
+                ('indirect_contact_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone number')),
+                ('subject_work_place', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Name and location of work place')),
+                ('subject_work_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Work contact cell number')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('screening_identifier', models.CharField(blank=True, max_length=36,
+                 null=True, unique=True, verbose_name='Eligibility Identifier')),
+                ('subject_identifier', models.CharField(blank=True,
+                 max_length=50, null=True, verbose_name='Subject Identifier')),
+                ('study_maternal_identifier', models.CharField(blank=True, max_length=50,
+                 null=True, verbose_name='Study Caregiver Subject Identifier')),
+                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='First name')),
+                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
+                ('locator_date', models.DateField(validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date Locator Form signed')),
+                ('health_care_infant', models.CharField(blank=True, max_length=35, null=True,
+                 verbose_name='Health clinic where your infant will receive their routine care')),
+                ('may_call', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=25,
+                 verbose_name='Has the participant given his/her permission for study staff to call her for follow-up purposes during the study?')),
+                ('may_visit_home', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25,
+                 verbose_name='Has the participant given his/her permission for study staff <b>to make home visits</b> for follow-up purposes during the study??')),
+                ('has_caretaker', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25,
+                 verbose_name="Has the participant identified someone who will be responsible for the care of the baby in case of her death, to whom the study team could share information about her baby's health?")),
+                ('caretaker_name', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(
+                    blank=True, help_text='include firstname and surname (Encryption: RSA local)', max_length=71, null=True, verbose_name='Full Name of the responsible person')),
+                ('may_call_work', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Doesnt_work', "Doesn't work")], max_length=25,
+                 verbose_name='Has the participant given his/her permission for study staff to contact her at work for follow up purposes during the study?')),
+                ('subject_work_phone', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Work contact number')),
+                ('caretaker_cell', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.CellNumber], verbose_name='Cell number')),
+                ('caretaker_tel', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[edc_base.model_validators.phone.TelephoneNumber], verbose_name='Telephone number')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Caregiver Locator',
@@ -1833,40 +2992,72 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverHamdDeprScreening',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('depressed_mood', models.CharField(choices=[('0', 'Absent'), ('1', 'These feeling states indicated only on questioning'), ('2', 'These feeling states spontaneously reported verbally'), ('3', 'Communicates feeling states non-verbally, i.e. through facial expression, posture, voice and tendency to weep'), ('4', 'Patient reports virtually only these feeling states in his/her spontaneous verbal and non-verbal communication.')], max_length=2, verbose_name='Depressed Mood (Gloomy attitude, pessimism about the future, feeling of sadness, tendency to weep)')),
-                ('guilt_feelings', models.CharField(choices=[('0', 'Absent'), ('1', 'Self-reproach, feels he/she has let people down'), ('2', 'Ideas of guilt or rumination over past errors or sinful deeds.'), ('3', 'Present illness is a punishment; delusions of guilt'), ('4', 'Hears accusatory or denunciatory voices and/or experiences threatening visual hallucinations.')], max_length=2, verbose_name='Feelings Of Guilt')),
-                ('suicidal', models.CharField(choices=[('0', 'Absent'), ('1', 'Feels life is not worth living'), ('2', 'Wishes he/she were dead or any thoughts of possible death to self.'), ('3', 'Suicidal ideas or gestures'), ('4', 'Attempts at suicide')], max_length=2, verbose_name='Suicide')),
-                ('insomnia_initial', models.CharField(choices=[('0', 'No difficulty falling asleep.'), ('1', 'Complains of occasional difficulty falling asleep, i.e. more than 1⁄2 hour.'), ('2', 'Complains of nightly difficulty falling asleep')], max_length=2, verbose_name='Insomnia – Initial (Difficulty in falling asleep)')),
-                ('insomnia_middle', models.CharField(choices=[('0', 'No difficulty.'), ('1', 'Patient complains of being restless and disturbed during the night.'), ('2', 'Waking during the night – any getting out of bed rates 2 (except for purposes of voiding).')], max_length=2, verbose_name='Insomnia – Middle (Complains of being restless and disturbed during the night. Waking during the night.)')),
-                ('insomnia_delayed', models.CharField(choices=[('0', 'No difficulty.'), ('1', 'Waking in early hours of the morning but goes back to sleep.'), ('2', 'Unable to fall asleep again if he/she gets out of bed.')], max_length=2, verbose_name='Insomnia – Delayed (Waking in early hours of the morning and unable to fall asleep again)')),
-                ('work_interests', models.CharField(choices=[('0', 'No difficulty'), ('1', 'Thoughts and feelings of incapacity, fatigue or weakness related to activities, work or hobbies.'), ('2', 'Loss of interest in activity, hobbies or work – either directly reported by the patient or indirect in listlessness, indecision and vacillations'), ('3', 'Decrease in actual time spent in activities or decrease in productivity'), ('4', 'Stopped working because of present illness.')], max_length=2, verbose_name='Work and Interests')),
-                ('retardation', models.CharField(choices=[('0', 'Normal speech and thought.'), ('1', 'Slight retardation during the interview.'), ('2', 'Obvious retardation during the interview.'), ('3', 'Interview difficult'), ('4', 'Complete stupor')], max_length=2, verbose_name='Retardation (Slowness of thought, speech, and activity; apathy; stupor.)')),
-                ('agitation', models.CharField(choices=[('0', 'None'), ('1', 'Fidgetiness'), ('2', 'Playing with hands, hair, etc.'), ('3', 'Moving about, can’t sit still.'), ('4', 'Hand wringing, nail biting, hair-pulling, biting of lips.')], max_length=2, verbose_name='Agitation (Restlessness associated with anxiety.)')),
-                ('anxiety_pyschic', models.CharField(choices=[('0', 'No difficulty'), ('1', 'Subjective tension and irritability'), ('2', 'Worrying about minor matters'), ('3', 'Apprehensive attitude apparent in face or speech'), ('4', 'Fears expressed without questioning')], max_length=2, verbose_name='Anxiety – Psychic')),
-                ('anxiety', models.CharField(choices=[('0', 'Absent'), ('1', 'Mild'), ('2', 'Moderate'), ('3', 'Severe'), ('4', 'Incapacitating')], max_length=2, verbose_name='Anxiety – Somatic Gastrointestinal, indigestion, Cardiovascular, palpitation, Headaches, Respiratory, Genito-urinary, etc')),
-                ('gastro_symptoms', models.CharField(choices=[('0', 'None'), ('1', 'Loss of appetite but eating without staff encouragement. Heavy feelings in abdomen.'), ('2', 'Difficulty eating without staff urging. Requests or requires laxatives or medication for bowels or medication for gastro-intestinal symptoms.')], max_length=2, verbose_name='Somatic Symptoms – Gastrointestinal (Loss of appetite , heavy feeling in abdomen; constipation)')),
-                ('general_symptoms', models.CharField(choices=[('0', 'None'), ('1', 'Heaviness in limbs, back or head. Backaches, headaches, muscle aches. Loss of energy and fatigability.'), ('2', 'Any clear-cut symptom rates 2.')], max_length=2, verbose_name='Somatic Symptoms – General (Heaviness in limbs, back or head; diffuse backache; loss of energy and fatiguability)')),
-                ('genital_symptoms', models.CharField(choices=[('0', 'Absent'), ('1', 'Mild'), ('2', 'Severe')], max_length=2, verbose_name='Genital Symptoms (Loss of libido, menstrual disturbances)')),
-                ('hypochondriasis', models.CharField(choices=[('0', 'Not present'), ('1', 'Self-absorption (bodily)'), ('2', 'Preoccupation with health'), ('3', 'Frequent complaints, requests for help, etc.'), ('4', 'Hypochondriacal delusions')], max_length=2, verbose_name='Hypochondriasis')),
-                ('weight_loss', models.CharField(choices=[('0', 'No weight loss'), ('1', 'Probable weight loss associated with present illness.'), ('2', 'Definite (according to patient) weight loss.'), ('3', 'Not assessed.')], max_length=2, verbose_name='Weight Loss')),
-                ('insight', models.CharField(choices=[('0', 'Acknowledges being depressed and ill'), ('1', 'Acknowledges illness but attributes cause to bad food, climate, overwork, virus, need for rest, etc'), ('2', 'Denies being ill at all')], help_text='(Insight must be interpreted in terms of patient’s understanding and background.)', max_length=2, verbose_name='Insight')),
-                ('depression_score', models.IntegerField(blank=True, default='', null=True, verbose_name='Depression score')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('depressed_mood', models.CharField(choices=[('0', 'Absent'), ('1', 'These feeling states indicated only on questioning'), ('2', 'These feeling states spontaneously reported verbally'), ('3', 'Communicates feeling states non-verbally, i.e. through facial expression, posture, voice and tendency to weep'), (
+                    '4', 'Patient reports virtually only these feeling states in his/her spontaneous verbal and non-verbal communication.')], max_length=2, verbose_name='Depressed Mood (Gloomy attitude, pessimism about the future, feeling of sadness, tendency to weep)')),
+                ('guilt_feelings', models.CharField(choices=[('0', 'Absent'), ('1', 'Self-reproach, feels he/she has let people down'), ('2', 'Ideas of guilt or rumination over past errors or sinful deeds.'), (
+                    '3', 'Present illness is a punishment; delusions of guilt'), ('4', 'Hears accusatory or denunciatory voices and/or experiences threatening visual hallucinations.')], max_length=2, verbose_name='Feelings Of Guilt')),
+                ('suicidal', models.CharField(choices=[('0', 'Absent'), ('1', 'Feels life is not worth living'), (
+                    '2', 'Wishes he/she were dead or any thoughts of possible death to self.'), ('3', 'Suicidal ideas or gestures'), ('4', 'Attempts at suicide')], max_length=2, verbose_name='Suicide')),
+                ('insomnia_initial', models.CharField(choices=[('0', 'No difficulty falling asleep.'), ('1', 'Complains of occasional difficulty falling asleep, i.e. more than 1⁄2 hour.'), (
+                    '2', 'Complains of nightly difficulty falling asleep')], max_length=2, verbose_name='Insomnia – Initial (Difficulty in falling asleep)')),
+                ('insomnia_middle', models.CharField(choices=[('0', 'No difficulty.'), ('1', 'Patient complains of being restless and disturbed during the night.'), (
+                    '2', 'Waking during the night – any getting out of bed rates 2 (except for purposes of voiding).')], max_length=2, verbose_name='Insomnia – Middle (Complains of being restless and disturbed during the night. Waking during the night.)')),
+                ('insomnia_delayed', models.CharField(choices=[('0', 'No difficulty.'), ('1', 'Waking in early hours of the morning but goes back to sleep.'), (
+                    '2', 'Unable to fall asleep again if he/she gets out of bed.')], max_length=2, verbose_name='Insomnia – Delayed (Waking in early hours of the morning and unable to fall asleep again)')),
+                ('work_interests', models.CharField(choices=[('0', 'No difficulty'), ('1', 'Thoughts and feelings of incapacity, fatigue or weakness related to activities, work or hobbies.'), ('2', 'Loss of interest in activity, hobbies or work – either directly reported by the patient or indirect in listlessness, indecision and vacillations'), (
+                    '3', 'Decrease in actual time spent in activities or decrease in productivity'), ('4', 'Stopped working because of present illness.')], max_length=2, verbose_name='Work and Interests')),
+                ('retardation', models.CharField(choices=[('0', 'Normal speech and thought.'), ('1', 'Slight retardation during the interview.'), ('2', 'Obvious retardation during the interview.'), (
+                    '3', 'Interview difficult'), ('4', 'Complete stupor')], max_length=2, verbose_name='Retardation (Slowness of thought, speech, and activity; apathy; stupor.)')),
+                ('agitation', models.CharField(choices=[('0', 'None'), ('1', 'Fidgetiness'), ('2', 'Playing with hands, hair, etc.'), ('3', 'Moving about, can’t sit still.'), (
+                    '4', 'Hand wringing, nail biting, hair-pulling, biting of lips.')], max_length=2, verbose_name='Agitation (Restlessness associated with anxiety.)')),
+                ('anxiety_pyschic', models.CharField(choices=[('0', 'No difficulty'), ('1', 'Subjective tension and irritability'), ('2', 'Worrying about minor matters'), (
+                    '3', 'Apprehensive attitude apparent in face or speech'), ('4', 'Fears expressed without questioning')], max_length=2, verbose_name='Anxiety – Psychic')),
+                ('anxiety', models.CharField(choices=[('0', 'Absent'), ('1', 'Mild'), ('2', 'Moderate'), ('3', 'Severe'), ('4', 'Incapacitating')], max_length=2,
+                 verbose_name='Anxiety – Somatic Gastrointestinal, indigestion, Cardiovascular, palpitation, Headaches, Respiratory, Genito-urinary, etc')),
+                ('gastro_symptoms', models.CharField(choices=[('0', 'None'), ('1', 'Loss of appetite but eating without staff encouragement. Heavy feelings in abdomen.'), (
+                    '2', 'Difficulty eating without staff urging. Requests or requires laxatives or medication for bowels or medication for gastro-intestinal symptoms.')], max_length=2, verbose_name='Somatic Symptoms – Gastrointestinal (Loss of appetite , heavy feeling in abdomen; constipation)')),
+                ('general_symptoms', models.CharField(choices=[('0', 'None'), ('1', 'Heaviness in limbs, back or head. Backaches, headaches, muscle aches. Loss of energy and fatigability.'), (
+                    '2', 'Any clear-cut symptom rates 2.')], max_length=2, verbose_name='Somatic Symptoms – General (Heaviness in limbs, back or head; diffuse backache; loss of energy and fatiguability)')),
+                ('genital_symptoms', models.CharField(choices=[('0', 'Absent'), ('1', 'Mild'), (
+                    '2', 'Severe')], max_length=2, verbose_name='Genital Symptoms (Loss of libido, menstrual disturbances)')),
+                ('hypochondriasis', models.CharField(choices=[('0', 'Not present'), ('1', 'Self-absorption (bodily)'), ('2', 'Preoccupation with health'), (
+                    '3', 'Frequent complaints, requests for help, etc.'), ('4', 'Hypochondriacal delusions')], max_length=2, verbose_name='Hypochondriasis')),
+                ('weight_loss', models.CharField(choices=[('0', 'No weight loss'), ('1', 'Probable weight loss associated with present illness.'), (
+                    '2', 'Definite (according to patient) weight loss.'), ('3', 'Not assessed.')], max_length=2, verbose_name='Weight Loss')),
+                ('insight', models.CharField(choices=[('0', 'Acknowledges being depressed and ill'), ('1', 'Acknowledges illness but attributes cause to bad food, climate, overwork, virus, need for rest, etc'), (
+                    '2', 'Denies being ill at all')], help_text='(Insight must be interpreted in terms of patient’s understanding and background.)', max_length=2, verbose_name='Insight')),
+                ('depression_score', models.IntegerField(blank=True,
+                 default='', null=True, verbose_name='Depression score')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Depression Screening - HAM-D',
@@ -1877,30 +3068,52 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverGadAnxietyScreening',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('feeling_anxious', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=2, verbose_name='Feeling nervous, anxious, or on edge')),
-                ('control_worrying', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=2, verbose_name='Not being able to stop or control worrying')),
-                ('worrying', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=2, verbose_name='Worrying too much about different things')),
-                ('trouble_relaxing', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=2)),
-                ('restlessness', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=2, verbose_name='Being so restless that it is hard to sit still')),
-                ('easily_annoyed', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=2, verbose_name='Becoming easily annoyed or irritable')),
-                ('fearful', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), ('3', 'Nearly every day')], max_length=2, verbose_name='Feeling afraid, as if something awful might happen')),
-                ('anxiety_score', models.IntegerField(blank=True, null=True, verbose_name='Anxiety score')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('feeling_anxious', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=2, verbose_name='Feeling nervous, anxious, or on edge')),
+                ('control_worrying', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=2, verbose_name='Not being able to stop or control worrying')),
+                ('worrying', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=2, verbose_name='Worrying too much about different things')),
+                ('trouble_relaxing', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), (
+                    '2', 'More than half the days'), ('3', 'Nearly every day')], max_length=2)),
+                ('restlessness', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=2, verbose_name='Being so restless that it is hard to sit still')),
+                ('easily_annoyed', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=2, verbose_name='Becoming easily annoyed or irritable')),
+                ('fearful', models.CharField(choices=[('0', 'Not at all'), ('1', 'Several days'), ('2', 'More than half the days'), (
+                    '3', 'Nearly every day')], max_length=2, verbose_name='Feeling afraid, as if something awful might happen')),
+                ('anxiety_score', models.IntegerField(
+                    blank=True, null=True, verbose_name='Anxiety score')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Anxiety Screening - GAD-7',
@@ -1911,33 +3124,58 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverEdinburghDeprScreening',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('able_to_laugh', models.CharField(choices=[('0', 'As much as I always could'), ('1', 'Not quite so much now'), ('2', 'Definitely not so much now'), ('3', 'Not at all')], max_length=2, verbose_name='I have been able to laugh and see the funny side of things')),
-                ('enjoyment_to_things', models.CharField(choices=[('0', 'As much as I ever did'), ('1', 'Rather less than I used to'), ('2', 'Definitely less than I used to'), ('3', 'Hardly at all')], max_length=2, verbose_name='I looked forward with enjoyment of things')),
-                ('self_blame', models.CharField(choices=[('0', 'No, never'), ('1', 'Not very often'), ('2', 'Yes, some of the time'), ('3', 'Yes, most of the time')], max_length=2, verbose_name='I have blamed myself unnecessarily when things went wrong')),
-                ('anxious', models.CharField(choices=[('0', 'No, not at all'), ('1', 'Hardly ever'), ('2', 'Yes, sometimes'), ('3', 'Yes, very often')], max_length=2, verbose_name='I have been anxious or worried for no good reason')),
-                ('panicky', models.CharField(choices=[('3', 'Yes, quite a lot'), ('2, sometimes', 'Yes, sometimes'), ('1', 'No, not much'), ('0', 'No, not at all')], max_length=20, verbose_name='I have felt scared or panicky for no very good reason')),
-                ('coping', models.CharField(choices=[('3', "Yes, most of the time I haven't been able to cope at all"), ('2', "Yes, sometimes I haven't been coping as well as usual"), ('1', 'No, most of the time I have coped quite well'), ('0', 'No, I have been coping as well as ever')], max_length=2, verbose_name='Things have been getting on top of me')),
-                ('sleeping_difficulty', models.CharField(choices=[('0', 'No, not at all'), ('1', 'Not very often'), ('2', 'Yes, sometimes'), ('3', 'Yes, most of the time')], max_length=2, verbose_name='I have been so unhappy that I have had difficulty in sleeping')),
-                ('miserable_feeling', models.CharField(choices=[('0', 'No, not at all'), ('1', 'Not very often'), ('2', 'Yes, quite often'), ('3', 'Yes, most of the time')], max_length=2, verbose_name='I have felt sad or miserable')),
-                ('unhappy', models.CharField(choices=[('3', 'Yes, most of the time'), ('2, quite often', 'Yes, quite often'), ('1', 'Only occasionally'), ('0', 'No, never')], max_length=20, verbose_name='I have been so unhappy that I have been crying')),
-                ('self_harm', models.CharField(choices=[('3', 'Yes, quite often'), ('2', 'Sometimes'), ('1', 'Hardly ever'), ('0', 'Never')], max_length=2, verbose_name='The thought of harming myself has occurred to me')),
-                ('depression_score', models.IntegerField(blank=True, null=True, verbose_name='Depression score')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('able_to_laugh', models.CharField(choices=[('0', 'As much as I always could'), ('1', 'Not quite so much now'), (
+                    '2', 'Definitely not so much now'), ('3', 'Not at all')], max_length=2, verbose_name='I have been able to laugh and see the funny side of things')),
+                ('enjoyment_to_things', models.CharField(choices=[('0', 'As much as I ever did'), ('1', 'Rather less than I used to'), (
+                    '2', 'Definitely less than I used to'), ('3', 'Hardly at all')], max_length=2, verbose_name='I looked forward with enjoyment of things')),
+                ('self_blame', models.CharField(choices=[('0', 'No, never'), ('1', 'Not very often'), ('2', 'Yes, some of the time'), (
+                    '3', 'Yes, most of the time')], max_length=2, verbose_name='I have blamed myself unnecessarily when things went wrong')),
+                ('anxious', models.CharField(choices=[('0', 'No, not at all'), ('1', 'Hardly ever'), ('2', 'Yes, sometimes'), (
+                    '3', 'Yes, very often')], max_length=2, verbose_name='I have been anxious or worried for no good reason')),
+                ('panicky', models.CharField(choices=[('3', 'Yes, quite a lot'), ('2, sometimes', 'Yes, sometimes'), ('1', 'No, not much'), (
+                    '0', 'No, not at all')], max_length=20, verbose_name='I have felt scared or panicky for no very good reason')),
+                ('coping', models.CharField(choices=[('3', "Yes, most of the time I haven't been able to cope at all"), ('2', "Yes, sometimes I haven't been coping as well as usual"), (
+                    '1', 'No, most of the time I have coped quite well'), ('0', 'No, I have been coping as well as ever')], max_length=2, verbose_name='Things have been getting on top of me')),
+                ('sleeping_difficulty', models.CharField(choices=[('0', 'No, not at all'), ('1', 'Not very often'), ('2', 'Yes, sometimes'), (
+                    '3', 'Yes, most of the time')], max_length=2, verbose_name='I have been so unhappy that I have had difficulty in sleeping')),
+                ('miserable_feeling', models.CharField(choices=[('0', 'No, not at all'), ('1', 'Not very often'), (
+                    '2', 'Yes, quite often'), ('3', 'Yes, most of the time')], max_length=2, verbose_name='I have felt sad or miserable')),
+                ('unhappy', models.CharField(choices=[('3', 'Yes, most of the time'), ('2, quite often', 'Yes, quite often'), (
+                    '1', 'Only occasionally'), ('0', 'No, never')], max_length=20, verbose_name='I have been so unhappy that I have been crying')),
+                ('self_harm', models.CharField(choices=[('3', 'Yes, quite often'), ('2', 'Sometimes'), ('1', 'Hardly ever'), (
+                    '0', 'Never')], max_length=2, verbose_name='The thought of harming myself has occurred to me')),
+                ('depression_score', models.IntegerField(
+                    blank=True, null=True, verbose_name='Depression score')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Depression Screening – Edinburgh',
@@ -1948,26 +3186,44 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverClinicalMeasurementsFu',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('weight_kg', models.DecimalField(decimal_places=2, help_text='Measured in Kilograms (kg)', max_digits=5, validators=[django.core.validators.MinValueValidator(30), django.core.validators.MaxValueValidator(136)], verbose_name="Caregiver's weight? ")),
-                ('systolic_bp', models.IntegerField(help_text='in mm e.g. 120, should be between 75 and 220.', validators=[django.core.validators.MinValueValidator(75), django.core.validators.MaxValueValidator(220)], verbose_name="Caregiver's systolic blood pressure?")),
-                ('waist_circ', models.DecimalField(decimal_places=2, help_text='only measure waist circumference for caregivers who are not pregnant', max_digits=5, validators=[django.core.validators.MinValueValidator(50), django.core.validators.MaxValueValidator(420)], verbose_name="Caregiver's waist circumference")),
-                ('hip_circ', models.DecimalField(decimal_places=2, help_text='only measure waist circumference for caregivers who are not pregnant', max_digits=5, validators=[django.core.validators.MinValueValidator(50), django.core.validators.MaxValueValidator(420)], verbose_name="Caregiver's hip circumference")),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('weight_kg', models.DecimalField(decimal_places=2, help_text='Measured in Kilograms (kg)', max_digits=5, validators=[
+                 django.core.validators.MinValueValidator(30), django.core.validators.MaxValueValidator(136)], verbose_name="Caregiver's weight? ")),
+                ('systolic_bp', models.IntegerField(help_text='in mm e.g. 120, should be between 75 and 220.', validators=[
+                 django.core.validators.MinValueValidator(75), django.core.validators.MaxValueValidator(220)], verbose_name="Caregiver's systolic blood pressure?")),
+                ('waist_circ', models.DecimalField(decimal_places=2, help_text='only measure waist circumference for caregivers who are not pregnant', max_digits=5, validators=[
+                 django.core.validators.MinValueValidator(50), django.core.validators.MaxValueValidator(420)], verbose_name="Caregiver's waist circumference")),
+                ('hip_circ', models.DecimalField(decimal_places=2, help_text='only measure waist circumference for caregivers who are not pregnant', max_digits=5, validators=[
+                 django.core.validators.MinValueValidator(50), django.core.validators.MaxValueValidator(420)], verbose_name="Caregiver's hip circumference")),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Caregiver Clinical Measurements Follow Up',
@@ -1978,28 +3234,48 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverClinicalMeasurements',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('height', models.DecimalField(decimal_places=2, help_text='Measured in Centimeters (cm)', max_digits=5, validators=[django.core.validators.MinValueValidator(114), django.core.validators.MaxValueValidator(195)], verbose_name="Caregiver's height? ")),
-                ('weight_kg', models.DecimalField(decimal_places=2, help_text='Measured in Kilograms (kg)', max_digits=5, validators=[django.core.validators.MinValueValidator(30), django.core.validators.MaxValueValidator(136)], verbose_name="Caregiver's weight? ")),
-                ('systolic_bp', models.IntegerField(help_text='in mm e.g. 120, should be between 75 and 220.', validators=[django.core.validators.MinValueValidator(75), django.core.validators.MaxValueValidator(220)], verbose_name="Caregiver's systolic blood pressure?")),
-                ('diastolic_bp', models.IntegerField(help_text='in hg e.g. 80, should be between 35 and 150.', validators=[django.core.validators.MinValueValidator(35), django.core.validators.MaxValueValidator(150)], verbose_name="Caregiver's diastolic blood pressure?")),
-                ('waist_circ', models.DecimalField(decimal_places=2, help_text='only measure waist circumference for caregivers who are not pregnant', max_digits=5, validators=[django.core.validators.MinValueValidator(50), django.core.validators.MaxValueValidator(420)], verbose_name="Caregiver's waist circumference")),
-                ('hip_circ', models.DecimalField(decimal_places=2, help_text='only measure waist circumference for caregivers who are not pregnant', max_digits=5, validators=[django.core.validators.MinValueValidator(50), django.core.validators.MaxValueValidator(420)], verbose_name="Caregiver's hip circumference")),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('height', models.DecimalField(decimal_places=2, help_text='Measured in Centimeters (cm)', max_digits=5, validators=[
+                 django.core.validators.MinValueValidator(114), django.core.validators.MaxValueValidator(195)], verbose_name="Caregiver's height? ")),
+                ('weight_kg', models.DecimalField(decimal_places=2, help_text='Measured in Kilograms (kg)', max_digits=5, validators=[
+                 django.core.validators.MinValueValidator(30), django.core.validators.MaxValueValidator(136)], verbose_name="Caregiver's weight? ")),
+                ('systolic_bp', models.IntegerField(help_text='in mm e.g. 120, should be between 75 and 220.', validators=[
+                 django.core.validators.MinValueValidator(75), django.core.validators.MaxValueValidator(220)], verbose_name="Caregiver's systolic blood pressure?")),
+                ('diastolic_bp', models.IntegerField(help_text='in hg e.g. 80, should be between 35 and 150.', validators=[
+                 django.core.validators.MinValueValidator(35), django.core.validators.MaxValueValidator(150)], verbose_name="Caregiver's diastolic blood pressure?")),
+                ('waist_circ', models.DecimalField(decimal_places=2, help_text='only measure waist circumference for caregivers who are not pregnant', max_digits=5, validators=[
+                 django.core.validators.MinValueValidator(50), django.core.validators.MaxValueValidator(420)], verbose_name="Caregiver's waist circumference")),
+                ('hip_circ', models.DecimalField(decimal_places=2, help_text='only measure waist circumference for caregivers who are not pregnant', max_digits=5, validators=[
+                 django.core.validators.MinValueValidator(50), django.core.validators.MaxValueValidator(420)], verbose_name="Caregiver's hip circumference")),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Caregiver Clinical Measurements',
@@ -2010,53 +3286,96 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverChildConsent',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True)),
-                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
-                ('initials', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, validators=[django.core.validators.RegexValidator(message='Ensure initials consist of letters only in upper case, no spaces.', regex='^[A-Z]{2,3}$')])),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True)),
+                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
+                ('initials', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True,
+                 validators=[django.core.validators.RegexValidator(message='Ensure initials consist of letters only in upper case, no spaces.', regex='^[A-Z]{2,3}$')])),
                 ('dob', models.DateField(null=True, verbose_name='Date of birth')),
-                ('is_dob_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedField(choices=[('-', 'No'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), ('YMD', 'Yes, estimated Year, Month and Day')], help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, null=True, verbose_name='Is date of birth estimated?')),
-                ('guardian_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is a minor.<BR>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)", max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Guardian's last and first name")),
+                ('is_dob_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedField(choices=[('-', 'No'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), (
+                    'YMD', 'Yes, estimated Year, Month and Day')], help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, null=True, verbose_name='Is date of birth estimated?')),
+                ('guardian_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is a minor.<BR>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)",
+                 max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Guardian's last and first name")),
                 ('subject_type', models.CharField(max_length=25)),
-                ('consent_reviewed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[edc_consent.validators.eligible_if_yes], verbose_name='I have reviewed the consent with the participant')),
-                ('study_questions', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[edc_consent.validators.eligible_if_yes], verbose_name='I have answered all questions the participant had about the study')),
-                ('assessment_score', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[edc_consent.validators.eligible_if_yes], verbose_name='I have asked the participant questions about this study and the participant has demonstrated understanding')),
-                ('consent_signature', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[edc_consent.validators.eligible_if_yes], verbose_name='I have verified that the participant has signed the consent form')),
-                ('consent_copy', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Declined', 'Yes, but subject declined copy')], help_text='If declined, return copy with the consent', max_length=20, null=True, validators=[edc_consent.validators.eligible_if_yes_or_declined], verbose_name='I have provided the participant with a copy of their signed informed consent')),
-                ('is_verified', models.BooleanField(default=False, editable=False)),
-                ('is_verified_datetime', models.DateTimeField(editable=False, null=True)),
-                ('verified_by', models.CharField(editable=False, max_length=25, null=True)),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('study_child_identifier', models.CharField(blank=True, max_length=50, null=True, verbose_name='Previous study identifier')),
-                ('gender', models.CharField(choices=[('M', 'Male'), ('F', 'Female')], max_length=1, verbose_name='Gender')),
-                ('identity', django_crypto_fields.fields.identity_field.IdentityField(blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Identity number')),
-                ('identity_type', models.CharField(blank=True, choices=[('country_id', 'Country ID number'), ('birth_cert', 'Birth Certificate number'), ('country_id_rcpt', 'Country ID receipt'), ('passport', 'Passport'), ('OTHER', 'Other')], max_length=25, null=True, verbose_name='What type of identity number is this?')),
-                ('confirm_identity', django_crypto_fields.fields.identity_field.IdentityField(blank=True, help_text='Retype the identity number (Encryption: RSA local)', max_length=71, null=True)),
-                ('child_dob', models.DateField(validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date of birth')),
-                ('child_test', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=5, verbose_name='Will you allow for HIV testing and counselling of your Child')),
-                ('child_remain_in_study', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=5, verbose_name='Is your child willing to remain in the study area until 2025?')),
-                ('child_preg_test', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If no, participant is not eligible.', max_length=5, verbose_name='If your child is female and will be 12 years or older prior to 30-Jun-2025, will you allow the female child to undergo pregnancy testing?')),
-                ('child_knows_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If no, participant is not eligible.', max_length=5, verbose_name='If your child is ≥ 16 years, have they been told about your HIV?')),
-                ('future_studies_contact', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you give us permission for us to contact you or your child for future studies?')),
-                ('specimen_consent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name="Do you give us permission for us to use your child's blood samples for future studies?")),
-                ('child_age_at_enrollment', models.DecimalField(decimal_places=2, max_digits=4)),
-                ('consent_datetime', models.DateTimeField(validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Consent date and time')),
-                ('version', models.CharField(editable=False, help_text="See 'Consent Type' for consent versions by period.", max_length=10, verbose_name='Consent version')),
-                ('cohort', models.CharField(choices=[('cohort_a', 'Cohort A'), ('cohort_b', 'Cohort B'), ('cohort_c', 'Cohort C'), ('cohort_a_sec', 'Cohort A Secondary Aims'), ('cohort_b_sec', 'Cohort B Secondary Aims'), ('cohort_c_sec', 'Cohort C Secondary Aims'), ('cohort_pool', 'Cohort Pool')], max_length=12)),
-                ('caregiver_visit_count', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(3)])),
-                ('is_eligible', models.BooleanField(default=False, editable=False)),
-                ('ineligibility', models.TextField(editable=False, max_length=150, null=True, verbose_name='Reason not eligible')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
-                ('subject_consent', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.subjectconsent')),
+                ('consent_reviewed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes], verbose_name='I have reviewed the consent with the participant')),
+                ('study_questions', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes], verbose_name='I have answered all questions the participant had about the study')),
+                ('assessment_score', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes], verbose_name='I have asked the participant questions about this study and the participant has demonstrated understanding')),
+                ('consent_signature', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes], verbose_name='I have verified that the participant has signed the consent form')),
+                ('consent_copy', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Declined', 'Yes, but subject declined copy')], help_text='If declined, return copy with the consent', max_length=20, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes_or_declined], verbose_name='I have provided the participant with a copy of their signed informed consent')),
+                ('is_verified', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_verified_datetime', models.DateTimeField(
+                    editable=False, null=True)),
+                ('verified_by', models.CharField(
+                    editable=False, max_length=25, null=True)),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('study_child_identifier', models.CharField(
+                    blank=True, max_length=50, null=True, verbose_name='Previous study identifier')),
+                ('gender', models.CharField(choices=[
+                 ('M', 'Male'), ('F', 'Female')], max_length=1, verbose_name='Gender')),
+                ('identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Identity number')),
+                ('identity_type', models.CharField(blank=True, choices=[('country_id', 'Country ID number'), ('birth_cert', 'Birth Certificate number'), (
+                    'country_id_rcpt', 'Country ID receipt'), ('passport', 'Passport'), ('OTHER', 'Other')], max_length=25, null=True, verbose_name='What type of identity number is this?')),
+                ('confirm_identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    blank=True, help_text='Retype the identity number (Encryption: RSA local)', max_length=71, null=True)),
+                ('child_dob', models.DateField(validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of birth')),
+                ('child_test', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.',
+                 max_length=5, verbose_name='Will you allow for HIV testing and counselling of your Child')),
+                ('child_remain_in_study', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=5, verbose_name='Is your child willing to remain in the study area until 2025?')),
+                ('child_preg_test', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], help_text='If no, participant is not eligible.', max_length=5,
+                 verbose_name='If your child is female and will be 12 years or older prior to 30-Jun-2025, will you allow the female child to undergo pregnancy testing?')),
+                ('child_knows_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')],
+                 help_text='If no, participant is not eligible.', max_length=5, verbose_name='If your child is ≥ 16 years, have they been told about your HIV?')),
+                ('future_studies_contact', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Do you give us permission for us to contact you or your child for future studies?')),
+                ('specimen_consent', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3,
+                 verbose_name="Do you give us permission for us to use your child's blood samples for future studies?")),
+                ('child_age_at_enrollment', models.DecimalField(
+                    decimal_places=2, max_digits=4)),
+                ('consent_datetime', models.DateTimeField(validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Consent date and time')),
+                ('version', models.CharField(editable=False, help_text="See 'Consent Type' for consent versions by period.",
+                 max_length=10, verbose_name='Consent version')),
+                ('cohort', models.CharField(choices=[('cohort_a', 'Cohort A'), ('cohort_b', 'Cohort B'), ('cohort_c', 'Cohort C'), ('cohort_a_sec', 'Cohort A Secondary Aims'), (
+                    'cohort_b_sec', 'Cohort B Secondary Aims'), ('cohort_c_sec', 'Cohort C Secondary Aims'), ('cohort_pool', 'Cohort Pool')], max_length=12)),
+                ('caregiver_visit_count', models.IntegerField(blank=True, null=True, validators=[
+                 django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(3)])),
+                ('is_eligible', models.BooleanField(
+                    default=False, editable=False)),
+                ('ineligibility', models.TextField(editable=False,
+                 max_length=150, null=True, verbose_name='Reason not eligible')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('subject_consent', models.ForeignKey(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.subjectconsent')),
             ],
             options={
                 'verbose_name': 'Caregiver Consent On Behalf Of Child',
@@ -2066,32 +3385,56 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ArvsPrePregnancy',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('prev_preg_azt', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Did she ever receive AZT monotherapy in a previous pregnancy?  ')),
-                ('prev_sdnvp_labour', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Did she ever receive single-dose NVP in labour during a previous pregnancy?')),
-                ('prev_preg_art', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Did she ever receive triple antiretrovirals during a prior pregnancy?')),
-                ('art_start_date', models.DateField(blank=True, null=True, validators=[edc_base.model_validators.date.date_not_future], verbose_name='Date of triple antiretrovirals first started')),
-                ('is_date_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedFieldNa(choices=[('N/A', 'Not applicable'), ('not_estimated', 'No.'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), ('YMD', 'Yes, estimated Year, Month and Day')], default='N/A', help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, verbose_name="Is the subject's date of triple antiretrovirals estimated?")),
-                ('preg_on_art', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=25, verbose_name='Was she still on triple antiretrovirals at the time she became pregnant for this pregnancy? ')),
-                ('art_changes', models.IntegerField(help_text='If there was no change please enter 0.', validators=[django.core.validators.MinValueValidator(0)], verbose_name='How many times did you change your triple antiretrovirals medicines?')),
-                ('prior_preg', models.CharField(choices=[('continuous', 'Received continuous ART from the time she started'), ('restarted', 'Had treatment interruption but restarted ART prior to this pregnancy'), ('stopped', 'Had treatment interruption and never restarted ART prior to this pregnancy'), ('N/A', 'Not Applicable')], max_length=80, verbose_name='Prior to this pregnancy the mother has ')),
-                ('prior_arv_other', edc_base.model_fields.custom_fields.OtherCharField(blank=True, max_length=35, null=True, verbose_name='if other specify...')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('prior_arv', models.ManyToManyField(to='flourish_caregiver.PriorArv', verbose_name='Please list all of the ARVs that the mother ever received prior to the current pregnancy:')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('prev_preg_azt', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=25, verbose_name='Did she ever receive AZT monotherapy in a previous pregnancy?  ')),
+                ('prev_sdnvp_labour', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25,
+                 verbose_name='Did she ever receive single-dose NVP in labour during a previous pregnancy?')),
+                ('prev_preg_art', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=25,
+                 verbose_name='Did she ever receive triple antiretrovirals during a prior pregnancy?')),
+                ('art_start_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of triple antiretrovirals first started')),
+                ('is_date_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedFieldNa(choices=[('N/A', 'Not applicable'), ('not_estimated', 'No.'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), (
+                    'YMD', 'Yes, estimated Year, Month and Day')], default='N/A', help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, verbose_name="Is the subject's date of triple antiretrovirals estimated?")),
+                ('preg_on_art', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], max_length=25,
+                 verbose_name='Was she still on triple antiretrovirals at the time she became pregnant for this pregnancy? ')),
+                ('art_changes', models.IntegerField(help_text='If there was no change please enter 0.', validators=[
+                 django.core.validators.MinValueValidator(0)], verbose_name='How many times did you change your triple antiretrovirals medicines?')),
+                ('prior_preg', models.CharField(choices=[('continuous', 'Received continuous ART from the time she started'), ('restarted', 'Had treatment interruption but restarted ART prior to this pregnancy'), (
+                    'stopped', 'Had treatment interruption and never restarted ART prior to this pregnancy'), ('N/A', 'Not Applicable')], max_length=80, verbose_name='Prior to this pregnancy the mother has ')),
+                ('prior_arv_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other specify...')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('prior_arv', models.ManyToManyField(to='flourish_caregiver.PriorArv',
+                 verbose_name='Please list all of the ARVs that the mother ever received prior to the current pregnancy:')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'ARVs Pre Pregnancy',
@@ -2102,22 +3445,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortCSec',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2130,22 +3486,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortCQuarterly',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2158,22 +3527,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortCPool',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2186,22 +3568,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortCFU',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2214,22 +3609,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortCEnrollment',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2242,22 +3650,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortBSec',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2270,22 +3691,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortBQuarterly',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2298,22 +3732,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortBFU',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2326,22 +3773,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortBEnrollment',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2354,22 +3814,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortASec',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2382,22 +3855,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortAQuarterly',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2410,22 +3896,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortAFU',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2438,22 +3937,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortAEnrollment',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2466,22 +3978,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortABirth',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2494,22 +4019,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OnScheduleCohortAAntenatal',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
-                ('subject_identifier', models.CharField(max_length=50, verbose_name='Subject Identifier')),
-                ('child_subject_identifier', models.CharField(max_length=50, verbose_name='Associated Child Identifier')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('onschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future])),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('child_subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Associated Child Identifier')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'abstract': False,
@@ -2522,21 +4060,34 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LocatorLogEntry',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
-                ('log_status', models.CharField(choices=[('exist', 'Exists'), ('not_found', 'Not found')], max_length=25, verbose_name='What is the status of the locator?')),
-                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comments')),
-                ('date_created', models.DateField(default=django.utils.timezone.now)),
-                ('locator_log', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.locatorlog')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_base.model_validators.date.datetime_not_future], verbose_name='Report date')),
+                ('log_status', models.CharField(choices=[('exist', 'Exists'), (
+                    'not_found', 'Not found')], max_length=25, verbose_name='What is the status of the locator?')),
+                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comments')),
+                ('date_created', models.DateField(
+                    default=django.utils.timezone.now)),
+                ('locator_log', models.ForeignKey(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.locatorlog')),
             ],
             options={
                 'ordering': ('report_datetime',),
@@ -2546,22 +4097,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverPhqReferral',
             fields=[
-                ('referralformmixin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='flourish_caregiver.referralformmixin')),
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('referralformmixin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE,
+                 parent_link=True, primary_key=True, serialize=False, to='flourish_caregiver.referralformmixin')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'PHQ-9 Referral Form for Caregivers',
@@ -2573,21 +4138,33 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverOffSchedule',
             fields=[
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False, help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
-                ('subject_identifier', models.CharField(max_length=50, unique=True, verbose_name='Subject Identifier')),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(max_length=50,
+                 unique=True, verbose_name='Subject Identifier')),
                 ('report_datetime', models.DateTimeField(editable=False)),
-                ('offschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Date and time subject taken off schedule')),
-                ('schedule_name', models.CharField(blank=True, max_length=25, null=True)),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('offschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Date and time subject taken off schedule')),
+                ('schedule_name', models.CharField(
+                    blank=True, max_length=25, null=True)),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'unique_together': {('subject_identifier', 'schedule_name')},
@@ -2600,22 +4177,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverHamdReferral',
             fields=[
-                ('referralformmixin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='flourish_caregiver.referralformmixin')),
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('referralformmixin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE,
+                 parent_link=True, primary_key=True, serialize=False, to='flourish_caregiver.referralformmixin')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Caregiver HAM-D Referral Form',
@@ -2627,22 +4218,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverGadReferral',
             fields=[
-                ('referralformmixin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='flourish_caregiver.referralformmixin')),
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('referralformmixin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE,
+                 parent_link=True, primary_key=True, serialize=False, to='flourish_caregiver.referralformmixin')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Caregiver GAD-7 Referral Form',
@@ -2654,22 +4259,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CaregiverEdinburghReferral',
             fields=[
-                ('referralformmixin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='flourish_caregiver.referralformmixin')),
-                ('created', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('modified', models.DateTimeField(blank=True, default=edc_base.utils.get_utcnow)),
-                ('user_created', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
-                ('user_modified', edc_base.model_fields.userfield.UserField(blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
-                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname, help_text='System field. (modified on create only)', max_length=60)),
-                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(blank=True, help_text='System field. (modified on every save)', max_length=50)),
-                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False, help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('referralformmixin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE,
+                 parent_link=True, primary_key=True, serialize=False, to='flourish_caregiver.referralformmixin')),
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
                 ('device_created', models.CharField(blank=True, max_length=10)),
                 ('device_modified', models.CharField(blank=True, max_length=10)),
-                ('form_as_json', models.TextField(editable=False, help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
-                ('consent_model', models.CharField(editable=False, max_length=50, null=True)),
-                ('consent_version', models.CharField(editable=False, max_length=10, null=True)),
-                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.", validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
-                ('maternal_visit', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
-                ('site', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('maternal_visit', models.OneToOneField(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.maternalvisit')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
             ],
             options={
                 'verbose_name': 'Caregiver Edinburgh Referral Form',
@@ -2677,5 +4296,2382 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
             bases=('flourish_caregiver.referralformmixin', models.Model),
+        ),
+
+        migrations.CreateModel(
+            name='AfterPregnancyInfluencersList',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='ArvInterruptionReasons',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='BreastFeedingQuestionnaire',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_base.model_validators.date.datetime_not_future, edc_protocol.validators.datetime_not_before_study_start], verbose_name='Report Time and Date')),
+                ('feeding_hiv_status', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'rather_not_answer', 'Rather not answer')], max_length=18, verbose_name='I was aware of my HIV status when I made my infant feeding choice')),
+                ('hiv_status_aware', models.CharField(blank=True, choices=[('during_preg', 'Later during pregnancy'), ('before_delivery', 'At/shortly after delivery'), (
+                    'after_delivery', 'After Delivery')], max_length=18, null=True, verbose_name='I was not aware of my HIV status when I first made a plan for feeding my infant, but I became aware of my HIV status:')),
+                ('on_hiv_status_aware', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('no_plan', 'I did not make a feeding plan before I was aware of my HIV status')],
+                 max_length=8, null=True, verbose_name='When you became aware of your HIV status, did you change your infant feeding choice?')),
+                ('hiv_status_during_preg', models.CharField(choices=[('POS', 'Positive'), ('NEG', 'Negative'), (
+                    'unknown', 'Unknown')], max_length=10, verbose_name='My HIV status during pregnancy and/or breastfeeding was:')),
+                ('hiv_status_known_by', models.CharField(blank=True, choices=[('no_one', '0 persons in my household'), ('one_person', '1 persons in my household'), (
+                    'two_or_more', '≥2 persons in my household')], max_length=14, null=True, verbose_name='During my pregnancy or breastfeeding, my HIV status was known by:')),
+                ('father_knew_hiv_status', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=4, null=True, verbose_name='During my pregnancy or breastfeeding, my HIV status was known by the father of this baby.')),
+                ('delivery_advice_vl_results', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('do_not_remember', 'Do not remember')],
+                 max_length=16, null=True, verbose_name='At delivery, I was advised not to breastfeed my infant because I did not have a recent viral load result.')),
+                ('delivery_advice_on_viralload', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'do_not_remember', 'Do not remember')], max_length=16, null=True, verbose_name='At delivery, I was advised not to breastfeed my infant because my viral load was too high.')),
+                ('after_delivery_advice_vl_results', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('do_not_remember', 'Do not remember')], max_length=16,
+                 null=True, verbose_name='In the months after delivery, I was advised not to breastfeed my infant because I did not have recent viral load results.')),
+                ('after_delivery_advice_on_viralload', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'do_not_remember', 'Do not remember')], max_length=16, null=True, verbose_name='In the months after delivery, I was advised not to breastfeed my infant because my viral load was too high.')),
+                ('use_medicines', models.CharField(blank=True, choices=[('strongly_disagree', 'Strongly disagree'), ('disagree', 'Disagree'), ('neutral', 'Neither agree or disagree'), ('agree', 'Agree'), (
+                    'strongly_agree', 'Strongly agree')], max_length=20, null=True, verbose_name='I feIt that I could breastfeed and still keep my baby from getting HIV by using antiretroviral medicines.')),
+                ('breastfeeding_duration', models.CharField(blank=True, choices=[('less_than_six_months', '<6 months'), ('six_months', '6 months'), ('six_to_twelve_months', '6-12 months'), ('twelve_months', '12 months'), ('greater_than_twelve_months', '>12 months'), (
+                    'do_not_know', 'I don’t know')], max_length=30, null=True, verbose_name='What do you think the correct duration of breastfeeding should be if a mother has HIV but is taking antiretroviral treatment to prevent mother-to-child HIV transmission throughout breastfeeding?')),
+                ('during_preg_influencers_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=200, null=True, verbose_name='if other specify...')),
+                ('influenced_during_preg', models.CharField(choices=[('strongly_disagree', 'Strongly disagree'), ('disagree', 'Disagree'), ('neutral', 'Neither agree or disagree'), ('agree', 'Agree'), (
+                    'strongly_agree', 'Strongly agree')], max_length=20, verbose_name='During pregnancy, I felt that others influenced me to plan a feeding choice for this baby that was not my own preference.')),
+                ('after_delivery_influencers_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=200, null=True, verbose_name='if other specify...')),
+                ('influenced_after_delivery', models.CharField(choices=[('strongly_disagree', 'Strongly disagree'), ('disagree', 'Disagree'), ('neutral', 'Neither agree or disagree'), ('agree', 'Agree'), (
+                    'strongly_agree', 'Strongly agree')], max_length=20, verbose_name='Since this baby was born, I felt that others influenced me to plan a feeding choice for this baby that was not my own preference.')),
+                ('training_outcome', models.CharField(blank=True, choices=[('strongly_disagree', 'Strongly disagree'), ('disagree', 'Disagree'), ('neutral', 'Neither agree or disagree'), ('agree', 'Agree'), (
+                    'strongly_agree', 'Strongly agree')], max_length=20, null=True, verbose_name='The training increased my understanding of the risk and benefits of breastfeeding and formula feeding.')),
+                ('feeding_advice', models.CharField(choices=[('Formula_feeding', 'Formula feeding'), ('Breastfeeding only', 'Breast feed'), (
+                    'mixed_feeding', 'Mixed formula and breast feed'), ('N/A', 'Not applicable')], max_length=20, verbose_name='I was advised by a health worker to feed my baby by:')),
+                ('community_breastfeeding_bias', models.CharField(choices=[('strongly_disagree', 'Strongly disagree'), ('disagree', 'Disagree'), ('neutral', 'Neither agree or disagree'), ('agree', 'Agree'), (
+                    'strongly_agree', 'Strongly agree')], max_length=20, verbose_name='In my community, if a woman does not breastfeed her infant and only uses infant formula/other foods, people will be suspicious she has HIV.')),
+                ('community_exclusive_breastfeeding_bias', models.CharField(choices=[('strongly_disagree', 'Strongly disagree'), ('disagree', 'Disagree'), ('neutral', 'Neither agree or disagree'), ('agree', 'Agree'), (
+                    'strongly_agree', 'Strongly agree')], max_length=20, verbose_name='In my community, if a woman exclusively breastfeeds her infant and does not use infant formula/other foods, people will be suspicious she has HIV.')),
+                ('after_birth_opinion', models.CharField(choices=[('continued_breastfeeding', 'Wanted to continue breastfeeding and was able to do so'), ('unable_to_breastfeed', 'Wanted to continue breastfeeding but was unable to do so'), ('did_not_want_to_breastfeed', 'No longer wanted to breastfeed'), (
+                    'told_not_to_breastfeed_before', 'Was told not to breastfeed before/at delivery'), ('did_not_want_to_breastfeed_before', 'Did not want to breastfeed even before this baby was born '), ('none', 'None of the above'), ('OTHER', 'Other(specify)')], max_length=35, verbose_name='In the months since this baby was born, I:')),
+                ('after_birth_opinion_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('return_to_work_school', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not Applicable')],
+                 max_length=3, verbose_name='My need to return to work/school influenced my feeding choice for this baby.')),
+                ('returned_to_work_school', models.CharField(choices=[('less_than_one_month_after_delivery', '<1 month after delivery'), ('one_to_three_months_after_delivery',
+                 '1-3 months after delivery'), ('four_months_or_greater', '≥4 months after delivery'), ('N/A', 'Not Applicable')], max_length=40, verbose_name='I returned to work/school:')),
+                ('six_months_feeding', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('do_not_remember', 'Unsure/Do not remember')],
+                 max_length=16, verbose_name='In this baby’s first 6 months of life, I have introduced formula feeds or other foods beside breastmilk.')),
+                ('infant_feeding_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=150, null=True, verbose_name='if other specify...')),
+                ('after_delivery_influencers', models.ManyToManyField(to='flourish_caregiver.AfterPregnancyInfluencersList',
+                 verbose_name='Since this baby was born, the individuals most influential in helping me make a feeding choice for this baby have been (Select all that apply):')),
+            ],
+            options={
+                'verbose_name': 'Breast Feeding Questionnaire',
+                'verbose_name_plural': 'Breast Feeding Questionnaire',
+                'abstract': False,
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='BreastMilkFieldsMixin',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('exp_mastitis', models.CharField(choices=[('yes_currently', 'Yes currently'), ('yes_resolved', 'Yes but it has resolved'), (
+                    'No', 'No')], max_length=35, null=True, verbose_name='Since the last FLOURISH visit (birth visit), has the participant experienced mastitis?')),
+                ('exp_mastitis_count', models.CharField(blank=True, choices=[('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), (
+                    '5_greater', '5 or Greater')], max_length=10, null=True, verbose_name='How many times has the participant experienced mastitis since the last visit?')),
+                ('exp_cracked_nipples', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=10, null=True,
+                 verbose_name='Has the participant experienced cracked nipples since the last FLOURISH visit?')),
+                ('exp_cracked_nipples_count', models.CharField(blank=True, choices=[('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), (
+                    '5_greater', '5 or Greater')], max_length=10, null=True, verbose_name='How many times has the participant experienced cracked nipples?')),
+                ('milk_collected', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=10, verbose_name='Were you able to collect breast milk today?')),
+                ('not_collected_reasons', models.CharField(blank=True, choices=[('trying_to_breastfeed', 'Participant could not produce sufficient quantity but is still trying to breastfeed. '), (
+                    'no_longer_breastfeeding', ' Participant could not produce sufficient quantity but is also no longer  breastfeeding'), ('no_milk', ' No milk let down  since delivery ')], max_length=50, null=True, verbose_name='What was the reason for inability to collect breast milk today')),
+                ('breast_collected', models.CharField(blank=True, choices=[('right', 'Right'), ('left', 'Left'), (
+                    'both', 'Both')], max_length=30, null=True, verbose_name='Which breast was the collection from:')),
+                ('milk_collected_volume', models.IntegerField(blank=True, help_text='range from 1mL to 20mL', null=True, validators=[django.core.validators.MinValueValidator(
+                    4), django.core.validators.MaxValueValidator(20)], verbose_name='Approximately how much breast milk was collected?(mL)')),
+                ('last_breastfed', models.DateTimeField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.datetime_not_future], verbose_name='What date and time was the infant last breastfed ')),
+                ('recently_ate', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=10, null=True, verbose_name='Did the mother have a meal in the past two hours ')),
+                ('add_comments', models.TextField(blank=True,
+                 null=True, verbose_name='Any additional comments ')),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='BriefDangerAssessment',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('physical_violence_increased', models.CharField(choices=[
+                 ('1', 'Yes'), ('2', 'No')], max_length=5, verbose_name='Has the physical violence increased in frequency over the past year?')),
+                ('used_weapons', models.CharField(choices=[('1', 'Yes'), ('2', 'No')], max_length=5,
+                 verbose_name='Has your partner ever used a weapon against you or threatened you with a weapon?')),
+                ('capable_of_killing', models.CharField(choices=[
+                 ('1', 'Yes'), ('2', 'No')], max_length=5, verbose_name='Do you believe your partner is capable of killing you?')),
+                ('choke', models.CharField(choices=[
+                 ('1', 'Yes'), ('2', 'No')], max_length=5, verbose_name='Has your partner ever tried to choke you?')),
+                ('partner_violently', models.CharField(choices=[
+                 ('1', 'Yes'), ('2', 'No')], max_length=5, verbose_name='Is your partner violently and constantly jealous of you?')),
+                ('child_been_physically_hurt', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=5, verbose_name='Has your child been physically hurt by your partner?')),
+                ('last_time_child_hurt_datetime', models.DateField(blank=True, max_length=25,
+                 null=True, verbose_name='If yes, when was the last time this happened?')),
+                ('last_time_child_hurt_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedField(blank=True, choices=[('-', 'No'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), (
+                    'YMD', 'Yes, estimated Year, Month and Day')], help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, null=True, verbose_name='Is this date estimated?')),
+                ('fear_partner_hurt_child', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=5, verbose_name='Do you fear your partner might physically hurt your child?')),
+            ],
+            options={
+                'verbose_name': 'Brief Danger Assessment',
+                'verbose_name_plural': 'Brief Danger Assessments',
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CaregiverCageAid',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('alcohol_drugs', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=10, verbose_name='Do you partake in drinking alcohol or using nonmedicinal drugs?')),
+                ('cut_down', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], default=None, max_length=10,
+                 null=True, verbose_name='Have you ever felt the need to cut down on your drinking or drug use?')),
+                ('people_reaction', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], default=None, max_length=10, null=True, verbose_name='Have people annoyed you by criticizing your drinking or drug use?')),
+                ('guilt', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], default=None,
+                 max_length=10, null=True, verbose_name='Have you ever felt guilty about drinking or drug use?')),
+                ('eye_opener', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No')], default=None, max_length=10, null=True,
+                 verbose_name='Have you ever felt you needed a drink or used drugs first thing in the morning to steady your nerves or to get rid of a hangover (Eye-Opener)?')),
+            ],
+            options={
+                'verbose_name': 'CAGE-AID Substance Abuse Screening ',
+                'verbose_name_plural': 'CAGE-AID Substance Abuse Screening ',
+                'abstract': False,
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CaregiverContact',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('contact_type', models.CharField(choices=[('phone_call', 'Phone Call'), ('in_person', 'In person (Home visit)'), (
+                    'text_message', 'Text Message')], max_length=25, verbose_name='Type of contact')),
+                ('contact_datetime', models.DateTimeField(help_text='This date can be modified.', validators=[
+                 edc_base.model_validators.date.datetime_not_future, edc_protocol.validators.datetime_not_before_study_start], verbose_name='Contact datetime')),
+                ('contact_success', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=5, verbose_name='Were you able to reach the participant?')),
+                ('call_reason', models.CharField(choices=[('follow_up', 'Follow up/Quarterly calls'), ('missed_visit', 'Missed visit'), ('scheduled_appointment', 'Confirm scheduled appointment'), ('follow_up_delivery', 'Follow up on delivery status'), ('follow_up_labs', 'Follow up on abnormal labs'), (
+                    're_appointment', 'Re-appointment or reschedule'), ('recruitment', 'Recruitement'), ('focus_group', 'Focus group invitation'), ('6_month_visit_facet', '6th month visit(FACET)'), ('participant_eae_report', "Participant's clinical notes for EAE reporting")], max_length=30, verbose_name='Reason for call')),
+                ('call_reason_other', models.CharField(blank=True,
+                 max_length=70, null=True, verbose_name='Other, specify')),
+                ('contact_comment', models.TextField(blank=True,
+                 max_length=500, null=True, verbose_name='Outcome of call')),
+                ('call_rescheduled', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=10, null=True, verbose_name='Was the visit rescheduled')),
+                ('reason_rescheduled', models.CharField(blank=True, choices=[('out_of_study_area', 'Temporarily out of study area'), ('no_transport_fares', 'Participant do not have transport fares'), ('schools_are_reluctant_to_release_children', 'Schools are reluctant to release children'), ('Child_examinations', 'Child writing examinations or tests'), ('phone_not_reachable', 'Phone number(s) not reachable'), ('home_visit_done', 'Home visit done, successful / unsuccessful'), ('emergency_issues', 'Participant has work or home emergency issues'), ('Participant_work ', 'Participant cannot be released from work'), (
+                    'Participant_quarantine', 'Participant on quarantine or Isolations due to covid-19 exposure or infection'), ('Participant_changed_mind', 'Participant changed mind and asked for a re-appointments or want to withdraw/ be-withdraw from participating on study '), ('caregiver_not_well', 'Child, mother, caregiver not well'), ('undisclosed_personal_reasons', 'Participant has undisclosed personal reasons'), ('another_appointment', 'Participant has another appointment at local clinic/hospital scheduled on the same day'), ('OTHER', 'Other, specify')], max_length=50, null=True, verbose_name='Please indicate reason for re-scheduling')),
+                ('reason_rescheduled_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=255, null=True, verbose_name='If Other, specify ...')),
+                ('call_outcome', models.CharField(choices=[('successful_confirmed', 'Successful, appointment confirmed'), ('successful_rescheduled', 'Successful, appointment rescheduled'), ('successful_scheduled', 'Successful, appointment scheduled'), ('successful_next_kin', 'Successful, talked to next of kin to relay message'), (
+                    'test_message_pat', 'Text message sent to participant'), ('test_message_next_kin', 'Text message sent to next of kin'), ('unsuccessful', 'Unsuccessful'), ('OTHER', 'Other, specify')], max_length=30, verbose_name='Outcome of a phone call or Home visit')),
+                ('call_outcome_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=255, null=True, verbose_name='If Other, specify ...')),
+                ('study_name', models.CharField(default='flourish',
+                 max_length=20, verbose_name='Study name')),
+            ],
+            options={
+                'verbose_name': 'Caregiver Contact',
+                'unique_together': {('subject_identifier', 'contact_datetime')},
+            },
+        ),
+        migrations.CreateModel(
+            name='CaregiverRequisition',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('requisition_identifier', models.CharField(
+                    max_length=50, unique=True, verbose_name='Requisition Id')),
+                ('identifier_prefix', models.CharField(
+                    editable=False, max_length=50, null=True, unique=True)),
+                ('primary_aliquot_identifier', models.CharField(
+                    editable=False, max_length=18, null=True, unique=True)),
+                ('clinic_verified', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=15, null=True)),
+                ('clinic_verified_datetime', models.DateTimeField(null=True)),
+                ('requisition_datetime', models.DateTimeField(default=django.utils.timezone.now, validators=[
+                 edc_base.model_validators.date.datetime_not_future], verbose_name='Requisition Date')),
+                ('drawn_datetime', models.DateTimeField(blank=True, help_text='If not drawn, leave blank. Same as date and time of finger prick in case on DBS.',
+                 null=True, validators=[edc_base.model_validators.date.datetime_not_future], verbose_name='Date / Time Specimen Drawn')),
+                ('is_drawn', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], help_text='If No, provide a reason below', max_length=3, verbose_name='Was a specimen drawn?')),
+                ('reason_not_drawn_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('protocol_number', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('clinician_initials', edc_base.model_fields.custom_fields.InitialsField(
+                    blank=True, help_text='Type 2-3 letters, all in uppercase and no spaces', max_length=3, null=True, verbose_name='Initials')),
+                ('specimen_type', models.CharField(blank=True,
+                 max_length=25, null=True, verbose_name='Specimen type')),
+                ('item_type', models.CharField(choices=[('N/A', 'Not applicable'), ('tube', 'Tube'), ('swab', 'Swab'), (
+                    'dbs', 'DBS Card'), ('OTHER', 'Other')], default='N/A', max_length=25, verbose_name='Item collection type')),
+                ('received', models.BooleanField(default=False)),
+                ('received_datetime', models.DateTimeField(blank=True, null=True)),
+                ('processed', models.BooleanField(default=False)),
+                ('processed_datetime', models.DateTimeField(blank=True, null=True)),
+                ('packed', models.BooleanField(default=False)),
+                ('packed_datetime', models.DateTimeField(blank=True, null=True)),
+                ('shipped', models.BooleanField(default=False)),
+                ('shipped_datetime', models.DateTimeField(blank=True, null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('sample_id', models.CharField(blank=True, max_length=50,
+                 verbose_name='LIS generated Sample Identifier')),
+                ('exists_on_lis', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], default='No', max_length=3, verbose_name='Already exists on LIS?')),
+                ('study_site', models.CharField(choices=[
+                 ('40', 'Gaborone')], default=40, max_length=25, verbose_name='Study site')),
+                ('estimated_volume', models.DecimalField(decimal_places=2,
+                 help_text='If applicable, estimated volume of sample for this test/order. This is the total volume if number of "tubes" above is greater than 1', max_digits=7, verbose_name='Estimated volume in mL')),
+                ('item_count', models.IntegerField(
+                    help_text='Number of tubes, samples, cards, etc being sent for this test/order only. Determines number of labels to print', verbose_name='Total number of items')),
+                ('priority', models.CharField(choices=[('normal', 'Normal'), (
+                    'urgent', 'Urgent')], default='normal', max_length=25, verbose_name='Priority')),
+                ('reason_not_drawn', models.CharField(choices=[('collection_failed', 'Tried, but unable to obtain sample from patient'), ('absent', 'Patient did not attend visit'), (
+                    'refused', 'Patient refused'), ('no_supplies', 'No supplies'), ('OTHER', 'Other'), ('N/A', 'Not Applicable')], default='N/A', max_length=25, verbose_name='If not drawn, please explain')),
+                ('comments', models.TextField(blank=True, max_length=350, null=True)),
+            ],
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='CaregiverRequisitionResult',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_base.model_validators.date.datetime_not_future, edc_protocol.validators.datetime_not_before_study_start], verbose_name='Date and Time captured')),
+                ('sample_id', models.CharField(max_length=50,
+                 unique=True, verbose_name='LIS generated sample ID')),
+                ('sample_status', models.CharField(choices=[('resulted', 'Resulted'), ('stored', 'Stored'), (
+                    'pending', 'Pending')], default='resulted', max_length=50, verbose_name='Status')),
+                ('is_partition', models.BooleanField(default=False)),
+                ('parent_id', models.CharField(max_length=50, null=True,
+                 verbose_name='Primary sample ID, if partition')),
+                ('storage_location', models.CharField(max_length=100, null=True,
+                 verbose_name='Physical location of sample in storage.')),
+                ('date_stored', models.DateField(null=True)),
+                ('sample_results_file', models.FileField(
+                    null=True, upload_to='senaite_results/')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+            ],
+            options={
+                'verbose_name': 'Sample Result',
+            },
+        ),
+        migrations.CreateModel(
+            name='CaregiverResultValue',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('analysis_title', models.CharField(max_length=50,
+                 verbose_name='Name of analysis/test resulted')),
+                ('analysis_keyword', models.CharField(max_length=50,
+                 verbose_name='Unique keyword used to identify the analysis')),
+                ('result_value', models.CharField(max_length=50)),
+                ('result_unit', models.CharField(max_length=10, null=True,
+                 verbose_name='Unit of result value e.g. (gm/dL)')),
+                ('reference_values', models.CharField(max_length=50, null=True,
+                 verbose_name='Result reference values (lower-upper limit)')),
+                ('out_range', models.BooleanField(default=False)),
+                ('date_resulted', models.DateField()),
+                ('result', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT,
+                 to='flourish_caregiver.caregiverrequisitionresult')),
+            ],
+            options={
+                'verbose_name': 'Analysis Result Value',
+            },
+        ),
+        migrations.CreateModel(
+            name='CaregiverSafiStigma',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('member_lwhiv', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], max_length=3,
+                 verbose_name='Do you have a family member or someone who you are close with who is living with HIV?')),
+                ('judged', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), ('N/A', 'Not Applicable')],
+                 default='N/A', max_length=20, verbose_name='Because someone else in my family or a close friend has HIV, I am judged negatively by others')),
+                ('judged_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('avoided', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), ('N/A', 'Not Applicable')],
+                 default='N/A', max_length=20, verbose_name='Because someone else in my family or a close friend has HIV, I am isolated or avoided by others')),
+                ('avoided_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('insulted', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), ('N/A', 'Not Applicable')],
+                 default='N/A', max_length=20, verbose_name='Because someone else in my family or a close friend has HIV, I have been called names or insulted')),
+                ('insulted_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('at_home', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=20, verbose_name='Home')),
+                ('at_home_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('at_neigborhood', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=20, verbose_name='Neighborhood')),
+                ('at_neigborhood_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('at_religious', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=20, verbose_name='A Religious Place (e.g. church)')),
+                ('at_religious_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('at_clinic', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=20, verbose_name='Clinic')),
+                ('at_clinic_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('at_workplace', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=20, verbose_name='Workplace')),
+                ('at_workplace_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('other_place', models.CharField(blank=True, max_length=100,
+                 null=True, verbose_name='Other place, (please specify)')),
+                ('other_place_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened” at Other Place: When?')),
+                ('finacial_support', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=20, verbose_name='Lose Financial Support/Work')),
+                ('finacial_support_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('social_support', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=20, verbose_name='Lose Social Support')),
+                ('social_support_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('stressed', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=20, verbose_name='Stressed or anxious')),
+                ('stressed_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('saddened', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'N/A', 'Not Applicable')], default='N/A', max_length=20, verbose_name='Depressed, feeling down, saddened ')),
+                ('saddened_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago')], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('hiv_perspective', models.CharField(choices=[('no_one_thinks_that', 'No one thinks that'), ('a_few_people_think_that', 'A few people think that'), ('most_people_think_that', 'Most people think that'), (
+                    'dont_know', "Don't know"), ('N/A', 'Not Applicable')], max_length=25, null=True, verbose_name='People in the community think that HIV is a “dirty,” “immoral,” or “shameful” disease ')),
+                ('social_effect', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), (
+                    'dont_know', "Don't know"), ('N/A', 'Not Applicable')], max_length=20, null=True, verbose_name='Socially')),
+                ('social_effect_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago'), ('dont_know', "Don't know")], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('emotional_effect', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), ('dont_know', "Don't know"), (
+                    'N/A', 'Not Applicable')], max_length=20, null=True, verbose_name='Emotionally (for example, you feel stressed, down, or depressed)')),
+                ('emotional_effect_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago'), ('dont_know', "Don't know")], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+                ('pespective_changed', models.CharField(choices=[('never_happened', 'Never Happened'), ('ever_happened', 'Ever Happened'), ('dont_know', "Don't know")],
+                 max_length=20, verbose_name='Because of my HIV status, how the future is viewed by myself or future hopes that I have has changed in a negative way')),
+                ('pespective_changed_period', models.CharField(blank=True, choices=[('past_6_months', 'Past 6 months'), (
+                    'more_than_6_months', 'Longer than 6 months ago'), ('dont_know', "Don't know")], max_length=20, null=True, verbose_name='If “Ever Happened”: When?')),
+            ],
+            options={
+                'verbose_name': 'Caregiver SAFI Stigma',
+                'verbose_name_plural': 'Caregiver SAFI Stigma',
+                'abstract': False,
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CaregiverSocialWorkReferral',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('is_preg', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, null=True, verbose_name='Is this participant currently pregnant? ')),
+                ('current_hiv_status', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), (
+                    'unknown', 'Unknown')], max_length=14, null=True, verbose_name='Current HIV status?')),
+                ('child_exposure_status', models.CharField(blank=True, choices=[
+                 ('heu', 'HEU'), ('huu', 'HUU')], max_length=3, null=True, verbose_name='HIV exposure status')),
+                ('reason_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='if other specify...')),
+                ('comment', models.TextField(blank=True,
+                 max_length=250, null=True, verbose_name='Comment')),
+                ('referral_loc', models.CharField(choices=[('hospital_based_sw', 'Hospital-based Social Worker'), ('community_sw', 'Community Social Worker'), ('bonmeh', 'BONMEH (Botswana Network for Mental Health)'), ('bofwa', 'BOFWA (Botswana Family Welfare Association)'), (
+                    'bosanet', 'BOSANET (Botswana Substance Abuse Support Network'), ('bonela', 'BONELA (Botswana Network on Ethics, Law, and HIV/AIDS)'), ('OTHER', 'Other, specify')], default='hospital_based_sw', max_length=50, verbose_name='Please indicate the referral location')),
+                ('referral_loc_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('referral_for', models.CharField(choices=[('caregiver', 'Caregiver'), (
+                    'child', 'Child')], default='caregiver', max_length=10, verbose_name='Referral For ')),
+            ],
+            options={
+                'verbose_name': 'Caregiver Referral',
+                'verbose_name_plural': 'Caregiver Referral',
+                'abstract': False,
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CaregiverSocialWorkReferralList',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='CaregiverTBReferralOutcome',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('tb_evaluation', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Did participant go to clinic for TB evaluation?')),
+                ('clinic_name', models.CharField(blank=True, choices=[('Bontleng', 'Bontleng'), ('Julia Molefe', 'Julia Molefe'), ('Phase2', 'Phase2'), ('BH2', 'BH2'), ('Nkoyaphiri', 'Nkoyaphiri'), ('Mogoditshane', 'Mogoditshane'), (
+                    'Lesirane', 'Lesirane'), ('Old Naledi', 'Old Naledi'), ('BH3', 'BH3'), ('GWest', 'GWest'), ('BH1', 'BH1'), ('Sebele', 'Sebele'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Clinic name for referral')),
+                ('clinic_name_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('other_test_specify', models.TextField(blank=True,
+                 null=True, verbose_name='If "Other", specify')),
+                ('chest_xray_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Chest Xray Results')),
+                ('sputum_sample_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Sputum sample Results')),
+                ('urine_test_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Urine Test Results')),
+                ('skin_test_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Skin Test Results')),
+                ('blood_test_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Blood Test Results')),
+                ('other_test_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Other Test Result')),
+                ('diagnosed_with_tb', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, null=True, verbose_name='Were you diagnosed with TB?')),
+                ('tb_treatment', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('awaiting_results', 'awaiting_results'), (
+                    'OTHER', 'Other, specify')], max_length=20, null=True, verbose_name='Were you started on TB treatment?')),
+                ('other_tb_treatment', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('tb_preventative_therapy', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('OTHER', 'Other, specify')], max_length=10,
+                 null=True, verbose_name='Were you started on TB preventative therapy?treatment (consists of four or more drugs taken over several months)')),
+                ('other_tb_preventative_therapy', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('tb_isoniazid_preventative_therapy', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'OTHER', 'Other, specify')], max_length=10, null=True, verbose_name='Were you started on TB preventative therapy (such as isoniazid or rifapentine/isoniazid for several months)? ')),
+                ('other_tb_isoniazid_preventative_therapy', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('reasons', models.CharField(blank=True, choices=[('temporarily', 'Temporarily out of study area'), ('transport', 'Participant does not have transport fares'), ('school', 'Unable to attend due to school, exams or tests'), ('work', 'Participant/caregiver has work/home emergency issues'), (
+                    'work', 'Participant/caregiver cannot be released from work'), ('isolation', 'Participant is in isolation due to COVID-19 or another infection'), ('not_well', 'Participant/caregiver is not well'), ('OTHER', 'Other')], max_length=30, null=True, verbose_name='Reasons not able to go to TB clinic for evaluation')),
+                ('other_reasons', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+            ],
+            options={
+                'verbose_name': 'Caregiver TB Referral Outcomes CRF',
+                'verbose_name_plural': 'Caregiver TB Referral Outcomes CRFs',
+                'abstract': False,
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CaregiverTBScreening',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('cough', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'unknown', 'Unknown')], max_length=20, verbose_name='Do you currently have any cough?')),
+                ('cough_duration', models.CharField(blank=True, choices=[('< 2 weeks', '< 2 weeks'), (
+                    '>= 2 weeks', '≥ 2 weeks')], max_length=10, null=True, verbose_name='How long has the cough lasted?')),
+                ('fever', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'unknown', 'Unknown')], max_length=20, verbose_name='Do you currently have a fever?')),
+                ('fever_duration', models.CharField(blank=True, choices=[('< 2 weeks', '< 2 weeks'), (
+                    '>= 2 weeks', '≥ 2 weeks')], max_length=10, null=True, verbose_name='How long has the fever lasted?')),
+                ('sweats', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'unknown', 'Unknown')], max_length=20, verbose_name='Are you currently experiencing night sweats?')),
+                ('sweats_duration', models.CharField(blank=True, choices=[('< 2 weeks', '< 2 weeks'), (
+                    '>= 2 weeks', '≥ 2 weeks')], max_length=10, null=True, verbose_name='How long have the night sweats lasted?')),
+                ('weight_loss', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown')], max_length=20,
+                 verbose_name='Since the last time you spoke with FLOURISH staff, have you had any weight loss?')),
+                ('weight_loss_duration', models.CharField(blank=True, choices=[('< 2 weeks', '< 2 weeks'), (
+                    '>= 2 weeks', '≥ 2 weeks')], max_length=10, null=True, verbose_name='How long has the weight loss lasted?')),
+                ('household_diagnosed_with_tb', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown')], max_length=20,
+                 verbose_name='Since the last time you spoke with FLOURISH staff, has someone in your household been diagnosed with TB? ')),
+                ('evaluated_for_tb', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown')], help_text='Only for children',
+                 max_length=20, verbose_name='Since the last time you spoke with FLOURISH staff, have you been evaluated in a clinic for TB?')),
+                ('clinic_visit_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='What was the date of the clinic visit?')),
+                ('other_test', models.TextField(blank=True, null=True,
+                 verbose_name='If "Other", specify test and result')),
+                ('chest_xray_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Chest Xray Results')),
+                ('sputum_sample_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Sputum sample Results')),
+                ('urine_test_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Urine Test Results')),
+                ('skin_test_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Skin Test Results')),
+                ('blood_test_results', models.CharField(blank=True, choices=[('POS', 'positive'), ('NEG', 'negative'), (
+                    'PENDING', 'pending'), ('not_recieved', 'not_received')], max_length=15, null=True, verbose_name='Blood Test Results')),
+                ('other_test_results', models.TextField(
+                    blank=True, null=True, verbose_name='Other Test Result')),
+                ('started_on_TB_treatment', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'OTHER', 'Other, specify')], max_length=15, null=True, verbose_name='Were you started on TB treatment?')),
+                ('started_on_TB_preventative_therapy', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'OTHER', 'Other, specify')], max_length=15, null=True, verbose_name='Were you started on TB preventative therapy?')),
+            ],
+            options={
+                'verbose_name': 'Caregiver TB Screening',
+                'verbose_name_plural': 'Caregiver TB Screenings',
+                'ordering': ('-modified', '-created'),
+                'get_latest_by': 'modified',
+                'abstract': False,
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ClinicianNotes',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('is_verified', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_verified_datetime', models.DateTimeField(
+                    editable=False, null=True)),
+                ('verified_by', models.CharField(
+                    editable=False, max_length=25, null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+            ],
+            options={
+                'verbose_name': 'Caregiver Clinician Notes',
+                'verbose_name_plural': 'Caregiver Clinician Notes',
+                'abstract': False,
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ClinicianNotesImage',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('image', models.ImageField(upload_to='caregiver_notes/')),
+                ('user_uploaded', models.CharField(blank=True,
+                 max_length=50, verbose_name='user uploaded')),
+                ('datetime_captured', models.DateTimeField(
+                    default=edc_base.utils.get_utcnow)),
+                ('clinician_notes', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT,
+                 related_name='caregiver_clinician_notes', to='flourish_caregiver.cliniciannotes')),
+            ],
+            options={
+                'verbose_name': 'Caregiver Clinician Notes Image',
+                'verbose_name_plural': 'Caregiver Clinician Notes Images',
+            },
+        ),
+        migrations.CreateModel(
+            name='Cohort',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('name', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=150, verbose_name='Cohort name')),
+                ('assign_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time for cohort assignment', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
+                ('enrollment_cohort', models.BooleanField(default=False,
+                 editable=False, verbose_name='Study enrolment cohort')),
+                ('current_cohort', models.BooleanField(
+                    verbose_name='Current cohort')),
+                ('exposure_status', models.CharField(max_length=9,
+                 verbose_name='Exposure status (i.e. HIV exposed/unexposed')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+            ],
+            options={
+                'verbose_name': 'Cohort',
+                'verbose_name_plural': 'Cohort',
+                'unique_together': {('subject_identifier', 'name')},
+            },
+            bases=(flourish_caregiver.models.model_mixins.matrix_match_variables_mixin.MatrixMatchVariablesMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='CohortSchedules',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('schedule_name', models.CharField(
+                    max_length=50, verbose_name='Schedule name')),
+                ('schedule_type', models.CharField(
+                    max_length=50, verbose_name='Schedule type')),
+                ('cohort_name', models.CharField(
+                    max_length=50, verbose_name='Cohort name')),
+                ('onschedule_model', models.CharField(
+                    max_length=100, verbose_name='OnSchedule model')),
+                ('child_count', models.IntegerField(
+                    null=True, verbose_name='Child count')),
+                ('site', models.ForeignKey(editable=False, null=True,
+                 on_delete=django.db.models.deletion.PROTECT, to='sites.site')),
+            ],
+            options={
+                'verbose_name': 'Cohort Schedule',
+                'verbose_name_plural': 'Cohort Schedules',
+            },
+        ),
+        migrations.CreateModel(
+            name='Covid19',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('test_for_covid', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('tried_but_could_not_get_tested', 'Tried, but could not get tested '), (
+                    'unknown', 'Unknown')], max_length=35, verbose_name='Have you been tested for COVID-19?')),
+                ('date_of_test', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of the test')),
+                ('reason_for_testing', models.CharField(blank=True, choices=[('pre-traveling_screening ', 'Pre-Traveling screening'), ('routine_testing ', 'Routine testing (experiencing symptoms)'), (
+                    'contact_tracing', 'Contact tracing'), ('asymptomatic_testing', 'Routine Testing(Asymptomatic)'), ('OTHER', 'Other')], max_length=30, null=True, verbose_name='What was the reason for testing?')),
+                ('other_reason_for_testing', models.CharField(
+                    blank=True, max_length=30, null=True, verbose_name='Other reason for testing?')),
+                ('result_of_test', models.CharField(blank=True, choices=[('POS', 'Positive'), ('NEG', 'Negative'), ('PENDING', 'Pending'), (
+                    'unknown', 'Unknown')], max_length=30, null=True, verbose_name='What was the result of the test?')),
+                ('isolation_location', models.CharField(blank=True, choices=[('home', 'Home'), ('hospital', 'Hospital'), ('clinic', 'Clinic'), (
+                    'OTHER', 'Other')], max_length=15, null=True, verbose_name='If your results were positive, where were you isolated? ')),
+                ('other_isolation_location', models.CharField(blank=True, max_length=30,
+                 null=True, verbose_name='If other, where were you isolated?')),
+                ('has_tested_positive', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'unknown', 'Unknown')], max_length=15, verbose_name='Has anyone in your household tested positive for COVID-19')),
+                ('date_of_test_member', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of the test for member of household')),
+                ('is_test_estimated', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, null=True, verbose_name='Is this test estimated')),
+                ('close_contact', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('unknown', 'Unknown')], max_length=10,
+                 verbose_name='Have you been in close contact with anyone outside of your household who tested positive for COVID-19')),
+                ('fully_vaccinated', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), (
+                    'partially_jab', 'Partially')], max_length=25, verbose_name='Have you been fully vaccinated for COVID-19')),
+                ('vaccination_type', models.CharField(blank=True, choices=[('astrazeneca', 'AstraZeneca'), ('sinovac', 'Sinovac'), ('pfizer', 'Pfizer'), (
+                    'johnson_and_johnson', 'Johnson & Johnson '), ('moderna', 'Moderna'), ('OTHER', 'Other')], max_length=20, null=True, verbose_name='Which vaccine did you receive')),
+                ('other_vaccination_type', models.CharField(blank=True, max_length=20,
+                 null=True, verbose_name='If other specify which vaccine you received?')),
+                ('first_dose', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of first vaccine dose')),
+                ('second_dose', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of second vaccine dose')),
+                ('received_booster', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=10, null=True, verbose_name='Have you received your COVID-19 booster vaccine?')),
+                ('booster_vac_type', models.CharField(blank=True, choices=[('astrazeneca', 'AstraZeneca'), ('sinovac', 'Sinovac'), ('pfizer', 'Pfizer'), (
+                    'johnson_and_johnson', 'Johnson & Johnson '), ('moderna', 'Moderna'), ('OTHER', 'Other')], max_length=50, null=True, verbose_name='Which vaccine did you receive for your booster')),
+                ('other_booster_vac_type', models.CharField(blank=True, max_length=20,
+                 null=True, verbose_name='If other specify which vaccine you received?')),
+                ('booster_vac_date', models.DateField(blank=True, null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Date of booster vaccine')),
+            ],
+            options={
+                'verbose_name': 'Caregiver Covid-19 Form',
+                'verbose_name_plural': 'Caregiver Covid-19 Forms',
+                'abstract': False,
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CovidSymptoms',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='CovidSymptomsAfter14Days',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='CrackedNipplesActions',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='CrackedNipplesInline',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('cracked_nipples_date_onset', models.DateField(null=True, validators=[
+                 edc_base.model_validators.date.date_not_future], verbose_name='Approximate date of onset of cracked nipples: ')),
+                ('cracked_nipples_type', models.CharField(choices=[('unilateral', 'Unilateral'), (
+                    'bilateral', 'Bilateral')], max_length=20, null=True, verbose_name='Are the cracked nipples:')),
+                ('cracked_nipples_action_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify')),
+                ('breast_milk_crf', models.ForeignKey(
+                    on_delete=django.db.models.deletion.PROTECT, to='flourish_caregiver.breastmilkfieldsmixin')),
+                ('cracked_nipples_action', models.ManyToManyField(max_length=20, related_name='cracked_nipples_actions',
+                 to='flourish_caregiver.CrackedNipplesActions', verbose_name='What did the mother do when experiencing cracked nipples? ')),
+            ],
+            options={
+                'verbose_name': 'Cracked Nipples Inline',
+                'verbose_name_plural': 'Cracked Nipples Inlines',
+            },
+        ),
+        migrations.CreateModel(
+            name='EmoHealthImproved',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='EmoSupportType',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='ExpenseContributors',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='GeneralSymptoms',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='HistoricalCaregiverContact',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('contact_type', models.CharField(choices=[('phone_call', 'Phone Call'), ('in_person', 'In person (Home visit)'), (
+                    'text_message', 'Text Message')], max_length=25, verbose_name='Type of contact')),
+                ('contact_datetime', models.DateTimeField(help_text='This date can be modified.', validators=[
+                 edc_base.model_validators.date.datetime_not_future, edc_protocol.validators.datetime_not_before_study_start], verbose_name='Contact datetime')),
+                ('contact_success', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=5, verbose_name='Were you able to reach the participant?')),
+                ('call_reason', models.CharField(choices=[('follow_up', 'Follow up/Quarterly calls'), ('missed_visit', 'Missed visit'), ('scheduled_appointment', 'Confirm scheduled appointment'), ('follow_up_delivery', 'Follow up on delivery status'), ('follow_up_labs', 'Follow up on abnormal labs'), (
+                    're_appointment', 'Re-appointment or reschedule'), ('recruitment', 'Recruitement'), ('focus_group', 'Focus group invitation'), ('6_month_visit_facet', '6th month visit(FACET)'), ('participant_eae_report', "Participant's clinical notes for EAE reporting")], max_length=30, verbose_name='Reason for call')),
+                ('call_reason_other', models.CharField(blank=True,
+                 max_length=70, null=True, verbose_name='Other, specify')),
+                ('contact_comment', models.TextField(blank=True,
+                 max_length=500, null=True, verbose_name='Outcome of call')),
+                ('call_rescheduled', models.CharField(blank=True, choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=10, null=True, verbose_name='Was the visit rescheduled')),
+                ('reason_rescheduled', models.CharField(blank=True, choices=[('out_of_study_area', 'Temporarily out of study area'), ('no_transport_fares', 'Participant do not have transport fares'), ('schools_are_reluctant_to_release_children', 'Schools are reluctant to release children'), ('Child_examinations', 'Child writing examinations or tests'), ('phone_not_reachable', 'Phone number(s) not reachable'), ('home_visit_done', 'Home visit done, successful / unsuccessful'), ('emergency_issues', 'Participant has work or home emergency issues'), ('Participant_work ', 'Participant cannot be released from work'), (
+                    'Participant_quarantine', 'Participant on quarantine or Isolations due to covid-19 exposure or infection'), ('Participant_changed_mind', 'Participant changed mind and asked for a re-appointments or want to withdraw/ be-withdraw from participating on study '), ('caregiver_not_well', 'Child, mother, caregiver not well'), ('undisclosed_personal_reasons', 'Participant has undisclosed personal reasons'), ('another_appointment', 'Participant has another appointment at local clinic/hospital scheduled on the same day'), ('OTHER', 'Other, specify')], max_length=50, null=True, verbose_name='Please indicate reason for re-scheduling')),
+                ('reason_rescheduled_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=255, null=True, verbose_name='If Other, specify ...')),
+                ('call_outcome', models.CharField(choices=[('successful_confirmed', 'Successful, appointment confirmed'), ('successful_rescheduled', 'Successful, appointment rescheduled'), ('successful_scheduled', 'Successful, appointment scheduled'), ('successful_next_kin', 'Successful, talked to next of kin to relay message'), (
+                    'test_message_pat', 'Text message sent to participant'), ('test_message_next_kin', 'Text message sent to next of kin'), ('unsuccessful', 'Unsuccessful'), ('OTHER', 'Other, specify')], max_length=30, verbose_name='Outcome of a phone call or Home visit')),
+                ('call_outcome_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=255, null=True, verbose_name='If Other, specify ...')),
+                ('study_name', models.CharField(default='flourish',
+                 max_length=20, verbose_name='Study name')),
+                ('history_date', models.DateTimeField(db_index=True)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'verbose_name': 'historical Caregiver Contact',
+                'verbose_name_plural': 'historical Caregiver Contacts',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': ('history_date', 'history_id'),
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
+        ),
+        migrations.CreateModel(
+            name='HistoricalCaregiverRequisition',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('requisition_identifier', models.CharField(
+                    db_index=True, max_length=50, verbose_name='Requisition Id')),
+                ('identifier_prefix', models.CharField(
+                    db_index=True, editable=False, max_length=50, null=True)),
+                ('primary_aliquot_identifier', models.CharField(
+                    db_index=True, editable=False, max_length=18, null=True)),
+                ('clinic_verified', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=15, null=True)),
+                ('clinic_verified_datetime', models.DateTimeField(null=True)),
+                ('requisition_datetime', models.DateTimeField(default=django.utils.timezone.now, validators=[
+                 edc_base.model_validators.date.datetime_not_future], verbose_name='Requisition Date')),
+                ('drawn_datetime', models.DateTimeField(blank=True, help_text='If not drawn, leave blank. Same as date and time of finger prick in case on DBS.',
+                 null=True, validators=[edc_base.model_validators.date.datetime_not_future], verbose_name='Date / Time Specimen Drawn')),
+                ('is_drawn', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], help_text='If No, provide a reason below', max_length=3, verbose_name='Was a specimen drawn?')),
+                ('reason_not_drawn_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('protocol_number', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('clinician_initials', edc_base.model_fields.custom_fields.InitialsField(
+                    blank=True, help_text='Type 2-3 letters, all in uppercase and no spaces', max_length=3, null=True, verbose_name='Initials')),
+                ('specimen_type', models.CharField(blank=True,
+                 max_length=25, null=True, verbose_name='Specimen type')),
+                ('item_type', models.CharField(choices=[('N/A', 'Not applicable'), ('tube', 'Tube'), ('swab', 'Swab'), (
+                    'dbs', 'DBS Card'), ('OTHER', 'Other')], default='N/A', max_length=25, verbose_name='Item collection type')),
+                ('received', models.BooleanField(default=False)),
+                ('received_datetime', models.DateTimeField(blank=True, null=True)),
+                ('processed', models.BooleanField(default=False)),
+                ('processed_datetime', models.DateTimeField(blank=True, null=True)),
+                ('packed', models.BooleanField(default=False)),
+                ('packed_datetime', models.DateTimeField(blank=True, null=True)),
+                ('shipped', models.BooleanField(default=False)),
+                ('shipped_datetime', models.DateTimeField(blank=True, null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('sample_id', models.CharField(blank=True, max_length=50,
+                 verbose_name='LIS generated Sample Identifier')),
+                ('exists_on_lis', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], default='No', max_length=3, verbose_name='Already exists on LIS?')),
+                ('study_site', models.CharField(choices=[
+                 ('40', 'Gaborone')], default=40, max_length=25, verbose_name='Study site')),
+                ('estimated_volume', models.DecimalField(decimal_places=2,
+                 help_text='If applicable, estimated volume of sample for this test/order. This is the total volume if number of "tubes" above is greater than 1', max_digits=7, verbose_name='Estimated volume in mL')),
+                ('item_count', models.IntegerField(
+                    help_text='Number of tubes, samples, cards, etc being sent for this test/order only. Determines number of labels to print', verbose_name='Total number of items')),
+                ('priority', models.CharField(choices=[('normal', 'Normal'), (
+                    'urgent', 'Urgent')], default='normal', max_length=25, verbose_name='Priority')),
+                ('reason_not_drawn', models.CharField(choices=[('collection_failed', 'Tried, but unable to obtain sample from patient'), ('absent', 'Patient did not attend visit'), (
+                    'refused', 'Patient refused'), ('no_supplies', 'No supplies'), ('OTHER', 'Other'), ('N/A', 'Not Applicable')], default='N/A', max_length=25, verbose_name='If not drawn, please explain')),
+                ('comments', models.TextField(blank=True, max_length=350, null=True)),
+                ('history_date', models.DateTimeField(db_index=True)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'verbose_name': 'historical caregiver requisition',
+                'verbose_name_plural': 'historical caregiver requisitions',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': ('history_date', 'history_id'),
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
+        ),
+        migrations.CreateModel(
+            name='HistoricalCaregiverRequisitionResult',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_base.model_validators.date.datetime_not_future, edc_protocol.validators.datetime_not_before_study_start], verbose_name='Date and Time captured')),
+                ('sample_id', models.CharField(db_index=True,
+                 max_length=50, verbose_name='LIS generated sample ID')),
+                ('sample_status', models.CharField(choices=[('resulted', 'Resulted'), ('stored', 'Stored'), (
+                    'pending', 'Pending')], default='resulted', max_length=50, verbose_name='Status')),
+                ('is_partition', models.BooleanField(default=False)),
+                ('parent_id', models.CharField(max_length=50, null=True,
+                 verbose_name='Primary sample ID, if partition')),
+                ('storage_location', models.CharField(max_length=100, null=True,
+                 verbose_name='Physical location of sample in storage.')),
+                ('date_stored', models.DateField(null=True)),
+                ('sample_results_file', models.TextField(max_length=100, null=True)),
+                ('history_id', models.AutoField(primary_key=True, serialize=False)),
+                ('history_date', models.DateTimeField(db_index=True)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+            ],
+            options={
+                'verbose_name': 'historical Sample Result',
+                'verbose_name_plural': 'historical Sample Results',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': ('history_date', 'history_id'),
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
+        ),
+        migrations.CreateModel(
+            name='HistoricalCaregiverResultValue',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('analysis_title', models.CharField(max_length=50,
+                 verbose_name='Name of analysis/test resulted')),
+                ('analysis_keyword', models.CharField(max_length=50,
+                 verbose_name='Unique keyword used to identify the analysis')),
+                ('result_value', models.CharField(max_length=50)),
+                ('result_unit', models.CharField(max_length=10, null=True,
+                 verbose_name='Unit of result value e.g. (gm/dL)')),
+                ('reference_values', models.CharField(max_length=50, null=True,
+                 verbose_name='Result reference values (lower-upper limit)')),
+                ('out_range', models.BooleanField(default=False)),
+                ('date_resulted', models.DateField()),
+                ('history_id', models.AutoField(primary_key=True, serialize=False)),
+                ('history_date', models.DateTimeField(db_index=True)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('result', models.ForeignKey(blank=True, db_constraint=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='flourish_caregiver.caregiverrequisitionresult')),
+            ],
+            options={
+                'verbose_name': 'historical Analysis Result Value',
+                'verbose_name_plural': 'historical Analysis Result Values',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': ('history_date', 'history_id'),
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
+        ),
+        migrations.CreateModel(
+            name='HistoricalCohort',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('name', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=150, verbose_name='Cohort name')),
+                ('assign_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text='Date and time for cohort assignment', validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date and Time')),
+                ('enrollment_cohort', models.BooleanField(default=False,
+                 editable=False, verbose_name='Study enrolment cohort')),
+                ('current_cohort', models.BooleanField(
+                    verbose_name='Current cohort')),
+                ('exposure_status', models.CharField(max_length=9,
+                 verbose_name='Exposure status (i.e. HIV exposed/unexposed')),
+                ('history_date', models.DateTimeField(db_index=True)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+            ],
+            options={
+                'verbose_name': 'historical Cohort',
+                'verbose_name_plural': 'historical Cohort',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': ('history_date', 'history_id'),
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
+        ),
+        migrations.CreateModel(
+            name='HistoricalCohortSchedules',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('schedule_name', models.CharField(
+                    max_length=50, verbose_name='Schedule name')),
+                ('schedule_type', models.CharField(
+                    max_length=50, verbose_name='Schedule type')),
+                ('cohort_name', models.CharField(
+                    max_length=50, verbose_name='Cohort name')),
+                ('onschedule_model', models.CharField(
+                    max_length=100, verbose_name='OnSchedule model')),
+                ('child_count', models.IntegerField(
+                    null=True, verbose_name='Child count')),
+                ('history_date', models.DateTimeField(db_index=True)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+            ],
+            options={
+                'verbose_name': 'historical Cohort Schedule',
+                'verbose_name_plural': 'historical Cohort Schedules',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': ('history_date', 'history_id'),
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
+        ),
+        migrations.CreateModel(
+            name='HistoricalTbAdolConsent',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('subject_identifier_as_pk', models.UUIDField(
+                    default=uuid.uuid4, editable=False)),
+                ('subject_identifier_aka', models.CharField(editable=False, help_text='track a previously allocated identifier.',
+                 max_length=50, null=True, verbose_name='Subject Identifier a.k.a')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('citizen', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Is the participant a Botswana citizen? ')),
+                ('legal_marriage', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A', help_text="If 'No', participant may not be consented.",
+                 max_length=3, null=True, verbose_name='If not a citizen, is the participant legally married to a Botswana citizen?')),
+                ('marriage_certificate', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('N/A', 'Not applicable')], default='N/A',
+                 help_text="If 'No', participant may not be consented.", max_length=3, null=True, verbose_name='[Interviewer] Has the participant produced the marriage certificate as proof? ')),
+                ('marriage_certificate_no', models.CharField(blank=True, help_text='e.g. 000/YYYY',
+                 max_length=9, null=True, verbose_name='What is the marriage certificate number?')),
+                ('identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    help_text=' (Encryption: RSA local)', max_length=71, verbose_name='Identity number')),
+                ('confirm_identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    help_text='Retype the identity number (Encryption: RSA local)', max_length=71, null=True)),
+                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True)),
+                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
+                ('dob', models.DateField(null=True, verbose_name='Date of birth')),
+                ('guardian_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is a minor.<BR>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)",
+                 max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Guardian's last and first name")),
+                ('subject_type', models.CharField(max_length=25)),
+                ('consent_reviewed', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes], verbose_name='I have reviewed the consent with the participant')),
+                ('study_questions', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes], verbose_name='I have answered all questions the participant had about the study')),
+                ('assessment_score', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes], verbose_name='I have asked the participant questions about this study and the participant has demonstrated understanding')),
+                ('consent_signature', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes], verbose_name='I have verified that the participant has signed the consent form')),
+                ('consent_copy', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No'), ('Declined', 'Yes, but subject declined copy')], help_text='If declined, return copy with the consent', max_length=20, null=True, validators=[
+                 edc_consent.validators.eligible_if_yes_or_declined], verbose_name='I have provided the participant with a copy of their signed informed consent')),
+                ('is_incarcerated', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="( if 'Yes' STOP participant cannot be consented )", max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_no], verbose_name='Is the participant under involuntary incarceration?')),
+                ('is_literate', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], help_text="If 'No' provide witness's name on this form and signature on the paper document.", max_length=3, verbose_name='Is the participant literate?')),
+                ('witness_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is illiterate.<br>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)",
+                 max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Witness's last and first name")),
+                ('language', models.CharField(choices=[('tn', 'Setswana'), ('en', 'English')],
+                 help_text='The language used for the consent process will also be used during data collection.', max_length=25, verbose_name='Language of consent')),
+                ('is_verified', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_verified_datetime', models.DateTimeField(
+                    editable=False, null=True)),
+                ('verified_by', models.CharField(
+                    editable=False, max_length=25, null=True)),
+                ('report_datetime', models.DateTimeField(editable=False, null=True)),
+                ('version', models.CharField(editable=False, help_text="See 'Consent Type' for consent versions by period.",
+                 max_length=10, verbose_name='Consent version')),
+                ('updates_versions', models.BooleanField(default=False)),
+                ('sid', models.CharField(blank=True, editable=False,
+                 help_text='Used for randomization against a prepared rando-list.', max_length=15, null=True, verbose_name='SID')),
+                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comment')),
+                ('dm_comment', models.CharField(editable=False, help_text='see also edc.data manager.',
+                 max_length=150, null=True, verbose_name='Data Management comment')),
+                ('consent_identifier', models.UUIDField(default=uuid.uuid4, editable=False,
+                 help_text='A unique identifier for this consent instance')),
+                ('initials', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text='Ensure initials consist of letters only in upper case, no spaces. (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[django.core.validators.RegexValidator(message='Ensure initials consist of letters only in upper case, no spaces.', regex='^[A-Z]{2,3}$')])),
+                ('consent_datetime', models.DateTimeField(
+                    help_text='Date and time of consent.', null=True, verbose_name='Consent date and time')),
+                ('identity_type', models.CharField(choices=[('country_id', 'Country ID number'), ('country_id_rcpt', 'Country ID receipt'), (
+                    'passport', 'Passport'), ('OTHER', 'Other')], max_length=30, verbose_name='What type of identity number is this?')),
+                ('gender', models.CharField(choices=[('M', 'Male'), ('F', 'Female'), (
+                    'OTHER', 'Other')], max_length=5, null=True, verbose_name='Gender')),
+                ('is_dob_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedField(choices=[('-', 'No'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), (
+                    'YMD', 'Yes, estimated Year, Month and Day')], help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, null=True, verbose_name='Is the caregiver date of birth estimated?')),
+                ('future_studies_contact', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Contact for future studies: Do you give us permission for us to contact you or your child for future studies?')),
+                ('is_eligible', models.BooleanField(default=True, editable=False)),
+                ('gender_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('history_date', models.DateTimeField(db_index=True)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+            ],
+            options={
+                'verbose_name': 'historical TB Adolescent Caregiver Consent',
+                'verbose_name_plural': 'historical TB Adolescent Caregiver Consents',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': ('history_date', 'history_id'),
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
+        ),
+        migrations.CreateModel(
+            name='HistoricalTbInformedConsent',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(
+                    max_length=50, verbose_name='Subject Identifier')),
+                ('subject_identifier_as_pk', models.UUIDField(
+                    default=uuid.uuid4, editable=False)),
+                ('subject_identifier_aka', models.CharField(editable=False, help_text='track a previously allocated identifier.',
+                 max_length=50, null=True, verbose_name='Subject Identifier a.k.a')),
+                ('slug', models.CharField(db_index=True, default='', editable=False,
+                 help_text='a field used for quick search', max_length=250, null=True)),
+                ('identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    help_text=' (Encryption: RSA local)', max_length=71, verbose_name='Identity number')),
+                ('confirm_identity', django_crypto_fields.fields.identity_field.IdentityField(
+                    help_text='Retype the identity number (Encryption: RSA local)', max_length=71, null=True)),
+                ('first_name', django_crypto_fields.fields.firstname_field.FirstnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True)),
+                ('last_name', django_crypto_fields.fields.lastname_field.LastnameField(
+                    blank=True, help_text=' (Encryption: RSA local)', max_length=71, null=True, verbose_name='Last name')),
+                ('dob', models.DateField(null=True, verbose_name='Date of birth')),
+                ('is_dob_estimated', edc_base.model_fields.date_estimated.IsDateEstimatedField(choices=[('-', 'No'), ('D', 'Yes, estimated the Day'), ('MD', 'Yes, estimated Month and Day'), (
+                    'YMD', 'Yes, estimated Year, Month and Day')], help_text='If the exact date is not known, please indicate which part of the date is estimated.', max_length=25, null=True, verbose_name='Is date of birth estimated?')),
+                ('guardian_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is a minor.<BR>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)",
+                 max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Guardian's last and first name")),
+                ('subject_type', models.CharField(max_length=25)),
+                ('is_incarcerated', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text="( if 'Yes' STOP participant cannot be consented )", max_length=3, null=True, validators=[
+                 edc_consent.validators.eligible_if_no], verbose_name='Is the participant under involuntary incarceration?')),
+                ('is_literate', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], help_text="If 'No' provide witness's name on this form and signature on the paper document.", max_length=3, verbose_name='Is the participant literate?')),
+                ('witness_name', django_crypto_fields.fields.lastname_field.LastnameField(blank=True, help_text="Required only if participant is illiterate.<br>Format is 'LASTNAME, FIRSTNAME'. All uppercase separated by a comma. (Encryption: RSA local)",
+                 max_length=71, null=True, validators=[edc_consent.validators.FullNameValidator()], verbose_name="Witness's last and first name")),
+                ('language', models.CharField(choices=[('tn', 'Setswana'), ('en', 'English')],
+                 help_text='The language used for the consent process will also be used during data collection.', max_length=25, verbose_name='Language of consent')),
+                ('is_verified', models.BooleanField(
+                    default=False, editable=False)),
+                ('is_verified_datetime', models.DateTimeField(
+                    editable=False, null=True)),
+                ('verified_by', models.CharField(
+                    editable=False, max_length=25, null=True)),
+                ('report_datetime', models.DateTimeField(editable=False, null=True)),
+                ('version', models.CharField(editable=False, help_text="See 'Consent Type' for consent versions by period.",
+                 max_length=10, verbose_name='Consent version')),
+                ('updates_versions', models.BooleanField(default=False)),
+                ('sid', models.CharField(blank=True, editable=False,
+                 help_text='Used for randomization against a prepared rando-list.', max_length=15, null=True, verbose_name='SID')),
+                ('comment', django_crypto_fields.fields.encrypted_text_field.EncryptedTextField(
+                    blank=True, help_text=' (Encryption: AES local)', max_length=250, null=True, verbose_name='Comment')),
+                ('dm_comment', models.CharField(editable=False, help_text='see also edc.data manager.',
+                 max_length=150, null=True, verbose_name='Data Management comment')),
+                ('consent_identifier', models.UUIDField(default=uuid.uuid4, editable=False,
+                 help_text='A unique identifier for this consent instance')),
+                ('initials', django_crypto_fields.fields.encrypted_char_field.EncryptedCharField(blank=True, help_text='Ensure initials consist of letters only in upper case, no spaces. (Encryption: RSA local)',
+                 max_length=71, null=True, validators=[django.core.validators.RegexValidator(message='Ensure initials consist of letters only in upper case, no spaces.', regex='^[A-Z]{2,3}$')])),
+                ('consent_datetime', models.DateTimeField(
+                    help_text='Date and time of consent.', null=True, verbose_name='Consent date and time')),
+                ('identity_type', models.CharField(choices=[('country_id', 'Country ID number'), ('country_id_rcpt', 'Country ID receipt'), (
+                    'passport', 'Passport'), ('OTHER', 'Other')], max_length=30, verbose_name='What type of identity number is this?')),
+                ('gender', models.CharField(choices=[('M', 'Male'), ('F', 'Female'), (
+                    'OTHER', 'Other')], max_length=5, null=True, verbose_name='Gender')),
+                ('consent_to_participate', models.CharField(choices=[('Yes', 'Yes'), ('No', 'No')], help_text='If no, participant is not eligible.', max_length=3, validators=[
+                 edc_consent.validators.eligible_if_yes], verbose_name='Do you consent to participate in the study?')),
+                ('is_eligible', models.BooleanField(default=True, editable=False)),
+                ('gender_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('history_date', models.DateTimeField(db_index=True)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+            ],
+            options={
+                'verbose_name': 'historical TB Informed Consent',
+                'verbose_name_plural': 'historical TB Informed Consent',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': ('history_date', 'history_id'),
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
+        ),
+        migrations.CreateModel(
+            name='HistoricalTbOffStudy',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    blank=True, db_index=True, editable=False, help_text='System auto field. UUID primary key.')),
+                ('subject_identifier', models.CharField(db_index=True,
+                 max_length=50, verbose_name='Subject Identifier')),
+                ('offschedule_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, validators=[
+                 edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Date and time subject taken off schedule')),
+                ('action_identifier', models.CharField(max_length=25, null=True)),
+                ('tracking_identifier', models.CharField(max_length=30, null=True)),
+                ('related_tracking_identifier',
+                 models.CharField(max_length=30, null=True)),
+                ('parent_tracking_identifier',
+                 models.CharField(max_length=30, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('reason', models.CharField(choices=[('multiple_vialble_gestations', 'Multiple (2 or more) viable gestations seen on ultrasound'), ('unable_to_determine_ga', 'Unable to confirm GA by Ultrasound.'), ('miscarriage_or_arbotion', 'Miscarriage or abortion'), ('fetal_death_gt_20wks', 'fetal Death at >= 20weeks GA (IUFD) or still born'), ('took_art_less_than_4weeks', 'Biological mother took ART for less than 4 weeks during pregnancy'), ('caregiver_death', 'Caregiver death (complete the Death Report Form AF005)'), ('moving_out_of_study_area', 'Participant stated that they will be moving out of the study area or unable to stay in study area'), ('loss_to_followup', 'Participant lost to follow-up/unable to locate'), ('loss_to_followup_contacted', 'Participant lost to follow-up, contacted but did not come to study clinic'), ('caregiver_withdrew_consent', 'Caregiver changed mind and withdrew consent'), ('father_refused', 'Father of the infant/child/adolescent refused to participate and therefore participant withdrew consent '), (
+                    'family_member_refused', 'Other family member refused the study and therefore participant withdrew consent'), ('caregiver_hiv_infected', 'Caregiver was found to be HIV-infected and the date of infection cannot be determined prior to the birth of their child'), ('infant_hiv_infected', 'Infant/Child/Adolescent found to be HIV-infected'), ('infant_death', 'Infant/Child/Adolescent death (complete Infant Death Report Form)'), ('protocol_completion', 'Completion of protocol required period of time for observation (see Study Protocol for definition of "Completion") (skip to end of form)'), ('enrolled_erroneously', 'Enrolled erroneously – did not meet eligibility criteria prior to consent'), ('in_eligible', 'Did not meet eligibility criteria, after consent obtained'), ('incarcerated', 'Participant is incarcerated'), ('change_of_caregiver', 'Change of caregiver'), ('OTHER', 'Other')], max_length=115, verbose_name='Please code the primary reason participant taken off-study')),
+                ('offstudy_date', models.DateField(validators=[
+                 edc_protocol.validators.date_not_before_study_start, edc_base.model_validators.date.date_not_future], verbose_name='Off-study Date')),
+                ('reason_other', edc_base.model_fields.custom_fields.OtherCharField(
+                    blank=True, max_length=35, null=True, verbose_name='If Other, specify ...')),
+                ('comment', models.TextField(blank=True,
+                 max_length=250, null=True, verbose_name='Comment')),
+                ('history_date', models.DateTimeField(db_index=True)),
+                ('history_change_reason', models.CharField(
+                    max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[
+                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('history_id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(
+                    primary_key=True, serialize=False)),
+                ('history_user', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('site', models.ForeignKey(blank=True, db_constraint=False, editable=False, null=True,
+                 on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='sites.site')),
+            ],
+            options={
+                'verbose_name': 'historical TB Off Study',
+                'verbose_name_plural': 'historical TB Off Study',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': ('history_date', 'history_id'),
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
+        ),
+        migrations.CreateModel(
+            name='HITSScreening',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('form_as_json', models.TextField(editable=False,
+                 help_text='System field to save form.as_json. form.as_json should be called in modeladmin.save_model', null=True)),
+                ('consent_model', models.CharField(
+                    editable=False, max_length=50, null=True)),
+                ('consent_version', models.CharField(
+                    editable=False, max_length=10, null=True)),
+                ('report_datetime', models.DateTimeField(default=edc_base.utils.get_utcnow, help_text="If reporting today, use today's date/time, otherwise use the date/time this information was reported.",
+                 validators=[edc_protocol.validators.datetime_not_before_study_start, edc_base.model_validators.date.datetime_not_future], verbose_name='Report Date')),
+                ('in_relationship', models.CharField(choices=[
+                 ('Yes', 'Yes'), ('No', 'No')], max_length=3, verbose_name='Are you currently in a relationship?')),
+                ('physical_hurt', models.CharField(blank=True, choices=[('1', 'Never'), ('2', 'Rarely'), ('3', 'Sometimes'), ('4', 'Fairly Often'), (
+                    '5', 'Frequently')], max_length=5, null=True, verbose_name='How often does your partner physically hurt you?')),
+                ('insults', models.CharField(blank=True, choices=[('1', 'Never'), ('2', 'Rarely'), ('3', 'Sometimes'), ('4', 'Fairly Often'), (
+                    '5', 'Frequently')], max_length=5, null=True, verbose_name='How often does your partner insult or talk down to you?')),
+                ('threaten', models.CharField(blank=True, choices=[('1', 'Never'), ('2', 'Rarely'), ('3', 'Sometimes'), ('4', 'Fairly Often'), (
+                    '5', 'Frequently')], max_length=5, null=True, verbose_name='How often does your partner threaten you with harm?')),
+                ('screem_curse', models.CharField(blank=True, choices=[('1', 'Never'), ('2', 'Rarely'), ('3', 'Sometimes'), ('4', 'Fairly Often'), (
+                    '5', 'Frequently')], max_length=5, null=True, verbose_name='How often does your partner scream or curse at you?')),
+                ('score', models.IntegerField(default=0,
+                 max_length=5, verbose_name='Total HITS Score')),
+            ],
+            options={
+                'verbose_name': 'HITS Screening',
+                'verbose_name_plural': 'HITS Screenings',
+            },
+            bases=(flourish_caregiver.models.model_mixins.consent_version_model_mixin.ConsentVersionModelModelMixin, models.Model),
+            managers=[
+                ('objects', flourish_caregiver.models.model_mixins.crf_model_mixin.CrfModelManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='MemberChildOutside',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='MemberNamedWithChild',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='MemberPlayedWithChild',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='MemberReadBooks',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='MemberSangSongs',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='MemberToldStories',
+            fields=[
+                ('created', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('modified', models.DateTimeField(
+                    blank=True, default=edc_base.utils.get_utcnow)),
+                ('user_created', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user created')),
+                ('user_modified', edc_base.model_fields.userfield.UserField(
+                    blank=True, help_text='Updated by admin.save_model', max_length=50, verbose_name='user modified')),
+                ('hostname_created', models.CharField(blank=True, default=_socket.gethostname,
+                 help_text='System field. (modified on create only)', max_length=60)),
+                ('hostname_modified', edc_base.model_fields.hostname_modification_field.HostnameModificationField(
+                    blank=True, help_text='System field. (modified on every save)', max_length=50)),
+                ('revision', django_revision.revision_field.RevisionField(blank=True, editable=False,
+                 help_text='System field. Git repository tag:branch:commit.', max_length=75, null=True, verbose_name='Revision')),
+                ('device_created', models.CharField(blank=True, max_length=10)),
+                ('device_modified', models.CharField(blank=True, max_length=10)),
+                ('id', edc_base.model_fields.uuid_auto_field.UUIDAutoField(blank=True, editable=False,
+                 help_text='System auto field. UUID primary key.', primary_key=True, serialize=False)),
+                ('short_name', models.CharField(db_index=True, help_text='This is the stored value, required',
+                 max_length=250, unique=True, verbose_name='Stored value')),
+                ('display_index', models.IntegerField(db_index=True, default=0,
+                 help_text='Index to control display order if not alphabetical, not required', verbose_name='display index')),
+                ('field_name', models.CharField(blank=True, editable=False,
+                 help_text='Not required', max_length=25, null=True)),
+                ('version', models.CharField(
+                    default='1.0', editable=False, max_length=35)),
+                ('name', models.CharField(db_index=True,
+                 help_text='(suggest 40 characters max.)', max_length=250, verbose_name='Name')),
+            ],
+            options={
+                'abstract': False,
+            },
         ),
     ]
