@@ -49,6 +49,7 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
         self.validate_is_present()
 
         self.validate_last_alive_date(id=id)
+        self.validate_other()
 
         # self.validate_brain_scan()
 
@@ -247,6 +248,14 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             UNSCHEDULED,
             field='reason',
             field_required='reason_unscheduled')
+        
+    def validate_other(self):
+        
+        self.validate_other_specify(
+            field='reason_unscheduled',
+            other_specify_field='reason_unscheduled_other',
+            required_msg='Please give reason for unscheduled visit'
+        )
 
     def validate_against_consent_datetime(self, report_datetime):
         """Returns an instance of the current maternal consent or
