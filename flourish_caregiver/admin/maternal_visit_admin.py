@@ -85,6 +85,7 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
     radio_fields = {
         'reason': admin.VERTICAL,
         'study_status': admin.VERTICAL,
+        'reason_unscheduled':admin.VERTICAL,
         'info_source': admin.VERTICAL,
         'is_present': admin.VERTICAL,
         'survival_status': admin.VERTICAL,
