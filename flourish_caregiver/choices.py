@@ -1355,3 +1355,23 @@ NO_REFERRAL_REASONS = (
     ('already_evaluated', 'Participant already evaluated for TB in last month'),
     (OTHER, 'Other, specify')
 )
+
+NO_EVALUATION_REASONS = (
+    ('referral_other_clinic', 'Referral to another clinic'),
+    ('referral_hospital', 'Referral to a hospital'),
+    ('no_service_providers', 'No service providers'),
+    ('no_diagnostic_tests', 'No diagnostic tests'),
+    (OTHER, 'Other, please specify')
+)
+
+UNSCHEDULED_REASON =(
+    ('fu_lab_results','Follow up of Lab results'),
+    ('fu_mental_health_screening','Follow up on mental health screening referrals'),
+    ('maternal_death','Maternal/caregiver  death'),
+    ('infant_death','Infant/child/adolescent death'),
+    ('social_worker_or_tb_eval','Referring for social worker or TB evaluation'),
+    ('2_weeks_tb_sec_screening','2 weeks TB second screening'),
+    ('lab_sample_redraw','Lab sample redraw'),
+    ('general_consultation','General consultation'),
+    (OTHER, 'Other, specify')
+)
