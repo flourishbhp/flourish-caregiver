@@ -48,10 +48,22 @@ class AutoCompleteChildCrfs:
         models = [
             'flourish_caregiver.cliniciannotesimage',
             'flourish_caregiver.cliniciannotes',
-            'flourish_caregiver.childhoodleadexposurerisk'
+            'flourish_caregiver.childhoodleadexposurerisk',
+            'flourish_caregiver.relationshipfatherinvolvement'
         ]
 
         return models
+
+    @property
+    def exclude_fields(self):
+        """
+            Model fields to be excluded when pre-filling data
+            for a specific model.
+            Returns: dict: {model_name: fields<list>}
+        """
+        _mapping = {'sociodemographicdata':
+                    ['socio_demo_changed', 'stay_with_child', ]}
+        return _mapping
 
     @property
     def maternal_inlines_crfs(self):
@@ -159,10 +171,15 @@ class AutoCompleteChildCrfs:
                 return
 
         try:
+            exclude = ['id', 'maternal_visit_id', 'maternal_visit']
+
+            # Add extra model specific exclude fields
+            exclude.extend(
+                self.exclude_fields.get(model_cls._meta.model_name, []))
             kwargs = model_to_dict(model_obj,
                                    fields=[
                                        field.name for field in model_obj._meta.fields],
-                                   exclude=['id', 'maternal_visit_id', 'maternal_visit'])
+                                   exclude=exclude)
             new_obj, created = model_cls.objects.get_or_create(
                 maternal_visit=self.instance, defaults=kwargs, )
 

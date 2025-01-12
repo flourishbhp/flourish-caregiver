@@ -270,3 +270,16 @@ def create_call_reminder(title, start_date, reminder_time, repeat,
         defaults={'start_date': start_date,
                   'end_date': end_date,
                   'remainder_time': reminder_time})
+
+
+def check_dt_before_child_dob(subject_identifier, reference_date):
+    child_consent_cls = django_apps.get_model(
+        'flourish_caregiver.caregiverchildconsent')
+
+    child_consent = child_consent_cls.objects.only(
+        'child_dob').filter(subject_identifier=subject_identifier).order_by(
+            '-consent_datetime').first()
+    child_dob = getattr(child_consent, 'child_dob', None)
+    if not child_dob:
+        return None
+    return child_dob < reference_date
