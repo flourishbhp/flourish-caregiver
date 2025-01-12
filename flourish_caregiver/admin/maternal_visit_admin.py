@@ -67,6 +67,8 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
                 'report_datetime',
                 'reason',
                 'reason_missed',
+                'reason_unscheduled',
+                'reason_unscheduled_other',
                 'study_status',
                 'info_source',
                 'info_source_other',
@@ -83,10 +85,12 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
     radio_fields = {
         'reason': admin.VERTICAL,
         'study_status': admin.VERTICAL,
+        'reason_unscheduled':admin.VERTICAL,
         'info_source': admin.VERTICAL,
         'is_present': admin.VERTICAL,
         'survival_status': admin.VERTICAL,
-        'brain_scan': admin.VERTICAL
+        'brain_scan': admin.VERTICAL,
+        'reason_unscheduled': admin.VERTICAL
     }
 
     conditional_fieldlists = {

@@ -17,7 +17,7 @@ from edc_visit_tracking.managers import VisitModelManager as BaseVisitModelManag
 from edc_visit_tracking.model_mixins import VisitModelMixin, CaretakerFieldsMixin
 
 from ..choices import MATERNAL_VISIT_STUDY_STATUS, VISIT_REASON
-from ..choices import VISIT_INFO_SOURCE, ALIVE_DEAD_UNKNOWN
+from ..choices import VISIT_INFO_SOURCE, ALIVE_DEAD_UNKNOWN, UNSCHEDULED_REASON
 from ..helper_classes.utils import get_child_subject_identifier_by_visit
 from ..visit_sequence import VisitSequence
 
@@ -52,9 +52,16 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
 
     reason_unscheduled = models.CharField(
         verbose_name='If \'Unscheduled\' above, provide reason for the unscheduled visit',
+        choices=UNSCHEDULED_REASON,
         blank=True,
         null=True,
-        max_length=25,)
+        max_length=50,)
+
+    reason_unscheduled_other = models.CharField(
+        verbose_name="if unscheduled reason is Other, please specify",
+        max_length=100,
+        blank=True,
+        null=True)
 
     study_status = models.CharField(
         verbose_name='What is the participant\'s current study status',
