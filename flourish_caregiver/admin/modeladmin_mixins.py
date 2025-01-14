@@ -47,6 +47,13 @@ class CrfModelAdminMixin(VisitTrackingCrfModelAdminMixin,
     post_url_on_delete_name = settings.DASHBOARD_URL_NAMES.get(
         'subject_dashboard_url')
 
+    def extend_list_filter(self):
+        super().extend_list_filter()
+        self.list_filter = list(self.list_filter)
+        self.list_filter.extend([
+            self.visit_model_attr + '__appointment__visit_code_sequence'])
+        self.list_filter = tuple(self.list_filter)
+
     @property
     def cohort_schedules_cls(self):
         model_name = 'flourish_caregiver.cohortschedules'
