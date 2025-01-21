@@ -67,7 +67,7 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
         'flourish_referral': admin.VERTICAL,
         'chest_xray_results': admin.VERTICAL,
         'sputum_sample_results': admin.VERTICAL,
-        'stool_sample_results':admin.VERTICAL,
+        'stool_sample_results': admin.VERTICAL,
         'urine_test_results': admin.VERTICAL,
         'skin_test_results': admin.VERTICAL,
         'blood_test_results': admin.VERTICAL,
@@ -93,7 +93,7 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
         except ObjectDoesNotExist:
             return None
         else:
-            return model_obj.schedule_name
+            return getattr(model_obj, 'schedule_name', None)
 
     @property
     def quarterly_schedules(self):
@@ -102,5 +102,3 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
             onschedule_model__startswith='flourish_caregiver').values_list(
                 'schedule_name', flat=True)
         return schedules
-
-
