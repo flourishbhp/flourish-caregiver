@@ -14,8 +14,8 @@ class ClinicianNotesImageInline(TabularInlineMixin, admin.TabularInline):
     form = ClinicianNotesImageForm
     extra = 0
 
-    fields = ('clinician_notes_image', 'image', 'user_uploaded', 'datetime_captured',
-              'modified', 'hostname_created',)
+    fields = ('clinician_notes_image', 'image', 'user_uploaded',
+              'datetime_captured', 'modified', 'hostname_created',)
 
     def get_readonly_fields(self, request, obj=None):
         fields = super().get_readonly_fields(request, obj)

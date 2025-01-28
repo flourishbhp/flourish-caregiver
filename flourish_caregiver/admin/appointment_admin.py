@@ -20,6 +20,12 @@ class AppointmentAdmin(BaseAppointmentAdmin):
 
     form = AppointmentForm
 
+    list_display = ('subject_identifier', '__str__',
+                    'appt_datetime', 'appt_type', 'appt_status', 'timepoint')
+
+    list_filter = ('visit_code', 'appt_datetime', 'appt_type', 'appt_status',
+                   'timepoint')
+
     def change_view(self, request, object_id, form_url='', extra_context=None):
 
         extra_context = extra_context or {}
