@@ -61,6 +61,7 @@ class ExportActionMixin(AdminExportHelper):
                     old_matpid=study_maternal_identifier,
                     visit_code=obj.maternal_visit.visit_code,
                     visit_code_sequence=obj.maternal_visit.visit_code_sequence,
+                    childpid=get_child_subject_identifier_by_visit(obj.maternal_visit),
                     **data_copy)
 
             # Update variable names for study identifiers

@@ -577,7 +577,7 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 obj.subject_identifier,
                 obj.study_child_identifier,
                 caregiver_sid)
-            # extra_data.update({'caregiver_subject_identifier': caregiver_sid})
+            extra_data.update({'caregiver_subject_identifier': caregiver_sid})
             extra_data.update({'hiv_exposure': exposure_status})
             extra_data.update({'study_status': self.study_status(obj.subject_identifier)})
 
