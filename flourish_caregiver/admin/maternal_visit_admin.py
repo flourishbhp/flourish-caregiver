@@ -89,7 +89,8 @@ class MaternalVisitAdmin(ModelAdminMixin, VisitModelAdminMixin,
         'info_source': admin.VERTICAL,
         'is_present': admin.VERTICAL,
         'survival_status': admin.VERTICAL,
-        'brain_scan': admin.VERTICAL
+        'brain_scan': admin.VERTICAL,
+        'reason_unscheduled': admin.VERTICAL
     }
 
     conditional_fieldlists = {
