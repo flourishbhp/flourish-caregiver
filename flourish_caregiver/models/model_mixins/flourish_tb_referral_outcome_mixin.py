@@ -2,7 +2,7 @@ from django.db import models
 from edc_base.model_fields import OtherCharField
 from edc_constants.choices import YES_NO
 
-from flourish_caregiver.choices import CLINIC_NAMES, TB_REASON_CHOICES,NO_EVALUATION_REASONS
+from flourish_caregiver.choices import CLINIC_NAMES, TB_REASON_CHOICES
 from flourish_caregiver.models.list_models import TBTests
 from flourish_child.choices import TB_TREATMENT_CHOICES, TEST_RESULTS_CHOICES, \
     YES_NO_OTHER
@@ -21,20 +21,6 @@ class FlourishTbReferralOutcomeMixin(models.Model):
         blank=True, null=True)
 
     clinic_name_other = OtherCharField()
-
-    evaluated = models.CharField(
-        verbose_name='Was the caregiver evaluated at the clinic?',
-        choices=YES_NO,
-        max_length=30,
-        blank=True, null=True)
-    
-    reason_not_evaluated = models.CharField(
-        verbose_name='Reasons that caregiver was not evaluated at the clinic',
-        choices=NO_EVALUATION_REASONS,
-        max_length=30,
-        blank=True, null=True)
-    
-    reason_not_evaluated_other = OtherCharField()
 
     tests_performed = models.ManyToManyField(
         TBTests,

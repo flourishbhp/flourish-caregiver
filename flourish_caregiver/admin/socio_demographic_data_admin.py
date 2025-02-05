@@ -104,6 +104,10 @@ class HouseHoldDetailsInlineAdmin(StackedInlineMixin, ModelAdminFormAutoNumberMi
 
         consents = self.subject_consents(subject_identifier)
         latest_consent = self.latest_consent(consents)
+        twin_enrol = getattr(latest_consent, 'multiple_birth', None)
+        if not twin_enrol:
+            return []
+
         try:
             dataset_obj = dataset_cls.objects.get(
                 screening_identifier=getattr(latest_consent, 'screening_identifier', None))
@@ -111,7 +115,7 @@ class HouseHoldDetailsInlineAdmin(StackedInlineMixin, ModelAdminFormAutoNumberMi
             return []
         else:
             children = child_dataset_cls.objects.filter(
-                study_maternal_identifier=dataset_obj.study_maternal_identifier,twin_triplet=True).values_list(
+                study_maternal_identifier=dataset_obj.study_maternal_identifier).values_list(
                     'study_child_identifier', flat=True)
 
             for consent in consents:

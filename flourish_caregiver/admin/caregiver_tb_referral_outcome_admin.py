@@ -21,9 +21,6 @@ class CaregiverTBReferralOutcomeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
                 'tb_evaluation',
                 'clinic_name',
                 'clinic_name_other',
-                'evaluated',
-                'reason_not_evaluated',
-                'reason_not_evaluated_other',
                 'tests_performed',
                 'comments',
                 'other_test_specify',
@@ -48,8 +45,6 @@ class CaregiverTBReferralOutcomeAdmin(CrfModelAdminMixin, admin.ModelAdmin):
 
     radio_fields = {'tb_evaluation': admin.VERTICAL,
                     'clinic_name': admin.VERTICAL,
-                    'evaluated':admin.VERTICAL,
-                    'reason_not_evaluated':admin.VERTICAL,
                     'chest_xray_results': admin.VERTICAL,
                     'sputum_sample_results': admin.VERTICAL,
                     'stool_sample_results':admin.VERTICAL,
