@@ -38,6 +38,7 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
                 'other_test',
                 'chest_xray_results',
                 'sputum_sample_results',
+                'stool_sample_results',
                 'urine_test_results',
                 'skin_test_results',
                 'blood_test_results',
@@ -61,12 +62,12 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
         'sweats_duration': admin.VERTICAL,
         'weight_loss': admin.VERTICAL,
         'weight_loss_duration': admin.VERTICAL,
-        'persistent_symptoms': admin.VERTICAL,
         'household_diagnosed_with_tb': admin.VERTICAL,
         'evaluated_for_tb': admin.VERTICAL,
         'flourish_referral': admin.VERTICAL,
         'chest_xray_results': admin.VERTICAL,
         'sputum_sample_results': admin.VERTICAL,
+        'stool_sample_results': admin.VERTICAL,
         'urine_test_results': admin.VERTICAL,
         'skin_test_results': admin.VERTICAL,
         'blood_test_results': admin.VERTICAL,
@@ -80,6 +81,7 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
     update_fields = [
         'chest_xray_results',
         'sputum_sample_results',
+        'stool_sample_results',
         'urine_test_results',
         'skin_test_results',
         'blood_test_results',
@@ -100,14 +102,3 @@ class CaregiverTBScreeningAdmin(CrfModelAdminMixin, PreviousResultsAdminMixin,
             onschedule_model__startswith='flourish_caregiver').values_list(
                 'schedule_name', flat=True)
         return schedules
-
-    @property
-    def conditional_fieldlists(self):
-        conditional_fieldlists = {}
-        schedules = list(self.quarterly_schedules)
-
-        for schedule in schedules:
-            conditional_fieldlists.update(
-                {schedule: Insert('persistent_symptoms',
-                                  after='weight_loss_duration')})
-        return conditional_fieldlists
