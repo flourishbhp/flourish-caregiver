@@ -122,6 +122,9 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
             subject_consent__subject_identifier=subject_identifier).order_by(
             'consent_datetime')
 
+        # If child is older than 18 no consent on behalf required
+        consents = self.filter_consents_by_age(consents)
+
         if obj:
             consents = consents.filter(
                 subject_consent__version=getattr(obj, 'version', None))
@@ -137,7 +140,8 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
     def prepare_initial_values_based_on_study(self, obj, study_maternal_id):
         initial = []
         child_datasets = self.child_dataset_cls.objects.filter(
-            study_maternal_identifier=study_maternal_id).order_by('study_child_identifier')
+            study_maternal_identifier=study_maternal_id).order_by(
+                'study_child_identifier')
 
         if obj:
             child_datasets = self.get_difference(child_datasets, obj)
