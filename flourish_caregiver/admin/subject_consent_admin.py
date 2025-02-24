@@ -21,6 +21,7 @@ from flourish_child.helper_classes.utils import child_utils
 from .consent_amin_mixin import ConsentMixin
 from .modeladmin_mixins import ModelAdminMixin
 from ..admin_site import flourish_caregiver_admin
+from ..helper_classes.utils import get_child_related_schedules
 from ..forms import CaregiverChildConsentForm, SubjectConsentForm
 from ..models import CaregiverChildConsent, CaregiverLocator, SubjectConsent
 
@@ -354,47 +355,6 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
 
     search_fields = ('subject_identifier', 'dob',)
 
-    def export_linkage_csv(self, request, queryset):
-        records = []
-        _existing = []
-        for obj in queryset:
-            study_maternal_identifier = self.study_maternal_identifier(
-                screening_identifier=obj.screening_identifier)
-            caregiver_data = dict(
-                matpid=obj.subject_identifier,
-                old_matpid=study_maternal_identifier, )
-
-            child_consents = obj.caregiverchildconsent_set.values(
-                'subject_identifier', 'study_child_identifier')
-            for child_consent in child_consents:
-                data = {}
-                subject_identifier = child_consent.get('subject_identifier')
-                study_child_identifier = child_consent.get('study_child_identifier')
-                maternal_dataset = self.related_maternal_dataset(
-                    study_child_identifier)
-                enrol_cohort, curr_cohort = self.get_cohort_details(subject_identifier)
-                if subject_identifier not in _existing:
-                    data.update(
-                        **caregiver_data,
-                        childpid=subject_identifier,
-                        old_childpid=study_child_identifier,
-                        previous_study=getattr(maternal_dataset, 'protocol', None),
-                        enrol_cohort=enrol_cohort,
-                        current_cohort=curr_cohort)
-                    records.append(data)
-                    _existing.append(subject_identifier)
-        _model = self.model
-        self.model = None
-        response = self.write_to_csv(
-            records, app_label='CaregiverChildLinkage', export_type='csv')
-        self.model = _model
-        return response
-
-    export_linkage_csv.short_description = _(
-        'Export linkage CSV')
-
-    actions = [export_linkage_csv]
-
     def get_actions(self, request):
 
         super_actions = super().get_actions(request)
@@ -402,6 +362,7 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
         if ('flourish_caregiver.change_subjectconsent'
                 in request.user.get_group_permissions()):
             consent_actions = [
+                export_linkage_csv,
                 flag_as_verified_against_paper,
                 unflag_as_verified_against_paper]
 
@@ -484,6 +445,46 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
             locator_model_obj=locator_model_obj,
             pre_flourish_consent_model_obj=pre_flourish_consent_model_obj
         )]
+
+
+def export_linkage_csv(modeladmin, request, queryset):
+    records = []
+    _existing = []
+    for obj in queryset:
+        study_maternal_identifier = modeladmin.study_maternal_identifier(
+            screening_identifier=obj.screening_identifier)
+        caregiver_data = dict(
+            matpid=obj.subject_identifier,
+            old_matpid=study_maternal_identifier, )
+
+        child_consents = obj.caregiverchildconsent_set.values(
+            'subject_identifier', 'study_child_identifier')
+        for child_consent in child_consents:
+            data = {}
+            subject_identifier = child_consent.get('subject_identifier')
+            study_child_identifier = child_consent.get('study_child_identifier')
+            maternal_dataset = modeladmin.related_maternal_dataset(
+                study_child_identifier)
+            enrol_cohort, curr_cohort = modeladmin.get_cohort_details(subject_identifier)
+            if subject_identifier not in _existing:
+                data.update(
+                    **caregiver_data,
+                    childpid=subject_identifier,
+                    old_childpid=study_child_identifier,
+                    previous_study=getattr(maternal_dataset, 'protocol', None),
+                    enrol_cohort=enrol_cohort,
+                    current_cohort=curr_cohort)
+                records.append(data)
+                _existing.append(subject_identifier)
+    _model = modeladmin.model
+    modeladmin.model = None
+    response = modeladmin.write_to_csv(
+        records, app_label='CaregiverChildLinkage', export_type='csv')
+    modeladmin.model = _model
+    return response
+
+
+export_linkage_csv.short_description = 'Export linkage CSV'
 
 
 @admin.register(CaregiverChildConsent, site=flourish_caregiver_admin)
@@ -577,9 +578,11 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
                 obj.subject_identifier,
                 obj.study_child_identifier,
                 caregiver_sid)
+            study_status = self.study_status(
+                obj.subject_identifier, caregiver_sid)
             extra_data.update({'caregiver_subject_identifier': caregiver_sid})
             extra_data.update({'hiv_exposure': exposure_status})
-            extra_data.update({'study_status': self.study_status(obj.subject_identifier)})
+            extra_data.update({'study_status': study_status})
 
             # Update current and enrollment cohort
             enrol_cohort, current_cohort = self.get_cohort_details(obj.subject_identifier)
@@ -665,12 +668,35 @@ class CaregiverChildConsentAdmin(ModelAdminMixin, admin.ModelAdmin):
         new_data_dict.update(data)
         return new_data_dict
 
-    def study_status(self, subject_identifier=None):
+    def study_status(self, subject_identifier, caregiver_sid):
+        status = None
         if not subject_identifier:
             return ''
         child_offstudy_cls = django_apps.get_model(
             'flourish_prn.childoffstudy')
         is_offstudy = child_offstudy_cls.objects.filter(
             subject_identifier=subject_identifier).exists()
+        if is_offstudy:
+            status = 'off_study'
+        else:
+            status = self.check_schedules(
+                subject_identifier, caregiver_sid)
+        return status
 
-        return 'off_study' if is_offstudy else 'on_study'
+    def check_schedules(self, subject_identifier, caregiver_sid):
+        ssh_model_cls = django_apps.get_model(
+            'edc_visit_schedule.subjectschedulehistory')
+        has_schedules = ssh_model_cls.objects.filter(
+            subject_identifier=subject_identifier).exists()
+        if has_schedules:
+            return 'on_study'
+        caregiver_status = super().study_status(caregiver_sid)
+        if caregiver_status == 'off_study':
+            return caregiver_status
+        onschedules = get_child_related_schedules(
+            caregiver_sid, subject_identifier)
+        is_offschedule = all(
+            [onschedule.schedule_status == 'offschedule' for onschedule in onschedules])
+        if is_offschedule:
+            return 'off_study'
+        return 'on_study'
