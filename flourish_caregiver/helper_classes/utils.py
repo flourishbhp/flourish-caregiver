@@ -115,27 +115,41 @@ def get_child_subject_identifier_by_visit(visit):
 
 
 def get_schedule_names(instance):
-    onschedules = []
+    """ Returns schedule names for the specific related child
+        @param instance: caregiver visit model instance
+    """
+
     child_subject_identifier = get_child_subject_identifier_by_visit(instance)
+
+    onschedules = get_child_related_schedules(
+        instance.subject_identifier, child_subject_identifier)
+    schedule_names = [onschedule.schedule_name for onschedule in onschedules]
+
+    return schedule_names
+
+
+def get_child_related_schedules(subject_identifier, child_subject_identifier):
+    onschedules = []
     subject_schedule_history_model = 'edc_visit_schedule.subjectschedulehistory'
     subject_schedule_history_cls = django_apps.get_model(
         subject_schedule_history_model)
 
     qs = subject_schedule_history_cls.objects.filter(
-        subject_identifier=instance.subject_identifier).exclude(
+        subject_identifier=subject_identifier).exclude(
         Q(schedule_name__icontains='tb') | Q(
-            schedule_name__icontains='facet')).values_list(
-        'onschedule_model', flat=True)
-    for model_name in qs:
-        onschedule_model_cls = django_apps.get_model(model_name)
+            schedule_name__icontains='facet'))
+
+    for model_obj in qs:
+        onschedule_model_cls = django_apps.get_model(
+            model_obj.onschedule_model)
         try:
-            onschedule_obj = onschedule_model_cls.objects.get(
-                subject_identifier=instance.subject_identifier,
+            onschedule_model_cls.objects.get(
+                subject_identifier=subject_identifier,
                 child_subject_identifier=child_subject_identifier)
         except onschedule_model_cls.DoesNotExist:
             continue
         else:
-            onschedules.append(onschedule_obj.schedule_name)
+            onschedules.append(model_obj)
     return onschedules
 
 
