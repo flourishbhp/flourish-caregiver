@@ -124,7 +124,8 @@ class CaregiverChildConsentInline(ConsentMixin, StackedInlineMixin,
             'consent_datetime')
 
         # If child is older than 18 no consent on behalf required
-        consents = self.filter_consents_by_age(consents)
+        if consents:
+            consents = self.filter_consents_by_age(consents)
 
         if obj:
             consents = consents.filter(

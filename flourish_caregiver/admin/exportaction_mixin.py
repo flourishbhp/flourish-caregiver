@@ -44,7 +44,8 @@ class ExportActionMixin(AdminExportHelper):
             screening_identifier = screening_identifier or self.screening_identifier(
                 subject_identifier=subject_identifier)
             previous_study = self.previous_bhp_study(
-                screening_identifier=screening_identifier)
+                screening_identifier=screening_identifier,
+                subject_identifier=subject_identifier)
             study_maternal_identifier = study_maternal_identifier or self.study_maternal_identifier(
                     screening_identifier=screening_identifier)
             caregiver_hiv_status = self.caregiver_hiv_status(
@@ -132,17 +133,43 @@ class ExportActionMixin(AdminExportHelper):
         else:
             return version.version
 
-    def previous_bhp_study(self, screening_identifier=None):
+    def previous_bhp_study(
+            self, screening_identifier=None, subject_identifier=None):
+        """ Query for previous study by screening_identifier or
+            previous study_id from the locator
+        """
+        dataset_obj = self.get_maternal_dataset(
+            {'screening_identifier': screening_identifier})
+        if not dataset_obj:
+            locator_obj = self.get_locator_obj(
+                subject_identifier=subject_identifier)
+            study_maternal_identifier = getattr(
+                locator_obj, 'study_maternal_identifier', None)
+            dataset_obj = self.get_maternal_dataset(
+                {'study_maternal_identifier': study_maternal_identifier})
+
+        return getattr(dataset_obj, 'protocol', None)
+
+    def get_maternal_dataset(self, qs_attrs):
         dataset_cls = django_apps.get_model(
             'flourish_caregiver.maternaldataset')
-        if screening_identifier:
-            try:
-                dataset_obj = dataset_cls.objects.get(
-                    screening_identifier=screening_identifier)
-            except dataset_cls.DoesNotExist:
-                return None
-            else:
-                return dataset_obj.protocol
+        try:
+            dataset_obj = dataset_cls.objects.get(**qs_attrs)
+        except dataset_cls.DoesNotExist:
+            return None
+        else:
+            return dataset_obj
+
+    def get_locator_obj(self, subject_identifier=None):
+        locator_model_cls = django_apps.get_model(
+            'flourish_caregiver.caregiverlocator')
+        try:
+            locator_obj = locator_model_cls.objects.get(
+                subject_identifier=subject_identifier)
+        except locator_model_cls.DoesNotExist:
+            return None
+        else:
+            return locator_obj
 
     def study_maternal_identifier(self, screening_identifier=None):
         dataset_cls = django_apps.get_model(
@@ -156,7 +183,8 @@ class ExportActionMixin(AdminExportHelper):
             else:
                 return dataset_obj.study_maternal_identifier
 
-    def caregiver_hiv_status(self, subject_identifier=None, study_maternal_identifier=None):
+    def caregiver_hiv_status(
+            self, subject_identifier=None, study_maternal_identifier=None):
 
         status_helper = MaternalStatusHelper(
             subject_identifier=subject_identifier,
