@@ -1376,3 +1376,25 @@ UNSCHEDULED_REASON = (
     ('general_consultation', 'General consultation'),
     (OTHER, 'Other, specify')
 )
+
+NO_SUPPORT_REASONS = (
+    ('no_booking_slots', 'I went to the clinic/facility but could not get a booking'),
+    ('support_member_unavailable', 'Support member (such as social worker/ Psychologist/ Psychiatrist} not available on the day I went'),
+    ('long_queue', 'Long queue at the clinic/facility'),
+    ('support_not_needed', 'I was told I don’t need support'),
+    ('bad_treatment', 'I was not treated well at the clinic/facility'),
+    ('changed_mind', 'Changed mind and returned home'),
+    (OTHER, 'Other, specify'),
+)
+
+PERCEPTIONS = (
+    ('approachable', 'Approachable'),
+    ('respectful', 'Respectful'),
+    ('trustworthy', 'Trustworthy'),
+    ('patient', 'Patient'),
+    ('demeaning', 'Demeaning'),
+    ('judgmental', 'Judgmental'),
+    ('discriminatory', 'Discriminatory'),
+    (PNTA, 'Prefer not to answer'),
+    (OTHER, 'Other, specify'),
+)
