@@ -43,6 +43,7 @@ from .enrollment_form import EnrollmentForm
 from .flourish_consent_version_form import FlourishConsentVersionForm
 from .food_security_questionnaire_form import FoodSecurityQuestionnaireForm
 from .hits_post_referral_form import HITSPostReferralForm
+from .hits_referral_form import HITSReferralForm
 from .hits_screening_form import HITSScreeningForm
 from .hiv_disclosure_status_form import HIVDisclosureStatusFormA, HIVDisclosureStatusFormB
 from .hiv_disclosure_status_form import HIVDisclosureStatusFormC
