@@ -43,6 +43,7 @@ from .enrollment import Enrollment
 from .flourish_consent_version import FlourishConsentVersion
 from .food_security_questionnaire import FoodSecurityQuestionnaire
 from .hits_post_referral import HITSPostReferral
+from .hits_referral import HITSReferral
 from .hits_screening import HITSScreening
 from .hiv_disclosure_status import HIVDisclosureStatusA
 from .hiv_disclosure_status import HIVDisclosureStatusB
