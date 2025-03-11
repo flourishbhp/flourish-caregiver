@@ -11,6 +11,7 @@ from edc_appointment.constants import NEW_APPT
 from edc_appointment.creators import InvalidParentAppointmentMissingVisitError
 from edc_appointment.creators import InvalidParentAppointmentStatusError
 from edc_appointment.creators import UnscheduledAppointmentError
+from edc_base.utils import get_utcnow, age
 
 from ..helper_classes.unscheduled_appointment_creator import UnscheduledAppointmentCreator
 from ..helper_classes.cohort_assignment import CohortAssignment
@@ -297,3 +298,12 @@ def check_dt_before_child_dob(subject_identifier, reference_date):
     if not child_dob:
         return None
     return child_dob < reference_date
+
+
+def get_child_age(child_dob, reference_dt=get_utcnow().date()):
+    if not child_dob:
+        return None
+    child_age = age(child_dob, reference_dt)
+    child_age = round(
+            child_age.years + (child_age.months / 12) + (child_age.days / 365.25), 2)
+    return child_age

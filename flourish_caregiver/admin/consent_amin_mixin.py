@@ -1,20 +1,27 @@
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import OuterRef, Subquery
+from edc_base.utils import get_utcnow
 from edc_constants.constants import FEMALE
 
-from flourish_caregiver.helper_classes.utils import set_initials
+from flourish_caregiver.helper_classes.utils import set_initials, get_child_age
 
 
 class ConsentMixin:
-    consent_cls = django_apps.get_model('flourish_caregiver.caregiverchildconsent')
+    consent_cls = django_apps.get_model(
+        'flourish_caregiver.caregiverchildconsent')
 
     bhp_prior_screening_cls = django_apps.get_model(
         'flourish_caregiver.screeningpriorbhpparticipants')
 
-    caregiver_locator_cls = django_apps.get_model('flourish_caregiver.caregiverlocator')
+    caregiver_locator_cls = django_apps.get_model(
+        'flourish_caregiver.caregiverlocator')
 
-    pre_flourish_consent_cls = django_apps.get_model('pre_flourish.preflourishconsent')
+    pre_flourish_consent_cls = django_apps.get_model(
+        'pre_flourish.preflourishconsent')
+
+    consent_version_cls = django_apps.get_model(
+        'flourish_caregiver.flourishconsentversion')
 
     def prepare_subject_consent(self, consent):
         child_consent_obj = self.consent_cls.objects.filter(
@@ -148,3 +155,27 @@ class ConsentMixin:
                  properties_to_fetch})
 
         return options
+
+    def filter_consents_by_age(self, consents):
+        """ Filter out adolescents who are 18 and above, as they now
+            require a continued consent instead of consent on behalf.
+        """
+        filter_consents = []
+        subject_consent = getattr(
+            consents[0], 'subject_consent', None)
+        screening_identifier = getattr(
+            subject_consent, 'screening_identifier', None)
+
+        consent_version_obj = self.consent_version_cls.objects.filter(
+            screening_identifier=screening_identifier).last()
+        consent_version_dt = getattr(
+            consent_version_obj, 'report_datetime', get_utcnow())
+
+        for consent in consents:
+            child_dob = consent.child_dob
+            if not child_dob:
+                continue
+            child_age = get_child_age(child_dob, consent_version_dt.date())
+            if child_age >= 18:
+                filter_consents.append(consent.subject_identifier)
+        return consents.exclude(subject_identifier__in=filter_consents)
