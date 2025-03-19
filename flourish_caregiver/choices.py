@@ -641,7 +641,8 @@ VISIT_REASON = [
      'Unscheduled visit at which lab samples or data are being submitted'),
     (LOST_VISIT, 'Lost to follow-up (use only when taking subject off study)'),
     (FAILED_ELIGIBILITY, 'Subject failed enrollment eligibility'),
-    (COMPLETED_PROTOCOL_VISIT, 'Subject has completed the study')]
+    (COMPLETED_PROTOCOL_VISIT, 'Subject has completed the study'),
+    ('edc_system_glitch', 'EDC system glitch')]
 
 ZERO_ONE = (
     ('0', '0'),
