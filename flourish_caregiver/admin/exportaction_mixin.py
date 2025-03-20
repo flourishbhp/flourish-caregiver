@@ -140,7 +140,7 @@ class ExportActionMixin(AdminExportHelper):
         """
         dataset_obj = self.get_maternal_dataset(
             {'screening_identifier': screening_identifier})
-        if not dataset_obj:
+        if not dataset_obj and subject_identifier:
             locator_obj = self.get_locator_obj(
                 subject_identifier=subject_identifier)
             study_maternal_identifier = getattr(
