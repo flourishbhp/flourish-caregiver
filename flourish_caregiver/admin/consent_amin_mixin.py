@@ -175,7 +175,9 @@ class ConsentMixin:
             child_dob = consent.child_dob
             if not child_dob:
                 continue
-            child_age = get_child_age(child_dob, consent_version_dt.date())
+            if consent_version_dt.date() < child_dob:
+                consent_version_dt = get_utcnow()
+            child_age = get_child_age(child_dob, consent_version_dt)
             if child_age >= 18:
                 filter_consents.append(consent.subject_identifier)
         return consents.exclude(subject_identifier__in=filter_consents)

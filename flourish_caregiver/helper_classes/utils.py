@@ -300,7 +300,7 @@ def check_dt_before_child_dob(subject_identifier, reference_date):
     return child_dob < reference_date
 
 
-def get_child_age(child_dob, reference_dt=get_utcnow().date()):
+def get_child_age(child_dob, reference_dt=get_utcnow()):
     if not child_dob:
         return None
     child_age = age(child_dob, reference_dt)

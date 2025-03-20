@@ -5,7 +5,8 @@ from edc_constants.constants import NO, YES
 from edc_form_validators import FormValidatorMixin
 
 from flourish_form_validations.form_validators import SubjectConsentFormValidator
-from ..models import SubjectConsent
+from ..models import SubjectConsent, CaregiverChildConsent
+from ..helper_classes.utils import get_child_consents, get_child_age
 
 
 class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
@@ -43,7 +44,8 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
         child_consent = cleaned_data.get('child_consent')
         caregiver_child_consent = self.data.get(
             'caregiverchildconsent_set-TOTAL_FORMS')
-
+        requires_child_consent = self.validate_child_continued_consent(
+            cleaned_data, caregiver_child_consent)
         if child_consent == NO and int(caregiver_child_consent) != 0:
             msg = {
                 'child_consent': 'Participant is not willing to consent on behalf of '
@@ -51,12 +53,37 @@ class SubjectConsentForm(SiteModelFormMixin, FormValidatorMixin,
                                  'completed. To proceed, close Caregiver Child Consent.'}
 
             raise forms.ValidationError(msg)
-        elif child_consent == YES and int(caregiver_child_consent) == 0:
+        elif child_consent == YES and requires_child_consent:
 
             raise forms.ValidationError('Please complete the Caregiver '
                                         'consent for child participation')
 
         self.validate_screening_done(int(caregiver_child_consent))
+
+    def validate_child_continued_consent(self, cleaned_data, caregiver_child_consent):
+        """
+            Validate child `age` does not require caregiver consent
+            to continue on study.
+            If first consent, child consent is required.
+            @return: number of children who still require mother's
+                    consent to continue on study.
+        """
+        subject_identifier = cleaned_data.get('subject_identifier')
+        child_consents = get_child_consents(subject_identifier).values_list(
+            'subject_identifier', flat=True)
+        if not child_consents:
+            return int(caregiver_child_consent) == 0
+
+        requires_consent_count = 0
+        for childidx in set(child_consents):
+            latest_consent = CaregiverChildConsent.objects.filter(
+                subject_identifier=childidx).latest('consent_datetime')
+            child_age = get_child_age(latest_consent.child_dob)
+            if child_age and child_age >= 18:
+                continue
+
+            requires_consent_count += 1
+        return int(caregiver_child_consent) != requires_consent_count
 
     def validate_screening_done(self, child_count):
         """Validate that screening is done before consent."""
