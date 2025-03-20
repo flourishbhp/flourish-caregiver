@@ -82,7 +82,9 @@ class HITSPostReferral(CrfModelMixin):
     additional_counseling = models.CharField(
         verbose_name='Would you like us to provide a referral for additional counselling',
         choices=YES_NO,
-        max_length=3)
+        max_length=3,
+        blank=True,
+        null=True)
 
     class Meta(CrfModelMixin.Meta):
         app_label = 'flourish_caregiver'
