@@ -7,7 +7,7 @@ from edc_constants.constants import PARTICIPANT, ALIVE, NO, FAILED_ELIGIBILITY
 from edc_form_validators import FormValidatorMixin
 
 from edc_action_item.site_action_items import site_action_items
-from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT,UNSCHEDULED
+from edc_visit_tracking.constants import COMPLETED_PROTOCOL_VISIT, UNSCHEDULED
 from edc_visit_tracking.constants import LOST_VISIT, SCHEDULED, MISSED_VISIT
 from edc_visit_tracking.form_validators import VisitFormValidator
 from flourish_form_validations.form_validators import \
@@ -17,6 +17,7 @@ from flourish_prn.action_items import CAREGIVEROFF_STUDY_ACTION
 from ..models import MaternalVisit, SubjectConsent
 from ..visit_sequence import VisitSequence
 from edc_base.utils import get_utcnow
+
 
 class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin):
     visit_sequence_cls = VisitSequence
