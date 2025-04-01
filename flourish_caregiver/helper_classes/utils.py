@@ -144,6 +144,7 @@ def get_child_related_schedules(subject_identifier, child_subject_identifier):
             model_obj.onschedule_model)
         try:
             onschedule_model_cls.objects.get(
+                schedule_name=model_obj.schedule_name,
                 subject_identifier=subject_identifier,
                 child_subject_identifier=child_subject_identifier)
         except onschedule_model_cls.DoesNotExist:

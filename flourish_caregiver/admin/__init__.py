@@ -41,6 +41,8 @@ from .covid_19_admin import Covid19Admin
 from .enrollment_admin import EnrollmentAdmin
 from .flourish_consent_version_admin import FlourishConsentVersionAdmin
 from .food_security_questionnaire_admin import FoodSecurityQuestionnaireAdmin
+from .hits_post_referral_admin import HITSPostReferralAdmin
+from .hits_referral_admin import HITSReferralAdmin
 from .hits_screening_admin import HITSScreeningAdmin
 from .hiv_disclosure_status_admin import HIVDisclosureStatusAdminA, \
     HIVDisclosureStatusAdminB

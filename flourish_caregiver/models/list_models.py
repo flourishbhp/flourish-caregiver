@@ -149,3 +149,15 @@ class DisclosureReasons(ListModelMixin, BaseUuidModel):
 
 class CaregiverTbReferralReasons(ListModelMixin, BaseUuidModel):
     pass
+
+
+class ReasonsUnvisited(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class HITSSupportType(ListModelMixin, BaseUuidModel):
+    pass
+
+
+class HITSHealthImproved(ListModelMixin, BaseUuidModel):
+    pass

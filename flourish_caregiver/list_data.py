@@ -110,6 +110,15 @@ list_data = {
         ('emo_trauma_therapy', 'Emotional Trauma therapy'),
         (OTHER, 'Other, specify')
     ],
+    'flourish_caregiver.hitssupporttype': [
+        ('adherence_counselling', 'Adherence counseling'),
+        ('grief_counselling', 'Grief counseling'),
+        ('financial_advice', 'Financial advice'),
+        ('relationship_therapy', 'Relationship therapy (family, partner)'),
+        ('social_welfare_support', 'Social welfare support (food basket)'),
+        ('emo_trauma_therapy', 'Emotional Trauma therapy'),
+        (OTHER, 'Other, specify')
+    ],
     'flourish_caregiver.emohealthimproved': [
         ('difficult_to_tell',
          'Difficult to tell because I am still receiving emotional support'),
@@ -124,6 +133,24 @@ list_data = {
         ('accepted_loved_one_loss', 'I have now accepted the loss of my loved one'),
         ('feeling_fine', 'Emotional support received and feeling fine now'),
         ('no_longer_suicidal', 'I am no longer suicidal'),
+        ('defaulted', 'Gave up and defaulted (No difference)'),
+        (OTHER, 'Other, specify')
+    ],
+    'flourish_caregiver.hitshealthimproved': [
+        ('difficult_to_tell',
+         'Difficult to tell because I am still receiving support'),
+        ('mood_has_improved', 'My mood has improved'),
+        ('able_to_relax', 'I am now able to relax'),
+        ('rel_with_other_improved',
+         'My relationship with other people/family members/partner has improved'),
+        ('rel_with_partner_improved',
+         'My relationship with my partner has improved'),
+        ('able_to_manage_emotions',
+         'I am now able to manage my thoughts, feelings and emotions'),
+        ('no_unhealthy_rel',
+         'I am no longer in an unhealthy relationship'),
+        ('received_emo_supp', 'Emotional support received and feeling fine now'),
+        ('healthier_rel', 'I am in a healthier relationship'),
         ('defaulted', 'Gave up and defaulted (No difference)'),
         (OTHER, 'Other, specify')
     ],
@@ -457,6 +484,15 @@ list_data = {
         ('weight_loss', 'Weight loss'),
         ('household_diagnosed_with_tb', 'Household Contact with TB'),
         ('persistent_symptoms', 'Persistent Symptoms'),
+        (OTHER, 'Other, specify'),
+    ],
+    'flourish_caregiver.reasonsunvisited': [
+        ('clinic_not_sought', 'I have not yet sought the clinic/facility'),
+        ('partner_refusal', 'My partner does not want me to attend'),
+        ('family_refusal', 'My family does not want me to attend'),
+        ('support_not_needed', 'I felt I no longer needed support'),
+        ('work_constraints', 'Work constraints'),
+        ('no_transport_fare', 'I did not have transport fare'),
         (OTHER, 'Other, specify'),
     ]
 }
