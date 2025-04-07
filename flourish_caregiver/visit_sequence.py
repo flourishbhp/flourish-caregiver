@@ -52,12 +52,12 @@ class VisitSequence(VisitSequence):
     def previous_visit(self):
         if not self.previous_visit_code:
             return None
-
         prev_visit = self.get_previous_visit()
         return prev_visit if prev_visit else self.get_previous_visit_by_appt()
 
     def get_previous_visit(self):
         previous_visits = self.model_cls.objects.filter(
+            self.sequence_query,
             appointment__subject_identifier=self.subject_identifier,
             visit_schedule_name=self.visit_schedule_name,
             schedule_name=self.appointment.schedule_name,
@@ -69,8 +69,8 @@ class VisitSequence(VisitSequence):
 
     def get_previous_visit_by_appt(self):
         """
-        Returns the previous visit by an appointment if the visit code does not exist
-        in the exclude visit codes
+            Returns the previous visit by an appointment if the visit code does not exist
+            in the exclude visit codes
         """
         prev_visit = None
 
