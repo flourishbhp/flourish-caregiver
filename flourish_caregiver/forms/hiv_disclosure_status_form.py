@@ -12,6 +12,10 @@ class HIVDisclosureStatusFormMixin(SubjectModelFormMixin, forms.ModelForm):
         label='Associated child identifier',
         widget=forms.TextInput(attrs={'readonly': 'readonly'}))
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['associated_child_identifier'].widget.attrs.pop('disabled', None)
+
     class Meta:
         abstract = True
 
