@@ -244,14 +244,14 @@ class MaternalVisitFormValidator(VisitFormValidator, FlourishFormValidatorMixin)
             OTHER,
             field='info_source',
             field_required='info_source_other')
-        
+
         self.required_if(
             UNSCHEDULED,
             field='reason',
             field_required='reason_unscheduled')
-        
+
     def validate_other(self):
-        
+
         self.validate_other_specify(
             field='reason_unscheduled',
             other_specify_field='reason_unscheduled_other',

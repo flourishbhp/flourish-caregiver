@@ -124,7 +124,7 @@ class MaternalVisit(VisitModelMixin, CreatesMetadataModelMixin,
         """
         visit = visit or self
 
-        if visit.reason != MISSED_VISIT:
+        if visit.reason not in [MISSED_VISIT, 'edc_system_glitch']:
             metadata_rule_evaluator = self.metadata_rule_evaluator_cls(
                 visit=visit)
             metadata_rule_evaluator.evaluate_rules()
