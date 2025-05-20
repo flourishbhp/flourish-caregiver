@@ -47,11 +47,7 @@ class MedicalHistoryForm(SubjectModelFormMixin, forms.ModelForm):
                            'Participant\'s medical history has not changed since '
                            'last visit. Please don\'t make any changes to this form.'}
                 raise forms.ValidationError(message)
-        form_validator = self.form_validator_cls(
-            cleaned_data=self.cleaned_data)
-        form_validator.subject_status = MaternalStatusHelper(
-            maternal_visit=self.cleaned_data.get('maternal_visit')).hiv_status
-        cleaned_data = form_validator.validate()
+        cleaned_data = super().clean()
         return cleaned_data
 
     def compare_instance_fields(self, prev_instance=None):
