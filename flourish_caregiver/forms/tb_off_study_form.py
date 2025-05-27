@@ -43,7 +43,8 @@ class TbOffStudyForm(FormValidatorMixin, FormValidator, forms.ModelForm):
 
         subject_identifier = self.cleaned_data.get('subject_identifier')
         latest_visit = self.visit_cls.objects.filter(
-            appointment__subject_identifier=subject_identifier).order_by(
+            appointment__subject_identifier=subject_identifier,
+            schedule_name__icontains='_tb').order_by(
             '-report_datetime').first()
 
         report_datetime = self.cleaned_data.get('report_datetime')
