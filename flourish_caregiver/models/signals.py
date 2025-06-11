@@ -21,9 +21,10 @@ from edc_constants.constants import NEW, NO, OPEN
 from edc_constants.constants import YES
 from edc_data_manager.models import DataActionItem
 from edc_visit_schedule.site_visit_schedules import site_visit_schedules
-from edc_visit_tracking.constants import MISSED_VISIT
+from edc_visit_tracking.constants import MISSED_VISIT, LOST_VISIT
+from edc_appointment.constants import COMPLETE_APPT
 from PIL import Image
-
+from edc_appointment.models import Appointment
 from flourish_prn.action_items import CAREGIVER_DEATH_REPORT_ACTION
 from .antenatal_enrollment import AntenatalEnrollment
 from .caregiver_child_consent import CaregiverChildConsent
@@ -584,7 +585,8 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
     tb_off_study_cls = django_apps.get_model(
         'flourish_caregiver.tboffstudy'
     )
-    if instance.visit_code == '2100T' and instance.reason == MISSED_VISIT:
+    if instance.visit_code in ['2200T' '2100T'] and (instance.reason == MISSED_VISIT or
+                                                     instance.reason == LOST_VISIT) :
         trigger_action_item(tb_off_study_cls,
                             TB_OFF_STUDY_ACTION,
                             instance.subject_identifier)
@@ -609,6 +611,17 @@ def maternal_visit_on_post_save(sender, instance, raw, created, **kwargs):
         Nothing will be affected
         """
         pass
+
+@receiver(post_save, weak=False, sender=Appointment,
+          dispatch_uid='tb_six_month_appointment_on_post_save')
+def tb_six_month_appointment_on_post_save(sender, instance, raw, created, **kwargs):
+
+    tb_off_study_cls = django_apps.get_model(
+        'flourish_caregiver.tboffstudy'
+    )
+    if  instance.visit_code == '2200T' and instance.appt_status == COMPLETE_APPT:
+        trigger_action_item(tb_off_study_cls,TB_OFF_STUDY_ACTION,
+                            instance.subject_identifier)
 
 
 @receiver(post_save, weak=False, sender=TbVisitScreeningWomen,
