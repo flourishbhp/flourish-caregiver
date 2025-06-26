@@ -477,6 +477,12 @@ def export_linkage_csv(modeladmin, request, queryset):
 
         child_consents = child_rel.caregiverchildconsent_set.values(
             'subject_identifier', 'study_child_identifier')
+
+        child_count = len(set(child_consents.values_list(
+            'subject_identifier', flat=True)))
+        if not bool(replacement) and child_count <= 1:
+            continue
+
         for child_consent in child_consents:
             data = {}
             subject_identifier = child_consent.get('subject_identifier')
