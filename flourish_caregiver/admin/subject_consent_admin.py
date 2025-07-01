@@ -455,33 +455,58 @@ class SubjectConsentAdmin(ConsentMixin, ModelAdminBasicMixin, ModelAdminMixin,
 def export_linkage_csv(modeladmin, request, queryset):
     records = []
     _existing = []
+    _model = modeladmin.model
+    queryset = queryset.exclude(subject_identifier__startswith='R')
     for obj in queryset:
-        study_maternal_identifier = modeladmin.study_maternal_identifier(
-            screening_identifier=obj.screening_identifier)
+        child_rel = obj
+        # Check for any replacement
+        replacement_id = f'R{obj.subject_identifier[1:]}'
+        try:
+            replacement = _model.objects.filter(
+                **{'subject_identifier': replacement_id}).latest(
+                    'consent_datetime')
+        except _model.DoesNotExist:
+            replacement = None
+        else:
+            child_rel = replacement
+
         caregiver_data = dict(
             matpid=obj.subject_identifier,
-            old_matpid=study_maternal_identifier, )
+            replacement_pid=getattr(
+                replacement, 'subject_identifier', None))
 
-        child_consents = obj.caregiverchildconsent_set.values(
+        child_consents = child_rel.caregiverchildconsent_set.values(
             'subject_identifier', 'study_child_identifier')
+
+        child_count = len(set(child_consents.values_list(
+            'subject_identifier', flat=True)))
+        if not bool(replacement) and child_count <= 1:
+            continue
+
         for child_consent in child_consents:
             data = {}
             subject_identifier = child_consent.get('subject_identifier')
             study_child_identifier = child_consent.get('study_child_identifier')
+            if subject_identifier in _existing:
+                continue
+
             maternal_dataset = modeladmin.related_maternal_dataset(
                 study_child_identifier)
-            enrol_cohort, curr_cohort = modeladmin.get_cohort_details(subject_identifier)
-            if subject_identifier not in _existing:
-                data.update(
-                    **caregiver_data,
-                    childpid=subject_identifier,
-                    old_childpid=study_child_identifier,
-                    previous_study=getattr(maternal_dataset, 'protocol', None),
-                    enrol_cohort=enrol_cohort,
-                    current_cohort=curr_cohort)
-                records.append(data)
-                _existing.append(subject_identifier)
-    _model = modeladmin.model
+            enrol_cohort, curr_cohort = modeladmin.get_cohort_details(
+                subject_identifier)
+
+            data.update(
+                **caregiver_data,
+                childpid=subject_identifier,
+                old_childpid=study_child_identifier,
+                old_matpid=getattr(
+                    maternal_dataset, 'study_maternal_identifier', None),
+                previous_study=getattr(maternal_dataset, 'protocol', None),
+                enrol_cohort=enrol_cohort,
+                current_cohort=curr_cohort)
+            records.append(data)
+            _existing.append(subject_identifier)
+
     modeladmin.model = None
     response = modeladmin.write_to_csv(
         records, app_label='CaregiverChildLinkage', export_type='csv')

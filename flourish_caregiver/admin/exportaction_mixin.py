@@ -47,7 +47,8 @@ class ExportActionMixin(AdminExportHelper):
                 screening_identifier=screening_identifier,
                 subject_identifier=subject_identifier)
             study_maternal_identifier = study_maternal_identifier or self.study_maternal_identifier(
-                    screening_identifier=screening_identifier)
+                    screening_identifier=screening_identifier,
+                    subject_identifier=subject_identifier)
             caregiver_hiv_status = self.caregiver_hiv_status(
                 subject_identifier=subject_identifier,
                 study_maternal_identifier=study_maternal_identifier)
@@ -135,6 +136,12 @@ class ExportActionMixin(AdminExportHelper):
 
     def previous_bhp_study(
             self, screening_identifier=None, subject_identifier=None):
+        dataset_obj = self.get_maternal_dataset_by_id(
+            screening_identifier, subject_identifier)
+        return getattr(dataset_obj, 'protocol', None)
+
+    def get_maternal_dataset_by_id(
+            self, screening_identifier=None, subject_identifier=None):
         """ Query for previous study by screening_identifier or
             previous study_id from the locator
         """
@@ -147,8 +154,7 @@ class ExportActionMixin(AdminExportHelper):
                 locator_obj, 'study_maternal_identifier', None)
             dataset_obj = self.get_maternal_dataset(
                 {'study_maternal_identifier': study_maternal_identifier})
-
-        return getattr(dataset_obj, 'protocol', None)
+        return dataset_obj
 
     def get_maternal_dataset(self, qs_attrs):
         dataset_cls = django_apps.get_model(
@@ -171,17 +177,13 @@ class ExportActionMixin(AdminExportHelper):
         else:
             return locator_obj
 
-    def study_maternal_identifier(self, screening_identifier=None):
-        dataset_cls = django_apps.get_model(
-            'flourish_caregiver.maternaldataset')
-        if screening_identifier:
-            try:
-                dataset_obj = dataset_cls.objects.get(
-                    screening_identifier=screening_identifier)
-            except dataset_cls.DoesNotExist:
-                return None
-            else:
-                return dataset_obj.study_maternal_identifier
+    def study_maternal_identifier(
+            self, screening_identifier=None, subject_identifier=None):
+
+            dataset_obj = self.get_maternal_dataset_by_id(
+                screening_identifier, subject_identifier)
+
+            return getattr(dataset_obj, 'study_maternal_identifier', None)
 
     def caregiver_hiv_status(
             self, subject_identifier=None, study_maternal_identifier=None):
