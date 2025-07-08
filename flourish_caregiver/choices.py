@@ -1374,6 +1374,8 @@ UNSCHEDULED_REASON = (
     ('2_weeks_tb_sec_screening', '2 weeks TB second screening'),
     ('lab_sample_redraw', 'Lab sample redraw'),
     ('general_consultation', 'General consultation'),
+    ('ltfu', 'Participant lost to follow up / unable to locate'),
+    ('study_completion', 'Subject has completed the study'),
     (OTHER, 'Other, specify')
 )
 
